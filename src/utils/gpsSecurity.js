@@ -92,15 +92,10 @@ export function validateGpsSecurity({
     };
   }
 
-  const { lat, lng, accuracy, timestamp, isMocked, isSimulated } = userCoords;
+  const { lat, lng, accuracy, timestamp, isMocked } = userCoords;
 
-  const isLocalDev =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1');
-
-  // 1. Deteksi Flag Mock Location (Kecuali Mode Uji Coba Pengembang / Localhost)
-  if (!isLocalDev && !isSimulated && (isMocked === true || userCoords.mocked === true)) {
+  // 1. Deteksi Flag Mock Location
+  if (isMocked === true || userCoords.mocked === true) {
     return {
       isValid: false,
       code: 'MOCK_DETECTED',
@@ -108,18 +103,18 @@ export function validateGpsSecurity({
     };
   }
 
-  // 2. Geofence Check: Wajib berada di batas geografis resmi D.I. Yogyakarta (Kecuali Localhost / Simulasi)
+  // 2. Geofence Check: Wajib berada di batas geografis resmi D.I. Yogyakarta
   const insideJogja =
     lat >= JOGJA_GEO_BOUNDS.minLat &&
     lat <= JOGJA_GEO_BOUNDS.maxLat &&
     lng >= JOGJA_GEO_BOUNDS.minLng &&
     lng <= JOGJA_GEO_BOUNDS.maxLng;
 
-  if (!insideJogja && !isSimulated && !isLocalDev) {
+  if (!insideJogja) {
     return {
       isValid: false,
       code: 'OUTSIDE_JOGJA_GEOFENCE',
-      message: `Koordinat Anda (${lat.toFixed(4)}, ${lng.toFixed(4)}) berada di luar wilayah Daerah Istimewa Yogyakarta.`
+      message: `Koordinat perangkat Anda (${lat.toFixed(4)}, ${lng.toFixed(4)}) berada di luar batas wilayah Daerah Istimewa Yogyakarta. Klaim badge paspor budaya hanya dapat dilakukan langsung di wilayah Yogyakarta.`
     };
   }
 
@@ -175,7 +170,7 @@ export function validateGpsSecurity({
       };
     }
 
-    if (distanceToTarget > maxRadius && !isSimulated && !isLocalDev) {
+    if (distanceToTarget > maxRadius) {
       const distKm = (distanceToTarget / 1000).toFixed(1);
       const radiusLabel = maxRadius >= 1000 ? `${(maxRadius / 1000).toFixed(1)} KM` : `${maxRadius} m`;
       return {

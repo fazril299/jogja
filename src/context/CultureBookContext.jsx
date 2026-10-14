@@ -124,6 +124,8 @@ export function CultureBookProvider({ children }) {
       const key = getUserCultureStorageKey(activeUserIdRef.current);
       localStorage.setItem(key, JSON.stringify(fresh));
       localStorage.removeItem('jogjakrama_culture_book_v3');
+      localStorage.removeItem('jogjakrama_culture_book_v4_guest');
+      localStorage.removeItem('jogjakrama_culture_book_v4_guest-user');
       if (
         isSupabaseConfigured &&
         activeUserIdRef.current &&
