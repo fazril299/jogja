@@ -26,7 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
-import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
+import { CULTURAL_PLACES, JOGJA_GPS_ZONES, JOGJA_SIMULATION_PRESETS } from './data/culturalData';
 import { isSupabaseConfigured, fetchPlacesFromSupabase } from './lib/supabase';
 
 // Auth & Community Modals
@@ -338,6 +338,32 @@ function NusantaraApp() {
     );
   };
 
+  // Pengujian GPS Virtual untuk Pengembang & Pengguna yang Berada di Luar Wilayah Jogja
+  const handleSimulateJogjaLocation = (preset) => {
+    const timeStr = new Date().toLocaleTimeString('id-ID');
+    const simFix = {
+      lat: preset.coordinates.lat,
+      lng: preset.coordinates.lng,
+      accuracy: 10,
+      altitude: 115,
+      speed: 0,
+      heading: 0,
+      inJogja: true,
+      isSimulated: true,
+      timestamp: timeStr,
+      simulatedPlaceName: preset.name,
+      simulatedPlaceId: preset.id
+    };
+
+    setUserLiveCoords(simFix);
+    setIsOutsideJogja(false);
+    setOutsideJogjaCoords(null);
+    setUserLiveAddress(preset.address);
+    setGpsErrorMsg('');
+    setAutoDetectedZoneId(preset.zoneId);
+    setShowGpsNotification(true);
+  };
+
   // Cek otomatis saat aplikasi dibuka: hanya menyalakan GPS jika pengguna di wilayah D.I. Yogyakarta
   useEffect(() => {
     triggerDeviceGpsDetection(false);
@@ -531,6 +557,146 @@ function NusantaraApp() {
             >
               Buka Peta & Lacak GPS Real-Time
             </button>
+
+            {/* Quick Switcher Antar Titik Wisata jika Sedang Mode Simulasi */}
+            {userLiveCoords?.isSimulated && (
+              <div style={{ marginTop: '0.85rem', paddingTop: '0.65rem', borderTop: '1px solid #e4e4e7' }}>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#71717a', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                  Ganti Titik Uji Coba:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                  {JOGJA_SIMULATION_PRESETS.slice(0, 5).map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => handleSimulateJogjaLocation(p)}
+                      style={{
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: '999px',
+                        backgroundColor: userLiveCoords?.simulatedPlaceId === p.id ? '#0066ff' : '#f4f4f5',
+                        color: userLiveCoords?.simulatedPlaceId === p.id ? '#ffffff' : '#3f3f46',
+                        border: 'none',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {p.shortName}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* MODAL / BANNER SIMULASI KHUSUS JIKA PENGGUNA BERADA DI LUAR WILAYAH D.I. YOGYAKARTA */}
+        {isOutsideJogja && !userLiveCoords && !isNearMeOpen && !selectedPlace && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.96 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: 'fixed',
+              bottom: '1.5rem',
+              right: '1.5rem',
+              zIndex: 9990,
+              width: 'min(420px, calc(100vw - 2rem))',
+              backgroundColor: '#FFFFFF',
+              color: '#2C221E',
+              borderRadius: '24px',
+              padding: '1.35rem 1.5rem',
+              boxShadow: '0 20px 50px rgba(44, 34, 30, 0.22)',
+              border: '2px solid #C99B52',
+              fontFamily: "'Plus Jakarta Sans', sans-serif"
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#8A5D26', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                📍 Mode Pengujian GPS dari Luar Kota
+              </span>
+              <button
+                onClick={() => setIsOutsideJogja(false)}
+                style={{ background: 'none', border: 'none', color: '#786B5E', cursor: 'pointer', padding: 0, fontSize: '0.76rem', fontWeight: 600 }}
+              >
+                Tutup
+              </button>
+            </div>
+
+            <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.8rem', color: '#5C4E43', lineHeight: 1.45 }}>
+              Lokasi fisik Anda berada di luar wilayah Jogja {outsideJogjaCoords ? `(${outsideJogjaCoords.lat.toFixed(3)}, ${outsideJogjaCoords.lng.toFixed(3)})` : ''}. Pilih lokasi virtual di bawah untuk menguji pergerakan radar & klaim badge:
+            </p>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem' }}>
+              {JOGJA_SIMULATION_PRESETS.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleSimulateJogjaLocation(p)}
+                  style={{
+                    padding: '0.32rem 0.7rem',
+                    borderRadius: '999px',
+                    backgroundColor: '#FAF8F5',
+                    border: '1px solid #DCD3C6',
+                    color: '#2C221E',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#2C221E';
+                    e.currentTarget.style.color = '#FAF8F5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#FAF8F5';
+                    e.currentTarget.style.color = '#2C221E';
+                  }}
+                >
+                  📍 {p.shortName}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => {
+                  handleSimulateJogjaLocation(JOGJA_SIMULATION_PRESETS[0]);
+                  setIsNearMeOpen(true);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '0.65rem',
+                  borderRadius: '999px',
+                  backgroundColor: '#2C221E',
+                  color: '#FAF8F5',
+                  border: '1.5px solid #C99B52',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Uji di Prambanan
+              </button>
+              <button
+                onClick={() => {
+                  handleSimulateJogjaLocation(JOGJA_SIMULATION_PRESETS[1]);
+                  setIsNearMeOpen(true);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '0.65rem',
+                  borderRadius: '999px',
+                  backgroundColor: '#9E1C64',
+                  color: '#FAF8F5',
+                  border: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Uji di Malioboro
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -699,6 +865,8 @@ function NusantaraApp() {
         gpsErrorMsg={gpsErrorMsg}
         onRefreshDeviceGps={() => triggerDeviceGpsDetection(false)}
         isGpsLoading={isGpsLoading}
+        onSimulateLocation={handleSimulateJogjaLocation}
+        simulationPresets={JOGJA_SIMULATION_PRESETS}
       />
 
       {/* My Culture Book (Paspor Budaya) Drawer */}
@@ -710,6 +878,8 @@ function NusantaraApp() {
         userLiveAddress={userLiveAddress}
         onRefreshGps={() => triggerDeviceGpsDetection(false)}
         isGpsLoading={isGpsLoading}
+        onSimulateLocation={handleSimulateJogjaLocation}
+        simulationPresets={JOGJA_SIMULATION_PRESETS}
         onSelectPlace={(place) => {
           setIsCultureBookOpen(false);
           setSelectedPlace(place);

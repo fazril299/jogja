@@ -1482,3 +1482,79 @@ Di atas batu karang hitam yang kini dikelilingi pagar Cepuri Parangkusumo, belia
     }
   }
 ];
+
+// Preset Lokasi Simulasi GPS Jogja Khusus Pengujian Developer / Pengguna dari Luar Kota
+export const JOGJA_SIMULATION_PRESETS = [
+  {
+    id: 'prambanan',
+    name: 'Candi Prambanan',
+    shortName: 'Prambanan',
+    zoneId: 'zona-prambanan-sleman',
+    coordinates: { lat: -7.7520, lng: 110.4914 },
+    address: 'Kawasan Candi Prambanan, Bokoharjo, Sleman, D.I. Yogyakarta',
+    placeId: 'prambanan-ratuboko'
+  },
+  {
+    id: 'malioboro',
+    name: 'Kawasan Malioboro & Titik Nol',
+    shortName: 'Malioboro',
+    zoneId: 'zona-malioboro-tugu',
+    coordinates: { lat: -7.7926, lng: 110.3658 },
+    address: 'Jl. Malioboro, Sosromenduran, Gedongtengen, Kota Yogyakarta',
+    placeId: 'malioboro-tugu'
+  },
+  {
+    id: 'keraton',
+    name: 'Keraton Ngayogyakarta',
+    shortName: 'Keraton',
+    zoneId: 'zona-keraton-wijilan',
+    coordinates: { lat: -7.8053, lng: 110.3642 },
+    address: 'Pelataran Kedhaton Keraton Jogja, Panembahan, Kraton, Kota Yogyakarta',
+    placeId: 'keraton-yogyakarta'
+  },
+  {
+    id: 'kotagede',
+    name: 'Kotagede (Pusaka Mataram)',
+    shortName: 'Kotagede',
+    zoneId: 'zona-kotagede-heritage',
+    coordinates: { lat: -7.8286, lng: 110.3998 },
+    address: 'Kawasan Cagar Budaya Kotagede, Purbayan, Kota Yogyakarta',
+    placeId: 'kotagede'
+  },
+  {
+    id: 'merapi',
+    name: 'Lereng Merapi (Kaliurang)',
+    shortName: 'Merapi',
+    zoneId: 'zona-merapi-kaliurang',
+    coordinates: { lat: -7.5950, lng: 110.4260 },
+    address: 'Kawasan Wisata Kaliurang, Hargobinangun, Pakem, Sleman',
+    placeId: 'merapi-kaliurang'
+  },
+  {
+    id: 'wijilan',
+    name: 'Sentra Gudeg Wijilan',
+    shortName: 'Wijilan',
+    zoneId: 'zona-keraton-wijilan',
+    coordinates: { lat: -7.8062, lng: 110.3685 },
+    address: 'Jl. Wijilan, Panembahan, Kraton, Kota Yogyakarta',
+    placeId: 'wijilan-prawirotaman'
+  },
+  {
+    id: 'kasongan',
+    name: 'Desa Wisata Kasongan',
+    shortName: 'Kasongan',
+    zoneId: 'zona-kasongan-bantul',
+    coordinates: { lat: -7.8465, lng: 110.3421 },
+    address: 'Jl. Kasongan, Bangunjiwo, Kasihan, Bantul',
+    placeId: 'kasongan-imogiri'
+  },
+  {
+    id: 'parangtritis',
+    name: 'Pantai Parangtritis',
+    shortName: 'Parangtritis',
+    zoneId: 'zona-parangtritis-selatan',
+    coordinates: { lat: -7.9818, lng: 110.3150 },
+    address: 'Kawasan Pesisir Parangtritis, Kretek, Bantul',
+    placeId: 'parangtritis-gunungkidul'
+  }
+];
