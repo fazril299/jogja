@@ -306,8 +306,10 @@ export async function deleteExperienceFromSupabase(expId) {
  * ============================================================================
  */
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function fetchCulturePassportFromSupabase(userId) {
-  if (!isSupabaseConfigured || !supabase || !userId || userId.startsWith('guest-')) return null;
+  if (!isSupabaseConfigured || !supabase || !userId || !UUID_REGEX.test(userId)) return null;
   try {
     const { data, error } = await supabase
       .from('culture_passports')
@@ -327,7 +329,7 @@ export async function fetchCulturePassportFromSupabase(userId) {
 }
 
 export async function saveCulturePassportToSupabase(userId, passportData) {
-  if (!isSupabaseConfigured || !supabase || !userId || userId.startsWith('guest-')) return null;
+  if (!isSupabaseConfigured || !supabase || !userId || !UUID_REGEX.test(userId)) return null;
   try {
     const payload = {
       user_id: userId,
