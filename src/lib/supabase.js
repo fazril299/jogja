@@ -260,6 +260,109 @@ export async function updateUserRoleInSupabase(userId, newRole) {
 }
 
 /**
+ * Sinkronisasi Profil Pengguna (Google Sign-In / OAuth / Pendaftaran) ke Supabase
+ */
+export async function syncProfileToSupabase({ id, email, fullName, avatarUrl, role }) {
+  if (!isSupabaseConfigured || !supabase) return { success: false, offline: true };
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (!cleanEmail) return { success: false, error: 'Email missing' };
+
+  const targetRole =
+    cleanEmail === 'admin@jogjakrama.id' || cleanEmail === 'fazrielmuliyael@gmail.com'
+      ? 'admin'
+      : (role || 'user');
+
+  try {
+    // 1. Cek apakah profil sudah ada di Supabase
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+
+    if (existingProfile) {
+      const { data: updated, error: updateErr } = await supabase
+        .from('profiles')
+        .update({
+          full_name: fullName || existingProfile.full_name,
+          avatar_url: avatarUrl || existingProfile.avatar_url,
+          role: targetRole,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', existingProfile.id)
+        .select()
+        .maybeSingle();
+
+      if (!updateErr && updated) {
+        return { success: true, data: updated };
+      }
+    }
+
+    // 2. Coba gunakan PostgreSQL RPC jika fungsi sync_profile terpasang di database
+    try {
+      const { data: rpcData, error: rpcError } = await supabase.rpc('sync_profile', {
+        p_email: cleanEmail,
+        p_full_name: fullName || cleanEmail.split('@')[0],
+        p_avatar_url: avatarUrl || null,
+        p_role: targetRole
+      });
+
+      if (!rpcError && rpcData) {
+        return { success: true, data: rpcData };
+      }
+    } catch (e) {
+      // RPC mungkin belum terpasang di database, lanjut ke fallback
+    }
+
+    // 3. Fallback: Autentikasi / Pendaftaran via Supabase Auth
+    const oauthPwd = `google-oauth-${cleanEmail}-2026!`;
+    const { data: signInData } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password: oauthPwd
+    });
+
+    if (signInData?.user) {
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', signInData.user.id)
+        .maybeSingle();
+
+      if (userProfile) return { success: true, data: userProfile };
+    } else {
+      const { data: signUpData } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password: oauthPwd,
+        options: {
+          data: {
+            full_name: fullName || cleanEmail.split('@')[0],
+            avatar_url: avatarUrl || null
+          }
+        }
+      });
+
+      if (signUpData?.user) {
+        return {
+          success: true,
+          data: {
+            id: signUpData.user.id,
+            email: cleanEmail,
+            full_name: fullName,
+            avatar_url: avatarUrl,
+            role: targetRole
+          }
+        };
+      }
+    }
+
+    return { success: false, error: 'Database profiles sync fallback applied' };
+  } catch (err) {
+    console.warn('[Supabase Sync Warning]', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+/**
  * ============================================================================
  * LAYANAN SUPABASE: MOMEN & PENGALAMAN BUDAYA (EXPERIENCES)
  * ============================================================================

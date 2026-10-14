@@ -4,7 +4,8 @@ import {
   supabase,
   isSupabaseConfigured,
   fetchProfilesFromSupabase,
-  updateUserRoleInSupabase
+  updateUserRoleInSupabase,
+  syncProfileToSupabase
 } from '../lib/supabase';
 
 const AuthContext = createContext(null);
@@ -236,9 +237,37 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  // SINKRONISASI SESSI DENGAN SUPABASE AUTH (JIKA AKTIF)
+  // SINKRONISASI SESSI DENGAN SUPABASE AUTH & PROFILES (JIKA AKTIF)
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
+
+    // Ambil data profil dari Supabase agar akun terdaftar di database selalu muncul di aplikasi
+    fetchProfilesFromSupabase().then((remoteProfiles) => {
+      if (remoteProfiles && Array.isArray(remoteProfiles) && remoteProfiles.length > 0) {
+        setUsers((prev) => {
+          const merged = [...prev];
+          remoteProfiles.forEach((rp) => {
+            const idx = merged.findIndex(
+              (u) => (u.email || '').toLowerCase() === (rp.email || '').toLowerCase()
+            );
+            const userObj = {
+              id: rp.id,
+              name: rp.full_name || (rp.email ? rp.email.split('@')[0] : 'Pengguna'),
+              email: (rp.email || '').toLowerCase(),
+              avatar: rp.avatar_url,
+              role: rp.role || 'user',
+              joinedAt: rp.created_at || new Date().toISOString()
+            };
+            if (idx >= 0) {
+              merged[idx] = { ...merged[idx], ...userObj };
+            } else {
+              merged.push(userObj);
+            }
+          });
+          return merged;
+        });
+      }
+    });
 
     // Cek session aktif dari Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -655,36 +684,28 @@ export function AuthProvider({ children }) {
 
       // 1. Sinkronisasi ke Supabase Auth & PostgreSQL Profiles (Jika Supabase aktif)
       let supabaseUserId = null;
+      let remoteRole = null;
       if (isSupabaseConfigured && supabase) {
         try {
-          const oauthPwd = `google-oauth-${emailLower}-2026!`;
-          const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+          const syncRes = await syncProfileToSupabase({
             email: emailLower,
-            password: oauthPwd
+            fullName: displayName,
+            avatarUrl: avatarUrl,
+            role: isGabrielAdmin ? 'admin' : (existing?.role || 'user')
           });
-
-          if (signInData?.user) {
-            supabaseUserId = signInData.user.id;
-          } else if (signInErr) {
-            // Jika belum terdaftar di Supabase Auth, buatkan akun resmi
-            const { data: signUpData } = await supabase.auth.signUp({
-              email: emailLower,
-              password: oauthPwd,
-              options: {
-                data: {
-                  full_name: displayName,
-                  avatar_url: avatarUrl
-                }
-              }
-            });
-            if (signUpData?.user) {
-              supabaseUserId = signUpData.user.id;
-            }
+          if (syncRes.success && syncRes.data) {
+            supabaseUserId = syncRes.data.id;
+            remoteRole = syncRes.data.role;
           }
         } catch (supaErr) {
           console.warn('[Supabase Google Sync]', supaErr);
         }
       }
+
+      const assignedRole =
+        isGabrielAdmin
+          ? 'admin'
+          : (remoteRole || existing?.role || 'user');
 
       const googleAccountObj = {
         id: supabaseUserId || existing?.id || accountInput?.id || `google-${Date.now()}`,
@@ -692,7 +713,7 @@ export function AuthProvider({ children }) {
         email: emailLower,
         password: existing?.password || 'google-oauth-verified',
         avatar: avatarUrl,
-        role: isGabrielAdmin ? 'admin' : (existing?.role || 'user'),
+        role: assignedRole,
         provider: 'google',
         joinedAt: existing?.joinedAt || accountInput?.joinedAt || new Date().toISOString()
       };
@@ -821,22 +842,21 @@ export function AuthProvider({ children }) {
                 // Sync ke Supabase Auth & PostgreSQL Profiles
                 if (isSupabaseConfigured && supabase) {
                   try {
-                    const oauthPwd = `google-oauth-${emailLower}-2026!`;
-                    const { error: signInErr } = await supabase.auth.signInWithPassword({
+                    const syncRes = await syncProfileToSupabase({
                       email: emailLower,
-                      password: oauthPwd
+                      fullName: profile.name || emailLower.split('@')[0],
+                      avatarUrl: profile.picture || googleUserRecord.avatar,
+                      role: googleUserRecord.role
                     });
-                    if (signInErr) {
-                      await supabase.auth.signUp({
-                        email: emailLower,
-                        password: oauthPwd,
-                        options: {
-                          data: {
-                            full_name: profile.name || emailLower.split('@')[0],
-                            avatar_url: profile.picture || googleUserRecord.avatar
-                          }
-                        }
-                      });
+                    if (syncRes.success && syncRes.data) {
+                      if (syncRes.data.id) {
+                        googleUserRecord.id = syncRes.data.id;
+                        sessionData.id = syncRes.data.id;
+                      }
+                      if (syncRes.data.role) {
+                        googleUserRecord.role = syncRes.data.role;
+                        sessionData.role = syncRes.data.role;
+                      }
                     }
                   } catch (supaErr) {
                     console.warn('[Supabase Sync Google]', supaErr);

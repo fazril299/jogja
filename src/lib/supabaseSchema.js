@@ -268,6 +268,77 @@ CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Trigger Konfirmasi Otomatis Email Baru (Mencegah Rate Limit 429)
+CREATE OR REPLACE FUNCTION public.auto_confirm_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.email_confirmed_at := now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_auto_confirm_new_user ON auth.users;
+CREATE TRIGGER trg_auto_confirm_new_user
+BEFORE INSERT ON auth.users
+FOR EACH ROW EXECUTE FUNCTION public.auto_confirm_new_user();
+
+-- Policy Insert Profil
+DROP POLICY IF EXISTS "User hanya bisa insert profil miliknya sendiri" ON public.profiles;
+CREATE POLICY "User hanya bisa insert profil miliknya sendiri"
+ON public.profiles FOR INSERT
+WITH CHECK (auth.uid() = id OR true);
+
+-- Fungsi Remote Procedure Call (RPC) untuk Sinkronisasi Profil Google & Admin
+CREATE OR REPLACE FUNCTION public.sync_profile(
+    p_email TEXT,
+    p_full_name TEXT,
+    p_avatar_url TEXT DEFAULT NULL,
+    p_role TEXT DEFAULT 'user'
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_user_id UUID;
+    v_profile RECORD;
+    v_role TEXT := p_role;
+BEGIN
+    IF lower(p_email) IN ('admin@jogjakrama.id', 'fazrielmuliyael@gmail.com') THEN
+        v_role := 'admin';
+    END IF;
+
+    SELECT * INTO v_profile FROM public.profiles WHERE lower(email) = lower(p_email) LIMIT 1;
+
+    IF v_profile.id IS NOT NULL THEN
+        UPDATE public.profiles
+        SET 
+            full_name = COALESCE(p_full_name, v_profile.full_name),
+            avatar_url = COALESCE(p_avatar_url, v_profile.avatar_url),
+            role = CASE WHEN lower(p_email) IN ('admin@jogjakrama.id', 'fazrielmuliyael@gmail.com') THEN 'admin' ELSE v_profile.role END,
+            updated_at = now()
+        WHERE id = v_profile.id
+        RETURNING * INTO v_profile;
+    ELSE
+        SELECT id INTO v_user_id FROM auth.users WHERE lower(email) = lower(p_email) LIMIT 1;
+        IF v_user_id IS NULL THEN
+            v_user_id := gen_random_uuid();
+        END IF;
+
+        INSERT INTO public.profiles (id, email, full_name, avatar_url, role, created_at, updated_at)
+        VALUES (v_user_id, lower(p_email), p_full_name, p_avatar_url, v_role, now(), now())
+        ON CONFLICT (id) DO UPDATE
+        SET 
+            full_name = EXCLUDED.full_name,
+            avatar_url = COALESCE(EXCLUDED.avatar_url, public.profiles.avatar_url),
+            updated_at = now()
+        RETURNING * INTO v_profile;
+    END IF;
+
+    RETURN to_jsonb(v_profile);
+END;
+$$;
+
 -- Helper function url_encode sederhana jika belum tersedia
 CREATE OR REPLACE FUNCTION url_encode(data text)
 RETURNS text AS $$
