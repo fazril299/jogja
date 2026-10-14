@@ -52,6 +52,7 @@ import PlaceStorybook from './components/PlaceStorybook';
 import NearMeModal from './components/NearMeModal';
 import MyCultureBookModal from './components/MyCultureBookModal';
 import AdminModal from './components/AdminModal';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
 export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
@@ -110,7 +111,21 @@ function NusantaraApp() {
       const saved = localStorage.getItem('jogjakrama_places_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Merge with master CULTURAL_PLACES so no chapters or fields are missing
+          const defaultMap = new Map(CULTURAL_PLACES.map((p) => [p.id, p]));
+          const merged = CULTURAL_PLACES.map((dp) => {
+            const cached = parsed.find((p) => p.id === dp.id);
+            return cached ? { ...dp, ...cached } : dp;
+          });
+          // Also include any user-created places from Admin
+          parsed.forEach((p) => {
+            if (!defaultMap.has(p.id)) {
+              merged.push(p);
+            }
+          });
+          return merged;
+        }
       }
     } catch (e) {
       console.error('Error loading cached places:', e);
@@ -636,14 +651,16 @@ function NusantaraApp() {
       {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
       <AnimatePresence>
         {selectedPlace && (
-          <PlaceStorybook
-            place={selectedPlace}
-            places={places}
-            onSelectPlace={(p) => setSelectedPlace(p)}
-            onBack={() => setSelectedPlace(null)}
-            onOpenMapWithPlace={handleOpenMapWithPlace}
-            onOpenCultureBook={() => setIsCultureBookOpen(true)}
-          />
+          <ErrorBoundary onReset={() => setSelectedPlace(null)}>
+            <PlaceStorybook
+              place={selectedPlace}
+              places={places}
+              onSelectPlace={(p) => setSelectedPlace(p)}
+              onBack={() => setSelectedPlace(null)}
+              onOpenMapWithPlace={handleOpenMapWithPlace}
+              onOpenCultureBook={() => setIsCultureBookOpen(true)}
+            />
+          </ErrorBoundary>
         )}
       </AnimatePresence>
 
@@ -723,12 +740,14 @@ function NusantaraApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CultureBookProvider>
-        <CommunityProvider>
-          <NusantaraApp />
-        </CommunityProvider>
-      </CultureBookProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <CultureBookProvider>
+          <CommunityProvider>
+            <NusantaraApp />
+          </CommunityProvider>
+        </CultureBookProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

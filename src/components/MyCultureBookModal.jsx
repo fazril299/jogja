@@ -14,6 +14,7 @@ import {
   Navigation,
   Lock,
   CheckCircle2,
+  AlertTriangle,
   ChevronRight,
   RefreshCw,
   LogOut,
@@ -739,7 +740,17 @@ export default function MyCultureBookModal({
                             index < places.length - 1 ? '1px solid #F5F1EA' : 'none'
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                        <div
+                          onClick={() => onSelectPlace && onSelectPlace(place)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            minWidth: 0,
+                            cursor: 'pointer'
+                          }}
+                          title={`Buka Cerita & Informasi ${place.name}`}
+                        >
                           <div
                             style={{
                               width: '20px',
@@ -764,8 +775,11 @@ export default function MyCultureBookModal({
                               color: '#3D312A',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              textOverflow: 'ellipsis',
+                              transition: 'color 0.15s ease'
                             }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = '#8A5D26')}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = '#3D312A')}
                           >
                             {place.name.split('&')[0]}
                           </span>
