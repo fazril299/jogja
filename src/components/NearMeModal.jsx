@@ -51,9 +51,7 @@ export default function NearMeModal({
   userLiveAddress,
   gpsErrorMsg,
   onRefreshDeviceGps,
-  isGpsLoading,
-  onSimulateLocation,
-  simulationPresets = []
+  isGpsLoading
 }) {
   const [selectedZoneId, setSelectedZoneId] = useState(
     autoDetectedZoneId || JOGJA_GPS_ZONES[0].id
@@ -351,81 +349,6 @@ export default function NearMeModal({
             padding: '6.2rem clamp(1.5rem, 4vw, 3.5rem) 4rem clamp(1.5rem, 4vw, 3.5rem)'
           }}
         >
-          {/* BAR SIMULASI LOKASI JOGJA (MEMUNGKINKAN PENGUJIAN LENGKAP DARI LUAR KOTA / JARAK JAUH) */}
-          <div
-            style={{
-              padding: '0.85rem 1.25rem',
-              borderRadius: '16px',
-              backgroundColor: '#FFFFFF',
-              border: userLiveCoords?.isSimulated ? '1.5px solid #059669' : '1.5px dashed #C99B52',
-              boxShadow: '0 4px 14px rgba(44, 34, 30, 0.05)',
-              marginBottom: '1.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '0.75rem'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', fontWeight: 800, color: '#8A5D26' }}>
-                <Navigation size={14} color="#8A5D26" />
-                <span>Simulasi Lokasi Jogja (Uji Coba dari Luar Kota):</span>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                {simulationPresets.map((preset) => {
-                  const isCurSim = userLiveCoords?.isSimulated && userLiveCoords?.simulatedPlaceId === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => onSimulateLocation && onSimulateLocation(preset)}
-                      style={{
-                        padding: '0.32rem 0.75rem',
-                        borderRadius: '999px',
-                        backgroundColor: isCurSim ? '#2C221E' : '#FAF8F5',
-                        color: isCurSim ? '#FAF8F5' : '#453830',
-                        border: isCurSim ? '1.5px solid #C99B52' : '1px solid #DCD3C6',
-                        fontSize: '0.74rem',
-                        fontWeight: isCurSim ? 800 : 600,
-                        cursor: 'pointer',
-                        boxShadow: isCurSim ? '0 2px 8px rgba(44, 34, 30, 0.16)' : 'none',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      📍 {preset.shortName}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {userLiveCoords?.isSimulated && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#059669', backgroundColor: '#ECFDF5', padding: '0.2rem 0.6rem', borderRadius: '999px' }}>
-                  ● Aktif di {userLiveCoords.simulatedPlaceName}
-                </span>
-                <button
-                  type="button"
-                  onClick={onRefreshDeviceGps}
-                  style={{
-                    padding: '0.3rem 0.75rem',
-                    borderRadius: '999px',
-                    backgroundColor: '#FAF8F5',
-                    border: '1px solid #DCD3C6',
-                    color: '#786B5E',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                  title="Kembalikan ke sensor GPS hardware perangkat"
-                >
-                  Reset GPS Nyata
-                </button>
-              </div>
-            )}
-          </div>
-
           {/* Bar Pilihan Wilayah Wisata & Radius */}
           <div
             style={{

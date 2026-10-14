@@ -33,9 +33,7 @@ export default function MyCultureBookModal({
   userLiveCoords,
   userLiveAddress,
   onRefreshGps,
-  isGpsLoading,
-  onSimulateLocation,
-  simulationPresets = []
+  isGpsLoading
 }) {
   const [activeTab, setActiveTab] = useState('badges-quests'); // Default langsung ke panduan badge
   const [selectedNotePlaceId, setSelectedNotePlaceId] = useState(
@@ -1157,82 +1155,7 @@ export default function MyCultureBookModal({
                     </div>
                   </div>
 
-                  {/* TOOLBAR UJI COBA GPS DARI LUAR KOTA / DEVELOPER */}
-                  {(isLocalhost || !userLiveCoords || userLiveCoords?.isSimulated) && (
-                    <div
-                      style={{
-                        marginBottom: '1.5rem',
-                        padding: '1.1rem 1.35rem',
-                        borderRadius: '16px',
-                        backgroundColor: '#FFFBEB',
-                        border: '1.5px dashed #D97706',
-                        color: '#92400E'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, fontSize: '0.85rem' }}>
-                          <Sparkles size={16} color="#D97706" />
-                          <span>Mode Pengujian GPS (Uji Coba dari Luar Kota Jogja)</span>
-                        </div>
-                        {userLiveCoords?.isSimulated && (
-                          <span style={{ fontSize: '0.72rem', fontWeight: 700, backgroundColor: '#FEF3C7', padding: '0.2rem 0.65rem', borderRadius: '999px', border: '1px solid #FDE68A' }}>
-                            📍 Virtual di: {userLiveCoords.simulatedPlaceName}
-                          </span>
-                        )}
-                      </div>
-                      <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.75rem', lineHeight: 1.5, color: '#78350F' }}>
-                        Karena Anda sedang menguji coba dari luar wilayah D.I. Yogyakarta, klik tombol destinasi di bawah untuk langsung menguji pergerakan radar & mengoleksi badge tanpa perlu berada di lokasi fisik:
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                        {places.map((p) => {
-                          const isDone = isGpsVerified(p.id);
-                          return (
-                            <button
-                              key={p.id}
-                              type="button"
-                              onClick={() => {
-                                const matchingPreset = simulationPresets.find((sp) => sp.placeId === p.id);
-                                if (matchingPreset && onSimulateLocation) {
-                                  onSimulateLocation(matchingPreset);
-                                }
-                                const simCoords = {
-                                  ...p.coordinates,
-                                  accuracy: 10,
-                                  isSimulated: true,
-                                  timestamp: Date.now()
-                                };
-                                handleClaimBadgeViaGps(p, simCoords);
-                              }}
-                              disabled={verifyingPlaceId === p.id || isDone}
-                              style={{
-                                padding: '0.35rem 0.8rem',
-                                borderRadius: '999px',
-                                backgroundColor: isDone ? '#ECFDF5' : '#FFFFFF',
-                                border: isDone ? '1px solid #A7F3D0' : '1px solid #D97706',
-                                color: isDone ? '#065F46' : '#92400E',
-                                fontSize: '0.72rem',
-                                fontWeight: 700,
-                                cursor: isDone ? 'default' : 'pointer',
-                                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.3rem'
-                              }}
-                            >
-                              {isDone ? (
-                                <>
-                                  <Check size={12} color="#059669" strokeWidth={3} />
-                                  <span>{p.name.split('&')[0].trim()} (Terkoleksi)</span>
-                                </>
-                              ) : (
-                                verifyingPlaceId === p.id ? 'Menguji...' : `Uji Klaim: ${p.name.split('&')[0].trim()}`
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* KATALOG DAFTAR BADGE & CARA DAPATNYA */}
                   <div style={{ marginBottom: '2.5rem' }}>
@@ -1488,39 +1411,6 @@ export default function MyCultureBookModal({
                                           : 'Cek Lokasi GPS'}
                                       </span>
                                     </button>
-
-                                    {isLocalhost && !isUnlocked && (
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          const simCoords = {
-                                            ...targetPlace.coordinates,
-                                            accuracy: 10,
-                                            isSimulated: true,
-                                            timestamp: Date.now()
-                                          };
-                                          handleClaimBadgeViaGps(targetPlace, simCoords);
-                                        }}
-                                        disabled={verifyingPlaceId === targetPlace.id}
-                                        style={{
-                                          padding: '0.5rem 0.95rem',
-                                          borderRadius: '999px',
-                                          backgroundColor: '#FEF3C7',
-                                          color: '#92400E',
-                                          border: '1px dashed #D97706',
-                                          fontSize: '0.74rem',
-                                          fontWeight: 700,
-                                          cursor: 'pointer',
-                                          display: 'inline-flex',
-                                          alignItems: 'center',
-                                          gap: '0.35rem'
-                                        }}
-                                        title="Uji klaim langsung badge ini di localhost"
-                                      >
-                                        <Sparkles size={12} color="#D97706" />
-                                        <span>Uji Klaim (Dev)</span>
-                                      </button>
-                                    )}
                                   </div>
                                 )}
                               </div>
