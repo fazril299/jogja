@@ -108,18 +108,18 @@ export function validateGpsSecurity({
     };
   }
 
-  // 2. Geofence Check: Wajib berada di batas geografis resmi D.I. Yogyakarta (Kecuali Simulasi Dev)
+  // 2. Geofence Check: Wajib berada di batas geografis resmi D.I. Yogyakarta (Kecuali Localhost / Simulasi)
   const insideJogja =
     lat >= JOGJA_GEO_BOUNDS.minLat &&
     lat <= JOGJA_GEO_BOUNDS.maxLat &&
     lng >= JOGJA_GEO_BOUNDS.minLng &&
     lng <= JOGJA_GEO_BOUNDS.maxLng;
 
-  if (!insideJogja && !isSimulated) {
+  if (!insideJogja && !isSimulated && !isLocalDev) {
     return {
       isValid: false,
       code: 'OUTSIDE_JOGJA_GEOFENCE',
-      message: `Koordinat Anda (${lat.toFixed(4)}, ${lng.toFixed(4)}) berada di luar wilayah Daerah Istimewa Yogyakarta. Untuk menguji di localhost, gunakan opsi 'Uji Simulasi Lokasi Jogja'.`
+      message: `Koordinat Anda (${lat.toFixed(4)}, ${lng.toFixed(4)}) berada di luar wilayah Daerah Istimewa Yogyakarta.`
     };
   }
 
@@ -175,7 +175,7 @@ export function validateGpsSecurity({
       };
     }
 
-    if (distanceToTarget > maxRadius) {
+    if (distanceToTarget > maxRadius && !isSimulated && !isLocalDev) {
       const distKm = (distanceToTarget / 1000).toFixed(1);
       const radiusLabel = maxRadius >= 1000 ? `${(maxRadius / 1000).toFixed(1)} KM` : `${maxRadius} m`;
       return {

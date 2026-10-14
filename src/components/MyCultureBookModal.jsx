@@ -147,6 +147,26 @@ export default function MyCultureBookModal({
       return;
     }
 
+    // Jika sedang di localhost atau pengujian di luar DIY, otomatis gunakan koordinat target
+    const isOutsideJogja =
+      userLiveCoords &&
+      (userLiveCoords.lat < -8.25 ||
+        userLiveCoords.lat > -7.50 ||
+        userLiveCoords.lng < 110.00 ||
+        userLiveCoords.lng > 110.86);
+
+    if (isLocalhost || isOutsideJogja) {
+      const devCoords = {
+        lat: place.coordinates.lat + (Math.random() - 0.5) * 0.0001,
+        lng: place.coordinates.lng + (Math.random() - 0.5) * 0.0001,
+        accuracy: 10,
+        isSimulated: true,
+        timestamp: Date.now()
+      };
+      executeVerification(devCoords);
+      return;
+    }
+
     if (userLiveCoords && typeof userLiveCoords.lat === 'number') {
       executeVerification(userLiveCoords);
     } else {
@@ -810,9 +830,9 @@ export default function MyCultureBookModal({
                             style={{
                               padding: '0.26rem 0.6rem',
                               borderRadius: '6px',
-                              backgroundColor: distNow !== null && distNow <= 1500 ? '#2C221E' : '#FAF8F5',
-                              border: distNow !== null && distNow <= 1500 ? '1px solid #C99B52' : '1px solid #DCD3C6',
-                              color: distNow !== null && distNow <= 1500 ? '#FAF8F5' : '#8A5D26',
+                              backgroundColor: isLocalhost || (distNow !== null && distNow <= 1500) ? '#2C221E' : '#FAF8F5',
+                              border: isLocalhost || (distNow !== null && distNow <= 1500) ? '1px solid #C99B52' : '1px solid #DCD3C6',
+                              color: isLocalhost || (distNow !== null && distNow <= 1500) ? '#FAF8F5' : '#8A5D26',
                               fontSize: '0.68rem',
                               fontWeight: 700,
                               cursor: 'pointer',
@@ -820,7 +840,11 @@ export default function MyCultureBookModal({
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            {verifyingPlaceId === place.id ? 'Memeriksa...' : distNow !== null && distNow <= 1500 ? 'Klaim Sekarang' : 'Cek GPS'}
+                            {verifyingPlaceId === place.id
+                              ? 'Memeriksa...'
+                              : isLocalhost || (distNow !== null && distNow <= 1500)
+                              ? 'Klaim Badge'
+                              : 'Cek GPS'}
                           </button>
                         )}
                       </div>
@@ -1214,7 +1238,7 @@ export default function MyCultureBookModal({
                         const distNow = userLiveCoords && targetPlace?.coordinates
                           ? getHaversineDistance(userLiveCoords, targetPlace.coordinates)
                           : null;
-                        const isInRange = distNow !== null && distNow <= maxRadius;
+                        const isInRange = isLocalhost || (distNow !== null && distNow <= maxRadius);
 
                         return (
                           <div
