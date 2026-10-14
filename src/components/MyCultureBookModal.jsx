@@ -55,7 +55,8 @@ export default function MyCultureBookModal({
     isBadgeUnlocked,
     isGpsVerified,
     getVerifiedVisitData,
-    getBadgeTierStats
+    getBadgeTierStats,
+    resetAllBadges
   } = useCultureBook();
   const { currentUser, openLogin, logout } = useAuth();
 
@@ -612,16 +613,40 @@ export default function MyCultureBookModal({
                   </span>
                 </div>
 
-                {/* Progress bar perolehan */}
-                <div style={{ width: '100%', height: '8px', backgroundColor: '#F4EFE6', borderRadius: '999px', overflow: 'hidden', marginBottom: '0.9rem' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`,
-                      backgroundColor: '#2C221E',
-                      borderRadius: '999px'
+                {/* Progress bar perolehan & Reset Badge Option */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.9rem' }}>
+                  <div style={{ flex: 1, height: '8px', backgroundColor: '#F4EFE6', borderRadius: '999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`,
+                        backgroundColor: '#2C221E',
+                        borderRadius: '999px'
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm('Reset semua perolehan badge Anda kembali ke 0?')) {
+                        resetAllBadges();
+                      }
                     }}
-                  />
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#94A3B8',
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0,
+                      textDecoration: 'underline',
+                      whiteSpace: 'nowrap'
+                    }}
+                    title="Mulai ulang semua badge dari 0"
+                  >
+                    Reset (Mulai 0)
+                  </button>
                 </div>
 
                 {/* 4 Ikon Bulat Khas Jogja Asli (Tanpa Emoji) */}

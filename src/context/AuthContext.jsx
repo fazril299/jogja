@@ -348,6 +348,11 @@ export function AuthProvider({ children }) {
       isGuest: true,
       joinedAt: new Date().toISOString()
     };
+    try {
+      localStorage.removeItem('jogjakrama_culture_book_v4_guest-user');
+      localStorage.removeItem('jogjakrama_culture_book_v4_guest');
+      localStorage.removeItem('jogjakrama_culture_book_v3');
+    } catch (err) {}
     setCurrentUser(guestSession);
     setIsAuthModalOpen(false);
 
@@ -496,6 +501,10 @@ export function AuthProvider({ children }) {
         }
 
         if (data?.user) {
+          try {
+            localStorage.removeItem(`jogjakrama_culture_book_v4_${data.user.id}`);
+            localStorage.removeItem('jogjakrama_culture_book_v3');
+          } catch (err) {}
           await syncSupabaseProfile(data.user);
           setIsAuthModalOpen(false);
           triggerCelebration();
@@ -534,6 +543,12 @@ export function AuthProvider({ children }) {
         role: assignedRole,
         joinedAt: new Date().toISOString()
       };
+
+      // Reset semua badge untuk akun baru pengguna biasa agar mulai bersih dari 0
+      try {
+        localStorage.removeItem(`jogjakrama_culture_book_v4_${newUser.id}`);
+        localStorage.removeItem('jogjakrama_culture_book_v3');
+      } catch (err) {}
 
       setUsers((prev) => [...prev, newUser]);
 
@@ -629,6 +644,14 @@ export function AuthProvider({ children }) {
         provider: 'google',
         joinedAt: existing?.joinedAt || accountInput?.joinedAt || new Date().toISOString()
       };
+
+      // Reset semua badge untuk akun Google baru pengguna biasa
+      if (!isGabrielAdmin && !existing) {
+        try {
+          localStorage.removeItem(`jogjakrama_culture_book_v4_${googleAccountObj.id}`);
+          localStorage.removeItem('jogjakrama_culture_book_v3');
+        } catch (err) {}
+      }
 
       setGoogleAccounts((prev) => {
         const existsInGoogle = prev.some((a) => a.email.toLowerCase() === emailLower);

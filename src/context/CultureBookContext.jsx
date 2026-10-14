@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
+import { useAuth } from './AuthContext';
 import { CULTURAL_BADGES, CULTURAL_QUESTS, BADGE_TIERS } from '../data/badgeQuestData';
 import {
   validateGpsSecurity,
@@ -7,13 +8,23 @@ import {
   verifyIntegritySignature,
   getHaversineDistance
 } from '../utils/gpsSecurity';
+import {
+  isSupabaseConfigured,
+  fetchCulturePassportFromSupabase,
+  saveCulturePassportToSupabase
+} from '../lib/supabase';
 
 const CultureBookContext = createContext(null);
 
-const STORAGE_KEY = 'jogjakrama_culture_book_v3';
+export const getUserCultureStorageKey = (userId) => {
+  if (!userId || userId === 'guest' || userId === 'guest-user') {
+    return 'jogjakrama_culture_book_v4_guest';
+  }
+  return `jogjakrama_culture_book_v4_${userId}`;
+};
 
-// Data awal paspor budaya bersih tanpa dummy
-const INITIAL_DEFAULT_DATA = () => ({
+// Data awal paspor budaya bersih tanpa dummy (Mulai dari 0 badge untuk akun baru)
+export const INITIAL_DEFAULT_DATA = () => ({
   visitedPlaces: [],
   readChapters: {},
   stamps: [],
@@ -31,13 +42,22 @@ const INITIAL_DEFAULT_DATA = () => ({
 });
 
 export function CultureBookProvider({ children }) {
-  const [cultureBook, setCultureBook] = useState(() => {
+  const { currentUser } = useAuth();
+  const currentUserId = currentUser?.id || 'guest';
+
+  // Helper untuk memuat data paspor budaya per akun
+  const loadUserData = useCallback((uid) => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      // Hapus data cache legacy v3 agar badge lama tidak pernah bocor ke akun baru
+      try {
+        localStorage.removeItem('jogjakrama_culture_book_v3');
+      } catch (err) {}
+
+      const key = getUserCultureStorageKey(uid);
+      const saved = localStorage.getItem(key);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Pastikan struktur v3 lengkap
-        if (parsed.verifiedVisits && parsed.unlockedBadgeIds) {
+        if (parsed.verifiedVisits && Array.isArray(parsed.unlockedBadgeIds)) {
           return parsed;
         }
       }
@@ -45,18 +65,76 @@ export function CultureBookProvider({ children }) {
       console.error('Error loading culture book from localStorage:', e);
     }
     return INITIAL_DEFAULT_DATA();
-  });
+  }, []);
+
+  const [cultureBook, setCultureBook] = useState(() => loadUserData(currentUserId));
+  const activeUserIdRef = useRef(currentUserId);
 
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [activeSoundType, setActiveSoundType] = useState('ocean');
 
+  // Sinkronisasi data ketika user login/ganti akun (termasuk pendaftaran akun baru)
+  useEffect(() => {
+    activeUserIdRef.current = currentUserId;
+    const freshData = loadUserData(currentUserId);
+    setCultureBook(freshData);
+
+    // Jika Supabase aktif dan bukan guest, sinkronisasikan paspor dari cloud
+    if (isSupabaseConfigured && currentUserId && !currentUserId.startsWith('guest')) {
+      fetchCulturePassportFromSupabase(currentUserId).then((cloudData) => {
+        if (cloudData && Array.isArray(cloudData.unlocked_badges)) {
+          setCultureBook((prev) => ({
+            ...prev,
+            stamps: cloudData.stamps || prev.stamps,
+            visitedPlaces: cloudData.visited_places || prev.visitedPlaces,
+            unlockedBadgeIds: cloudData.unlocked_badges || prev.unlockedBadgeIds,
+            favorites: cloudData.favorites || prev.favorites,
+            userNotes: cloudData.user_notes || prev.userNotes
+          }));
+        }
+      });
+    }
+  }, [currentUserId, loadUserData]);
+
+  // Simpan setiap perubahan paspor budaya ke storage spesifik user aktif
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cultureBook));
+      const key = getUserCultureStorageKey(activeUserIdRef.current);
+      localStorage.setItem(key, JSON.stringify(cultureBook));
+
+      if (
+        isSupabaseConfigured &&
+        activeUserIdRef.current &&
+        !activeUserIdRef.current.startsWith('guest')
+      ) {
+        saveCulturePassportToSupabase(activeUserIdRef.current, cultureBook);
+      }
     } catch (e) {
       console.error('Error saving culture book:', e);
     }
   }, [cultureBook]);
+
+  /**
+   * Reset seluruh badge dan progres paspor budaya untuk user saat ini (Kembali ke 0)
+   */
+  const resetAllBadges = useCallback(() => {
+    const fresh = INITIAL_DEFAULT_DATA();
+    setCultureBook(fresh);
+    try {
+      const key = getUserCultureStorageKey(activeUserIdRef.current);
+      localStorage.setItem(key, JSON.stringify(fresh));
+      localStorage.removeItem('jogjakrama_culture_book_v3');
+      if (
+        isSupabaseConfigured &&
+        activeUserIdRef.current &&
+        !activeUserIdRef.current.startsWith('guest')
+      ) {
+        saveCulturePassportToSupabase(activeUserIdRef.current, fresh);
+      }
+    } catch (e) {
+      console.error('Error resetting badges:', e);
+    }
+  }, []);
 
   /**
    * Evaluasi progres quest budaya berdasarkan tempat-tempat yang sudah dikunjungi
@@ -425,7 +503,8 @@ export function CultureBookProvider({ children }) {
         isAudioEnabled,
         setIsAudioEnabled,
         activeSoundType,
-        setActiveSoundType
+        setActiveSoundType,
+        resetAllBadges
       }}
     >
       {children}
