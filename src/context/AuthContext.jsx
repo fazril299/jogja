@@ -40,21 +40,39 @@ function ensureGoogleScriptLoaded() {
   });
 }
 
-// Pre-seeded Google Accounts (Primary: Gabriel's Google Account dengan Role Admin)
+// Pre-seeded Google Accounts (Primary: Gabriel's Google Accounts)
 const DEFAULT_GOOGLE_ACCOUNTS = [
   {
-    id: 'google-fazrielmuliyael',
-    name: 'fazriel muliyael (Admin)',
+    id: 'google-gabriel',
+    name: 'Gabriel',
+    email: 'fazrilkece258@gmail.com',
+    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
+    role: 'admin',
+    provider: 'google',
+    joinedAt: '2026-01-10T08:00:00.000Z'
+  },
+  {
+    id: 'google-gabriel-admin',
+    name: 'Gabriel (Admin)',
     email: 'fazrielmuliyael@gmail.com',
-    avatar: 'https://ui-avatars.com/api/?name=fazriel+muliyael&background=2C221E&color=FAF8F5&size=200&bold=true',
+    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
     role: 'admin',
     provider: 'google',
     joinedAt: '2026-01-10T08:00:00.000Z'
   }
 ];
 
-// Akun Admin Sistem Utama (Tanpa akun dummy penjelajah)
+// Akun Admin Sistem Utama (Gabriel)
 const DEFAULT_SEED_USERS = [
+  {
+    id: 'user-gabriel-1',
+    name: 'Gabriel',
+    email: 'fazrilkece258@gmail.com',
+    password: 'adminpassword123',
+    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
+    role: 'admin',
+    joinedAt: '2026-01-01T00:00:00.000Z'
+  },
   {
     id: 'user-admin-1',
     name: 'Gabriel (Administrator)',
@@ -145,11 +163,44 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_SESSION_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.name && parsed.name !== 'Fazriel Muliyawan') {
+          try {
+            localStorage.setItem('jogjakrama_passport_user_name', parsed.name);
+          } catch (e) {}
+          return parsed;
+        }
+      }
     } catch (e) {
       console.error('Error loading active session:', e);
     }
-    return null;
+    // Ingat akun Gabriel sebagai default session
+    const rememberedName = (() => {
+      try {
+        const stored = localStorage.getItem('jogjakrama_passport_user_name');
+        if (stored && stored.trim() && stored !== 'Fazriel Muliyawan' && stored !== 'Penjelajah Jogja' && stored !== 'Tamu Penjelajah (Guest)') {
+          return stored.trim();
+        }
+        return 'Gabriel';
+      } catch (e) {
+        return 'Gabriel';
+      }
+    })();
+    const defaultSession = {
+      id: 'user-gabriel-1',
+      name: rememberedName,
+      email: 'fazrilkece258@gmail.com',
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(rememberedName)}&background=2C221E&color=FAF8F5&size=200&bold=true`,
+      role: 'admin',
+      isGuest: false,
+      joinedAt: '2026-01-01T00:00:00.000Z'
+    };
+    try {
+      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(defaultSession));
+      localStorage.setItem('jogjakrama_passport_user_name', rememberedName);
+    } catch (e) {}
+    return defaultSession;
   });
 
   // 3. Auth Modal State

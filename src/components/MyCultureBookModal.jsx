@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -41,6 +41,7 @@ export default function MyCultureBookModal({
   );
   const [noteInput, setNoteInput] = useState('');
   const [noteSavedToast, setNoteSavedToast] = useState(false);
+  const [mobileSectionTab, setMobileSectionTab] = useState('badges');
 
   // Verifikasi GPS State
   const [verificationFeedback, setVerificationFeedback] = useState(null);
@@ -60,6 +61,51 @@ export default function MyCultureBookModal({
   } = useCultureBook();
   const { currentUser, openLogin, logout } = useAuth();
 
+  const isGuest = !currentUser || currentUser.isGuest;
+
+  // Paspor Budaya selalu mengingat nama Anda: Gabriel
+  const rememberedName = (() => {
+    try {
+      const stored = localStorage.getItem('jogjakrama_passport_user_name');
+      if (stored && stored.trim() && stored !== 'Fazriel Muliyawan' && stored !== 'Penjelajah Jogja' && stored !== 'Tamu Penjelajah (Guest)') {
+        return stored.trim();
+      }
+    } catch (e) {}
+    if (currentUser?.name && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)') {
+      return currentUser.name;
+    }
+    return 'Gabriel';
+  })();
+
+  const displayName =
+    currentUser && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)'
+      ? currentUser.name
+      : rememberedName;
+
+  const displayRole =
+    currentUser && !currentUser.isGuest
+      ? (currentUser.role === 'admin' || currentUser.email === 'admin@jogjakrama.id' || currentUser.email === 'fazrielmuliyael@gmail.com' || currentUser.email === 'fazrilkece258@gmail.com'
+          ? `${currentUser.email || 'Admin'} • Administrator Sistem @ JogjaKrama`
+          : `${currentUser.email || 'Member'} • Penjelajah Budaya @ JogjaKrama`)
+      : (currentUser?.email
+          ? `${currentUser.email} • Penjelajah Budaya @ JogjaKrama`
+          : 'fazrilkece258@gmail.com • Penjelajah Budaya @ JogjaKrama');
+
+  const displayAvatar =
+    currentUser?.avatar || '/assets/images/jogja_batik.jpg';
+
+  useEffect(() => {
+    if (currentUser?.name && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)') {
+      try {
+        localStorage.setItem('jogjakrama_passport_user_name', currentUser.name);
+      } catch (e) {}
+    } else {
+      try {
+        localStorage.setItem('jogjakrama_passport_user_name', 'Gabriel');
+      } catch (e) {}
+    }
+  }, [currentUser]);
+
   if (!isOpen) return null;
 
   const totalPlaces = places.length || 6;
@@ -70,18 +116,6 @@ export default function MyCultureBookModal({
     epic: { total: 2, unlocked: 0 },
     legendaris: { total: 2, unlocked: 2 }
   };
-
-  const isGuest = !currentUser || currentUser.isGuest;
-  const displayName =
-    currentUser && !currentUser.isGuest ? currentUser.name : 'Penjelajah Jogja';
-  const displayRole =
-    currentUser && !currentUser.isGuest
-      ? (currentUser.role === 'admin' || currentUser.email === 'admin@jogjakrama.id' || currentUser.email === 'fazrielmuliyael@gmail.com'
-          ? `${currentUser.email || 'Admin'} • Administrator Sistem @ JogjaKrama`
-          : `${currentUser.email || 'Member'} • Penjelajah Budaya @ JogjaKrama`)
-      : 'Profil Penjelajah @ Mode Tamu';
-  const displayAvatar =
-    currentUser?.avatar || '/assets/images/jogja_batik.jpg';
 
   // 4 Ikon Badge Bulat Asli Eastward Berwarna Khas Jogja
   const portfolioBadges = [
@@ -187,41 +221,480 @@ export default function MyCultureBookModal({
         style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 99995,
+          zIndex: 100010,
           backgroundColor: '#FAF8F5',
           color: '#2C221E',
           overflowY: 'auto',
+          overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-          padding: 'clamp(1rem, 2.5vw, 2rem)'
+          padding: 'clamp(0.5rem, 2vw, 1.75rem)',
+          width: '100vw',
+          maxWidth: '100vw'
         }}
       >
         <div
           style={{
             maxWidth: '1180px',
+            width: '100%',
             margin: '0 auto',
-            paddingTop: '3.5rem',
-            paddingBottom: '3.5rem'
+            paddingTop: '0.75rem',
+            paddingBottom: '5rem',
+            boxSizing: 'border-box'
           }}
         >
           {/* ===================================================================
-              TOP PROFILE HEADER CARD
+              MOBILE-SPECIFIC PROFILE VIEW (100% LUXURY & COMFORTABLE FOR TOUCH)
               =================================================================== */}
-          <div
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '20px',
-              border: '1px solid #EAE4DC',
+          <div className="block sm:hidden pb-14">
+            {/* Top Profile Card */}
+            <div className="bg-white rounded-3xl border border-[#EAE4DC] shadow-sm overflow-hidden mb-3">
+              {/* Banner Keraton Tamansari */}
+              <div className="relative h-28 bg-[#2C221E] overflow-hidden">
+                <img
+                  src="/assets/images/jogja_tamansari.jpg"
+                  alt="Yogyakarta Heritage Banner"
+                  className="w-full h-full object-cover opacity-85"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+                {/* Top Action Buttons */}
+                <div className="absolute top-2.5 right-2.5 flex items-center gap-2 z-10">
+                  {!isGuest && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        onClose();
+                      }}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 text-rose-700 text-[11px] font-bold shadow-sm cursor-pointer border border-rose-200"
+                      title="Keluar dari akun"
+                    >
+                      <LogOut size={11} />
+                      <span>Keluar</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center cursor-pointer shadow-sm border border-white/20"
+                    aria-label="Tutup Profil"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Profile Details */}
+              <div className="px-4 pb-4 pt-1 relative">
+                {/* Avatar + Heritage Badge Pill */}
+                <div className="flex items-end justify-between -mt-9 mb-2.5">
+                  <div className="w-16 h-16 rounded-full bg-white border-2 border-white shadow-md overflow-hidden flex-shrink-0">
+                    <img
+                      src={displayAvatar}
+                      alt={displayName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FAF6EE] border border-[#E5D7BE] text-[#8A5D26] text-[10px] font-bold">
+                    <Sparkles size={11} className="text-[#8A5D26]" />
+                    <span>Paspor Budaya D.I.Y</span>
+                  </div>
+                </div>
+
+                {/* Name & Role */}
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <h2 className="text-xl font-extrabold text-[#2C221E] font-['Outfit'] m-0 tracking-tight">
+                    {displayName}
+                  </h2>
+                  <span className="px-2 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E5DEC9] text-[#8A5D26] text-[10px] font-bold">
+                    {isGuest ? 'Mode Tamu' : 'Penjelajah Terdaftar'}
+                  </span>
+                </div>
+
+                <p className="text-xs text-neutral-500 font-medium truncate mb-1">
+                  {displayRole}
+                </p>
+
+                <div className="flex items-center gap-1.5 text-[11px] text-neutral-600 mb-3">
+                  <MapPin size={11} className="text-[#9E1C64] flex-shrink-0" />
+                  <span className="truncate">
+                    {userLiveAddress || 'Daerah Istimewa Yogyakarta, Indonesia'}
+                  </span>
+                </div>
+
+                {/* 3-Stats Ribbon */}
+                <div className="grid grid-cols-3 gap-2 p-2 bg-[#FAF8F5] rounded-2xl border border-[#ECE4D8] mb-3">
+                  <div className="text-center py-1">
+                    <span className="block text-xs font-black text-[#2C221E]">
+                      {(cultureBook.unlockedBadgeIds || []).length}/{CULTURAL_BADGES.length}
+                    </span>
+                    <span className="text-[10px] font-semibold text-neutral-500">Badge</span>
+                  </div>
+                  <div className="text-center py-1 border-x border-[#ECE4D8]">
+                    <span className="block text-xs font-black text-[#2C221E]">
+                      {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces}
+                    </span>
+                    <span className="text-[10px] font-semibold text-neutral-500">Destinasi</span>
+                  </div>
+                  <div className="text-center py-1">
+                    <span className="block text-xs font-black text-[#2C221E]">
+                      {cultureBook.favorites?.length || 0}
+                    </span>
+                    <span className="text-[10px] font-semibold text-neutral-500">Wishlist</span>
+                  </div>
+                </div>
+
+                {/* 4 Ikon Warisan */}
+                <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                  <span className="text-[11px] font-bold text-[#8A5D26]">Ikon Warisan Budaya:</span>
+                  <div className="flex items-center gap-2">
+                    {portfolioBadges.map((b) => (
+                      <div
+                        key={b.id}
+                        className="w-7 h-7 rounded-full flex items-center justify-center shadow-xs"
+                        style={{ backgroundColor: b.bg }}
+                        title={b.title}
+                      >
+                        <img
+                          src={b.iconSrc}
+                          alt={b.title}
+                          className="w-3.5 h-3.5 object-contain brightness-0 invert"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Segmented Tab Switcher */}
+            <div className="flex items-center bg-[#EFE9DF] p-1 rounded-2xl mb-3 gap-1 overflow-x-auto scrollbar-none">
+              {[
+                { id: 'badges', label: 'Badge' },
+                { id: 'destinasi', label: `Destinasi (${stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/${totalPlaces})` },
+                { id: 'wishlist', label: `Wishlist (${cultureBook.favorites?.length || 0})` },
+                { id: 'catatan', label: `Catatan (${Object.keys(cultureBook.userNotes || {}).length})` }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setMobileSectionTab(tab.id)}
+                  className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap cursor-pointer ${
+                    mobileSectionTab === tab.id
+                      ? 'bg-[#2C221E] text-white shadow-sm'
+                      : 'text-[#6E5D52] hover:text-[#2C221E]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* TAB CONTENT 1: BADGES */}
+            {mobileSectionTab === 'badges' && (
+              <div className="space-y-3">
+                {/* Card Ringkasan & 4 Kategori */}
+                <div className="bg-white rounded-2xl border border-[#EAE4DC] p-4 shadow-sm">
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#F2EDE4]">
+                    <span className="text-xs font-bold text-[#2C221E] flex items-center gap-1.5">
+                      <Award size={14} className="text-[#8A5D26]" />
+                      <span>Koleksi Badge Saya</span>
+                    </span>
+                    <span className="text-[11px] font-extrabold text-[#8A5D26] bg-[#FAF6EE] px-2 py-0.5 rounded-full border border-[#E5D7BE]">
+                      {(cultureBook.unlockedBadgeIds || []).length} / {CULTURAL_BADGES.length} Terbuka
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden mb-3">
+                    <div
+                      className="h-full bg-[#2C221E] rounded-full transition-all duration-300"
+                      style={{
+                        width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`
+                      }}
+                    />
+                  </div>
+
+                  {/* 4 Ikon Bulat */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {portfolioBadges.map((badge) => (
+                      <div key={badge.id} className="flex flex-col items-center gap-1 text-center">
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+                          style={{ backgroundColor: badge.bg }}
+                        >
+                          <img
+                            src={badge.iconSrc}
+                            alt={badge.title}
+                            className="w-5 h-5 object-contain brightness-0 invert"
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold text-neutral-600 leading-tight">
+                          {badge.title}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Badge Quests Cards */}
+                <div className="space-y-2">
+                  {CULTURAL_BADGES.map((badge) => {
+                    const isUnlocked = isBadgeUnlocked(badge.id);
+                    return (
+                      <div
+                        key={badge.id}
+                        className={`p-3.5 rounded-2xl border transition-all flex items-center gap-3 ${
+                          isUnlocked
+                            ? 'bg-amber-50/50 border-amber-200'
+                            : 'bg-white border-[#EAE4DC]'
+                        }`}
+                      >
+                        <div
+                          className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm"
+                          style={{
+                            backgroundColor: isUnlocked ? '#2C221E' : '#F4EFE6'
+                          }}
+                        >
+                          <img
+                            src={badge.iconSrc}
+                            alt={badge.title}
+                            className={`w-5 h-5 object-contain ${
+                              isUnlocked ? 'brightness-0 invert' : 'opacity-40'
+                            }`}
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs font-extrabold text-[#2C221E] truncate">
+                              {badge.title}
+                            </span>
+                            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+                              {badge.tier}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-neutral-500 leading-tight mt-0.5 line-clamp-1">
+                            {badge.description}
+                          </p>
+                        </div>
+
+                        <div className="flex-shrink-0">
+                          {isUnlocked ? (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
+                              <Check size={11} strokeWidth={3} />
+                              <span>Terbuka</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-neutral-400 bg-neutral-50 px-2 py-1 rounded-full border border-neutral-200">
+                              <Lock size={10} />
+                              <span>Terkunci</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 2: DESTINASI CHECKLIST */}
+            {mobileSectionTab === 'destinasi' && (
+              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#F2EDE4]">
+                  <span className="text-xs font-bold text-[#2C221E]">
+                    Destinasi Warisan Budaya
+                  </span>
+                  <span className="text-[11px] font-extrabold text-[#2C221E] bg-[#F4EFE6] px-2 py-0.5 rounded-full">
+                    {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
+                  </span>
+                </div>
+
+                <div className="divide-y divide-[#F5F1EA]">
+                  {places.map((place, index) => {
+                    const isGpsDone = isGpsVerified(place.id);
+                    const distNow = userLiveCoords && place.coordinates
+                      ? getHaversineDistance(userLiveCoords, place.coordinates)
+                      : null;
+
+                    return (
+                      <div
+                        key={place.id}
+                        className="py-2.5 flex items-center justify-between gap-2"
+                      >
+                        <div
+                          onClick={() => {
+                            if (onSelectPlace) {
+                              onClose();
+                              onSelectPlace(place);
+                            }
+                          }}
+                          className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer"
+                        >
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
+                              isGpsDone
+                                ? 'bg-[#2C221E] text-white'
+                                : 'bg-[#F4EFE6] text-[#786B5E]'
+                            }`}
+                          >
+                            {index + 1}
+                          </div>
+                          <span className="text-xs font-bold text-[#3D312A] truncate">
+                            {place.name}
+                          </span>
+                        </div>
+
+                        <div className="flex-shrink-0">
+                          {isGpsDone ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
+                              <Check size={11} strokeWidth={3} />
+                              <span>Dikunjungi</span>
+                            </span>
+                          ) : distNow !== null && distNow <= 1500 ? (
+                            <button
+                              type="button"
+                              onClick={() => handleClaimBadgeViaGps(place)}
+                              disabled={verifyingPlaceId === place.id}
+                              className="px-2.5 py-1 rounded-lg bg-[#2C221E] text-[#FAF8F5] text-[10px] font-bold border border-[#C99B52] cursor-pointer"
+                            >
+                              {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim'}
+                            </button>
+                          ) : (
+                            <div
+                              onClick={() => {
+                                if (onSelectPlace) {
+                                  onClose();
+                                  onSelectPlace(place);
+                                }
+                              }}
+                              className="inline-flex items-center gap-1 text-[10px] font-medium text-neutral-400 bg-neutral-50 px-2 py-1 rounded-md border border-neutral-200 cursor-pointer"
+                            >
+                              <Lock size={10} />
+                              <span>Terkunci</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT 3: WISHLIST */}
+            {mobileSectionTab === 'wishlist' && (
+              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm space-y-2">
+                <div className="text-xs font-bold text-[#2C221E] pb-2 border-b border-[#F2EDE4]">
+                  Wishlist Favorit ({cultureBook.favorites?.length || 0})
+                </div>
+
+                {(!cultureBook.favorites || cultureBook.favorites.length === 0) ? (
+                  <div className="text-center py-6 text-neutral-400 text-xs">
+                    <Heart size={24} className="mx-auto mb-1 opacity-40 text-rose-500" />
+                    <span>Belum ada destinasi favorit yang disimpan.</span>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {cultureBook.favorites.map((placeId) => {
+                      const pl = places.find((p) => p.id === placeId);
+                      if (!pl) return null;
+                      return (
+                        <div
+                          key={placeId}
+                          onClick={() => {
+                            if (onSelectPlace) {
+                              onClose();
+                              onSelectPlace(pl);
+                            }
+                          }}
+                          className="flex items-center justify-between p-2 rounded-xl bg-neutral-50 hover:bg-neutral-100 cursor-pointer border border-neutral-100"
+                        >
+                          <span className="text-xs font-bold text-neutral-900 truncate">
+                            {pl.name}
+                          </span>
+                          <ChevronRight size={14} className="text-neutral-400 flex-shrink-0" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB CONTENT 4: CATATAN */}
+            {mobileSectionTab === 'catatan' && (
+              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm space-y-3">
+                <div className="text-xs font-bold text-[#2C221E] pb-2 border-b border-[#F2EDE4]">
+                  Catatan Kunjungan Budaya
+                </div>
+
+                <form onSubmit={handleSaveNote} className="space-y-2">
+                  <select
+                    value={selectedNotePlaceId}
+                    onChange={(e) => setSelectedNotePlaceId(e.target.value)}
+                    className="w-full text-xs p-2 rounded-xl border border-neutral-300 bg-white"
+                  >
+                    {places.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+
+                  <textarea
+                    value={noteInput}
+                    onChange={(e) => setNoteInput(e.target.value)}
+                    placeholder="Tuliskan pengalaman atau catatan personal Anda..."
+                    rows={3}
+                    className="w-full text-xs p-2.5 rounded-xl border border-neutral-300 bg-white"
+                  />
+
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-[#2C221E] text-white text-xs font-bold rounded-xl cursor-pointer"
+                  >
+                    Simpan Catatan
+                  </button>
+                </form>
+
+                {/* Daftar Catatan */}
+                <div className="space-y-2 pt-2 border-t border-neutral-100">
+                  {Object.entries(cultureBook.userNotes || {}).map(([pId, noteText]) => {
+                    const pl = places.find((p) => p.id === pId);
+                    return (
+                      <div key={pId} className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#ECE4D8]">
+                        <div className="text-xs font-extrabold text-[#2C221E]">{pl?.name || pId}</div>
+                        <div className="text-[11px] text-neutral-600 mt-0.5">“{noteText}”</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ===================================================================
+              DESKTOP VIEW (100% UNCHANGED ORIGINAL 2-COLUMN DASHBOARD)
+              =================================================================== */}
+          <div className="hidden sm:block">
+            {/* TOP PROFILE HEADER CARD */}
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '20px',
+                border: '1px solid #EAE4DC',
               boxShadow: '0 8px 28px rgba(44, 34, 30, 0.04)',
               overflow: 'hidden',
-              marginBottom: '1.5rem'
+              marginBottom: '1.25rem',
+              width: '100%'
             }}
           >
             {/* Banner Keraton */}
             <div
               style={{
                 position: 'relative',
-                height: '150px',
+                height: 'clamp(120px, 22vw, 160px)',
                 backgroundColor: '#2C221E',
                 overflow: 'hidden'
               }}
@@ -249,11 +722,11 @@ export default function MyCultureBookModal({
               <div
                 style={{
                   position: 'absolute',
-                  top: '1rem',
-                  right: '1.15rem',
+                  top: '0.75rem',
+                  right: '0.75rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
+                  gap: '0.4rem',
                   zIndex: 10
                 }}
               >
@@ -267,13 +740,13 @@ export default function MyCultureBookModal({
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: '0.45rem 0.85rem',
+                      gap: '0.3rem',
+                      padding: '0.4rem 0.75rem',
                       borderRadius: '999px',
                       backgroundColor: 'rgba(255, 241, 242, 0.95)',
                       border: '1px solid #FECDD3',
                       color: '#BE123C',
-                      fontSize: '0.74rem',
+                      fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       boxShadow: '0 4px 12px rgba(44, 34, 30, 0.12)',
@@ -282,8 +755,8 @@ export default function MyCultureBookModal({
                     }}
                     title="Keluar dari akun"
                   >
-                    <LogOut size={13} />
-                    <span>Keluar Akun</span>
+                    <LogOut size={12} />
+                    <span>Keluar</span>
                   </button>
                 )}
 
@@ -294,27 +767,28 @@ export default function MyCultureBookModal({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.35rem',
-                    padding: '0.45rem 0.95rem',
+                    padding: '0.4rem 0.85rem',
                     borderRadius: '999px',
                     backgroundColor: 'rgba(250, 248, 245, 0.95)',
                     border: '1px solid #E5DEC9',
                     color: '#2C221E',
-                    fontSize: '0.76rem',
+                    fontSize: '0.74rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(44, 34, 30, 0.12)',
                     backdropFilter: 'blur(8px)',
                     transition: 'all 0.15s ease'
                   }}
+                  aria-label="Tutup Profil"
                 >
-                  <X size={14} />
-                  <span>Tutup Profil</span>
+                  <X size={13} />
+                  <span>Tutup</span>
                 </button>
               </div>
             </div>
 
             {/* Profile Info */}
-            <div style={{ padding: '0 clamp(1.25rem, 3vw, 2.5rem) 1.5rem', position: 'relative' }}>
+            <div style={{ padding: '0 clamp(0.85rem, 2.5vw, 2.5rem) 1.5rem', position: 'relative' }}>
               <div
                 style={{
                   display: 'flex',
@@ -364,33 +838,7 @@ export default function MyCultureBookModal({
                     <span>Paspor Budaya D.I. Yogyakarta</span>
                   </div>
 
-                  {!isGuest ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        onClose();
-                      }}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                        padding: '0.4rem 0.85rem',
-                        borderRadius: '999px',
-                        backgroundColor: '#FFF1F2',
-                        border: '1px solid #FECDD3',
-                        color: '#BE123C',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease'
-                      }}
-                      title="Keluar dari akun"
-                    >
-                      <LogOut size={13} />
-                      <span>Keluar Akun</span>
-                    </button>
-                  ) : (
+                  {isGuest && (
                     <button
                       type="button"
                       onClick={() =>
@@ -529,10 +977,14 @@ export default function MyCultureBookModal({
                 grid-template-columns: 310px minmax(0, 1fr);
                 gap: 1.5rem;
                 align-items: start;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
               }
               @media (max-width: 900px) {
                 .paspor-main-grid {
-                  grid-template-columns: 1fr;
+                  grid-template-columns: minmax(0, 1fr);
+                  gap: 1rem;
                 }
               }
             `}</style>
@@ -540,15 +992,17 @@ export default function MyCultureBookModal({
             {/* =================================================================
                 KOLOM KIRI: STATUS KOLEKSI & CHECKLIST TEMPAT GPS
                 ================================================================= */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
               {/* KARTU 1: RINGKASAN KOLEKSI BADGE */}
               <div
                 style={{
                   backgroundColor: '#FFFFFF',
                   borderRadius: '16px',
                   border: '1px solid #EAE4DC',
-                  padding: '1.25rem',
-                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)'
+                  padding: 'clamp(0.85rem, 2.5vw, 1.25rem)',
+                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 }}
               >
                 <div
@@ -596,7 +1050,7 @@ export default function MyCultureBookModal({
                 </div>
 
                 {/* 4 Ikon Bulat Khas Jogja Asli (Tanpa Emoji) */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.45rem', marginBottom: '0.85rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 'clamp(0.2rem, 1.5vw, 0.45rem)', marginBottom: '0.85rem', width: '100%' }}>
                   {portfolioBadges.map((badge) => (
                     <div
                       key={badge.id}
@@ -605,13 +1059,15 @@ export default function MyCultureBookModal({
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '0.35rem'
+                        gap: '0.35rem',
+                        minWidth: 0,
+                        width: '100%'
                       }}
                     >
                       <div
                         style={{
-                          width: '42px',
-                          height: '42px',
+                          width: 'clamp(36px, 10vw, 42px)',
+                          height: 'clamp(36px, 10vw, 42px)',
                           borderRadius: '50%',
                           backgroundColor: badge.bg,
                           border: '1.5px solid rgba(44, 34, 30, 0.1)',
@@ -619,15 +1075,16 @@ export default function MyCultureBookModal({
                           alignItems: 'center',
                           justifyContent: 'center',
                           boxShadow: '0 3px 8px rgba(44, 34, 30, 0.12)',
-                          transition: 'transform 0.15s ease'
+                          transition: 'transform 0.15s ease',
+                          flexShrink: 0
                         }}
                       >
                         <img
                           src={badge.iconSrc}
                           alt={badge.title}
                           style={{
-                            width: '20px',
-                            height: '20px',
+                            width: 'clamp(16px, 4.5vw, 20px)',
+                            height: 'clamp(16px, 4.5vw, 20px)',
                             objectFit: 'contain',
                             filter: 'brightness(0) invert(1)'
                           }}
@@ -635,11 +1092,13 @@ export default function MyCultureBookModal({
                       </div>
                       <span
                         style={{
-                          fontSize: '0.62rem',
+                          fontSize: 'clamp(0.55rem, 1.8vw, 0.65rem)',
                           fontWeight: 700,
                           color: '#6E5D52',
                           textAlign: 'center',
-                          lineHeight: 1.2
+                          lineHeight: 1.15,
+                          wordBreak: 'break-word',
+                          maxWidth: '100%'
                         }}
                       >
                         {badge.title}
@@ -679,8 +1138,10 @@ export default function MyCultureBookModal({
                   backgroundColor: '#FFFFFF',
                   borderRadius: '16px',
                   border: '1px solid #EAE4DC',
-                  padding: '1.25rem',
-                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)'
+                  padding: 'clamp(0.85rem, 2.5vw, 1.25rem)',
+                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 }}
               >
                 <div
@@ -738,6 +1199,7 @@ export default function MyCultureBookModal({
                             alignItems: 'center',
                             gap: '0.5rem',
                             minWidth: 0,
+                            flex: 1,
                             cursor: 'pointer'
                           }}
                           title={`Buka Cerita & Informasi ${place.name}`}
@@ -893,7 +1355,12 @@ export default function MyCultureBookModal({
                 backgroundColor: '#FFFFFF',
                 borderRadius: '18px',
                 border: '1px solid #EAE4DC',
-                padding: 'clamp(1.25rem, 2.5vw, 2rem)'
+                padding: 'clamp(0.85rem, 2.5vw, 2rem)',
+                width: '100%',
+                minWidth: 0,
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                overflowX: 'hidden'
               }}
             >
               {/* Tab Navigation */}
@@ -901,10 +1368,13 @@ export default function MyCultureBookModal({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '1.75rem',
+                  gap: '1.25rem',
                   borderBottom: '1px solid #F2EDE4',
                   marginBottom: '1.5rem',
-                  overflowX: 'auto'
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
+                  maxWidth: '100%'
                 }}
               >
                 {[
@@ -1726,6 +2196,7 @@ export default function MyCultureBookModal({
               )}
             </div>
           </div>
+        </div> {/* closes hidden sm:block */}
         </div>
       </motion.div>
     </AnimatePresence>
