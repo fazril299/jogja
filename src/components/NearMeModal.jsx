@@ -147,30 +147,44 @@ export default function NearMeModal({
         zoomControl: true
       });
 
-      // Official Google Maps Road Tiles (Bersih tanpa nama toko/hotel/POI di luar wisata & tempat makan)
+      // CartoDB Voyager: Ubin peta jernih, visual hangat estetik, bebas blokir CORS/ORB
       L.tileLayer(
-        'https://mt1.google.com/vt/lyrs=m&hl=id&apistyle=s.t:2%7Cp.v:off%2Cs.t:4%7Cp.v:off&x={x}&y={y}&z={z}',
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         {
+          subdomains: 'abcd',
           maxZoom: 19,
-          attribution: 'Map data © Google Maps • Peta Pusaka & Kuliner D.I. Yogyakarta'
+          attribution: '&copy; <a href="https://carto.com/">CARTO</a> &bull; Peta Pusaka & Kuliner D.I. Yogyakarta'
         }
       ).addTo(map);
 
       layerGroupRef.current = L.layerGroup().addTo(map);
       mapInstanceRef.current = map;
 
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
-    }
+      // Invalidate size beberapa kali untuk memastikan render mulus setelah animasi modal
+      [50, 150, 300, 600, 1000].forEach((delay) => {
+        setTimeout(() => {
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
+        }, delay);
+      });
 
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-        layerGroupRef.current = null;
-      }
-    };
+      const handleResize = () => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      };
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+          layerGroupRef.current = null;
+        }
+      };
+    }
   }, [isOpen]);
 
   // Render Track Point Wisata Utama + Lingkaran Radius + Pin Kuliner Terdekat
@@ -859,7 +873,8 @@ export default function NearMeModal({
                 ref={mapContainerRef}
                 style={{
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  backgroundColor: '#FAF8F5'
                 }}
               />
             </div>

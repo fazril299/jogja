@@ -737,5 +737,17 @@ body {
   }
 }
 
+/* Leaflet Radar & Map container luxury styling */
+.leaflet-container {
+  background-color: #FAF8F5 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  outline: none;
+}
+.leaflet-tile-pane,
+.leaflet-tile,
+.leaflet-layer {
+  background-color: #FAF8F5 !important;
+}
+
 
 

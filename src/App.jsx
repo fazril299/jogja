@@ -606,7 +606,7 @@ function NusantaraApp() {
       {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
       <HandcraftedPackages
         onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg.id || 'prambanan-ratuboko')}
+        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
       />
 
       {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
@@ -651,9 +651,14 @@ function NusantaraApp() {
       <QuickViewModal
         landmark={quickViewLandmark}
         onClose={() => setQuickViewLandmark(null)}
-        onBookLandmark={() => {
+        onBookLandmark={(lm) => {
+          const targetId = lm?.id || quickViewLandmark?.id;
+          if (targetId) {
+            handleSelectPlaceById(targetId);
+          } else {
+            handleScrollToExplore();
+          }
           setQuickViewLandmark(null);
-          handleScrollToExplore();
         }}
         onViewFullItinerary={() => {
           if (quickViewLandmark) {

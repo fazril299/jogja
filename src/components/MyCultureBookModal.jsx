@@ -70,6 +70,11 @@ export default function MyCultureBookModal({
   };
 
   const isGuest = !currentUser || currentUser.isGuest;
+  const isLocalhost =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('192.168.'));
   const displayName =
     currentUser && !currentUser.isGuest ? currentUser.name : 'Penjelajah Jogja';
   const displayRole =
@@ -108,8 +113,8 @@ export default function MyCultureBookModal({
     setTimeout(() => setNoteSavedToast(false), 2200);
   };
 
-  // Handler Klaim Badge Langsung via Sensor GPS Nyata
-  const handleClaimBadgeViaGps = (place) => {
+  // Handler Klaim Badge Langsung via Sensor GPS Nyata (Dengan Dukungan Simulasi Dev Localhost)
+  const handleClaimBadgeViaGps = (place, forceSimulatedCoords = null) => {
     if (!place) return;
     setVerifyingPlaceId(place.id);
     setVerificationFeedback(null);
@@ -135,6 +140,11 @@ export default function MyCultureBookModal({
         });
       }
     };
+
+    if (forceSimulatedCoords) {
+      executeVerification(forceSimulatedCoords);
+      return;
+    }
 
     if (userLiveCoords && typeof userLiveCoords.lat === 'number') {
       executeVerification(userLiveCoords);
@@ -1107,6 +1117,59 @@ export default function MyCultureBookModal({
                     </div>
                   </div>
 
+                  {/* TOOLBAR UJI COBA GPS LOCALHOST KHUSUS DEVELOPER */}
+                  {isLocalhost && (
+                    <div
+                      style={{
+                        marginBottom: '1.5rem',
+                        padding: '1rem 1.25rem',
+                        borderRadius: '14px',
+                        backgroundColor: '#FFFBEB',
+                        border: '1.5px dashed #D97706',
+                        color: '#92400E'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem', fontWeight: 800, fontSize: '0.82rem' }}>
+                        <Sparkles size={15} color="#D97706" />
+                        <span>Mode Uji Coba GPS Localhost (Aktif)</span>
+                      </div>
+                      <p style={{ margin: '0 0 0.65rem 0', fontSize: '0.74rem', lineHeight: 1.45, color: '#78350F' }}>
+                        Saat pengujian di komputer/laptop localhost, Anda dapat mengklik tombol simulasi destinasi di bawah ini untuk menguji klaim tiap badge secara instan tanpa terhambat batas wilayah nyata:
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                        {places.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              const simCoords = {
+                                ...p.coordinates,
+                                accuracy: 12,
+                                isSimulated: true,
+                                timestamp: Date.now()
+                              };
+                              handleClaimBadgeViaGps(p, simCoords);
+                            }}
+                            disabled={verifyingPlaceId === p.id}
+                            style={{
+                              padding: '0.32rem 0.75rem',
+                              borderRadius: '999px',
+                              backgroundColor: '#FFFFFF',
+                              border: '1px solid #D97706',
+                              color: '#92400E',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+                            }}
+                          >
+                            {verifyingPlaceId === p.id ? 'Menguji...' : `Uji Klaim: ${p.name.split('&')[0].trim()}`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* KATALOG DAFTAR BADGE & CARA DAPATNYA */}
                   <div style={{ marginBottom: '2.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -1331,7 +1394,8 @@ export default function MyCultureBookModal({
                                       Buka Cerita Tempat
                                     </button>
                                   ) : (
-                                    <button
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                                      <button
                                       type="button"
                                       onClick={() => handleClaimBadgeViaGps(targetPlace)}
                                       disabled={verifyingPlaceId === targetPlace.id}
@@ -1360,12 +1424,46 @@ export default function MyCultureBookModal({
                                           : 'Cek Lokasi GPS'}
                                       </span>
                                     </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
+
+                                    {isLocalhost && !isUnlocked && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const simCoords = {
+                                            ...targetPlace.coordinates,
+                                            accuracy: 10,
+                                            isSimulated: true,
+                                            timestamp: Date.now()
+                                          };
+                                          handleClaimBadgeViaGps(targetPlace, simCoords);
+                                        }}
+                                        disabled={verifyingPlaceId === targetPlace.id}
+                                        style={{
+                                          padding: '0.5rem 0.95rem',
+                                          borderRadius: '999px',
+                                          backgroundColor: '#FEF3C7',
+                                          color: '#92400E',
+                                          border: '1px dashed #D97706',
+                                          fontSize: '0.74rem',
+                                          fontWeight: 700,
+                                          cursor: 'pointer',
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '0.35rem'
+                                        }}
+                                        title="Uji klaim langsung badge ini di localhost"
+                                      >
+                                        <Sparkles size={12} color="#D97706" />
+                                        <span>Uji Klaim (Dev)</span>
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
-                        );
+                        </div>
+                      );
                       })}
                     </div>
                   </div>

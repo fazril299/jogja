@@ -155,7 +155,7 @@ export const CULTURAL_BADGES = [
     subtitle: 'Mahkota Penjelajah Kosmologi Yogyakarta',
     bg: '#C99B52',
     iconSrc: '/images/icon_all.svg',
-    targetPlaceId: 'special-quest-sumbu',
+    targetPlaceId: 'keraton-yogyakarta',
     maxRadiusMeters: 800,
     caraMendapatkan: 'Selesaikan Misi Sumbu Filosofis: Lakukan klaim GPS sah di Keraton Yogyakarta dan kawasan Malioboro / Tugu Pal Putih.',
     lore: 'Penghargaan tertinggi penjelajah budaya yang telah menapaki seluruh poros kosmologis warisan dunia UNESCO.'

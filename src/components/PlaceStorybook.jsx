@@ -276,6 +276,105 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
     };
   }
 
+  if (pId === 'wijilan-prawirotaman') {
+    return {
+      photos: [
+        '/assets/images/jogja_gudeg.jpg',
+        '/assets/images/jogja_batik.jpg',
+        '/assets/images/jogja_gudeg.jpg',
+        '/assets/images/jogja_keraton.jpg'
+      ],
+      reviews: [
+        {
+          id: 'w-rev-1',
+          userName: 'Bu Tri Wahyuni',
+          userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Gudeg Kering Khas Wijilan Harum Kayu Bakar',
+          photoUrl: '/assets/images/jogja_gudeg.jpg',
+          comment: 'Kelezatan gudeg kering Wijilan dengan areh santan kental gurih dan sambal krecek pedas manis sangat otentik. Beli dalam kendil tanah liat sangat awet untuk oleh-oleh.',
+          date: '2026-03-05T11:30:00.000Z'
+        },
+        {
+          id: 'w-rev-2',
+          userName: 'Rendy Pratama',
+          userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Kafe Seni & Gelato Dingin di Prawirotaman',
+          photoUrl: '/assets/images/jogja_gudeg.jpg',
+          comment: 'Kawasan Prawirotaman memiliki atmosfer bohemian yang unik. Menikmati gelato sore hari setelah berjalan kaki keliling kampung seni sangat menyegarkan.',
+          date: '2026-03-02T16:45:00.000Z'
+        }
+      ]
+    };
+  }
+
+  if (pId === 'kasongan-imogiri') {
+    return {
+      photos: [
+        '/assets/images/jogja_batik.jpg',
+        '/assets/images/jogja_keraton.jpg',
+        '/assets/images/jogja_batik.jpg',
+        '/assets/images/jogja_kotagede.jpg'
+      ],
+      reviews: [
+        {
+          id: 'ks-rev-1',
+          userName: 'Bambang Sutrisno',
+          userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Seni Gerabah Tanah Liat Kasongan yang Mendunia',
+          photoUrl: '/assets/images/jogja_batik.jpg',
+          comment: 'Melihat langsung tangan terampil para perajin Kasongan memutar tanah liat menjadi guci artistik dan terakota dekoratif adalah bukti luhurnya tradisi seni rupa Bantul.',
+          date: '2026-03-04T13:15:00.000Z'
+        },
+        {
+          id: 'ks-rev-2',
+          userName: 'Nurul Hidayati',
+          userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Keheningan Ratusan Anak Tangga Makam Imogiri',
+          photoUrl: '/assets/images/jogja_keraton.jpg',
+          comment: 'Menaiki ratusan anak tangga batu andesit menuju pusara Sultan Agung di puncak Bukit Pajimatan memberikan getaran spiritual dan rasa khidmat yang mendalam.',
+          date: '2026-03-01T15:20:00.000Z'
+        }
+      ]
+    };
+  }
+
+  if (pId === 'parangtritis-gunungkidul') {
+    return {
+      photos: [
+        '/assets/images/jogja_parangtritis.jpg',
+        '/assets/images/jogja_tamansari.jpg',
+        '/assets/images/jogja_parangtritis.jpg',
+        '/assets/images/jogja_merapi.jpg'
+      ],
+      reviews: [
+        {
+          id: 'pt-rev-1',
+          userName: 'Fajar Nugraha',
+          userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Ombak Samudra Hindia & Sunset Paralayang Watugupit',
+          photoUrl: '/assets/images/jogja_parangtritis.jpg',
+          comment: 'Menatap luasnya cakrawala Samudra Hindia dari atas bukit tebing karst saat senja tiba adalah salah satu pemandangan matahari terbenam paling spektakuler di tanah Jawa.',
+          date: '2026-03-06T18:00:00.000Z'
+        },
+        {
+          id: 'pt-rev-2',
+          userName: 'Anisa Maharani',
+          userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
+          rating: 5,
+          headline: 'Pesona Gurun Pasir Gumuk Pasir Barchan',
+          photoUrl: '/assets/images/jogja_parangtritis.jpg',
+          comment: 'Fenomena langka gumuk pasir barchan satu-satunya di Asia Tenggara. Sangat mengesankan untuk fotografi dan merasakan keunikan bentang alam selatan Jogja.',
+          date: '2026-03-03T16:30:00.000Z'
+        }
+      ]
+    };
+  }
+
   // DEFAULT: KERATON NGAYOGYAKARTA & TAMANSARI
   return {
     photos: [
@@ -369,9 +468,9 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
   const [expandedBio, setExpandedBio] = useState(false);
   const [expandedReviewIds, setExpandedReviewIds] = useState({});
   const [pinnedBadgeIds, setPinnedBadgeIds] = useState([
+    'badge-keraton-kedhaton',
     'badge-malioboro-stroll',
-    'badge-wijilan-gudeg',
-    'badge-prambanan-boko'
+    'badge-kotagede-silver'
   ]);
 
   const togglePinBadge = (badgeId) => {

@@ -94,10 +94,16 @@ const DESTINASI_WARISAN = [
     image: '/assets/images/jogja_prambanan.jpg'
   },
   {
-    id: 'kasongan-parangtritis',
-    name: 'Parangtritis & Kasongan',
-    subtitle: 'Pantai Selatan & Sentra Gerabah',
+    id: 'parangtritis-gunungkidul',
+    name: 'Parangtritis & Segara Kidul',
+    subtitle: 'Pantai Selatan & Tebing Karst',
     image: '/assets/images/jogja_parangtritis.jpg'
+  },
+  {
+    id: 'kasongan-imogiri',
+    name: 'Kasongan & Makam Imogiri',
+    subtitle: 'Sentra Kriya Gerabah & Perbukitan Suci',
+    image: '/assets/images/jogja_batik.jpg'
   }
 ];
 
