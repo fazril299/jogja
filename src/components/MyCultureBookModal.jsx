@@ -229,8 +229,9 @@ export default function MyCultureBookModal({
           WebkitOverflowScrolling: 'touch',
           fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
           padding: 'clamp(0.5rem, 2vw, 1.75rem)',
-          width: '100vw',
-          maxWidth: '100vw'
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
         }}
       >
         <div
@@ -346,13 +347,13 @@ export default function MyCultureBookModal({
                 </div>
 
                 {/* 4 Ikon Warisan */}
-                <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                <div className="flex items-center justify-between pt-2 border-t border-neutral-100 flex-wrap gap-2">
                   <span className="text-[11px] font-bold text-[#8A5D26]">Ikon Warisan Budaya:</span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     {portfolioBadges.map((b) => (
                       <div
                         key={b.id}
-                        className="w-7 h-7 rounded-full flex items-center justify-center shadow-xs"
+                        className="w-7 h-7 rounded-full flex items-center justify-center shadow-xs shrink-0"
                         style={{ backgroundColor: b.bg }}
                         title={b.title}
                       >
