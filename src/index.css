@@ -611,6 +611,40 @@ body {
   color: rgba(255, 253, 249, 0.92);
 }
 
+/* Mobile horizontal scroll pill variant */
+.hero-feature-pill--mobile {
+  max-width: 180px;
+  min-width: 160px;
+  flex-shrink: 0;
+  padding: 0.55rem 0.9rem 0.55rem 0.55rem;
+  gap: 0.65rem;
+}
+
+.hero-feature-pill--mobile .hero-feature-pill-thumb {
+  width: 38px;
+  height: 38px;
+}
+
+.hero-feature-pill--mobile .hero-feature-pill-title {
+  font-size: 0.82rem;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.hero-feature-pill--mobile .hero-feature-pill-subtitle {
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.hero-feature-pill--mobile:hover {
+  transform: translateY(-4px);
+}
+
+/* Hide scrollbar for pills strip on mobile */
+.hero-feature-pill--mobile::-webkit-scrollbar {
+  display: none;
+}
+
 /* ==========================================================================
    TravFrick Destination Section (Exact 1:1 Layout & Breakpoints)
    ========================================================================== */

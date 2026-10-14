@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
   return (
     <div
       style={{
@@ -14,7 +24,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         justifyContent: 'space-between',
         alignItems: 'center',
         overflow: 'hidden',
-        padding: '2rem 2rem 2.5rem 2rem',
+        padding: isMobile ? '1.5rem 1.25rem 2rem' : '2rem 2rem 2.5rem 2rem',
         backgroundColor: '#140e08'
       }}
     >
@@ -80,11 +90,11 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           maxWidth: '1360px',
           margin: 'auto',
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.3fr) minmax(0, 0.9fr)',
-          gap: '4rem',
+          gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.3fr) minmax(0, 0.9fr)',
+          gap: isMobile ? '2rem' : '4rem',
           alignItems: 'center',
           zIndex: 10,
-          padding: '7rem 2rem 3rem 2rem'
+          padding: isMobile ? '5.5rem 0 2.5rem 0' : '7rem 2rem 3rem 2rem'
         }}
       >
         {/* Left Column: Big Statement Headline, Subtitle, Pill Button */}
@@ -92,18 +102,20 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           initial={{ opacity: 0, x: -35 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', textAlign: isMobile ? 'center' : 'left' }}
         >
           {/* Warm Gold Tagline Accent matching SASANA */}
           <span
             style={{
-              fontSize: '0.78rem',
+              fontSize: isMobile ? '0.68rem' : '0.78rem',
               fontWeight: 700,
-              letterSpacing: '0.16em',
+              letterSpacing: isMobile ? '0.08em' : '0.16em',
               textTransform: 'uppercase',
               color: '#e5b869',
               marginBottom: '0.9rem',
-              textShadow: '0 2px 12px rgba(0, 0, 0, 0.6)'
+              textShadow: '0 2px 12px rgba(0, 0, 0, 0.6)',
+              maxWidth: isMobile ? '280px' : 'none',
+              lineHeight: 1.5
             }}
           >
             PUSAKA BUDAYA & RADAR KULINER D.I. YOGYAKARTA
@@ -113,7 +125,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           <h1
             style={{
               fontFamily: "'Playfair Display', 'Instrument Sans', Georgia, serif",
-              fontSize: 'clamp(3.2rem, 6.2vw, 5.9rem)',
+              fontSize: isMobile ? 'clamp(2.6rem, 9vw, 3.4rem)' : 'clamp(3.2rem, 6.2vw, 5.9rem)',
               fontWeight: 600,
               lineHeight: 1.04,
               letterSpacing: '-0.02em',
@@ -142,7 +154,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           </p>
 
           {/* Action Buttons Row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -173,36 +185,53 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           </div>
         </motion.div>
 
-        {/* Right Column: Stacked Warm Espresso-Gold Frosted Glass Feature Pills */}
+        {/* Right Column / Mobile Pill Strip: Feature Pills */}
         <motion.div
-          initial={{ opacity: 0, x: 35 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: isMobile ? 0 : 35, y: isMobile ? 20 : 0 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.9rem',
-            alignItems: 'flex-end',
-            width: '100%'
-          }}
+          style={
+            isMobile
+              ? {
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '0.75rem',
+                  overflowX: 'auto',
+                  overflowY: 'visible',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  width: '100%',
+                  paddingBottom: '0.5rem',
+                  paddingLeft: '0.25rem',
+                  paddingRight: '0.25rem'
+                }
+              : {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.9rem',
+                  alignItems: 'flex-end',
+                  width: '100%'
+                }
+          }
         >
           {[
             {
               id: 'keraton-yogyakarta',
               title: 'Keraton & Tamansari',
-              subtitle: 'Poros Sumbu Filosofis UNESCO',
+              subtitle: 'Sumbu Filosofis UNESCO',
               image: '/assets/images/jogja_keraton.jpg'
             },
             {
               id: 'malioboro-tugu',
-              title: 'Malioboro & Tugu Jogja',
-              subtitle: 'Denyut Malam, Kopi Joss & Batik',
+              title: 'Malioboro & Tugu',
+              subtitle: 'Kopi Joss & Batik',
               image: '/assets/images/jogja_malioboro.jpg'
             },
             {
               id: 'kotagede',
               title: 'Warisan Kotagede',
-              subtitle: 'Ibu Kota Mataram 1586 & Perak',
+              subtitle: 'Mataram 1586 & Perak',
               image: '/assets/images/jogja_kotagede.jpg'
             },
             {
@@ -217,10 +246,14 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.35 + idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}
+              style={
+                isMobile
+                  ? { flexShrink: 0, display: 'flex', justifyContent: 'center' }
+                  : { width: '100%', display: 'flex', justifyContent: 'flex-end' }
+              }
             >
               <div
-                className="hero-feature-pill"
+                className={isMobile ? 'hero-feature-pill hero-feature-pill--mobile' : 'hero-feature-pill'}
                 onClick={() => {
                   const landmark = LANDMARKS.find((l) => l.id === item.id) || LANDMARKS[idx];
                   if (onSelectLandmark) onSelectLandmark(landmark);
