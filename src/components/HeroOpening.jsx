@@ -112,7 +112,7 @@ export default function HeroOpening({ onStartExplore, onUseLocation, places = []
             className="w-full sm:w-auto px-6 py-4 rounded-xl bg-[#161B22]/90 border border-[#D4AF37]/30 text-amber-200 hover:text-white hover:bg-neutral-800/90 font-medium text-sm sm:text-base backdrop-blur-md transition-all flex items-center justify-center gap-2"
           >
             <Navigation className="w-4 h-4 text-emerald-400" />
-            <span>📍 Di Sekitar Anda</span>
+            <span>Di Sekitar Anda</span>
           </button>
         </motion.div>
 
@@ -130,10 +130,11 @@ export default function HeroOpening({ onStartExplore, onUseLocation, places = []
             {places.map((place) => (
               <span
                 key={place.id}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:border-[#D4AF37]/50 hover:text-white transition-colors cursor-pointer"
+                className="px-3 py-1 rounded-full text-xs font-medium bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:border-[#D4AF37]/50 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1.5"
                 onClick={onStartExplore}
               >
-                {place.passportStamp?.symbol} {place.name}
+                <MapPin className="w-3 h-3 text-[#D4AF37] shrink-0" />
+                <span>{place.name}</span>
               </span>
             ))}
           </div>

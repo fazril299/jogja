@@ -162,7 +162,7 @@ export default function InteractiveMapModal({
                               : 'bg-neutral-900/90 text-neutral-200 border-neutral-700 hover:border-[#D4AF37] hover:scale-105'
                           }`}
                         >
-                          <span className="text-sm">{p.passportStamp?.symbol}</span>
+                          <MapPin className="w-3.5 h-3.5 shrink-0" />
                           <span className="text-[11px] font-sans font-semibold whitespace-nowrap hidden sm:inline">
                             {p.name.split(' (')[0]}
                           </span>
@@ -214,7 +214,7 @@ export default function InteractiveMapModal({
 
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{activePlace.passportStamp?.symbol}</span>
+                    <Compass className="w-5 h-5 text-amber-300" />
                     <span className="text-xs text-neutral-400">{activePlace.regionLabel}</span>
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-white mb-1">

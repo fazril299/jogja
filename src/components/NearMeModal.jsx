@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Search, Navigation, X } from 'lucide-react';
+import { MapPin, Search, Navigation, X, Check } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
@@ -230,7 +230,7 @@ export default function NearMeModal({
         html: `
           <div style="display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%);">
             <div style="background:#2C221E;color:#FAF8F5;padding:4px 10px;border-radius:999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 6px 18px rgba(44,34,30,0.35);border:1.5px solid #C99B52;margin-bottom:4px;letter-spacing:0.02em;">
-              📍 Posisi Panjenengan (±${userLiveCoords.accuracy || 15} m)
+              Posisi Anda (±${userLiveCoords.accuracy || 15} m)
             </div>
             <div style="width:16px;height:16px;border-radius:50%;background:#C99B52;border:3px solid #FAF8F5;box-shadow:0 0 0 6px rgba(201,155,82,0.35);"></div>
           </div>
@@ -245,7 +245,7 @@ export default function NearMeModal({
             <div style="font-size:10px;font-weight:800;color:#8A5D26;text-transform:uppercase;letter-spacing:0.04em;">LOKASI GPS DI D.I. YOGYAKARTA</div>
             <div style="font-size:12px;font-weight:800;color:#2C221E;margin:4px 0;font-family:monospace;">${userLiveCoords.lat.toFixed(6)}, ${userLiveCoords.lng.toFixed(6)}</div>
             <div style="font-size:11px;color:#786B5E;">Akurasi Sensor: ±${userLiveCoords.accuracy} meter</div>
-            ${userLiveAddress ? `<div style="font-size:11px;color:#2C221E;margin-top:4px;">📍 ${userLiveAddress}</div>` : ''}
+            ${userLiveAddress ? `<div style="font-size:11px;color:#2C221E;margin-top:4px;">${userLiveAddress}</div>` : ''}
           </div>`
         )
         .addTo(group);
@@ -259,8 +259,7 @@ export default function NearMeModal({
       const markerHtml = isSelected
         ? `
           <div style="display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-100%);cursor:pointer;">
-            <div style="background:#2C221E;color:#FAF8F5;padding:5px 12px;border-radius:999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(44,34,30,0.3);border:1.5px solid #C99B52;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
-              <span style="color:#E8B86D;">✦</span>
+            <div style="background:#2C221E;color:#FAF8F5;padding:5px 12px;border-radius:999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(44,34,30,0.3);border:1.5px solid #C99B52;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
               <span>${item.name}</span>
             </div>
             <svg width="34" height="42" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 6px 14px rgba(158,28,100,0.45));">
@@ -723,7 +722,9 @@ export default function NearMeModal({
                         <div style={{ marginTop: '0.55rem' }}>
                           <span
                             style={{
-                              display: 'inline-block',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.25rem',
                               fontSize: '0.72rem',
                               fontWeight: 700,
                               color: '#8A5D26',
@@ -732,7 +733,8 @@ export default function NearMeModal({
                               borderRadius: '999px'
                             }}
                           >
-                            ✓ {item.verdictLabel}
+                            <Check size={11} />
+                            <span>{item.verdictLabel}</span>
                           </span>
                         </div>
                       )}

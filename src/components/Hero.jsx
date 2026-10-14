@@ -66,20 +66,20 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         >
           {/* Tagline */}
           <span className="hero-tagline">
-            PUSAKA BUDAYA & RADAR KULINER D.I. YOGYAKARTA
+            Eksplorasi Pusaka &amp; Kuliner Jogja
           </span>
 
           {/* Main Headline */}
           <h1 className="hero-headline">
-            <span style={{ display: 'block' }}>Jiwa Budaya Jogja.</span>
-            <span style={{ display: 'block' }}>Rasa Asli Mataram.</span>
+            <span style={{ display: 'block' }}>Warisan Tradisi.</span>
+            <span style={{ display: 'block' }}>Cita Rasa Autentik.</span>
           </h1>
 
           {/* Subtitle */}
           <p className="hero-subtitle">
-            Jelajahi warisan budaya D.I. Yogyakarta, dari Sumbu Filosofis Keraton dan Kotagede hingga lereng Merapi. Gunakan{' '}
+            Jelajahi keagungan Keraton, megahnya candi-candi bersejarah, dan kekayaan tradisi Jogja lengkap dengan panduan{' '}
             <strong style={{ color: '#f3c97e' }}>Radar GPS Kuliner</strong>{' '}
-            untuk menemukan rekomendasi kuliner di sekitar Anda.
+            untuk menemukan kelezatan lokal terdekatmu.
           </p>
 
           {/* CTA Button */}
@@ -108,7 +108,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
               }}
             >
               <span style={{ fontSize: '0.7rem', color: '#fffdf9' }}>●</span>
-              <span>Jelajahi Budaya Jogja</span>
+              <span>Mulai Eksplorasi Budaya</span>
               <span style={{ fontSize: '0.7rem', color: '#fffdf9' }}>●</span>
             </motion.button>
           </div>

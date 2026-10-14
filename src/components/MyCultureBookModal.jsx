@@ -14,15 +14,23 @@ import {
   Navigation,
   Lock,
   CheckCircle2,
+  AlertCircle,
   AlertTriangle,
   ChevronRight,
   RefreshCw,
   LogOut,
-  LogIn
+  LogIn,
+  Calendar,
+  BookOpen,
+  ExternalLink,
+  Clock,
+  Search,
+  Filter
 } from 'lucide-react';
 import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
 import { CULTURAL_BADGES, CULTURAL_QUESTS, BADGE_TIERS } from '../data/badgeQuestData';
+import { CULTURAL_EVENTS, CULTURAL_JOURNALS } from '../data/culturalEventsData';
 import { getHaversineDistance } from '../utils/gpsSecurity';
 
 export default function MyCultureBookModal({
@@ -33,19 +41,57 @@ export default function MyCultureBookModal({
   userLiveCoords,
   userLiveAddress,
   onRefreshGps,
-  isGpsLoading
+  isGpsLoading,
+  initialTab = 'badges-quests'
 }) {
-  const [activeTab, setActiveTab] = useState('badges-quests'); // Default langsung ke panduan badge
+  const [activeTab, setActiveTab] = useState(initialTab || 'badges-quests');
   const [selectedNotePlaceId, setSelectedNotePlaceId] = useState(
     places[0]?.id || 'keraton-yogyakarta'
   );
   const [noteInput, setNoteInput] = useState('');
   const [noteSavedToast, setNoteSavedToast] = useState(false);
-  const [mobileSectionTab, setMobileSectionTab] = useState('badges');
+  const [mobileSectionTab, setMobileSectionTab] = useState(
+    initialTab === 'events'
+      ? 'events'
+      : initialTab === 'jurnal'
+      ? 'jurnal'
+      : initialTab === 'background'
+      ? 'destinasi'
+      : initialTab === 'wishlist'
+      ? 'wishlist'
+      : initialTab === 'notes'
+      ? 'catatan'
+      : 'badges'
+  );
+
+  // Filter & Search untuk Event & Jurnal Budaya
+  const [eventCategoryFilter, setEventCategoryFilter] = useState('Semua');
+  const [eventSearchQuery, setEventSearchQuery] = useState('');
+  const [journalSearchQuery, setJournalSearchQuery] = useState('');
 
   // Verifikasi GPS State
   const [verificationFeedback, setVerificationFeedback] = useState(null);
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
+
+  // Sync tab saat initialTab berubah atau modal dibuka
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+      if (initialTab === 'events') {
+        setMobileSectionTab('events');
+      } else if (initialTab === 'jurnal') {
+        setMobileSectionTab('jurnal');
+      } else if (initialTab === 'badges-quests') {
+        setMobileSectionTab('badges');
+      } else if (initialTab === 'background') {
+        setMobileSectionTab('destinasi');
+      } else if (initialTab === 'wishlist') {
+        setMobileSectionTab('wishlist');
+      } else if (initialTab === 'notes') {
+        setMobileSectionTab('catatan');
+      }
+    }
+  }, [initialTab, isOpen]);
 
   const {
     cultureBook,
@@ -134,6 +180,30 @@ export default function MyCultureBookModal({
     'Gerabah Kasongan',
     'Lereng Merapi'
   ];
+
+  const filteredEvents = CULTURAL_EVENTS.filter((ev) => {
+    const matchCat =
+      eventCategoryFilter === 'Semua' || ev.category === eventCategoryFilter;
+    const q = eventSearchQuery.trim().toLowerCase();
+    const matchQuery =
+      !q ||
+      ev.name.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q) ||
+      ev.description.toLowerCase().includes(q) ||
+      ev.highlight.toLowerCase().includes(q);
+    return matchCat && matchQuery;
+  });
+
+  const filteredJournals = CULTURAL_JOURNALS.filter((jr) => {
+    const q = journalSearchQuery.trim().toLowerCase();
+    return (
+      !q ||
+      jr.title.toLowerCase().includes(q) ||
+      jr.excerpt.toLowerCase().includes(q) ||
+      jr.category.toLowerCase().includes(q) ||
+      (jr.tags && jr.tags.some((t) => t.toLowerCase().includes(q)))
+    );
+  });
 
   const handleSaveNote = (e) => {
     e.preventDefault();
@@ -373,6 +443,8 @@ export default function MyCultureBookModal({
             <div className="flex items-center bg-[#EFE9DF] p-1 rounded-2xl mb-3 gap-1 overflow-x-auto scrollbar-none">
               {[
                 { id: 'badges', label: 'Badge' },
+                { id: 'events', label: 'Kalender Acara' },
+                { id: 'jurnal', label: 'Jurnal' },
                 { id: 'destinasi', label: `Destinasi (${stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/${totalPlaces})` },
                 { id: 'wishlist', label: `Wishlist (${cultureBook.favorites?.length || 0})` },
                 { id: 'catatan', label: `Catatan (${Object.keys(cultureBook.userNotes || {}).length})` }
@@ -670,6 +742,208 @@ export default function MyCultureBookModal({
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: EVENTS (MOBILE) */}
+            {mobileSectionTab === 'events' && (
+              <div className="space-y-3">
+                {/* Header notice */}
+                <div className="bg-[#FAF6EE] border border-[#E5D7BE] p-3 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Calendar size={14} className="text-[#8A5D26]" />
+                    <span className="text-xs font-extrabold text-[#2C221E]">Kalender Event Budaya DIY</span>
+                  </div>
+                  <p className="text-[11px] text-[#6E5D52] m-0 leading-relaxed">
+                    Jadwal upacara adat sakral, festival seni, dan pergelaran tradisi Jogja dengan data resmi dari Kraton Yogyakarta & Dinas Pariwisata DIY.
+                  </p>
+                </div>
+
+                {/* Search & Category Filter */}
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                    <input
+                      type="text"
+                      value={eventSearchQuery}
+                      onChange={(e) => setEventSearchQuery(e.target.value)}
+                      placeholder="Cari upacara, pertunjukan, lokasi..."
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-[#EAE4DC] text-[#2C221E] focus:outline-none focus:border-[#C99B52]"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                    {['Semua', 'Upacara Keraton', 'Pertunjukan Seni', 'Festival Rakyat', 'Pameran Seni'].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setEventCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap cursor-pointer transition-all ${
+                          eventCategoryFilter === cat
+                            ? 'bg-[#2C221E] text-white'
+                            : 'bg-white text-neutral-600 border border-[#EAE4DC]'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Events List */}
+                <div className="space-y-2.5">
+                  {filteredEvents.map((ev) => (
+                    <div
+                      key={ev.id}
+                      className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-xs space-y-2"
+                    >
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-neutral-100 border border-neutral-200 text-black text-[10px] font-extrabold">
+                          <Calendar size={10} />
+                          <span>{ev.dateDisplay}</span>
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700">
+                          {ev.category}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 className="text-sm font-extrabold text-black m-0 leading-snug">
+                          {ev.name}
+                        </h4>
+                        <div className="flex items-center gap-1 text-[11px] font-bold text-black mt-0.5">
+                          <Sparkles size={11} className="text-black shrink-0" />
+                          <span>{ev.highlight}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-1.5 text-[11px] text-neutral-700">
+                        <MapPin size={12} className="text-black shrink-0 mt-0.5" />
+                        <span>{ev.location} ({ev.district})</span>
+                      </div>
+
+                      <p className="text-xs text-neutral-800 leading-relaxed m-0">
+                        {ev.description}
+                      </p>
+
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-2.5">
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-black mb-0.5">
+                          <AlertCircle size={12} className="text-black shrink-0" />
+                          <span>Tata Krama &amp; Ketentuan Kunjungan:</span>
+                        </div>
+                        <p className="text-[11px] text-neutral-700 m-0 leading-relaxed">
+                          {ev.tips}
+                        </p>
+                      </div>
+
+                      <div className="text-[10px] text-neutral-500 pt-1 border-t border-neutral-100 flex items-center justify-between">
+                        <span>Sumber: {ev.source}</span>
+                        <span className="font-bold text-black inline-flex items-center gap-1">
+                          <Check size={11} className="text-black" />
+                          <span>Data Resmi</span>
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+
+                  {filteredEvents.length === 0 && (
+                    <div className="text-center py-8 text-xs text-neutral-500 bg-white rounded-2xl border border-dashed border-neutral-200">
+                      Tidak ada event yang cocok dengan filter pencarian Anda.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: JURNAL (MOBILE) */}
+            {mobileSectionTab === 'jurnal' && (
+              <div className="space-y-3">
+                <div className="bg-neutral-50 border border-neutral-200 p-3 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-1">
+                    <BookOpen size={14} className="text-black" />
+                    <span className="text-xs font-extrabold text-black">Jurnal Budaya &amp; Folklor Jogja</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-700 m-0 leading-relaxed">
+                    Kumpulan esai budaya, kajian arsitektur warisan, dan panduan tata krama bersumber dari publikasi resmi D.I. Yogyakarta.
+                  </p>
+                </div>
+
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type="text"
+                    value={journalSearchQuery}
+                    onChange={(e) => setJournalSearchQuery(e.target.value)}
+                    placeholder="Cari esai, filosofi, tata krama..."
+                    className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-neutral-200 text-black focus:outline-none focus:border-black"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  {filteredJournals.map((jr) => (
+                    <div
+                      key={jr.id}
+                      className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-xs"
+                    >
+                      <div className="relative h-32 w-full overflow-hidden bg-neutral-100">
+                        <img
+                          src={jr.image}
+                          alt={jr.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold">
+                          {jr.category}
+                        </span>
+                        <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-black text-[10px] font-bold flex items-center gap-1">
+                          <Clock size={10} />
+                          <span>{jr.readTime}</span>
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 space-y-2">
+                        <h4 className="text-sm font-extrabold text-black m-0 leading-snug">
+                          {jr.title}
+                        </h4>
+
+                        <p className="text-xs text-neutral-700 leading-relaxed m-0">
+                          {jr.excerpt}
+                        </p>
+
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {jr.tags?.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 rounded-md bg-neutral-100 border border-neutral-200 text-[10px] font-medium text-neutral-700"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
+                          <span className="text-[10px] text-neutral-400">
+                            {jr.author} • {jr.date}
+                          </span>
+                          <a
+                            href={jr.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-black hover:underline"
+                          >
+                            <span>Baca Lengkap</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {filteredJournals.length === 0 && (
+                    <div className="text-center py-8 text-xs text-neutral-500 bg-white rounded-2xl border border-dashed border-neutral-200">
+                      Tidak ada artikel jurnal yang cocok dengan pencarian Anda.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1383,6 +1657,8 @@ export default function MyCultureBookModal({
                     id: 'badges-quests',
                     label: `Koleksi & Cara Klaim Badge (${(cultureBook.unlockedBadgeIds || []).length}/${CULTURAL_BADGES.length})`
                   },
+                  { id: 'events', label: 'Kalender Acara Budaya' },
+                  { id: 'jurnal', label: 'Jurnal & Panduan Budaya' },
                   { id: 'background', label: 'Ringkasan Profil' },
                   {
                     id: 'wishlist',
@@ -1800,8 +2076,9 @@ export default function MyCultureBookModal({
                               }}
                             >
                               <div style={{ flex: 1, minWidth: '220px' }}>
-                                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#2C221E', marginBottom: '0.2rem' }}>
-                                  📍 Cara Mendapatkan:
+                                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#000000', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                  <MapPin size={12} color="#000000" />
+                                  <span>Cara Mendapatkan:</span>
                                 </div>
                                 <div style={{ fontSize: '0.74rem', color: '#5C4E43', lineHeight: 1.45 }}>
                                   {badge.caraMendapatkan}
@@ -1816,7 +2093,7 @@ export default function MyCultureBookModal({
                                     }}
                                   >
                                     {isInRange
-                                      ? '✓ Anda berada di kawasan ini. Siap diklaim!'
+                                      ? 'Anda berada di kawasan ini. Siap diklaim!'
                                       : 'Kunjungi kawasan ini di Yogyakarta untuk membuka badge.'}
                                   </div>
                                 )}
@@ -1946,7 +2223,13 @@ export default function MyCultureBookModal({
                                   borderRadius: '999px'
                                 }}
                               >
-                                {isDone ? '✓ Selesai' : `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`}
+                                {isDone ? (
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                                    <Check size={11} /> Selesai
+                                  </span>
+                                ) : (
+                                  `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`
+                                )}
                               </span>
                             </div>
 
@@ -2149,8 +2432,13 @@ export default function MyCultureBookModal({
                     />
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.74rem', color: '#15803D', fontWeight: 700 }}>
-                        {noteSavedToast ? '✓ Catatan Berhasil Disimpan!' : ''}
+                      <span style={{ fontSize: '0.74rem', color: '#15803D', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                        {noteSavedToast ? (
+                          <>
+                            <Check size={12} color="#15803D" />
+                            <span>Catatan Berhasil Disimpan!</span>
+                          </>
+                        ) : ''}
                       </span>
                       <button
                         type="submit"
@@ -2193,6 +2481,523 @@ export default function MyCultureBookModal({
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {/* =================================================================
+                  TAB CONTENT 2: KALENDER EVENT BUDAYA (DATA REAL)
+                  ================================================================= */}
+              {activeTab === 'events' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Header Box */}
+                  <div
+                    style={{
+                      padding: '1.25rem 1.5rem',
+                      borderRadius: '14px',
+                      backgroundColor: '#FAF6EE',
+                      border: '1px solid #E5D7BE',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      gap: '1rem',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: '260px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                        <div
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '8px',
+                            backgroundColor: '#C99B52',
+                            color: '#FFFFFF',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <Calendar size={15} />
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: '1.05rem',
+                            fontWeight: 800,
+                            color: '#2C221E',
+                            margin: 0,
+                            fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif"
+                          }}
+                        >
+                          Kalender Event & Agenda Budaya Real Yogyakarta
+                        </h3>
+                      </div>
+                      <p style={{ fontSize: '0.8rem', color: '#6E5D52', margin: 0, lineHeight: 1.6 }}>
+                        Jadwal upacara adat, peringatan hari besar Keraton Ngayogyakarta, dan festival seni tahunan dengan kurasi data terverifikasi dari sumber resmi Kasultanan & Dinas Pariwisata DIY.
+                      </p>
+                    </div>
+
+                    <div
+                      style={{
+                        padding: '0.4rem 0.85rem',
+                        borderRadius: '999px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E5D7BE',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        color: '#8A5D26',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem'
+                      }}
+                    >
+                      <Sparkles size={12} />
+                      <span>{CULTURAL_EVENTS.length} Agenda Terverifikasi</span>
+                    </div>
+                  </div>
+
+                  {/* Filter & Search Bar */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '1rem',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    {/* Category Filter Pills */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      {['Semua', 'Upacara Keraton', 'Pertunjukan Seni', 'Festival Rakyat', 'Pameran Seni'].map((cat) => {
+                        const isSelected = eventCategoryFilter === cat;
+                        return (
+                          <button
+                            key={cat}
+                            type="button"
+                            onClick={() => setEventCategoryFilter(cat)}
+                            style={{
+                              padding: '0.4rem 0.85rem',
+                              borderRadius: '999px',
+                              backgroundColor: isSelected ? '#2C221E' : '#FFFFFF',
+                              color: isSelected ? '#FFFFFF' : '#6E5D52',
+                              border: isSelected ? '1px solid #2C221E' : '1px solid #EAE4DC',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {cat}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Search Input */}
+                    <div style={{ position: 'relative', minWidth: '220px' }}>
+                      <Search
+                        size={14}
+                        color="#9CA3AF"
+                        style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }}
+                      />
+                      <input
+                        type="text"
+                        value={eventSearchQuery}
+                        onChange={(e) => setEventSearchQuery(e.target.value)}
+                        placeholder="Cari agenda atau tempat..."
+                        style={{
+                          width: '100%',
+                          padding: '0.45rem 0.75rem 0.45rem 2rem',
+                          borderRadius: '10px',
+                          border: '1px solid #EAE4DC',
+                          fontSize: '0.78rem',
+                          color: '#2C221E',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Events Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+                    {filteredEvents.map((ev) => (
+                      <div
+                        key={ev.id}
+                        style={{
+                          borderRadius: '14px',
+                          border: '1px solid #EAE4DC',
+                          backgroundColor: '#FFFFFF',
+                          padding: '1.15rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          gap: '0.85rem',
+                          boxShadow: '0 2px 10px rgba(44, 34, 30, 0.03)',
+                          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                padding: '0.2rem 0.6rem',
+                                borderRadius: '999px',
+                                backgroundColor: '#F5F5F5',
+                                border: '1px solid #E5E5E5',
+                                color: '#000000',
+                                fontSize: '0.7rem',
+                                fontWeight: 800
+                              }}
+                            >
+                              <Calendar size={11} />
+                              <span>{ev.dateDisplay}</span>
+                            </span>
+
+                            <span
+                              style={{
+                                padding: '0.2rem 0.55rem',
+                                borderRadius: '999px',
+                                backgroundColor: '#F5F5F5',
+                                color: '#525252',
+                                fontSize: '0.68rem',
+                                fontWeight: 700
+                              }}
+                            >
+                              {ev.category}
+                            </span>
+                          </div>
+
+                          <div>
+                            <h4
+                              style={{
+                                fontSize: '0.92rem',
+                                fontWeight: 800,
+                                color: '#000000',
+                                margin: 0,
+                                lineHeight: 1.4
+                              }}
+                            >
+                              {ev.name}
+                            </h4>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 700, color: '#000000', marginTop: '0.2rem' }}>
+                              <Sparkles size={11} color="#000000" />
+                              <span>{ev.highlight}</span>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.35rem', fontSize: '0.74rem', color: '#171717' }}>
+                            <MapPin size={12} color="#000000" style={{ marginTop: '2px', flexShrink: 0 }} />
+                            <span>{ev.location} ({ev.district})</span>
+                          </div>
+
+                          <p style={{ fontSize: '0.76rem', color: '#262626', margin: 0, lineHeight: 1.55 }}>
+                            {ev.description}
+                          </p>
+
+                          <div
+                            style={{
+                              padding: '0.65rem 0.85rem',
+                              borderRadius: '10px',
+                              backgroundColor: '#F5F5F5',
+                              border: '1px solid #E5E5E5',
+                              fontSize: '0.72rem'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 800, color: '#000000', marginBottom: '0.2rem' }}>
+                              <AlertCircle size={12} color="#000000" />
+                              <span>Tata Krama &amp; Saran:</span>
+                            </div>
+                            <div style={{ color: '#262626', lineHeight: 1.45 }}>
+                              {ev.tips}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            paddingTop: '0.65rem',
+                            borderTop: '1px solid #E5E5E5',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            fontSize: '0.68rem',
+                            color: '#737373'
+                          }}
+                        >
+                          <span style={{ fontStyle: 'italic' }}>Rujukan: {ev.source}</span>
+                          <span style={{ color: '#000000', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <Check size={11} color="#000000" />
+                            <span>Data Terverifikasi</span>
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {filteredEvents.length === 0 && (
+                    <div
+                      style={{
+                        padding: '3rem 1.5rem',
+                        textAlign: 'center',
+                        backgroundColor: '#FAF8F5',
+                        borderRadius: '14px',
+                        border: '1px dashed #DCD3C6',
+                        color: '#786B5E',
+                        fontSize: '0.82rem'
+                      }}
+                    >
+                      Tidak ada event budaya yang cocok dengan kata kunci atau kategori yang Anda pilih.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* =================================================================
+                  TAB CONTENT 3: JURNAL & ESAI BUDAYA JOGJA
+                  ================================================================= */}
+              {activeTab === 'jurnal' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Header Box */}
+                  <div
+                    style={{
+                      padding: '1.25rem 1.5rem',
+                      borderRadius: '14px',
+                      backgroundColor: '#F8F9FA',
+                      border: '1px solid #E5E5E5',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      gap: '1rem',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: '260px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                        <div
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '8px',
+                            backgroundColor: '#000000',
+                            color: '#FFFFFF',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <BookOpen size={15} />
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: '1.05rem',
+                            fontWeight: 800,
+                            color: '#000000',
+                            margin: 0,
+                            fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif"
+                          }}
+                        >
+                          Jurnal Budaya & Narasi Tradisi Yogyakarta
+                        </h3>
+                      </div>
+                      <p style={{ fontSize: '0.8rem', color: '#525252', margin: 0, lineHeight: 1.6 }}>
+                        Kurasi artikel resmi, esai filosofis Kasultanan Mataram, dan catatan perjalanan mendalam mengenai cagar budaya dan kuliner otentik Yogyakarta.
+                      </p>
+                    </div>
+
+                    <div style={{ position: 'relative', minWidth: '220px' }}>
+                      <Search
+                        size={14}
+                        color="#9CA3AF"
+                        style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }}
+                      />
+                      <input
+                        type="text"
+                        value={journalSearchQuery}
+                        onChange={(e) => setJournalSearchQuery(e.target.value)}
+                        placeholder="Cari judul atau topik jurnal..."
+                        style={{
+                          width: '100%',
+                          padding: '0.45rem 0.75rem 0.45rem 2rem',
+                          borderRadius: '10px',
+                          border: '1px solid #E5E5E5',
+                          fontSize: '0.78rem',
+                          color: '#000000',
+                          backgroundColor: '#FFFFFF',
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Journal Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.15rem' }}>
+                    {filteredJournals.map((jr) => (
+                      <div
+                        key={jr.id}
+                        style={{
+                          borderRadius: '16px',
+                          border: '1px solid #E5E5E5',
+                          backgroundColor: '#FFFFFF',
+                          overflow: 'hidden',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
+                          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                        }}
+                      >
+                        <div style={{ position: 'relative', height: '160px', width: '100%', backgroundColor: '#000000', overflow: 'hidden' }}>
+                          <img
+                            src={jr.image}
+                            alt={jr.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: '10px',
+                              left: '10px',
+                              padding: '0.2rem 0.6rem',
+                              borderRadius: '999px',
+                              backgroundColor: 'rgba(0,0,0,0.65)',
+                              color: '#FFFFFF',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              backdropFilter: 'blur(4px)'
+                            }}
+                          >
+                            {jr.category}
+                          </span>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              bottom: '10px',
+                              right: '10px',
+                              padding: '0.2rem 0.55rem',
+                              borderRadius: '999px',
+                              backgroundColor: 'rgba(255,255,255,0.92)',
+                              color: '#000000',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                              backdropFilter: 'blur(4px)'
+                            }}
+                          >
+                            <Clock size={11} />
+                            <span>{jr.readTime}</span>
+                          </span>
+                        </div>
+
+                        <div style={{ padding: '1.15rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between', gap: '0.85rem' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                            <h4
+                              style={{
+                                fontSize: '0.94rem',
+                                fontWeight: 800,
+                                color: '#000000',
+                                margin: 0,
+                                lineHeight: 1.45
+                              }}
+                            >
+                              {jr.title}
+                            </h4>
+                            <p style={{ fontSize: '0.78rem', color: '#404040', margin: 0, lineHeight: 1.6 }}>
+                              {jr.excerpt}
+                            </p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.35rem' }}>
+                              {jr.tags?.map((tag) => (
+                                <span
+                                  key={tag}
+                                  style={{
+                                    padding: '0.15rem 0.45rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#F5F5F5',
+                                    border: '1px solid #E5E5E5',
+                                    fontSize: '0.68rem',
+                                    color: '#171717'
+                                  }}
+                                >
+                                  #{tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              paddingTop: '0.75rem',
+                              borderTop: '1px solid #E5E5E5',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '0.5rem'
+                            }}
+                          >
+                            <div style={{ fontSize: '0.68rem', color: '#9CA3AF' }}>
+                              <span>{jr.author}</span>
+                              <span style={{ display: 'block', fontSize: '0.65rem' }}>{jr.date}</span>
+                            </div>
+
+                            <a
+                              href={jr.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                padding: '0.35rem 0.75rem',
+                                borderRadius: '8px',
+                                backgroundColor: '#F5F5F5',
+                                border: '1px solid #E5E5E5',
+                                color: '#000000',
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                transition: 'all 0.15s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#000000';
+                                e.currentTarget.style.color = '#FFFFFF';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#F5F5F5';
+                                e.currentTarget.style.color = '#000000';
+                              }}
+                            >
+                              <span>Baca Artikel</span>
+                              <ExternalLink size={11} />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {filteredJournals.length === 0 && (
+                    <div
+                      style={{
+                        padding: '3rem 1.5rem',
+                        textAlign: 'center',
+                        backgroundColor: '#FAF8F5',
+                        borderRadius: '14px',
+                        border: '1px dashed #DCD3C6',
+                        color: '#786B5E',
+                        fontSize: '0.82rem'
+                      }}
+                    >
+                      Tidak ada artikel jurnal yang cocok dengan pencarian Anda.
+                    </div>
+                  )}
                 </div>
               )}
             </div>

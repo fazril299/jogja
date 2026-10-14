@@ -2231,10 +2231,14 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                 color: '#15803D',
                                 backgroundColor: '#DCFCE7',
                                 padding: '0.15rem 0.5rem',
-                                borderRadius: '999px'
+                                borderRadius: '999px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
                               }}
                             >
-                              ✓ Akun Terverifikasi
+                              <CheckCircle2 size={11} />
+                              <span>Akun Terverifikasi</span>
                             </span>
                             <span
                               style={{
@@ -2362,7 +2366,10 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           marginBottom: '0.85rem'
                         }}
                       >
-                        ✓ Ulasan Anda berhasil dikirim dan langsung tampil di bawah!
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <CheckCircle2 size={14} />
+                          <span>Ulasan Anda berhasil dikirim dan langsung tampil di bawah!</span>
+                        </span>
                       </div>
                     )}
 

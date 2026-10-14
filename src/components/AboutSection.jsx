@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import CustomPillButton from './CustomPillButton';
 
 export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
-  // 4 Slideshow Images for the About section tall photo
+  // Pure photographic images of iconic Yogyakarta landmarks
   const slideshowImages = [
-    { src: "/assets/images/jogja_keraton.jpg", alt: "Keraton Yogyakarta" },
-    { src: "/assets/images/jogja_prambanan.jpg", alt: "Candi Prambanan" },
-    { src: "/assets/images/jogja_merapi.jpg", alt: "Lereng Gunung Merapi & Kaliurang" },
-    { src: "/assets/images/jogja_tugu.jpg", alt: "Suasana Malam Malioboro & Tugu Jogja" }
+    "/assets/images/jogja_prambanan.jpg",
+    "/assets/images/jogja_keraton.jpg",
+    "/assets/images/jogja_merapi.jpg",
+    "/assets/images/jogja_tugu.jpg"
   ];
 
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState(0);
 
-  // Auto-advance slideshow every 3.5 seconds
+  // Seamless auto-dissolve every 4.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
-    }, 3500);
+      setCurrentIndex((prev) => {
+        setPrevIndex(prev);
+        return (prev + 1) % slideshowImages.length;
+      });
+    }, 4500);
     return () => clearInterval(timer);
   }, [slideshowImages.length]);
 
   return (
-    <div style={{ width: '100%', background: '#ffffff', color: '#0b1a26' }}>
+    <div id="about" style={{ width: '100%', background: '#ffffff', color: '#0b1a26' }}>
       
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - EXACT FRAMER TEMPLATE)
@@ -104,40 +108,57 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             </div>
           </motion.div>
 
-          {/* Right Column: Clean 4-Photo Slideshow Carousel */}
+          {/* Right Column: Pure Photo Showcase Card */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: 'relative',
               width: '100%',
               height: '560px',
               borderRadius: '28px',
               overflow: 'hidden',
-              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.15)',
-              background: '#051d2d'
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.16)',
+              background: '#0b1a26'
             }}
           >
-            <AnimatePresence mode="wait">
+            {/* Base Layer: Previous photo (100% solid, prevents black flashes) */}
+            <img
+              src={slideshowImages[prevIndex]}
+              alt="Keindahan Budaya Yogyakarta"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+                zIndex: 1
+              }}
+            />
+
+            {/* Active Layer: Current photo dissolving cleanly */}
+            {currentIndex !== prevIndex && (
               <motion.img
-                key={currentSlide}
-                src={slideshowImages[currentSlide].src}
-                alt={slideshowImages[currentSlide].alt}
-                initial={{ opacity: 0, scale: 1.08 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                key={currentIndex}
+                src={slideshowImages[currentIndex]}
+                alt="Keindahan Budaya Yogyakarta"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
                 style={{
                   position: 'absolute',
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover'
+                  objectFit: 'cover',
+                  display: 'block',
+                  zIndex: 2
                 }}
               />
-            </AnimatePresence>
+            )}
           </motion.div>
 
         </div>

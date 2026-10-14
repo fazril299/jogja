@@ -23,6 +23,7 @@
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
@@ -40,7 +41,6 @@ import AboutSection from './components/AboutSection';
 import MostLovedDestinations from './components/MostLovedDestinations';
 import HandcraftedPackages from './components/HandcraftedPackages';
 import OfficialSources from './components/OfficialSources';
-import TravelBlogs from './components/TravelBlogs';
 import TravelFAQ from './components/TravelFAQ';
 import InstagramStories from './components/InstagramStories';
 import CTAHeroBanner from './components/CTAHeroBanner';
@@ -51,6 +51,8 @@ import QuickViewModal from './components/QuickViewModal';
 import PlaceStorybook from './components/PlaceStorybook';
 import NearMeModal from './components/NearMeModal';
 import MyCultureBookModal from './components/MyCultureBookModal';
+import KalenderAcaraPage from './components/KalenderAcaraPage';
+import JurnalBudayaPage from './components/JurnalBudayaPage';
 import AdminModal from './components/AdminModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -164,8 +166,36 @@ function NusantaraApp() {
   const [isNearMeOpen, setIsNearMeOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isCultureBookOpen, setIsCultureBookOpen] = useState(false);
+  const [cultureBookInitialTab, setCultureBookInitialTab] = useState('badges-quests');
+  const [isKalenderAcaraOpen, setIsKalenderAcaraOpen] = useState(false);
+  const [isJurnalBudayaOpen, setIsJurnalBudayaOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
+
+  const handleOpenCultureBookWithTab = (tab = 'badges-quests') => {
+    setIsNearMeOpen(false);
+    setSelectedPlace(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setCultureBookInitialTab(tab);
+    setIsCultureBookOpen(true);
+  };
+
+  const handleOpenKalenderAcara = () => {
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setSelectedPlace(null);
+    setIsJurnalBudayaOpen(false);
+    setIsKalenderAcaraOpen(true);
+  };
+
+  const handleOpenJurnalBudaya = () => {
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setSelectedPlace(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(true);
+  };
 
   // REAL Hardware GPS Tracking States (Khusus Menyala di Wilayah D.I. Yogyakarta)
   const [autoDetectedZoneId, setAutoDetectedZoneId] = useState(JOGJA_GPS_ZONES[0].id);
@@ -492,8 +522,9 @@ function NusantaraApp() {
             </div>
 
             {userLiveAddress && (
-              <div style={{ fontSize: '0.76rem', color: '#52525b', marginBottom: '0.45rem', lineHeight: 1.35 }}>
-                📍 {userLiveAddress}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.35rem', fontSize: '0.76rem', color: '#52525b', marginBottom: '0.45rem', lineHeight: 1.35 }}>
+                <MapPin size={12} color="#000000" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span>{userLiveAddress}</span>
               </div>
             )}
 
@@ -557,11 +588,7 @@ function NusantaraApp() {
           handleSelectPlaceById('keraton-yogyakarta');
         }}
         onOpenBlogs={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          setSelectedPlace(null);
-          const el = document.getElementById('cultural-blogs');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          handleOpenCultureBookWithTab('jurnal');
         }}
         onOpenNearMe={() => {
           setSelectedPlace(null);
@@ -574,10 +601,12 @@ function NusantaraApp() {
           setIsMapOpen(true);
         }}
         onOpenCultureBook={() => {
-          setIsNearMeOpen(false);
-          setSelectedPlace(null);
-          setIsCultureBookOpen((prev) => !prev);
+          handleOpenCultureBookWithTab('badges-quests');
         }}
+        onOpenCultureEvents={handleOpenKalenderAcara}
+        onOpenCultureJournals={handleOpenJurnalBudaya}
+        onOpenKalenderAcara={handleOpenKalenderAcara}
+        onOpenJurnalBudaya={handleOpenJurnalBudaya}
         onOpenAdmin={() => {
           setIsNearMeOpen(false);
           setIsCultureBookOpen(false);
@@ -620,30 +649,39 @@ function NusantaraApp() {
       />
 
       {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
-      <HandcraftedPackages
-        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
-      />
+      <div id="packages">
+        <HandcraftedPackages
+          onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+          onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
+        />
+      </div>
 
       {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
       <OfficialSources />
 
-      {/* 7. TRAVEL STORIES & YOGYAKARTA FOLKLORE */}
-      <div id="cultural-blogs">
-        <TravelBlogs />
+      {/* 7. TRAVEL FAQ */}
+      <div id="faq-section">
+        <TravelFAQ />
       </div>
 
-      {/* 8. TRAVEL FAQ */}
-      <TravelFAQ />
-
-      {/* 9. INSTAGRAM STORIES PHOTO MARQUEE */}
+      {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
       <InstagramStories />
 
-      {/* 10. CTA HERO BANNER & CONTINUOUS TICKER */}
+      {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
       <CTAHeroBanner onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')} />
 
-      {/* 11. MODERN DARK FOOTER */}
-      <Footer />
+      {/* 10. MODERN DARK FOOTER */}
+      <Footer
+        onOpenNearMe={() => setIsNearMeOpen(true)}
+        onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
+        onOpenCultureEvents={handleOpenKalenderAcara}
+        onOpenCultureJournals={handleOpenJurnalBudaya}
+        onOpenKalenderAcara={handleOpenKalenderAcara}
+        onOpenJurnalBudaya={handleOpenJurnalBudaya}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenShareModal={() => setIsGlobalShareOpen(true)}
+        onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
+      />
 
       {/* =========================================================================
           MODALS & DEDICATED FULL-SCREEN PAGES
@@ -705,6 +743,7 @@ function NusantaraApp() {
       {/* My Culture Book (Paspor Budaya) Drawer */}
       <MyCultureBookModal
         isOpen={isCultureBookOpen}
+        initialTab={cultureBookInitialTab}
         onClose={() => setIsCultureBookOpen(false)}
         places={places}
         userLiveCoords={userLiveCoords}
@@ -715,6 +754,22 @@ function NusantaraApp() {
           setIsCultureBookOpen(false);
           setSelectedPlace(place);
         }}
+      />
+
+      {/* HALAMAN DEDIKASI 1: KALENDER ACARA BUDAYA JOGJA (DATA REAL, TANGGAL, JAM, BULAN, TAHUN) */}
+      <KalenderAcaraPage
+        isOpen={isKalenderAcaraOpen}
+        onClose={() => setIsKalenderAcaraOpen(false)}
+        onSelectPlace={(place) => {
+          setIsKalenderAcaraOpen(false);
+          setSelectedPlace(place);
+        }}
+      />
+
+      {/* HALAMAN DEDIKASI 2: JURNAL BUDAYA & PANDUAN CARA BERBUDAYA DENGAN BENAR (FOTO ASSET & CONTOH) */}
+      <JurnalBudayaPage
+        isOpen={isJurnalBudayaOpen}
+        onClose={() => setIsJurnalBudayaOpen(false)}
       />
 
       {/* Admin Panel & CMS Modal */}
