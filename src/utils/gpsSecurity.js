@@ -88,7 +88,7 @@ export function validateGpsSecurity({
     return {
       isValid: false,
       code: 'GPS_NOT_AVAILABLE',
-      message: 'Sensor GPS perangkat tidak terdeteksi atau izin lokasi belum diberikan.'
+      message: 'Akses lokasi belum aktif. Aktifkan izin lokasi pada browser Anda untuk membuka lencana.'
     };
   }
 
@@ -99,7 +99,7 @@ export function validateGpsSecurity({
     return {
       isValid: false,
       code: 'MOCK_DETECTED',
-      message: 'Sistem mendeteksi penggunaan aplikasi Lokasi Palsu (Mock GPS / Fake Location). Matikan opsi pengembang untuk melanjutkan verifikasi.'
+      message: 'Lokasi tidak dapat diverifikasi secara valid. Pastikan Anda berkunjung langsung menggunakan perangkat fisik di lokasi.'
     };
   }
 
@@ -114,7 +114,7 @@ export function validateGpsSecurity({
     return {
       isValid: false,
       code: 'OUTSIDE_JOGJA_GEOFENCE',
-      message: `Koordinat perangkat Anda (${lat.toFixed(4)}, ${lng.toFixed(4)}) berada di luar batas wilayah Daerah Istimewa Yogyakarta. Klaim badge paspor budaya hanya dapat dilakukan langsung di wilayah Yogyakarta.`
+      message: 'Anda saat ini terdeteksi berada di luar wilayah Daerah Istimewa Yogyakarta. Kunjungi langsung cagar budaya di Jogja untuk membuka lencana paspor budaya.'
     };
   }
 
@@ -124,14 +124,14 @@ export function validateGpsSecurity({
       return {
         isValid: false,
         code: 'ANOMALOUS_ACCURACY',
-        message: 'Akurasi sensor GPS tidak wajar (0 meter). Terindikasi injeksi data koordinat tiruan.'
+        message: 'Lokasi tidak dapat diverifikasi secara valid. Pastikan sensor lokasi perangkat Anda aktif.'
       };
     }
     if (accuracy > 300) {
       return {
         isValid: false,
         code: 'LOW_ACCURACY',
-        message: `Akurasi sensor GPS Anda terlalu rendah (±${Math.round(accuracy)} meter). Tunggu beberapa detik di tempat terbuka agar GPS mengunci posisi dengan tepat.`
+        message: 'Sinyal lokasi Anda sedang kurang stabil. Tunggu sejenak di ruang terbuka agar penentuan posisi lebih akurat.'
       };
     }
   }
@@ -152,7 +152,7 @@ export function validateGpsSecurity({
         return {
           isValid: false,
           code: 'VELOCITY_ANOMALY',
-          message: `Terdeteksi anomali perpindahan lokasi (${Math.round(distanceMeters)}m dalam ${Math.round(timeDeltaSeconds)} detik, kecepatan ${Math.round(speedKmH)} km/jam). Sistem mendeteksi potensi spoofing teleportasi lokasi.`
+          message: 'Terdeteksi perpindahan lokasi yang tidak wajar. Silakan coba kembali beberapa saat lagi saat berada di kawasan wisata.'
         };
       }
     }
@@ -166,19 +166,18 @@ export function validateGpsSecurity({
       return {
         isValid: false,
         code: 'TARGET_COORDS_MISSING',
-        message: 'Data koordinat destinasi tidak valid.'
+        message: 'Data lokasi cagar budaya belum tersedia.'
       };
     }
 
     if (distanceToTarget > maxRadius) {
       const distKm = (distanceToTarget / 1000).toFixed(1);
-      const radiusLabel = maxRadius >= 1000 ? `${(maxRadius / 1000).toFixed(1)} KM` : `${maxRadius} m`;
       return {
         isValid: false,
         code: 'DISTANCE_TOO_FAR',
         distanceMeters: distanceToTarget,
         maxRadiusAllowed: maxRadius,
-        message: `Posisi Anda masih berjarak ${distKm} km dari ${placeName || 'lokasi destinasi'}. Silakan dekati area cagar budaya (radius toleransi maksimal ${radiusLabel}) untuk membuka badge ini secara sah.`
+        message: `Posisi Anda masih berjarak ${distKm} km dari ${placeName || 'destinasi'}. Kunjungi kawasan ini langsung di Yogyakarta untuk membuka badge paspor budaya.`
       };
     }
 
@@ -186,13 +185,13 @@ export function validateGpsSecurity({
       isValid: true,
       distanceMeters: distanceToTarget,
       accuracy: accuracy || 15,
-      message: `Verifikasi GPS Sukses! Anda terdeteksi berada di lokasi (${distanceToTarget} m dari episentrum ${placeName}).`
+      message: `Verifikasi Berhasil! Selamat datang di kawasan ${placeName}. Lencana resmi telah ditambahkan ke Paspor Budaya Anda.`
     };
   }
 
   return {
     isValid: true,
     accuracy: accuracy || 15,
-    message: 'Verifikasi koordinat GPS D.I. Yogyakarta valid.'
+    message: 'Lokasi Anda terverifikasi berada di wilayah D.I. Yogyakarta.'
   };
 }

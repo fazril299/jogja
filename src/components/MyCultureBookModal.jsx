@@ -158,8 +158,8 @@ export default function MyCultureBookModal({
             setVerifyingPlaceId(null);
             setVerificationFeedback({
               type: 'error',
-              title: 'Izin Sensor GPS Ditolak',
-              message: 'Izinkan akses lokasi di browser untuk memverifikasi bahwa Anda berada di lokasi cagar budaya.'
+              title: 'Akses Lokasi Belum Aktif',
+              message: 'Aktifkan izin lokasi pada browser Anda agar kehadiran Anda di cagar budaya Yogyakarta dapat diverifikasi secara otomatis.'
             });
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -168,8 +168,8 @@ export default function MyCultureBookModal({
         setVerifyingPlaceId(null);
         setVerificationFeedback({
           type: 'error',
-          title: 'Sensor GPS Tidak Tersedia',
-          message: 'Perangkat atau browser ini tidak mendukung pembacaan koordinat Geolocation.'
+          title: 'Fitur Lokasi Tidak Didukung',
+          message: 'Perangkat atau browser Anda saat ini tidak mendukung deteksi lokasi otomatis.'
         });
       }
     }
@@ -583,40 +583,16 @@ export default function MyCultureBookModal({
                   </span>
                 </div>
 
-                {/* Progress bar perolehan & Reset Badge Option */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.9rem' }}>
-                  <div style={{ flex: 1, height: '8px', backgroundColor: '#F4EFE6', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        height: '100%',
-                        width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`,
-                        backgroundColor: '#2C221E',
-                        borderRadius: '999px'
-                      }}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm('Reset semua perolehan badge Anda kembali ke 0?')) {
-                        resetAllBadges();
-                      }
-                    }}
+                {/* Progress bar perolehan */}
+                <div style={{ width: '100%', height: '8px', backgroundColor: '#F4EFE6', borderRadius: '999px', overflow: 'hidden', marginBottom: '0.9rem' }}>
+                  <div
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#94A3B8',
-                      fontSize: '0.68rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      padding: 0,
-                      textDecoration: 'underline',
-                      whiteSpace: 'nowrap'
+                      height: '100%',
+                      width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`,
+                      backgroundColor: '#2C221E',
+                      borderRadius: '999px'
                     }}
-                    title="Mulai ulang semua badge dari 0"
-                  >
-                    Reset (Mulai 0)
-                  </button>
+                  />
                 </div>
 
                 {/* 4 Ikon Bulat Khas Jogja Asli (Tanpa Emoji) */}
@@ -720,7 +696,7 @@ export default function MyCultureBookModal({
                     justifyContent: 'space-between'
                   }}
                 >
-                  <span>Checklist Tempat GPS</span>
+                  <span>Destinasi Warisan Budaya</span>
                   <span
                     style={{
                       padding: '0.18rem 0.6rem',
@@ -731,7 +707,7 @@ export default function MyCultureBookModal({
                       fontWeight: 700
                     }}
                   >
-                    {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces}
+                    {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
                   </span>
                 </div>
 
@@ -817,17 +793,17 @@ export default function MyCultureBookModal({
                           >
                             <Check size={14} color="#15803D" strokeWidth={3} />
                           </div>
-                        ) : (
+                        ) : distNow !== null && distNow <= 1500 ? (
                           <button
                             type="button"
                             onClick={() => handleClaimBadgeViaGps(place)}
                             disabled={verifyingPlaceId === place.id}
                             style={{
-                              padding: '0.26rem 0.6rem',
+                              padding: '0.26rem 0.65rem',
                               borderRadius: '6px',
-                              backgroundColor: distNow !== null && distNow <= 1500 ? '#2C221E' : '#FAF8F5',
-                              border: distNow !== null && distNow <= 1500 ? '1px solid #C99B52' : '1px solid #DCD3C6',
-                              color: distNow !== null && distNow <= 1500 ? '#FAF8F5' : '#8A5D26',
+                              backgroundColor: '#2C221E',
+                              border: '1px solid #C99B52',
+                              color: '#FAF8F5',
                               fontSize: '0.68rem',
                               fontWeight: 700,
                               cursor: 'pointer',
@@ -835,12 +811,31 @@ export default function MyCultureBookModal({
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            {verifyingPlaceId === place.id
-                              ? 'Memeriksa...'
-                              : distNow !== null && distNow <= 1500
-                              ? 'Klaim Badge'
-                              : 'Cek GPS'}
+                            {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim Badge'}
                           </button>
+                        ) : (
+                          <div
+                            onClick={() => onSelectPlace && onSelectPlace(place)}
+                            style={{
+                              padding: '0.22rem 0.55rem',
+                              borderRadius: '6px',
+                              backgroundColor: '#FAF8F5',
+                              border: '1px solid #ECE4D8',
+                              color: '#8A7B6E',
+                              fontSize: '0.67rem',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                              whiteSpace: 'nowrap',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.25rem'
+                            }}
+                            title={`Buka info & cerita ${place.name}`}
+                          >
+                            <Lock size={10} color="#A89A8D" />
+                            <span>Terkunci</span>
+                          </div>
                         )}
                       </div>
                     );
@@ -1036,7 +1031,7 @@ export default function MyCultureBookModal({
                       </h3>
                     </div>
                     <p style={{ fontSize: '0.82rem', color: '#6E5D52', margin: '0 0 1rem 0', lineHeight: 1.5 }}>
-                      Badge cagar budaya Yogyakarta hanya dapat dibuka saat Anda benar-benar berada di lokasi fisik melalui sistem GPS asli:
+                      Badge warisan budaya Yogyakarta terbuka secara otomatis saat Anda berkunjung langsung ke situs bersejarah:
                     </p>
 
                     <div
@@ -1061,7 +1056,7 @@ export default function MyCultureBookModal({
                           <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Kunjungi Lokasi</strong>
                         </div>
                         <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Datang langsung ke cagar budaya target (Keraton, Malioboro, Kotagede, Prambanan, dll).
+                          Datang langsung ke situs cagar budaya (Keraton, Malioboro, Kotagede, Prambanan, dll).
                         </p>
                       </div>
 
@@ -1077,10 +1072,10 @@ export default function MyCultureBookModal({
                           <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
                             Langkah 2
                           </span>
-                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Buka Aplikasi</strong>
+                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Buka Paspor Budaya</strong>
                         </div>
                         <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Pastikan izin lokasi browser aktif dalam radius maksimal 1.5 KM dari titik cagar budaya.
+                          Buka aplikasi saat Anda berada di lokasi. Sistem otomatis mendeteksi kehadiran Anda di kawasan wisata.
                         </p>
                       </div>
 
@@ -1096,10 +1091,10 @@ export default function MyCultureBookModal({
                           <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
                             Langkah 3
                           </span>
-                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Klik Klaim GPS</strong>
+                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Koleksi Badge</strong>
                         </div>
                         <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Tekan tombol "Klaim Badge GPS". Sistem memvalidasi koordinat sah dan badge langsung tersimpan permanen!
+                          Tombol "Klaim Badge" otomatis aktif. Tekan untuk menyimpan lencana permanen di paspor budaya Anda.
                         </p>
                       </div>
                     </div>
@@ -1123,7 +1118,7 @@ export default function MyCultureBookModal({
                         <span>
                           {userLiveCoords
                             ? 'Lokasi Aktif: Terhubung ke Wilayah D.I. Yogyakarta'
-                            : 'Lokasi belum terdeteksi. Izinkan akses GPS untuk mengklaim badge.'}
+                            : 'Kunjungi cagar budaya di Yogyakarta untuk membuka koleksi lencana.'}
                         </span>
                       </div>
 
@@ -1145,7 +1140,7 @@ export default function MyCultureBookModal({
                         }}
                       >
                         <RefreshCw size={12} />
-                        <span>Sinkronkan GPS</span>
+                        <span>Perbarui Lokasi</span>
                       </button>
                     </div>
                   </div>
@@ -1350,8 +1345,8 @@ export default function MyCultureBookModal({
                                     }}
                                   >
                                     {isInRange
-                                      ? `✓ Posisi Anda terdeteksi berjarak ${distNow} m (Di dalam radius klaim < ${maxRadius >= 1000 ? (maxRadius / 1000).toFixed(1) + ' KM' : maxRadius + ' M'})`
-                                      : `Posisi Anda saat ini: berjarak ${(distNow / 1000).toFixed(1)} km (Radius toleransi < ${maxRadius >= 1000 ? (maxRadius / 1000).toFixed(1) + ' KM' : maxRadius + ' M'})`}
+                                      ? '✓ Anda berada di kawasan ini. Siap diklaim!'
+                                      : 'Kunjungi kawasan ini di Yogyakarta untuk membuka badge.'}
                                   </div>
                                 )}
                               </div>
@@ -1375,41 +1370,61 @@ export default function MyCultureBookModal({
                                     >
                                       Buka Cerita Tempat
                                     </button>
-                                  ) : (
+                                  ) : isInRange ? (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
                                       <button
+                                        type="button"
+                                        onClick={() => handleClaimBadgeViaGps(targetPlace)}
+                                        disabled={verifyingPlaceId === targetPlace.id}
+                                        style={{
+                                          padding: '0.5rem 1.15rem',
+                                          borderRadius: '999px',
+                                          backgroundColor: '#2C221E',
+                                          color: '#FAF8F5',
+                                          border: '1.5px solid #C99B52',
+                                          fontSize: '0.76rem',
+                                          fontWeight: 800,
+                                          cursor: 'pointer',
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '0.4rem',
+                                          boxShadow: '0 4px 12px rgba(44, 34, 30, 0.15)',
+                                          transition: 'all 0.15s ease'
+                                        }}
+                                      >
+                                        <Sparkles size={13} color="#C99B52" />
+                                        <span>
+                                          {verifyingPlaceId === targetPlace.id
+                                            ? 'Memproses...'
+                                            : 'Klaim Badge Sekarang'}
+                                        </span>
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
                                       type="button"
-                                      onClick={() => handleClaimBadgeViaGps(targetPlace)}
-                                      disabled={verifyingPlaceId === targetPlace.id}
+                                      onClick={() => onSelectPlace(targetPlace)}
                                       style={{
-                                        padding: '0.5rem 1.15rem',
+                                        padding: '0.45rem 0.95rem',
                                         borderRadius: '999px',
-                                        backgroundColor: isInRange ? '#2C221E' : '#FAF8F5',
-                                        color: isInRange ? '#FAF8F5' : '#8A5D26',
-                                        border: isInRange ? '1.5px solid #C99B52' : '1px solid #DCD3C6',
-                                        fontSize: '0.76rem',
-                                        fontWeight: 800,
+                                        backgroundColor: '#FAF8F5',
+                                        border: '1px solid #DCD3C6',
+                                        color: '#5C4E43',
+                                        fontSize: '0.74rem',
+                                        fontWeight: 700,
                                         cursor: 'pointer',
                                         display: 'inline-flex',
                                         alignItems: 'center',
-                                        gap: '0.4rem',
-                                        boxShadow: isInRange ? '0 4px 12px rgba(44, 34, 30, 0.15)' : 'none',
-                                        transition: 'all 0.15s ease'
+                                        gap: '0.35rem'
                                       }}
+                                      title={`Lihat info & panduan ${targetPlace.name}`}
                                     >
-                                      <Navigation size={13} />
-                                      <span>
-                                        {verifyingPlaceId === targetPlace.id
-                                          ? 'Memeriksa GPS...'
-                                          : isInRange
-                                          ? 'Klaim Badge Sekarang'
-                                          : 'Cek Lokasi GPS'}
-                                      </span>
+                                      <Compass size={13} color="#8A5D26" />
+                                      <span>Jelajahi Tempat</span>
                                     </button>
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                                  )}
+                                </div>
+                              )}
                           </div>
                         </div>
                       );

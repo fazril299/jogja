@@ -53,7 +53,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_soul.svg',
     targetPlaceId: 'malioboro-tugu',
     maxRadiusMeters: 1500,
-    caraMendapatkan: 'Kunjungi kawasan Jalan Malioboro atau Tugu Pal Putih di Yogyakarta (Radius < 1.5 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi kawasan Jalan Malioboro atau Tugu Pal Putih di Yogyakarta (Radius < 1.5 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Merekam denyut tradisi malam, angkringan kopi joss, dan kawasan nol kilometer Yogyakarta.'
   },
   // 2. WIJILAN
@@ -66,7 +66,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_culinary.svg',
     targetPlaceId: 'wijilan-prawirotaman',
     maxRadiusMeters: 1500,
-    caraMendapatkan: 'Kunjungi Sentra Gudeg Wijilan atau Prawirotaman di Yogyakarta (Radius < 1.5 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi Sentra Gudeg Wijilan atau Prawirotaman di Yogyakarta (Radius < 1.5 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Menikmati kelezatan gudeg kering daun jati yang dimasak kayu bakar secara turun-temurun sejak era 1950-an.'
   },
   // 3. KOTAGEDE
@@ -79,7 +79,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_culture.svg',
     targetPlaceId: 'kotagede',
     maxRadiusMeters: 1200,
-    caraMendapatkan: 'Kunjungi kawasan bersejarah Kotagede (Between Two Gates / Sentra Perak Kemasan, Radius < 1.2 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi kawasan bersejarah Kotagede (Between Two Gates / Sentra Perak Kemasan, Radius < 1.2 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Merekam keheningan gang-gang sempit rumah kalang dan seni kerajinan perak bakar legendaris.'
   },
   // 4. KASONGAN & IMOGIRI
@@ -92,7 +92,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_culture.svg',
     targetPlaceId: 'kasongan-imogiri',
     maxRadiusMeters: 1200,
-    caraMendapatkan: 'Kunjungi Sentra Kerajinan Gerabah Kasongan atau Makam Raja-raja Imogiri di Bantul (Radius < 1.2 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi Sentra Kerajinan Gerabah Kasongan atau Makam Raja-raja Imogiri di Bantul (Radius < 1.2 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Mengenal seni tanah liat yang diwariskan turun-temurun dan perbukitan suci pemakaman sultan Mataram.'
   },
   // 5. PARANGTRITIS & SEGARA KIDUL
@@ -105,7 +105,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_nature.svg',
     targetPlaceId: 'parangtritis-gunungkidul',
     maxRadiusMeters: 1200,
-    caraMendapatkan: 'Kunjungi Pantai Parangtritis, Gumuk Pasir, atau Tebing Karst Geopark Gunungkidul (Radius < 1.2 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi Pantai Parangtritis, Gumuk Pasir, atau Tebing Karst Geopark Gunungkidul (Radius < 1.2 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Menyaksikan deburan ombak Samudra Hindia yang menjadi poros kosmologi selatan kerajaan Mataram.'
   },
   // 6. PRAMBANAN & RATU BOKO
@@ -118,7 +118,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_culture.svg',
     targetPlaceId: 'prambanan-ratuboko',
     maxRadiusMeters: 1000,
-    caraMendapatkan: 'Kunjungi kawasan Candi Prambanan atau Situs Ratu Boko di Sleman timur (Radius ketat < 1.0 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi kawasan Candi Prambanan atau Situs Ratu Boko di Sleman timur (Radius ketat < 1.0 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Mengagumi relief Ramayana abad ke-9 dan panorama cakrawala senja dari gapura andesit Ratu Boko.'
   },
   // 7. MERAPI & KALIURANG
@@ -131,7 +131,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_nature.svg',
     targetPlaceId: 'merapi-kaliurang',
     maxRadiusMeters: 1000,
-    caraMendapatkan: 'Kunjungi kawasan Kaliurang, Museum Ullen Sentalu, atau lereng Gunung Merapi di Sleman utara (Radius ketat < 1.0 KM), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi kawasan Kaliurang, Museum Ullen Sentalu, atau lereng Gunung Merapi di Sleman utara (Radius ketat < 1.0 KM) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Menghormati puncak Merapi sebagai poros utara Sumbu Filosofis yang mengalirkan kesuburan tanah Yogyakarta.'
   },
   // 8. KERATON & TAMANSARI
@@ -144,7 +144,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_all.svg',
     targetPlaceId: 'keraton-yogyakarta',
     maxRadiusMeters: 800,
-    caraMendapatkan: 'Kunjungi Kompleks Keraton Ngayogyakarta Hadiningrat atau Istana Air Tamansari (Radius presisi < 800 M), lalu tekan tombol "Klaim Badge GPS".',
+    caraMendapatkan: 'Kunjungi Kompleks Keraton Ngayogyakarta Hadiningrat atau Istana Air Tamansari (Radius presisi < 800 M) saat Anda berkunjung langsung ke kawasan ini.',
     lore: 'Gelar kehormatan atas apresiasi terhadap falsafah luhur Hamemayu Hayuning Bawana dan paugeran luhur keraton.'
   },
   // 9. QUEST SUMBU FILOSOFIS MASTER
@@ -157,7 +157,7 @@ export const CULTURAL_BADGES = [
     iconSrc: '/images/icon_all.svg',
     targetPlaceId: 'keraton-yogyakarta',
     maxRadiusMeters: 800,
-    caraMendapatkan: 'Selesaikan Misi Sumbu Filosofis: Lakukan klaim GPS sah di Keraton Yogyakarta dan kawasan Malioboro / Tugu Pal Putih.',
+    caraMendapatkan: 'Selesaikan Misi Sumbu Filosofis: Kunjungi langsung Keraton Yogyakarta dan kawasan Malioboro / Tugu Pal Putih.',
     lore: 'Penghargaan tertinggi penjelajah budaya yang telah menapaki seluruh poros kosmologis warisan dunia UNESCO.'
   }
 ];
@@ -172,7 +172,7 @@ export const CULTURAL_QUESTS = [
     badgeRewardId: 'badge-sumbu-filosofis-master',
     requiredPlaceIds: ['keraton-yogyakarta', 'malioboro-tugu'],
     xp: 500,
-    caraMendapatkan: 'Klaim GPS di Keraton & Tamansari, kemudian klaim GPS di Malioboro / Tugu.'
+    caraMendapatkan: 'Kunjungi Keraton & Tamansari, kemudian kunjungi Malioboro / Tugu.'
   },
   {
     id: 'quest-jejak-mataram-kuno',
@@ -183,7 +183,7 @@ export const CULTURAL_QUESTS = [
     badgeRewardId: 'badge-kotagede-silver',
     requiredPlaceIds: ['kotagede', 'kasongan-imogiri'],
     xp: 350,
-    caraMendapatkan: 'Klaim GPS di Kotagede, kemudian klaim GPS di Kasongan atau Makam Imogiri.'
+    caraMendapatkan: 'Kunjungi Kotagede, kemudian kunjungi Kasongan atau Makam Imogiri.'
   },
   {
     id: 'quest-candi-merapi-agung',
@@ -194,7 +194,7 @@ export const CULTURAL_QUESTS = [
     badgeRewardId: 'badge-prambanan-boko',
     requiredPlaceIds: ['prambanan-ratuboko', 'merapi-kaliurang'],
     xp: 450,
-    caraMendapatkan: 'Klaim GPS di Candi Prambanan / Ratu Boko, kemudian klaim GPS di Merapi / Kaliurang.'
+    caraMendapatkan: 'Kunjungi Candi Prambanan / Ratu Boko, kemudian kunjungi Merapi / Kaliurang.'
   },
   {
     id: 'quest-kuliner-kembul-bujana',
@@ -205,6 +205,6 @@ export const CULTURAL_QUESTS = [
     badgeRewardId: 'badge-wijilan-gudeg',
     requiredPlaceIds: ['wijilan-prawirotaman', 'malioboro-tugu'],
     xp: 250,
-    caraMendapatkan: 'Klaim GPS di Wijilan / Prawirotaman, kemudian klaim GPS di kawasan Malioboro.'
+    caraMendapatkan: 'Kunjungi Wijilan / Prawirotaman, kemudian kunjungi kawasan Malioboro.'
   }
 ];
