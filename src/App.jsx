@@ -1,0 +1,729 @@
+/**
+ * ============================================================================
+ * CATATAN HANDOFF PENGEMBANGAN TIM (DAFTAR FITUR YANG BISA DILANJUTKAN):
+ * ============================================================================
+ * 1. [Auth & Profil - src/context/AuthContext.jsx & src/components/AuthModal.jsx]
+ *    - Halaman Login Split-Screen, Akun Demo, dan Mode Guest (tanpa paksa login) sudah selesai.
+ *    - BELUM: Modal/Halaman "Edit Profil" (ubah nama, avatar, dan password user yang sedang login).
+ *    - BELUM: Alur "Lupa Kata Sandi / Reset Password" pada halaman Login.
+ *
+ * 2. [Komunitas & Ulasan - src/context/CommunityContext.jsx & src/components/PlaceStorybook.jsx]
+ *    - Tambah ulasan, rating bintang, like, dan upload momen (termasuk untuk Guest) sudah selesai.
+ *    - BELUM: Fitur Hapus & Edit ulasan/postingan foto milik sendiri.
+ *    - BELUM: Filter & Sortir ulasan destinasi (berdasarkan Bintang 1-5, Terbaru, Terpopuler).
+ *
+ * 3. [Paspor Budaya & Wishlist - src/context/CultureBookContext.jsx]
+ *    - BELUM: Sinkronisasi data Wishlist & Stempel Paspor spesifik per `currentUser.id`
+ *      (saat ini masih berbagi 1 key localStorage yang sama antara Guest dan akun berbeda).
+ *
+ * 4. [Admin CMS & Inquiry - src/components/AdminModal.jsx & src/components/PlaceStorybook.jsx]
+ *    - BELUM: Persistensi data destinasi baru dari AdminModal ke localStorage/Database
+ *      (saat ini state `places` di App.jsx kembali ke default saat halaman di-refresh).
+ * ============================================================================
+ */
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AuthProvider } from './context/AuthContext';
+import { CommunityProvider } from './context/CommunityContext';
+import { CultureBookProvider } from './context/CultureBookContext';
+import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
+import { isSupabaseConfigured, fetchPlacesFromSupabase } from './lib/supabase';
+
+// Auth & Community Modals
+import AuthModal from './components/AuthModal';
+import ShareExperienceModal from './components/ShareExperienceModal';
+
+// Core Blueprint Components
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import AboutSection from './components/AboutSection';
+import MostLovedDestinations from './components/MostLovedDestinations';
+import HandcraftedPackages from './components/HandcraftedPackages';
+import OfficialSources from './components/OfficialSources';
+import TravelBlogs from './components/TravelBlogs';
+import TravelFAQ from './components/TravelFAQ';
+import InstagramStories from './components/InstagramStories';
+import CTAHeroBanner from './components/CTAHeroBanner';
+import Footer from './components/Footer';
+import QuickViewModal from './components/QuickViewModal';
+
+// Cultural Platform Specialized Modules
+import PlaceStorybook from './components/PlaceStorybook';
+import NearMeModal from './components/NearMeModal';
+import MyCultureBookModal from './components/MyCultureBookModal';
+import AdminModal from './components/AdminModal';
+
+// Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
+export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
+  if (
+    typeof lat1 !== 'number' ||
+    typeof lng1 !== 'number' ||
+    typeof lat2 !== 'number' ||
+    typeof lng2 !== 'number'
+  ) {
+    return null;
+  }
+  const R = 6371000; // Radius bumi dalam meter
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+}
+
+export function formatRealDistance(meters) {
+  if (meters === null || meters === undefined) return '';
+  if (meters < 1000) return `${meters} m`;
+  if (meters < 10000) return `${(meters / 1000).toFixed(2)} km`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
+// Mengecek apakah koordinat GPS berada di dalam batas wilayah Provinsi D.I. Yogyakarta
+export function isInsideJogjaBounds(lat, lng) {
+  return lat >= -8.22 && lat <= -7.52 && lng >= 110.00 && lng <= 110.86;
+}
+
+// Mencari Zona Track Point Wisata Jogja terdekat berdasarkan jarak Haversine asli dari koordinat GPS perangkat
+function findNearestJogjaZone(lat, lng) {
+  let nearest = JOGJA_GPS_ZONES[0];
+  let minMeters = Infinity;
+  JOGJA_GPS_ZONES.forEach((zone) => {
+    const anchorCoords = zone.wisataAnchor?.coordinates || zone.coordinates;
+    const dist = calculateRealDistanceMeters(lat, lng, anchorCoords.lat, anchorCoords.lng);
+    if (dist !== null && dist < minMeters) {
+      minMeters = dist;
+      nearest = zone;
+    }
+  });
+  return { zone: nearest, distanceMeters: minMeters };
+}
+
+function NusantaraApp() {
+  const [places, setPlaces] = useState(() => {
+    try {
+      const saved = localStorage.getItem('jogjakrama_places_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error('Error loading cached places:', e);
+    }
+    return CULTURAL_PLACES;
+  });
+
+  // Sync places to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('jogjakrama_places_v1', JSON.stringify(places));
+    } catch (e) {
+      console.error('Error saving places to cache:', e);
+    }
+  }, [places]);
+
+  // Sync places dari Supabase Cloud (jika terhubung)
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    fetchPlacesFromSupabase().then((remotePlaces) => {
+      if (remotePlaces && remotePlaces.length > 0) {
+        const remoteIds = new Set(remotePlaces.map((p) => p.id));
+        const merged = [
+          ...remotePlaces.map((rp) => rp.details_json || rp),
+          ...CULTURAL_PLACES.filter((cp) => !remoteIds.has(cp.id))
+        ];
+        setPlaces(merged);
+      }
+    });
+  }, []);
+
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [quickViewLandmark, setQuickViewLandmark] = useState(null);
+
+  // Modals & Dedicated GPS Page States
+  const [isNearMeOpen, setIsNearMeOpen] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isCultureBookOpen, setIsCultureBookOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
+
+  // REAL Hardware GPS Tracking States (Khusus Menyala di Wilayah D.I. Yogyakarta)
+  const [autoDetectedZoneId, setAutoDetectedZoneId] = useState(JOGJA_GPS_ZONES[0].id);
+  const [userLiveCoords, setUserLiveCoords] = useState(null); // Hanya terisi jika berada di dalam wilayah D.I. Yogyakarta
+  const [isOutsideJogja, setIsOutsideJogja] = useState(false);
+  const [outsideJogjaCoords, setOutsideJogjaCoords] = useState(null);
+  const [userLiveAddress, setUserLiveAddress] = useState('');
+  const [gpsErrorMsg, setGpsErrorMsg] = useState('');
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
+  const [showGpsNotification, setShowGpsNotification] = useState(false);
+  const hasAutoOpenedGpsRef = useRef(false);
+  const lastGeocodeCoordsRef = useRef({ lat: 0, lng: 0 });
+
+  const activeGpsZone =
+    JOGJA_GPS_ZONES.find((z) => z.id === autoDetectedZoneId) || JOGJA_GPS_ZONES[0];
+
+  // Cari lokasi kuliner terdekat dalam radius 5-10 KM dari posisi di Jogja
+  const recommendedFood = React.useMemo(() => {
+    const foodList = activeGpsZone.kulinerList;
+    if (!userLiveCoords || foodList.length === 0) {
+      return foodList[0];
+    }
+    let closest = foodList[0];
+    let minD = Infinity;
+    foodList.forEach((item) => {
+      if (item.coordinates) {
+        const d = calculateRealDistanceMeters(
+          userLiveCoords.lat,
+          userLiveCoords.lng,
+          item.coordinates.lat,
+          item.coordinates.lng
+        );
+        if (d !== null && d <= 10000 && d < minD) {
+          minD = d;
+          closest = item;
+        }
+      }
+    });
+    return closest;
+  }, [activeGpsZone, userLiveCoords]);
+
+  // Reverse Geocoding Asli untuk menampilkan nama jalan/kelurahan nyata posisi perangkat
+  const fetchRealAddressFromCoords = async (lat, lng) => {
+    const movedMeters = calculateRealDistanceMeters(
+      lastGeocodeCoordsRef.current.lat,
+      lastGeocodeCoordsRef.current.lng,
+      lat,
+      lng
+    );
+    if (movedMeters !== null && movedMeters < 35 && userLiveAddress) return;
+    lastGeocodeCoordsRef.current = { lat, lng };
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=id`
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.display_name) {
+        const addr = data.address || {};
+        const shortParts = [
+          addr.road || addr.pedestrian || addr.neighbourhood || addr.hamlet,
+          addr.village || addr.suburb || addr.town,
+          addr.city_district || addr.municipality || addr.city || addr.county,
+          addr.state
+        ].filter(Boolean);
+        setUserLiveAddress(
+          shortParts.length > 0 ? shortParts.join(', ') : data.display_name
+        );
+      }
+    } catch {
+      // Abaikan jika jaringan offline
+    }
+  };
+
+  // Memproses hasil pembacaan sensor GPS asli: HANYA MENYALA JIKA DI DALAM WILAYAH D.I. YOGYAKARTA
+  const handleRealPositionUpdate = (pos, shouldOpenModal = false) => {
+    setIsGpsLoading(false);
+
+    const { latitude, longitude, accuracy, altitude, speed, heading } = pos.coords;
+    const inJogja = isInsideJogjaBounds(latitude, longitude);
+    const timeStr = new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID');
+
+    fetchRealAddressFromCoords(latitude, longitude);
+
+    // JIKA PENGGUNA BERADA DI LUAR WILAYAH D.I. YOGYAKARTA -> GPS TIDAK DAPAT DIGUNAKAN / MATI
+    if (!inJogja) {
+      setIsOutsideJogja(true);
+      setOutsideJogjaCoords({
+        lat: latitude,
+        lng: longitude,
+        accuracy: Math.round(accuracy || 0),
+        timestamp: timeStr
+      });
+      setUserLiveCoords(null);
+      setShowGpsNotification(false);
+      setGpsErrorMsg(
+        'Lokasi Anda saat ini terdeteksi berada di luar wilayah D.I. Yogyakarta. Sesuai penguncian wilayah, fitur pelacakan GPS tidak dapat digunakan di luar Jogja dan hanya menyala otomatis saat Anda berada di wilayah D.I. Yogyakarta (Radius Rekomendasi 5–10 KM).'
+      );
+      return;
+    }
+
+    // JIKA PENGGUNA BERADA DI DALAM WILAYAH D.I. YOGYAKARTA -> GPS MENYALA AKTIF (RADIUS 5-10 KM)
+    setIsOutsideJogja(false);
+    setOutsideJogjaCoords(null);
+    setGpsErrorMsg('');
+
+    const realFix = {
+      lat: latitude,
+      lng: longitude,
+      accuracy: Math.round(accuracy || 0),
+      altitude: altitude ? Math.round(altitude) : null,
+      speed: speed ? (speed * 3.6).toFixed(1) : null,
+      heading: heading ? Math.round(heading) : null,
+      inJogja: true,
+      timestamp: timeStr
+    };
+
+    setUserLiveCoords(realFix);
+
+    const { zone: nearestZone } = findNearestJogjaZone(latitude, longitude);
+    setAutoDetectedZoneId(nearestZone.id);
+    setShowGpsNotification(true);
+
+    if (shouldOpenModal && !hasAutoOpenedGpsRef.current) {
+      hasAutoOpenedGpsRef.current = true;
+      setIsNearMeOpen(true);
+    }
+  };
+
+  // Fungsi Lacak GPS Hardware Asli (Hanya Aktif Jika di Wilayah D.I. Yogyakarta)
+  const triggerDeviceGpsDetection = (autoOpenPage = false) => {
+    if (!('geolocation' in navigator)) {
+      setGpsErrorMsg('Browser perangkat ini tidak mendukung sensor Geolocation GPS.');
+      return;
+    }
+
+    setIsGpsLoading(true);
+    setGpsErrorMsg('');
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        handleRealPositionUpdate(pos, autoOpenPage);
+      },
+      () => {
+        navigator.geolocation.getCurrentPosition(
+          (posFallback) => {
+            handleRealPositionUpdate(posFallback, autoOpenPage);
+          },
+          (errFinal) => {
+            setIsGpsLoading(false);
+            if (errFinal.code === 1) {
+              setGpsErrorMsg(
+                'Izin lokasi GPS ditolak di browser. Klik ikon gembok/lokasi di address bar browser lalu pilih "Allow / Izinkan" untuk memeriksa apakah Anda berada di wilayah D.I. Yogyakarta.'
+              );
+            } else if (errFinal.code === 2) {
+              setGpsErrorMsg(
+                'Sensor lokasi perangkat sedang tidak aktif. Pastikan Location Service di perangkat Anda menyala.'
+              );
+            } else {
+              setGpsErrorMsg(
+                'Waktu tunggu pembacaan sensor GPS habis. Klik "Cek Ulang Lokasi GPS" untuk memeriksa ulang.'
+              );
+            }
+          },
+          { enableHighAccuracy: false, timeout: 12000, maximumAge: 0 }
+        );
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  };
+
+  // Cek otomatis saat aplikasi dibuka: hanya menyalakan GPS jika pengguna di wilayah D.I. Yogyakarta
+  useEffect(() => {
+    triggerDeviceGpsDetection(false);
+
+    let watchId = null;
+    if ('geolocation' in navigator) {
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          handleRealPositionUpdate(pos, false);
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+    }
+
+    return () => {
+      if (watchId !== null && 'geolocation' in navigator) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, []);
+
+  // Navigation handlers
+  const handleGoHome = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleScrollToDestinations = () => {
+    setSelectedPlace(null);
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
+    setTimeout(() => {
+      const el = document.getElementById('destinations-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const handleScrollToAbout = () => {
+    setSelectedPlace(null);
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
+    setTimeout(() => {
+      const el = document.getElementById('about-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const handleSelectPlaceById = (id) => {
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsMapOpen(false);
+    const found = places.find((p) => p.id === id) || places[0];
+    if (found) {
+      setSelectedPlace(found);
+    }
+  };
+
+  const handleOpenMapWithPlace = (place) => {
+    setSelectedPlace(place);
+    setIsMapOpen(true);
+  };
+
+  const handleAddNewPlace = (newPlace) => {
+    setPlaces((prev) => [newPlace, ...prev.filter((p) => p.id !== newPlace.id)]);
+  };
+
+  const handleDeletePlace = (placeId) => {
+    setPlaces((prev) => prev.filter((p) => p.id !== placeId));
+    if (selectedPlace?.id === placeId) {
+      setSelectedPlace(null);
+    }
+  };
+
+  const realDistToRecommendedFood =
+    userLiveCoords && recommendedFood?.coordinates
+      ? calculateRealDistanceMeters(
+          userLiveCoords.lat,
+          userLiveCoords.lng,
+          recommendedFood.coordinates.lat,
+          recommendedFood.coordinates.lng
+        )
+      : null;
+
+  return (
+    <div className="app-container" style={{ position: 'relative', width: '100%', minHeight: '100vh', background: '#031926' }}>
+      {/* =========================================================================
+          NOTIFIKASI REAL-TIME GPS PERANGKAT (HANYA MUNCUL JIKA GPS ASLI TERDETEKSI)
+          ========================================================================= */}
+      <AnimatePresence>
+        {showGpsNotification && userLiveCoords && !isNearMeOpen && !selectedPlace && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.96 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              bottom: '1.5rem',
+              right: '1.5rem',
+              zIndex: 9990,
+              width: 'min(410px, calc(100vw - 2rem))',
+              backgroundColor: '#ffffff',
+              color: '#09090b',
+              borderRadius: '24px',
+              padding: '1.35rem 1.5rem',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.18)',
+              border: '2px solid #0066ff',
+              fontFamily: "'Plus Jakarta Sans', sans-serif"
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                ● GPS LIVE AKTIF (±{userLiveCoords.accuracy}m) • {recommendedFood?.trackPointCode || 'TP-01'}
+              </span>
+              <button
+                onClick={() => setShowGpsNotification(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#71717a',
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontSize: '0.78rem',
+                  fontWeight: 600
+                }}
+              >
+                Tutup
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: '#0066ff', fontWeight: 700, marginBottom: '0.35rem' }}>
+              Posisi Anda: {userLiveCoords.lat.toFixed(6)}, {userLiveCoords.lng.toFixed(6)}
+              {realDistToRecommendedFood !== null && ` (${formatRealDistance(realDistToRecommendedFood)} ke lokasi)`}
+            </div>
+
+            {userLiveAddress && (
+              <div style={{ fontSize: '0.76rem', color: '#52525b', marginBottom: '0.45rem', lineHeight: 1.35 }}>
+                📍 {userLiveAddress}
+              </div>
+            )}
+
+            <h4 style={{ fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif", fontSize: '1.18rem', fontWeight: 700, color: '#09090b', margin: '0 0 0.2rem 0' }}>
+              {recommendedFood?.name}
+            </h4>
+
+            <div style={{ fontSize: '0.82rem', color: '#71717a', marginBottom: '0.4rem', lineHeight: 1.4 }}>
+              Zona Terdekat: {activeGpsZone.wisataAnchor?.trackCode || 'WISATA'} ({activeGpsZone.wilayahName.split(',')[0]}) • {recommendedFood?.spotName}
+            </div>
+
+            <div style={{ height: '1px', backgroundColor: '#e4e4e7', margin: '0.75rem 0' }} />
+
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${recommendedFood?.coordinates?.lat},${recommendedFood?.coordinates?.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-block', marginBottom: '0.9rem', color: '#2563eb', fontSize: '0.8rem', fontWeight: 700, textDecoration: 'none' }}
+            >
+              Periksa informasi terbaru di Google Maps
+            </a>
+
+            <button
+              onClick={() => setIsNearMeOpen(true)}
+              style={{
+                width: '100%',
+                padding: '0.8rem 1rem',
+                borderRadius: '9999px',
+                backgroundColor: '#0066ff',
+                color: '#ffffff',
+                border: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                cursor: 'pointer'
+              }}
+            >
+              Buka Peta & Lacak GPS Real-Time
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 1. SINGLE PERSISTENT TOP GLASS PILL NAVBAR */}
+      <Navbar
+        onOpenBooking={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          handleSelectPlaceById('keraton-yogyakarta');
+        }}
+        onSelectPlaceById={(placeId) => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          handleSelectPlaceById(placeId);
+        }}
+        onGoHome={handleGoHome}
+        onOpenDestinations={handleScrollToDestinations}
+        onOpenAboutUs={handleScrollToAbout}
+        onOpenTours={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          handleSelectPlaceById('keraton-yogyakarta');
+        }}
+        onOpenBlogs={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          setSelectedPlace(null);
+          const el = document.getElementById('cultural-blogs');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onOpenNearMe={() => {
+          setSelectedPlace(null);
+          setIsCultureBookOpen(false);
+          setIsNearMeOpen(true);
+        }}
+        onOpenMap={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          setIsMapOpen(true);
+        }}
+        onOpenCultureBook={() => {
+          setIsNearMeOpen(false);
+          setSelectedPlace(null);
+          setIsCultureBookOpen((prev) => !prev);
+        }}
+        onOpenAdmin={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          setIsAdminOpen(true);
+        }}
+        onOpenShareModal={() => {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          setIsGlobalShareOpen(true);
+        }}
+      />
+
+      {/* 2. FULL-BLEED OCEAN VIDEO HERO WITH 4 YOGYAKARTA FLOATING PILLS & GPS TRIGGER */}
+      <Hero
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenNearMe={() => setIsNearMeOpen(true)}
+        onSelectLandmark={(landmark) => {
+          const match = places.find((p) => p.id === landmark.id);
+          if (match) {
+            setSelectedPlace(match);
+          } else {
+            setQuickViewLandmark(landmark);
+          }
+        }}
+      />
+
+      {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
+      <AboutSection
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenAboutUs={() => handleSelectPlaceById('keraton-yogyakarta')}
+      />
+
+      {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}
+      <MostLovedDestinations
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenJapanDetail={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenSwissDetail={() => handleSelectPlaceById('malioboro-tugu')}
+        onOpenParisDetail={() => handleSelectPlaceById('kotagede')}
+        onOpenNYDetail={() => handleSelectPlaceById('merapi-kaliurang')}
+      />
+
+      {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
+      <HandcraftedPackages
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg.id || 'prambanan-ratuboko')}
+      />
+
+      {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
+      <OfficialSources />
+
+      {/* 7. TRAVEL STORIES & YOGYAKARTA FOLKLORE */}
+      <div id="cultural-blogs">
+        <TravelBlogs />
+      </div>
+
+      {/* 8. TRAVEL FAQ */}
+      <TravelFAQ />
+
+      {/* 9. INSTAGRAM STORIES PHOTO MARQUEE */}
+      <InstagramStories />
+
+      {/* 10. CTA HERO BANNER & CONTINUOUS TICKER */}
+      <CTAHeroBanner onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')} />
+
+      {/* 11. MODERN DARK FOOTER */}
+      <Footer />
+
+      {/* =========================================================================
+          MODALS & DEDICATED FULL-SCREEN PAGES
+          ========================================================================= */}
+
+      {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
+      <AnimatePresence>
+        {selectedPlace && (
+          <PlaceStorybook
+            place={selectedPlace}
+            places={places}
+            onSelectPlace={(p) => setSelectedPlace(p)}
+            onBack={() => setSelectedPlace(null)}
+            onOpenMapWithPlace={handleOpenMapWithPlace}
+            onOpenCultureBook={() => setIsCultureBookOpen(true)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Quick View Modal for Floating Landmark Cards */}
+      <QuickViewModal
+        landmark={quickViewLandmark}
+        onClose={() => setQuickViewLandmark(null)}
+        onBookLandmark={() => {
+          setQuickViewLandmark(null);
+          handleScrollToExplore();
+        }}
+        onViewFullItinerary={() => {
+          if (quickViewLandmark) {
+            handleSelectPlaceById(quickViewLandmark.id);
+          }
+          setQuickViewLandmark(null);
+        }}
+      />
+
+      {/* HALAMAN KHUSUS GPS REAL-TIME AKURAT (TERKUNCI KHUSUS WILAYAH JOGJA & RADIUS 5-10 KM) */}
+      <NearMeModal
+        isOpen={isNearMeOpen}
+        onClose={() => setIsNearMeOpen(false)}
+        places={places}
+        onSelectPlace={(place) => setSelectedPlace(place)}
+        autoDetectedZoneId={autoDetectedZoneId}
+        userLiveCoords={userLiveCoords}
+        isOutsideJogja={isOutsideJogja}
+        outsideJogjaCoords={outsideJogjaCoords}
+        userLiveAddress={userLiveAddress}
+        gpsErrorMsg={gpsErrorMsg}
+        onRefreshDeviceGps={() => triggerDeviceGpsDetection(false)}
+        isGpsLoading={isGpsLoading}
+      />
+
+      {/* My Culture Book (Paspor Budaya) Drawer */}
+      <MyCultureBookModal
+        isOpen={isCultureBookOpen}
+        onClose={() => setIsCultureBookOpen(false)}
+        places={places}
+        userLiveCoords={userLiveCoords}
+        userLiveAddress={userLiveAddress}
+        onRefreshGps={() => triggerDeviceGpsDetection(false)}
+        isGpsLoading={isGpsLoading}
+        onSelectPlace={(place) => {
+          setIsCultureBookOpen(false);
+          setSelectedPlace(place);
+        }}
+      />
+
+      {/* Admin Panel & CMS Modal */}
+      <AdminModal
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        places={places}
+        onAddNewPlace={handleAddNewPlace}
+        onDeletePlace={handleDeletePlace}
+      />
+
+      {/* Global Authentication Modal (Login / Register with Benefit Triggers) */}
+      <AuthModal />
+
+      {/* Global Share Experience Modal */}
+      <ShareExperienceModal
+        isOpen={isGlobalShareOpen}
+        onClose={() => setIsGlobalShareOpen(false)}
+        places={places}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <CultureBookProvider>
+        <CommunityProvider>
+          <NusantaraApp />
+        </CommunityProvider>
+      </CultureBookProvider>
+    </AuthProvider>
+  );
+}
