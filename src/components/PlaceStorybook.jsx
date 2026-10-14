@@ -17,7 +17,8 @@ import {
   ExternalLink,
   Calendar,
   Search,
-  Award
+  Award,
+  Lock
 } from 'lucide-react';
 import { CULTURAL_PLACES } from '../data/culturalData';
 import { CULTURAL_BADGES } from '../data/badgeQuestData';
@@ -530,6 +531,17 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
     e.preventDefault();
     setReviewError('');
 
+    // Guest hanya boleh melihat ulasan, tidak boleh submit komentar tanpa akun
+    if (!currentUser || currentUser.isGuest) {
+      setReviewError('Mode Tamu hanya dapat membaca ulasan. Silakan masuk atau buat akun terlebih dahulu untuk menulis ulasan.');
+      openLogin({
+        benefitType: 'review',
+        title: 'Buat Akun untuk Mengulas',
+        description: 'Sebagai Tamu, Anda bebas membaca seluruh ulasan penjelajah. Untuk menulis ulasan dan memberikan penilaian bintang, silakan buat akun atau masuk terlebih dahulu.'
+      });
+      return;
+    }
+
     if (!reviewComment.trim()) {
       setReviewError('Silakan tuliskan komentar ulasan Anda.');
       return;
@@ -537,20 +549,12 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
 
     const targetPlaceId = activeMapPlace?.id || place?.id || 'keraton-yogyakarta';
 
-    // Gunakan akun pengguna asli jika sedang login, atau fallback ke mode Tamu
-    const activeAuthor = currentUser || {
-      id: 'guest-user',
-      name: 'Tamu Penjelajah (Guest)',
-      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
-      isGuest: true
-    };
-
     addReview({
       placeId: targetPlaceId,
       rating: userRating,
       comment: reviewComment.trim(),
-      headline: `Pengalaman oleh ${activeAuthor.name}`,
-      user: activeAuthor
+      headline: `Pengalaman oleh ${currentUser.name}`,
+      user: currentUser
     });
 
     setActiveReviewIdx(0);
@@ -1788,7 +1792,17 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
 
                 <button
                   type="button"
-                  onClick={() => setIsReviewFormOpen((prev) => !prev)}
+                  onClick={() => {
+                    if (!currentUser || currentUser.isGuest) {
+                      openLogin({
+                        benefitType: 'review',
+                        title: 'Buat Akun untuk Mengulas',
+                        description: 'Sebagai Tamu, Anda bebas membaca seluruh ulasan penjelajah. Untuk menulis ulasan dan memberikan penilaian bintang, silakan buat akun atau masuk terlebih dahulu.'
+                      });
+                      return;
+                    }
+                    setIsReviewFormOpen((prev) => !prev);
+                  }}
                   style={{
                     padding: '9px 16px',
                     backgroundColor: '#9E1C64',
@@ -2077,280 +2091,308 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                 </div>
               </div>
 
-              {/* FORMULIR TULIS ULASAN ASLI */}
-              <div
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '20px',
-                  border: '1.5px solid #EAE4DC',
-                  padding: 'clamp(1.25rem, 2.5vw, 2rem)',
-                  boxShadow: '0 6px 20px rgba(44, 34, 30, 0.04)',
-                  marginBottom: '2.5rem'
-                }}
-              >
-                <form onSubmit={handleReviewSubmit}>
-                  {/* Penulis Ulasan Identity Bar */}
-                  <div
+              {/* FORMULIR TULIS ULASAN / KARTU AJAKAN MASUK AKUN BAGI TAMU */}
+              {!currentUser || currentUser.isGuest ? (
+                <div
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '20px',
+                    border: '1.5px solid #EAE4DC',
+                    padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+                    boxShadow: '0 6px 20px rgba(44, 34, 30, 0.04)',
+                    marginBottom: '2.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1.25rem'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', maxWidth: '640px' }}>
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '50%',
+                        backgroundColor: '#FAF6EE',
+                        border: '1px solid #E5D7BE',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}
+                    >
+                      <Lock size={20} color="#8A5D26" />
+                    </div>
+                    <div>
+                      <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1rem', fontWeight: 800, color: '#2C221E' }}>
+                        Ingin Menulis Ulasan & Berbagi Cerita Budaya?
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.84rem', color: '#6E5D52', lineHeight: 1.5 }}>
+                        Sebagai Tamu, Anda bebas membaca seluruh ulasan penjelajah di bawah ini. Untuk menulis ulasan dan memberikan penilaian bintang, silakan buat akun atau masuk terlebih dahulu.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openLogin({
+                        benefitType: 'review',
+                        title: 'Buat Akun untuk Mengulas',
+                        description: 'Masuk atau daftarkan akun Anda untuk memberikan ulasan dan terhubung dengan komunitas penjelajah JogjaKrama.'
+                      })
+                    }
                     style={{
-                      display: 'flex',
+                      padding: '0.75rem 1.6rem',
+                      borderRadius: '999px',
+                      backgroundColor: '#2C221E',
+                      color: '#FAF8F5',
+                      border: '1.5px solid #C99B52',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '0.75rem',
-                      marginBottom: '1.25rem',
-                      paddingBottom: '1rem',
-                      borderBottom: '1px solid #F4EFE6'
+                      gap: '0.5rem',
+                      boxShadow: '0 4px 14px rgba(44, 34, 30, 0.16)',
+                      whiteSpace: 'nowrap'
                     }}
                   >
+                    <Sparkles size={14} color="#C99B52" />
+                    <span>Masuk / Buat Akun untuk Mengulas</span>
+                  </button>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '20px',
+                    border: '1.5px solid #EAE4DC',
+                    padding: 'clamp(1.25rem, 2.5vw, 2rem)',
+                    boxShadow: '0 6px 20px rgba(44, 34, 30, 0.04)',
+                    marginBottom: '2.5rem'
+                  }}
+                >
+                  <form onSubmit={handleReviewSubmit}>
+                    {/* Penulis Ulasan Identity Bar */}
                     <div
-                      onClick={() => {
-                        if (currentUser && !currentUser.isGuest) {
-                          setVisitedUser({
-                            userId: currentUser.id,
-                            userName: currentUser.name,
-                            userAvatar: currentUser.avatar,
-                            email: currentUser.email
-                          });
-                        }
-                      }}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
                         gap: '0.75rem',
-                        cursor: currentUser && !currentUser.isGuest ? 'pointer' : 'default',
-                        padding: '4px 8px',
-                        borderRadius: '10px'
+                        marginBottom: '1.25rem',
+                        paddingBottom: '1rem',
+                        borderBottom: '1px solid #F4EFE6'
                       }}
-                      title={currentUser && !currentUser.isGuest ? "Klik untuk melihat kartu profil Anda" : undefined}
                     >
-                      <img
-                        src={activeAuthorAvatar}
-                        alt={activeAuthorName}
-                        style={{
-                          width: '42px',
-                          height: '42px',
-                          borderRadius: '50%',
-                          objectFit: 'cover',
-                          border: '2px solid #E5D7BE'
+                      <div
+                        onClick={() => {
+                          if (currentUser && !currentUser.isGuest) {
+                            setVisitedUser({
+                              userId: currentUser.id,
+                              userName: currentUser.name,
+                              userAvatar: currentUser.avatar,
+                              email: currentUser.email
+                            });
+                          }
                         }}
-                      />
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                          <strong style={{ fontSize: '0.9rem', color: '#2C221E' }}>
-                            {activeAuthorName}
-                          </strong>
-                          {currentUser && !currentUser.isGuest ? (
-                            <>
-                              <span
-                                style={{
-                                  fontSize: '0.68rem',
-                                  fontWeight: 700,
-                                  color: '#15803D',
-                                  backgroundColor: '#DCFCE7',
-                                  padding: '0.15rem 0.5rem',
-                                  borderRadius: '999px'
-                                }}
-                              >
-                                ✓ Akun Terverifikasi
-                              </span>
-                              <span
-                                style={{
-                                  fontSize: '0.68rem',
-                                  color: '#9E1C64',
-                                  fontWeight: 700,
-                                  backgroundColor: '#FDF2F8',
-                                  border: '1px solid #FBCFE8',
-                                  padding: '0.15rem 0.45rem',
-                                  borderRadius: '999px'
-                                }}
-                              >
-                                Lihat Profil ↗
-                              </span>
-                            </>
-                          ) : (
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          cursor: 'pointer',
+                          padding: '4px 8px',
+                          borderRadius: '10px'
+                        }}
+                        title="Klik untuk melihat kartu profil Anda"
+                      >
+                        <img
+                          src={activeAuthorAvatar}
+                          alt={activeAuthorName}
+                          style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            border: '2px solid #E5D7BE'
+                          }}
+                        />
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                            <strong style={{ fontSize: '0.9rem', color: '#2C221E' }}>
+                              {activeAuthorName}
+                            </strong>
                             <span
                               style={{
                                 fontSize: '0.68rem',
                                 fontWeight: 700,
-                                color: '#8A5D26',
-                                backgroundColor: '#FAF6EE',
+                                color: '#15803D',
+                                backgroundColor: '#DCFCE7',
                                 padding: '0.15rem 0.5rem',
                                 borderRadius: '999px'
                               }}
                             >
-                              Mode Tamu
+                              ✓ Akun Terverifikasi
                             </span>
-                          )}
-                        </div>
-                        <div style={{ fontSize: '0.74rem', color: '#786B5E' }}>
-                          {currentUser && !currentUser.isGuest
-                            ? `${currentUser.email || 'Member JogjaKrama'} • Klik untuk melihat profil`
-                            : 'Ulasan akan tampil sebagai Tamu Penjelajah'}
+                            <span
+                              style={{
+                                fontSize: '0.68rem',
+                                color: '#9E1C64',
+                                fontWeight: 700,
+                                backgroundColor: '#FDF2F8',
+                                border: '1px solid #FBCFE8',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '999px'
+                              }}
+                            >
+                              Lihat Profil ↗
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.74rem', color: '#786B5E' }}>
+                            {currentUser.email || 'Member JogjaKrama'} • Klik untuk melihat profil
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {(!currentUser || currentUser.isGuest) && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openLogin({
-                            benefitType: 'review',
-                            title: 'Masuk Akun untuk Mengulas',
-                            description: 'Gunakan akun Anda agar foto profil dan nama asli tampil di ulasan.'
-                          })
-                        }
-                        style={{
-                          padding: '0.4rem 0.85rem',
-                          borderRadius: '999px',
-                          backgroundColor: '#FAF6EE',
-                          border: '1px solid #E5D7BE',
-                          color: '#8A5D26',
-                          fontSize: '0.74rem',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Masuk Akun Pribadi
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Rating Selector 1 - 5 Bintang */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.85rem',
-                      marginBottom: '1rem',
-                      flexWrap: 'wrap'
-                    }}
-                  >
-                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2C221E' }}>
-                      Beri Penilaian:
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      {[1, 2, 3, 4, 5].map((star) => {
-                        const isFilled = (hoverRating || userRating) >= star;
-                        return (
-                          <button
-                            key={star}
-                            type="button"
-                            onMouseEnter={() => setHoverRating(star)}
-                            onMouseLeave={() => setHoverRating(0)}
-                            onClick={() => setUserRating(star)}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              padding: '2px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center'
-                            }}
-                            title={`${star} Bintang`}
-                          >
-                            <Star
-                              size={22}
-                              fill={isFilled ? '#C99B52' : 'none'}
-                              color={isFilled ? '#C99B52' : '#D4D4D8'}
-                              style={{ transition: 'transform 0.1s ease' }}
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <span style={{ fontSize: '0.78rem', color: '#8A5D26', fontWeight: 600 }}>
-                      {userRating === 5 && 'Luar Biasa (5/5)'}
-                      {userRating === 4 && 'Sangat Bagus (4/5)'}
-                      {userRating === 3 && 'Cukup Baik (3/5)'}
-                      {userRating === 2 && 'Kurang Memuaskan (2/5)'}
-                      {userRating === 1 && 'Perlu Peningkatan (1/5)'}
-                    </span>
-                  </div>
-
-                  {/* Textarea Input Komentar */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <textarea
-                      rows={4}
-                      required
-                      placeholder={`Tuliskan ulasan nyata Anda tentang ${activeMapPlace?.name || place?.name || 'tempat ini'} (suasana, fasilitas, keramahan warga, tips terbaik)...`}
-                      value={reviewComment}
-                      onChange={(e) => setReviewComment(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '0.9rem 1.1rem',
-                        borderRadius: '12px',
-                        backgroundColor: '#FAF8F5',
-                        border: '1.5px solid #EAE4DC',
-                        fontSize: '0.88rem',
-                        color: '#2C221E',
-                        lineHeight: 1.6,
-                        outline: 'none',
-                        resize: 'vertical',
-                        boxSizing: 'border-box',
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        transition: 'border-color 0.2s ease'
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#2C221E';
-                        e.target.style.backgroundColor = '#FFFFFF';
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#EAE4DC';
-                        e.target.style.backgroundColor = '#FAF8F5';
-                      }}
-                    />
-                  </div>
-
-                  {reviewError && (
-                    <div style={{ fontSize: '0.78rem', color: '#DC2626', marginBottom: '0.75rem', fontWeight: 600 }}>
-                      ⚠ {reviewError}
-                    </div>
-                  )}
-
-                  {reviewSuccess && (
+                    {/* Rating Selector 1 - 5 Bintang */}
                     <div
                       style={{
-                        padding: '0.75rem 1rem',
-                        backgroundColor: '#DCFCE7',
-                        border: '1px solid #BBF7D0',
-                        borderRadius: '8px',
-                        color: '#15803D',
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        marginBottom: '0.85rem'
-                      }}
-                    >
-                      ✓ Ulasan Anda berhasil dikirim dan langsung tampil di bawah!
-                    </div>
-                  )}
-
-                  {/* Tombol Kirim Ulasan */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                    <button
-                      type="submit"
-                      style={{
-                        display: 'inline-flex',
+                        display: 'flex',
                         alignItems: 'center',
-                        gap: '0.45rem',
-                        padding: '0.65rem 1.45rem',
-                        borderRadius: '999px',
-                        backgroundColor: '#2C221E',
-                        color: '#FAF8F5',
-                        border: 'none',
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 14px rgba(44, 34, 30, 0.16)',
-                        transition: 'transform 0.15s ease'
+                        gap: '0.85rem',
+                        marginBottom: '1rem',
+                        flexWrap: 'wrap'
                       }}
                     >
-                      <Send size={14} />
-                      <span>Kirim Ulasan Sekarang</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2C221E' }}>
+                        Beri Penilaian:
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const isFilled = (hoverRating || userRating) >= star;
+                          return (
+                            <button
+                              key={star}
+                              type="button"
+                              onMouseEnter={() => setHoverRating(star)}
+                              onMouseLeave={() => setHoverRating(0)}
+                              onClick={() => setUserRating(star)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: '2px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center'
+                              }}
+                              title={`${star} Bintang`}
+                            >
+                              <Star
+                                size={22}
+                                fill={isFilled ? '#C99B52' : 'none'}
+                                color={isFilled ? '#C99B52' : '#D4D4D8'}
+                                style={{ transition: 'transform 0.1s ease' }}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <span style={{ fontSize: '0.78rem', color: '#8A5D26', fontWeight: 600 }}>
+                        {userRating === 5 && 'Luar Biasa (5/5)'}
+                        {userRating === 4 && 'Sangat Bagus (4/5)'}
+                        {userRating === 3 && 'Cukup Baik (3/5)'}
+                        {userRating === 2 && 'Kurang Memuaskan (2/5)'}
+                        {userRating === 1 && 'Perlu Peningkatan (1/5)'}
+                      </span>
+                    </div>
+
+                    {/* Textarea Input Komentar */}
+                    <div style={{ marginBottom: '1rem' }}>
+                      <textarea
+                        rows={4}
+                        required
+                        placeholder={`Tuliskan ulasan nyata Anda tentang ${activeMapPlace?.name || place?.name || 'tempat ini'} (suasana, fasilitas, keramahan warga, tips terbaik)...`}
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.9rem 1.1rem',
+                          borderRadius: '12px',
+                          backgroundColor: '#FAF8F5',
+                          border: '1.5px solid #EAE4DC',
+                          fontSize: '0.88rem',
+                          color: '#2C221E',
+                          lineHeight: 1.6,
+                          outline: 'none',
+                          resize: 'vertical',
+                          boxSizing: 'border-box',
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          transition: 'border-color 0.2s ease'
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = '#2C221E';
+                          e.target.style.backgroundColor = '#FFFFFF';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = '#EAE4DC';
+                          e.target.style.backgroundColor = '#FAF8F5';
+                        }}
+                      />
+                    </div>
+
+                    {reviewError && (
+                      <div style={{ fontSize: '0.78rem', color: '#DC2626', marginBottom: '0.75rem', fontWeight: 600 }}>
+                        ⚠ {reviewError}
+                      </div>
+                    )}
+
+                    {reviewSuccess && (
+                      <div
+                        style={{
+                          padding: '0.75rem 1rem',
+                          backgroundColor: '#DCFCE7',
+                          border: '1px solid #BBF7D0',
+                          borderRadius: '8px',
+                          color: '#15803D',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          marginBottom: '0.85rem'
+                        }}
+                      >
+                        ✓ Ulasan Anda berhasil dikirim dan langsung tampil di bawah!
+                      </div>
+                    )}
+
+                    {/* Tombol Kirim Ulasan */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                      <button
+                        type="submit"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          padding: '0.65rem 1.45rem',
+                          borderRadius: '999px',
+                          backgroundColor: '#2C221E',
+                          color: '#FAF8F5',
+                          border: 'none',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 14px rgba(44, 34, 30, 0.16)',
+                          transition: 'transform 0.15s ease'
+                        }}
+                      >
+                        <Send size={14} />
+                        <span>Kirim Ulasan Sekarang</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
 
               {/* FILTER & STATISTIK FEED */}
               <div

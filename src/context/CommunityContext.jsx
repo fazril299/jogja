@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
+  supabase,
   isSupabaseConfigured,
   fetchReviewsFromSupabase,
   insertReviewToSupabase,
@@ -14,6 +15,35 @@ const CommunityContext = createContext(null);
 
 const STORAGE_REVIEWS_KEY = 'jogjakrama_community_reviews_v2';
 const STORAGE_EXPERIENCES_KEY = 'jogjakrama_shared_experiences_v3';
+
+// Helper mapper agar format data review seragam dan mendukung fallback format headline
+function mapSupabaseReview(r) {
+  if (!r) return null;
+  let resolvedPlaceId = r.place_id;
+  let resolvedHeadline = r.headline || '';
+  if (!resolvedPlaceId && resolvedHeadline) {
+    const match = resolvedHeadline.match(/^\[pid:([^\]]+)\]\s*(.*)$/);
+    if (match) {
+      resolvedPlaceId = match[1];
+      resolvedHeadline = match[2];
+    }
+  }
+
+  return {
+    id: r.id,
+    placeId: resolvedPlaceId,
+    userId: r.user_id,
+    userName: r.user_name || 'Penjelajah Budaya',
+    userAvatar: r.user_avatar || '',
+    rating: Number(r.rating) || 5,
+    headline: resolvedHeadline,
+    comment: r.comment || '',
+    photoUrl: r.photo_url || null,
+    status: r.status || 'approved',
+    likes: r.likes || 0,
+    date: r.created_at || new Date().toISOString()
+  };
+}
 
 export function CommunityProvider({ children }) {
   // Reviews state (Murni dari Supabase / submission asli, tanpa dummy)
@@ -44,32 +74,19 @@ export function CommunityProvider({ children }) {
     return [];
   });
 
-  // Sync dengan Supabase PostgreSQL
+  // 1. Initial Load dari Supabase PostgreSQL
   useEffect(() => {
     if (!isSupabaseConfigured) return;
 
-    // 1. Ambil ulasan dari Supabase
+    // Ambil ulasan dari Supabase
     fetchReviewsFromSupabase().then((remoteRevs) => {
       if (remoteRevs) {
-        const mapped = remoteRevs.map((r) => ({
-          id: r.id,
-          placeId: r.place_id,
-          userId: r.user_id,
-          userName: r.user_name,
-          userAvatar: r.user_avatar,
-          rating: r.rating,
-          headline: r.headline,
-          comment: r.comment,
-          photoUrl: r.photo_url,
-          status: r.status || 'approved',
-          likes: r.likes || 0,
-          date: r.created_at
-        }));
+        const mapped = remoteRevs.map(mapSupabaseReview).filter(Boolean);
         setReviews(mapped);
       }
     });
 
-    // 2. Ambil momen pengalaman dari Supabase
+    // Ambil momen pengalaman dari Supabase
     fetchExperiencesFromSupabase().then((remoteExps) => {
       if (remoteExps) {
         const mapped = remoteExps.map((e) => ({
@@ -93,6 +110,52 @@ export function CommunityProvider({ children }) {
     });
   }, []);
 
+  // 2. Realtime Synchronizer: Mendengarkan ulasan baru langsung dari seluruh pengguna lain
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    const channel = supabase
+      .channel('jogjakrama_reviews_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'reviews' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const mapped = mapSupabaseReview(payload.new);
+            if (!mapped) return;
+            setReviews((prev) => {
+              if (prev.some((r) => r.id === mapped.id)) return prev;
+              return [mapped, ...prev];
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const mapped = mapSupabaseReview(payload.new);
+            if (!mapped) return;
+            setReviews((prev) =>
+              prev.map((r) => (r.id === mapped.id ? mapped : r))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setReviews((prev) => prev.filter((r) => r.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    // Re-fetch saat tab browser aktif kembali untuk memastikan sinkronisasi 100%
+    const handleFocus = () => {
+      fetchReviewsFromSupabase().then((remoteRevs) => {
+        if (remoteRevs) {
+          setReviews(remoteRevs.map(mapSupabaseReview).filter(Boolean));
+        }
+      });
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
   // Sync to local storage
   useEffect(() => {
     try {
@@ -110,24 +173,25 @@ export function CommunityProvider({ children }) {
     }
   }, [experiences]);
 
-  // Method: Tambah ulasan baru
+  // Method: Tambah ulasan baru (Hanya untuk pengguna terdaftar, Guest tidak diizinkan)
   const addReview = async ({ placeId, rating, comment, headline, user }) => {
     if (!placeId || !rating || !comment.trim()) return false;
 
-    const activeUser = user || {
-      id: 'guest-user',
-      name: 'Tamu Penjelajah (Guest)',
-      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest'
-    };
+    // Proteksi: Tamu wajib login / daftar akun sebelum dapat berkomentar
+    if (!user || user.isGuest || user.id === 'guest-user') {
+      console.warn('Mode Tamu tidak diizinkan mengirim ulasan. Silakan masuk akun.');
+      return false;
+    }
 
+    const tempId = 'rev-' + Date.now();
     const newRev = {
-      id: 'rev-' + Date.now(),
+      id: tempId,
       placeId,
-      userId: activeUser.id,
-      userName: activeUser.name,
-      userAvatar: activeUser.avatar,
+      userId: user.id,
+      userName: user.name,
+      userAvatar: user.avatar || '',
       rating: Number(rating),
-      headline: headline || `Pengalaman oleh ${activeUser.name}`,
+      headline: headline || `Pengalaman oleh ${user.name}`,
       comment: comment.trim(),
       date: new Date().toISOString(),
       status: 'approved',
@@ -137,7 +201,13 @@ export function CommunityProvider({ children }) {
     setReviews((prev) => [newRev, ...prev]);
 
     if (isSupabaseConfigured) {
-      await insertReviewToSupabase(newRev);
+      const res = await insertReviewToSupabase(newRev);
+      if (res && res.success && res.data?.id) {
+        // Ganti ID lokal sementara dengan ID permanen dari Supabase
+        setReviews((prev) =>
+          prev.map((r) => (r.id === tempId ? { ...r, id: res.data.id } : r))
+        );
+      }
     }
 
     return newRev;

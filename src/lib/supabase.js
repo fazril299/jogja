@@ -124,7 +124,7 @@ export async function fetchReviewsFromSupabase(placeId = null) {
   try {
     let query = supabase.from('reviews').select('*').order('created_at', { ascending: false });
     if (placeId) {
-      query = query.eq('place_id', placeId);
+      query = query.or(`place_id.eq.${placeId},headline.ilike.[pid:${placeId}]%`);
     }
     const { data, error } = await query;
     if (error) {
@@ -141,10 +141,15 @@ export async function fetchReviewsFromSupabase(placeId = null) {
 export async function insertReviewToSupabase(review) {
   if (!isSupabaseConfigured || !supabase) return { success: false, offline: true };
   try {
+    // Validasi apakah userId adalah format UUID resmi agar tidak ditolak PostgreSQL
+    const isValidUUID =
+      typeof review.userId === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(review.userId);
+
     const dbPayload = {
-      place_id: review.placeId,
-      user_id: review.userId || null,
-      user_name: review.userName,
+      place_id: review.placeId || null,
+      user_id: isValidUUID ? review.userId : null,
+      user_name: review.userName || 'Penjelajah Budaya',
       user_avatar: review.userAvatar || '',
       rating: review.rating || 5,
       headline: review.headline || '',
@@ -154,7 +159,21 @@ export async function insertReviewToSupabase(review) {
       likes: review.likes || 0
     };
 
-    const { data, error } = await supabase.from('reviews').insert(dbPayload).select().single();
+    // Percobaan 1: Insert langsung dengan place_id
+    let { data, error } = await supabase.from('reviews').insert(dbPayload).select().single();
+
+    // Jika terjadi error foreign key constraint (23503: place_id belum di-seed di tabel places)
+    if (error && error.code === '23503' && review.placeId) {
+      const fallbackPayload = {
+        ...dbPayload,
+        place_id: null,
+        headline: `[pid:${review.placeId}] ${dbPayload.headline}`.trim()
+      };
+      const fallbackRes = await supabase.from('reviews').insert(fallbackPayload).select().single();
+      data = fallbackRes.data;
+      error = fallbackRes.error;
+    }
+
     if (error) throw error;
     return { success: true, data };
   } catch (err) {
