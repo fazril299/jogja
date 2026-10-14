@@ -23,11 +23,10 @@ export default function WhyTravelWithUs() {
 
     mapInstanceRef.current = map;
 
-    // Tile Layer Google Maps Resmi (Clean Base Map Tanpa Nama Toko/Hotel Asing)
-    L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.t:2%7Cp.v:off%2Cs.t:4%7Cp.v:off', {
-      attribution: '&copy; Google Maps • Peta Budaya & Kuliner D.I. Yogyakarta',
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    // Tile Layer Esri World Street Map Resmi (Bebas Watermark & CORS Handal)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri • Peta Budaya & Kuliner D.I. Yogyakarta',
+      maxZoom: 19
     }).addTo(map);
 
     // Garis Imajiner Sumbu Kosmologi Yogyakarta (Gunung Merapi -> Tugu/Malioboro -> Keraton -> Parangtritis)

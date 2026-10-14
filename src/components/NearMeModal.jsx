@@ -149,13 +149,12 @@ export default function NearMeModal({
         zoomControl: true
       });
 
-      // CartoDB Voyager: Ubin peta jernih, visual hangat estetik, bebas blokir CORS/ORB
+      // Esri World Street Map: Peta jalan resmi jernih, estetik hangat, bebas watermark & tanpa API key
       L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
         {
-          subdomains: 'abcd',
           maxZoom: 19,
-          attribution: '&copy; <a href="https://carto.com/">CARTO</a> &bull; Peta Pusaka & Kuliner D.I. Yogyakarta'
+          attribution: '&copy; <a href="https://www.esri.com/">Esri</a> &bull; Peta Pusaka & Kuliner D.I. Yogyakarta'
         }
       ).addTo(map);
 
