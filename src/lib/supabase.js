@@ -1,11 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Ambil URL dan Kunci API (Anon / Publishable Key) dari Environment Variables Vite (.env)
-const envUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+// Kunci Publik & URL Produksi Supabase JogjaKrama (Aman untuk Client-Side Bundle)
+const PROD_SUPABASE_URL = 'https://jqoecxfqbdmqecerbjey.supabase.co';
+const PROD_SUPABASE_KEY = 'sb_publishable_V44TT0vxmbyKWbkK56O_6g_cCHePCae';
+
+// Ambil URL dan Kunci API dari Environment Variables Vite (.env) atau default produksi Vercel
+const envUrl = (import.meta.env.VITE_SUPABASE_URL || PROD_SUPABASE_URL).trim();
 const envKey = (
   import.meta.env.VITE_SUPABASE_ANON_KEY ||
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  ''
+  PROD_SUPABASE_KEY
 ).trim();
 
 // Cek apakah konfigurasi Supabase valid (bukan placeholder kosong)

@@ -69,12 +69,13 @@ const DEFAULT_SEED_USERS = [
 export function AuthProvider({ children }) {
   // 0. Google OAuth Client ID
   const [googleClientId, setGoogleClientId] = useState(() => {
-    const envId = (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim();
+    const defaultGoogleId = '587175859464-50dpiafahcp7o21ljpeb4rdedqqjbc1n.apps.googleusercontent.com';
+    const envId = (import.meta.env.VITE_GOOGLE_CLIENT_ID || defaultGoogleId).trim();
     if (envId && !envId.startsWith(' ISI_DENGAN_')) return envId;
     try {
-      return (localStorage.getItem(STORAGE_GOOGLE_CLIENT_ID_KEY) || '').trim();
+      return (localStorage.getItem(STORAGE_GOOGLE_CLIENT_ID_KEY) || defaultGoogleId).trim();
     } catch (e) {
-      return '';
+      return defaultGoogleId;
     }
   });
 
