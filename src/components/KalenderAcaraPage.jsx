@@ -92,11 +92,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30 pointer-events-none" />
 
           <div className="relative max-w-7xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-xs font-bold">
-              <Sparkles size={12} className="text-white" />
-              <span>Agenda Upacara Adat &amp; Tradisi Kasultanan</span>
-            </div>
-
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-2xl leading-tight">
               Kalender Acara Tradisi Jogja
             </h2>

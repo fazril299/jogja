@@ -90,11 +90,6 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-transparent pointer-events-none" />
 
           <div className="relative max-w-7xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold">
-              <Sparkles size={13} className="text-white" />
-              <span>Etika, Unggah-Ungguh &amp; Esai Budaya Mataram</span>
-            </div>
-
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-3xl leading-snug">
               Panduan Cara Berbudaya dengan Benar &amp; Esai Warisan Yogyakarta
             </h2>
