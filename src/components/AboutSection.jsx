@@ -31,13 +31,13 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - EXACT FRAMER TEMPLATE)
           ========================================================================= */}
-      <section id="about-section" style={{ padding: '6rem 2rem 4rem 2rem' }}>
+      <section id="about-section" style={{ padding: 'clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 2rem) clamp(2.5rem, 5vw, 4rem)' }}>
         <div style={{
           maxWidth: '1180px',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '4rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+          gap: 'clamp(2rem, 5vw, 4rem)',
           alignItems: 'center'
         }}>
           {/* Left Column */}
@@ -66,9 +66,9 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
 
             <h2 style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: 'clamp(2.2rem, 3.8vw, 3.1rem)',
+              fontSize: 'clamp(1.9rem, 3.8vw, 3.1rem)',
               fontWeight: 800,
-              lineHeight: 1.12,
+              lineHeight: 1.15,
               marginBottom: '1.2rem',
               color: '#0b1a26',
               letterSpacing: '-0.02em'
@@ -95,7 +95,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             <div style={{
               marginTop: '2.5rem',
               width: '100%',
-              height: '220px',
+              height: 'clamp(180px, 30vh, 220px)',
               borderRadius: '24px',
               overflow: 'hidden',
               boxShadow: '0 15px 35px rgba(0,0,0,0.08)'
@@ -117,7 +117,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             style={{
               position: 'relative',
               width: '100%',
-              height: '560px',
+              height: 'clamp(320px, 55vh, 560px)',
               borderRadius: '28px',
               overflow: 'hidden',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.16)',
@@ -167,7 +167,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 2: EXPLORE BY EXPERIENCE (4 PILAR WISATA & BUDAYA JOGJA)
           ========================================================================= */}
-      <section style={{ padding: '4rem 2rem 6rem 2rem', background: '#ffffff' }}>
+      <section style={{ padding: 'clamp(3rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) clamp(3rem, 6vw, 6rem)', background: '#ffffff' }}>
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           
           {/* Header Tag & Title */}
@@ -175,7 +175,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ textAlign: 'center', marginBottom: '4rem' }}
+            style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
           >
             <div style={{
               display: 'inline-flex',
@@ -196,11 +196,11 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             
             <h2 style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: 'clamp(2.3rem, 4.2vw, 3.3rem)',
+              fontSize: 'clamp(1.9rem, 4vw, 3.2rem)',
               fontWeight: 800,
               color: '#0b1a26',
               letterSpacing: '-0.025em',
-              lineHeight: 1.12,
+              lineHeight: 1.15,
               maxWidth: '750px',
               margin: '0 auto'
             }}>
@@ -211,10 +211,10 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
           {/* 4 Experience Category Cards Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
             gap: '1.8rem',
             alignItems: 'start',
-            marginBottom: '4.5rem'
+            marginBottom: 'clamp(2.5rem, 5vw, 4.5rem)'
           }}>
             
             {/* Card 1: Budaya & Sejarah Mataram */}
@@ -226,7 +226,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             >
               <div style={{
                 width: '100%',
-                height: '380px',
+                height: 'clamp(280px, 45vh, 380px)',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 marginBottom: '1.2rem',
@@ -261,7 +261,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               </p>
               <div style={{
                 width: '100%',
-                height: '290px',
+                height: 'clamp(240px, 35vh, 290px)',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.06)'
@@ -283,7 +283,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             >
               <div style={{
                 width: '100%',
-                height: '380px',
+                height: 'clamp(280px, 45vh, 380px)',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 marginBottom: '1.2rem',
@@ -318,7 +318,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               </p>
               <div style={{
                 width: '100%',
-                height: '290px',
+                height: 'clamp(240px, 35vh, 290px)',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.06)'
@@ -334,18 +334,12 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
           </div>
 
           {/* Section Footer Bar */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '2rem',
-            paddingTop: '1.5rem'
-          }}>
-            <span style={{ fontSize: '0.92rem', fontWeight: 600, color: '#64748b', whiteSpace: 'nowrap' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pt-6 text-center sm:text-left">
+            <span className="text-sm font-semibold text-slate-500">
               Temukan destinasi lain di Yogyakarta.
             </span>
 
-            <div style={{ flexGrow: 1, height: '1px', background: '#e2e8f0', margin: '0 1rem' }} />
+            <div className="hidden sm:block flex-grow h-px bg-slate-200 mx-4" />
 
             <CustomPillButton 
               label="Lihat Pilihan Perjalanan"

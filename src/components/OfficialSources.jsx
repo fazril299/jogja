@@ -28,13 +28,13 @@ const officialSources = [
 
 export default function OfficialSources() {
   return (
-    <section style={{ width: '100%', padding: '5rem 2rem', background: '#f7f8f5', color: '#173f36' }}>
+    <section style={{ width: '100%', padding: 'clamp(3rem, 5vw, 5rem) clamp(1rem, 4vw, 2rem)', background: '#f7f8f5', color: '#173f36' }}>
       <div style={{ width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
-        <header style={{ maxWidth: '720px', marginBottom: '2rem' }}>
+        <header style={{ maxWidth: '720px', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <p style={{ margin: '0 0 0.65rem', color: '#a94e35', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
             Referensi Resmi
           </p>
-          <h2 style={{ margin: '0 0 0.7rem', fontFamily: 'Outfit, sans-serif', fontSize: '2rem', lineHeight: 1.2 }}>
+          <h2 style={{ margin: '0 0 0.7rem', fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', lineHeight: 1.2 }}>
             Informasi yang dapat diperiksa
           </h2>
           <p style={{ margin: 0, color: '#64766d', fontSize: '0.95rem', lineHeight: 1.6 }}>
@@ -42,18 +42,20 @@ export default function OfficialSources() {
           </p>
         </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1rem' }}>
           {officialSources.map(({ title, detail, source, href, iconSrc }) => (
             <motion.article
               key={title}
               whileHover={{ y: -3 }}
               transition={{ duration: 0.16 }}
-              style={{ minWidth: 0, padding: '1.4rem', border: '1px solid #dce4de', borderRadius: '6px', background: '#ffffff' }}
+              style={{ minWidth: 0, padding: 'clamp(1.1rem, 3vw, 1.4rem)', border: '1px solid #dce4de', borderRadius: '12px', background: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
             >
-              <img src={iconSrc} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.82 }} />
-              <h3 style={{ margin: '1rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', lineHeight: 1.3 }}>{title}</h3>
-              <p style={{ minHeight: '6.5rem', margin: '0 0 1rem', color: '#52665d', fontSize: '0.88rem', lineHeight: 1.6 }}>{detail}</p>
-              <a href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#8b3d2a', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
+              <div>
+                <img src={iconSrc} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.82 }} />
+                <h3 style={{ margin: '0.85rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', lineHeight: 1.3 }}>{title}</h3>
+                <p style={{ margin: '0 0 1rem', color: '#52665d', fontSize: '0.88rem', lineHeight: 1.6 }}>{detail}</p>
+              </div>
+              <a href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#8b3d2a', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none', paddingTop: '0.5rem' }}>
                 {source} <ExternalLink size={14} aria-hidden="true" />
               </a>
             </motion.article>

@@ -65,7 +65,7 @@ export default function TravelFAQ() {
           background: '#ffffff',
           border: '1px solid #e2e8f0',
           borderRadius: '20px',
-          padding: '1.25rem 1.6rem',
+          padding: 'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 3vw, 1.6rem)',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           boxShadow: isOpen ? '0 10px 30px rgba(0, 0, 0, 0.06)' : '0 2px 10px rgba(0, 0, 0, 0.02)'
@@ -79,10 +79,10 @@ export default function TravelFAQ() {
         }}>
           <h3 style={{
             fontFamily: 'Outfit, sans-serif',
-            fontSize: '1.05rem',
+            fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
             fontWeight: 700,
             color: '#051926',
-            lineHeight: 1.3
+            lineHeight: 1.35
           }}>
             {item.q}
           </h3>
@@ -109,7 +109,7 @@ export default function TravelFAQ() {
               <p style={{
                 fontSize: '0.9rem',
                 color: '#64748b',
-                lineHeight: 1.5,
+                lineHeight: 1.55,
                 fontWeight: 400
               }}>
                 {item.a}
@@ -125,7 +125,7 @@ export default function TravelFAQ() {
     <section style={{
       width: '100%',
       background: '#ffffff',
-      padding: '4rem 2.5rem 6.5rem 2.5rem',
+      padding: 'clamp(3rem, 6vw, 4rem) clamp(1rem, 4vw, 2.5rem) clamp(3.5rem, 6vw, 6.5rem)',
       position: 'relative'
     }}>
       <div style={{
@@ -136,7 +136,7 @@ export default function TravelFAQ() {
         <div style={{
           textAlign: 'center',
           maxWidth: '750px',
-          margin: '0 auto 3.5rem auto'
+          margin: '0 auto clamp(2rem, 5vw, 3.5rem) auto'
         }}>
           <motion.div 
             initial={{ opacity: 0, y: -15 }}
@@ -162,7 +162,7 @@ export default function TravelFAQ() {
 
           <h2 style={{
             fontFamily: 'Outfit, sans-serif',
-            fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)',
+            fontSize: 'clamp(1.8rem, 3.8vw, 3.2rem)',
             fontWeight: 800,
             color: '#051926',
             lineHeight: 1.15,
@@ -175,7 +175,7 @@ export default function TravelFAQ() {
         {/* 2-COLUMN ACCORDION GRID */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
           gap: '1.2rem',
           alignItems: 'start'
         }}>

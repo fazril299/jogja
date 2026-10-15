@@ -78,23 +78,43 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
       >
-        {/* Hero Section (Top padded for global floating navbar) */}
-        <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-12 px-4 sm:px-8 border-b border-neutral-800">
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-black text-white pt-20 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-8 border-b border-neutral-800">
+          <div className="absolute inset-0 opacity-25 pointer-events-none">
             <img
               src="/assets/images/jogja_keraton.jpg"
               alt="Keraton Yogyakarta"
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto space-y-3">
+          {/* Top Bar Navigation: Close / Back to Home Button */}
+          <div className="relative max-w-7xl mx-auto mb-6 flex items-center justify-between z-10">
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/25 backdrop-blur-md transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <ArrowLeft size={14} />
+              <span>Kembali ke Beranda</span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup Halaman"
+              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/25 backdrop-blur-md cursor-pointer transition-all active:scale-95"
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          <div className="relative max-w-7xl mx-auto space-y-2">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-3xl leading-snug">
               Panduan Cara Berbudaya dengan Benar &amp; Esai Warisan Yogyakarta
             </h2>
 
-            <p className="text-sm sm:text-base text-neutral-300 max-w-3xl m-0 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-neutral-300 max-w-3xl m-0 leading-relaxed font-normal">
               Memahami nilai luhur andhap asor, tata busana adat sakral, etika menghadiri upacara hajad dalem, pantangan motif batik keraton, hingga adab santun menikmati kuliner angkringan lokal.
             </p>
 

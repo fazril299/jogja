@@ -60,8 +60,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
       >
-        {/* Hero Section with Upacara Adat Photo Background (Top padded for global floating navbar) */}
-        <section className="relative overflow-hidden bg-neutral-900 text-white pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 border-b border-neutral-200">
+        {/* Hero Section with Upacara Adat Photo Background */}
+        <section className="relative overflow-hidden bg-neutral-900 text-white pt-20 sm:pt-28 pb-10 sm:pb-16 px-4 sm:px-8 border-b border-neutral-200">
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <img
               src="/assets/images/real_bregada_gunungan.jpg"
@@ -69,11 +69,31 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
               className="w-full h-full object-cover object-center scale-100 brightness-105"
             />
           </div>
-          {/* Subtle soft gradient only behind headline for readability, keeping photo natural and bright */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/20 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/10 pointer-events-none" />
+          {/* Subtle soft gradient only behind headline for readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/20 pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto space-y-3 drop-shadow-md">
+          {/* Top Bar Navigation: Close / Back to Home Button */}
+          <div className="relative max-w-7xl mx-auto mb-6 flex items-center justify-between z-10">
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 hover:bg-black/90 text-white text-xs font-bold border border-white/25 backdrop-blur-md transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <ArrowLeft size={14} />
+              <span>Kembali ke Beranda</span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup Halaman"
+              className="w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/25 backdrop-blur-md cursor-pointer transition-all active:scale-95"
+            >
+              <X size={15} />
+            </button>
+          </div>
+
+          <div className="relative max-w-7xl mx-auto space-y-2 drop-shadow-md">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-2xl leading-tight drop-shadow-lg">
               Kalender Acara Tradisi Jogja
             </h2>

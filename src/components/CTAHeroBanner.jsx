@@ -16,11 +16,12 @@ export default function CTAHeroBanner({ onOpenBooking }) {
         style={{
           position: 'relative',
           width: '100%',
-          height: '560px',
+          minHeight: 'clamp(440px, 55vh, 560px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          padding: '2.5rem 0'
         }}
       >
         {/* Background Image (Yogyakarta Ratu Boko & Prambanan Heritage Landscape) */}
@@ -57,7 +58,7 @@ export default function CTAHeroBanner({ onOpenBooking }) {
             zIndex: 10,
             textAlign: 'center',
             maxWidth: '750px',
-            padding: '4rem 2rem 0 2rem',
+            padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)',
             color: '#ffffff'
           }}
         >

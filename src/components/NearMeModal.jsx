@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Search, Navigation, X, Check } from 'lucide-react';
+import { MapPin, Search, Navigation, X, Check, Map, List } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
@@ -59,11 +59,21 @@ export default function NearMeModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [radiusLimitKm, setRadiusLimitKm] = useState(10); // Radius rekomendasi: 5 KM atau 10 KM
   const [selectedCardId, setSelectedCardId] = useState(null);
+  const [mobileTab, setMobileTab] = useState('list'); // 'list' | 'map' untuk tampilan mobile
 
   // Refs untuk Peta Interaktif Leaflet + Google Tiles (Terkunci 100% di D.I. Yogyakarta)
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const layerGroupRef = useRef(null);
+
+  // Re-render Leaflet tiles saat mobile berpindah ke tab peta
+  useEffect(() => {
+    if (mobileTab === 'map' && mapInstanceRef.current) {
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 150);
+    }
+  }, [mobileTab]);
 
   // Sinkronisasi saat GPS mendeteksi wilayah terdekat di dalam D.I. Yogyakarta
   useEffect(() => {
@@ -345,7 +355,7 @@ export default function NearMeModal({
           style={{
             maxWidth: '1420px',
             margin: '0 auto',
-            padding: '6.2rem clamp(1.5rem, 4vw, 3.5rem) 4rem clamp(1.5rem, 4vw, 3.5rem)'
+            padding: 'clamp(4.25rem, 7vw, 6rem) clamp(1rem, 3.5vw, 3.5rem) 3.5rem clamp(1rem, 3.5vw, 3.5rem)'
           }}
         >
           {/* Bar Pilihan Wilayah Wisata & Radius */}
@@ -453,19 +463,47 @@ export default function NearMeModal({
             </div>
           </div>
 
+          {/* Mobile View Toggle: Daftar vs Peta (Hanya Muncul di Mobile / Tablet) */}
+          <div className="flex lg:hidden items-center justify-center p-1.5 mb-6 rounded-2xl bg-[#F0EAE1] border border-[#E2D7C7] gap-1 shadow-sm">
+            <button
+              type="button"
+              onClick={() => setMobileTab('list')}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                mobileTab === 'list'
+                  ? 'bg-[#2C221E] text-[#FAF8F5] shadow-md'
+                  : 'text-[#5C4E43] hover:text-[#2C221E]'
+              }`}
+            >
+              <List size={14} />
+              <span>Daftar Tempat ({filteredItems.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileTab('map');
+                setTimeout(() => {
+                  mapInstanceRef.current?.invalidateSize();
+                }, 100);
+              }}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                mobileTab === 'map'
+                  ? 'bg-[#9E1C64] text-white shadow-md'
+                  : 'text-[#5C4E43] hover:text-[#2C221E]'
+              }`}
+            >
+              <Map size={14} />
+              <span>Peta Radar Jogja</span>
+            </button>
+          </div>
+
           {/* 2-Column Grid: Left Store List + Right Rounded Map */}
           <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-              gap: '2.75rem',
-              alignItems: 'start'
-            }}
+            className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-6 lg:gap-11 items-start"
           >
             {/* =====================================================================
                 LEFT COLUMN: TITLE, RESULTS COUNT, SEARCH & CARDS
                 ===================================================================== */}
-            <div style={{ maxWidth: '540px', width: '100%' }}>
+            <div className={`w-full max-w-full lg:max-w-[540px] ${mobileTab === 'map' ? 'hidden lg:block' : 'block'}`}>
               {/* Badge Khas Jogja */}
               <div
                 style={{
@@ -832,12 +870,12 @@ export default function NearMeModal({
                 RIGHT COLUMN: CLEAN ROUNDED GOOGLE MAP (DENGAN AKSEN KHAS JOGJA)
                 ===================================================================== */}
             <div
+              className={`w-full ${mobileTab === 'list' ? 'hidden lg:block' : 'block'}`}
               style={{
                 position: 'sticky',
                 top: '5.5rem',
-                width: '100%',
-                height: 'clamp(520px, calc(100vh - 130px), 780px)',
-                borderRadius: '30px',
+                height: 'clamp(460px, calc(100vh - 130px), 780px)',
+                borderRadius: '24px',
                 overflow: 'hidden',
                 border: '1.5px solid #E5DDD1',
                 boxShadow: '0 14px 44px rgba(44, 34, 30, 0.08)',

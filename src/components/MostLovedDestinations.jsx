@@ -133,27 +133,14 @@ function DestinationCard({ dest, onOpenBooking }) {
         />
       </div>
 
-      {/* Hover Gradient Overlay (.framer-18zsyc8) */}
+      {/* Hover / Always-visible Mobile Gradient Overlay */}
       <motion.div
         initial={false}
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={HOVER_BG_TRANSITION}
-        style={{
-          background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%)',
-          display: 'flex',
-          flex: '1 0 0px',
-          flexDirection: 'row',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-start',
-          gap: '10px',
-          width: '1px',
-          height: '100%',
-          padding: '40px',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
+        className="travfrick-card-overlay"
       >
-        {/* Hover Text Container (.framer-yg0g5n) */}
+        {/* Hover / Always-visible Mobile Text Container */}
         <motion.div
           initial={false}
           animate={{
@@ -161,28 +148,15 @@ function DestinationCard({ dest, onOpenBooking }) {
             y: isHovered ? 0 : 20
           }}
           transition={HOVER_TEXT_TRANSITION}
-          style={{
-            display: 'flex',
-            flex: '1 0 0px',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            gap: '15px',
-            width: '1px',
-            height: 'min-content',
-            padding: 0,
-            position: 'relative',
-            overflow: 'hidden',
-            willChange: 'transform, opacity'
-          }}
+          className="travfrick-card-text"
         >
           <div style={{ width: '100%', position: 'relative' }}>
             <h3
               style={{
                 fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                fontSize: 'clamp(1.13rem, 2.06vw, 2.06rem)',
+                fontSize: 'clamp(1.15rem, 2.06vw, 2.06rem)',
                 fontWeight: 700,
-                lineHeight: 1.1,
+                lineHeight: 1.15,
                 color: '#ffffff',
                 margin: 0
               }}
@@ -194,10 +168,10 @@ function DestinationCard({ dest, onOpenBooking }) {
             <p
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 'clamp(0.94rem, 1.3vw, 1.63rem)',
+                fontSize: 'clamp(0.85rem, 1.3vw, 1.4rem)',
                 fontWeight: 400,
-                lineHeight: 1.4,
-                color: 'rgb(176, 176, 176)',
+                lineHeight: 1.45,
+                color: 'rgb(220, 220, 220)',
                 margin: 0
               }}
             >

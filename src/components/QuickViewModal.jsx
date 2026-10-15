@@ -23,7 +23,7 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1.5rem'
+          padding: 'clamp(0.75rem, 3vw, 1.5rem)'
         }}
       >
         <motion.div
@@ -36,10 +36,12 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
             position: 'relative',
             width: '100%',
             maxWidth: '680px',
+            maxHeight: 'min(90vh, 720px)',
+            overflowY: 'auto',
             background: 'rgba(10, 28, 44, 0.96)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
-            borderRadius: '30px',
-            padding: '2rem',
+            borderRadius: '24px',
+            padding: 'clamp(1.2rem, 3.5vw, 2rem)',
             boxShadow: '0 30px 80px rgba(0, 0, 0, 0.7)',
             color: '#ffffff'
           }}
@@ -50,8 +52,8 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
             aria-label="Tutup ringkasan destinasi"
             style={{
               position: 'absolute',
-              top: '1.5rem',
-              right: '1.5rem',
+              top: '1.2rem',
+              right: '1.2rem',
               width: '36px',
               height: '36px',
               borderRadius: '50%',
@@ -70,10 +72,10 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
           <div style={{
             position: 'relative',
             width: '100%',
-            height: '280px',
-            borderRadius: '20px',
+            height: 'clamp(180px, 28vh, 280px)',
+            borderRadius: '18px',
             overflow: 'hidden',
-            marginBottom: '1.5rem'
+            marginBottom: '1.25rem'
           }}>
             <img 
               src={landmark.image} 
@@ -87,15 +89,15 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
             }} />
             <span style={{
               position: 'absolute',
-              bottom: '1rem',
-              left: '1.2rem',
+              bottom: '0.85rem',
+              left: '1rem',
               background: 'rgba(0, 240, 209, 0.2)',
               backdropFilter: 'blur(8px)',
               border: '1px solid #00f0d1',
               color: '#00f0d1',
-              fontSize: '0.8rem',
+              fontSize: '0.78rem',
               fontWeight: 700,
-              padding: '0.3rem 0.9rem',
+              padding: '0.3rem 0.85rem',
               borderRadius: '20px'
             }}>
               {landmark.tag}
@@ -103,51 +105,47 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
           </div>
 
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#00f0d1', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#00f0d1', fontSize: '0.88rem', fontWeight: 600, marginBottom: '0.3rem' }}>
               <MapPin size={16} /> {landmark.location}
             </div>
-            <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2.1rem', fontWeight: 800, marginBottom: '0.8rem' }}>
+            <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(1.4rem, 3.5vw, 2.1rem)', fontWeight: 800, marginBottom: '0.6rem' }}>
               {landmark.title}
             </h3>
-            <p style={{ fontSize: '0.98rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.65', marginBottom: '1.8rem' }}>
+            <p style={{ fontSize: '0.92rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
               {landmark.description}
             </p>
 
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingTop: '1.2rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.12)'
-            }}>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-white/10">
               <div>
-                        <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)', textTransform: 'uppercase', display: 'block', marginBottom: '0.45rem' }}>Informasi kunjungan</span>
-                        <a href={landmark.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#00f0d1', fontSize: '0.88rem', fontWeight: 700, textDecoration: 'none' }}>
-                          {landmark.sourceName} <ExternalLink size={15} />
-                        </a>
+                <span style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.5)', textTransform: 'uppercase', display: 'block', marginBottom: '0.3rem' }}>Informasi kunjungan</span>
+                <a href={landmark.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#00f0d1', fontSize: '0.86rem', fontWeight: 700, textDecoration: 'none' }}>
+                  {landmark.sourceName} <ExternalLink size={14} />
+                </a>
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   onClose();
                   onBookLandmark(landmark);
                 }}
+                className="w-full sm:w-auto"
                 style={{
                   background: 'linear-gradient(135deg, #00f0d1 0%, #02c39a 100%)',
                   color: '#031926',
                   fontWeight: 800,
-                  fontSize: '1rem',
-                  padding: '0.8rem 1.6rem',
+                  fontSize: '0.92rem',
+                  padding: '0.75rem 1.4rem',
                   borderRadius: '30px',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '0.5rem',
-                  boxShadow: '0 10px 25px rgba(0, 240, 209, 0.35)'
+                  boxShadow: '0 8px 22px rgba(0, 240, 209, 0.3)'
                 }}
               >
-                        Lihat Detail Destinasi <ArrowRight size={18} />
+                Lihat Detail Destinasi <ArrowRight size={17} />
               </motion.button>
             </div>
 
@@ -165,13 +163,13 @@ export default function QuickViewModal({ landmark, onClose, onBookLandmark, onVi
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
                   fontWeight: 600,
-                  fontSize: '0.95rem',
-                  padding: '0.8rem 1.6rem',
+                  fontSize: '0.9rem',
+                  padding: '0.75rem 1.4rem',
                   borderRadius: '30px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: '1rem',
+                  marginTop: '0.85rem',
                   gap: '0.5rem'
                 }}
               >

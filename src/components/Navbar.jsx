@@ -240,15 +240,15 @@ export default function Navbar({
 
   return (
     <>
-      {/* Top-Right Profile Pill with Floating Dropdown Animation */}
+      {/* Top-Right Profile Pill with Floating Dropdown Animation (Desktop / Tablet Only) */}
       <div
+        className="hidden sm:flex"
         style={{
           position: 'fixed',
           top: '1.25rem',
           right: '1.5rem',
           zIndex: 100011,
           pointerEvents: 'auto',
-          display: 'flex',
           justifyContent: 'flex-end'
         }}
       >
@@ -522,8 +522,9 @@ export default function Navbar({
         </motion.div>
       </div>
 
+      {/* Center Navigation Pill (Desktop & Tablet sm: and above) */}
       <div
-        className="fixed top-5 left-1/2 -translate-x-1/2 pointer-events-none"
+        className="hidden sm:block fixed top-5 left-1/2 -translate-x-1/2 pointer-events-none"
         style={{ zIndex: 100010 }}
       >
         <motion.div
@@ -882,8 +883,95 @@ export default function Navbar({
             )}
           </AnimatePresence>
         </motion.div>
+      </div>
 
-        {/* Mobile Dropdown Menu (Matches Sneks mobile dropdown) */}
+      {/* =========================================================================
+          DEDICATED MOBILE FLOATING NAVBAR (Viewport < 640px)
+          Unified, elegant pill that never collides, overlaps, or causes horizontal scroll
+          ========================================================================= */}
+      <div className="sm:hidden fixed top-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.25rem)] max-w-sm pointer-events-auto z-[100010]">
+        <div className="bg-white/95 backdrop-blur-md rounded-full border border-black/10 shadow-lg px-3.5 py-1.5 flex items-center justify-between">
+          {/* Logo & Brand */}
+          <button
+            type="button"
+            onClick={() => {
+              closeAll();
+              if (onGoHome) onGoHome();
+              else window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none p-0 text-left"
+          >
+            <img
+              src="/images/icon_culture.svg"
+              alt="JogjaKrama"
+              className="w-5 h-5 object-contain"
+            />
+            <span className="font-extrabold text-[13px] tracking-tight text-neutral-900 font-['Outfit']">
+              JogjaKrama
+            </span>
+          </button>
+
+          {/* Right Mobile Actions */}
+          <div className="flex items-center gap-1.5">
+            {/* Quick Profile / Login Trigger */}
+            {currentUser && !currentUser.isGuest ? (
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="w-7 h-7 rounded-full overflow-hidden border border-amber-400 cursor-pointer shadow-2xs"
+                title={currentUser.name}
+              >
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  closeAll();
+                  openLogin({
+                    benefitType: 'general',
+                    title: 'Selamat Datang di JogjaKrama',
+                    description: 'Akses penuh ke fitur Wishlist, ulasan, serta galeri momen budaya Yogyakarta.'
+                  });
+                }}
+                className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-black text-[11px] font-bold cursor-pointer transition-colors"
+              >
+                Masuk
+              </button>
+            )}
+
+            {/* Hamburger Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Mobile Menu"
+              className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-black cursor-pointer bg-transparent border-none"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-4 h-4" />
+              ) : (
+                <svg
+                  width="18"
+                  height="12"
+                  viewBox="0 0 18 12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
+                  <line x1="1" y1="2" x2="17" y2="2" />
+                  <line x1="1" y1="10" x2="17" y2="10" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown Panel */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -891,94 +979,184 @@ export default function Navbar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="pointer-events-auto absolute top-14 left-1/2 -translate-x-1/2 w-48 bg-white rounded-2xl p-2.5 border border-gray-100 shadow-xl space-y-0.5 z-50"
+              className="mt-2 w-full max-h-[82vh] overflow-y-auto bg-white rounded-2xl p-3 border border-neutral-200/80 shadow-2xl space-y-2 text-left"
             >
-              {NAV_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleNavClick(item.id)}
-                  className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${activeTab === item.id
-                      ? 'bg-black text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  style={{ border: 'none' }}
-                >
-                  <span>{item.label}</span>
-                  <ChevronRight className="w-3 h-3 opacity-40" />
-                </button>
-              ))}
+              {/* User Status Card */}
+              {currentUser && !currentUser.isGuest ? (
+                <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="w-8 h-8 rounded-full object-cover shrink-0 border border-amber-400"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-neutral-900 truncate m-0">
+                        {currentUser.name}
+                      </p>
+                      <p className="text-[10px] text-neutral-500 truncate m-0">
+                        {currentUser.email}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      if (logout) logout();
+                    }}
+                    className="shrink-0 px-2 py-1 rounded-lg bg-neutral-200/70 hover:bg-rose-100 hover:text-rose-600 text-[11px] font-bold text-neutral-700 transition-colors cursor-pointer"
+                  >
+                    Keluar
+                  </button>
+                </div>
+              ) : (
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-neutral-900 m-0">
+                      Tamu Penjelajah
+                    </p>
+                    <p className="text-[10px] text-neutral-500 m-0">
+                      Masuk untuk simpan paspor &amp; momen
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      openLogin({
+                        benefitType: 'general',
+                        title: 'Selamat Datang di JogjaKrama',
+                        description: 'Akses penuh ke paspor budaya & wishlist destinasi.'
+                      });
+                    }}
+                    className="shrink-0 px-2.5 py-1.5 rounded-lg bg-black text-white text-[11px] font-bold cursor-pointer"
+                  >
+                    Masuk Akun
+                  </button>
+                </div>
+              )}
 
-              <div className="pt-1.5 border-t border-gray-100 mt-1 space-y-1">
+              {/* Main Navigation Items */}
+              <div className="space-y-1">
+                {NAV_ITEMS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
+                      activeTab === item.id
+                        ? 'bg-neutral-900 text-white'
+                        : 'text-neutral-700 hover:bg-neutral-100'
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                  </button>
+                ))}
+              </div>
+
+              {/* Cultural Highlights */}
+              <div className="pt-2 border-t border-neutral-100 space-y-1">
+                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-2 m-0 mb-1">
+                  Fitur Budaya &amp; Kuliner
+                </p>
+
+                {/* Radar Kuliner GPS */}
                 <button
                   type="button"
                   onClick={() => {
                     closeAll();
-                    if (onOpenKalenderAcara) {
-                      onOpenKalenderAcara();
-                    } else if (onOpenCultureEvents) {
-                      onOpenCultureEvents();
-                    } else if (onOpenCultureBook) {
-                      onOpenCultureBook();
-                    }
+                    if (onOpenNearMe) onOpenNearMe();
+                  }}
+                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-amber-950 bg-amber-50/70 hover:bg-amber-100/80 border border-amber-200/60"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Radar GPS Kuliner (Radius 5–10 KM)</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-800" />
+                </button>
+
+                {/* Kalender Acara */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeAll();
+                    if (onOpenKalenderAcara) onOpenKalenderAcara();
+                    else if (onOpenCultureEvents) onOpenCultureEvents();
+                    else if (onOpenCultureBook) onOpenCultureBook();
                   }}
                   className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
                     currentView === 'kalender'
                       ? 'bg-amber-100 text-amber-950 font-black'
-                      : 'text-black hover:bg-neutral-100'
+                      : 'text-neutral-800 hover:bg-neutral-100'
                   }`}
-                  style={{ border: 'none' }}
                 >
                   <div className="flex items-center gap-2">
-                    <Calendar className={`w-3.5 h-3.5 ${currentView === 'kalender' ? 'text-amber-800' : 'text-black'}`} />
-                    <span>Kalender Acara Jogja</span>
+                    <Calendar className="w-3.5 h-3.5 text-amber-800" />
+                    <span>Kalender Acara Tradisi</span>
                   </div>
-                  <ChevronRight className="w-3 h-3 opacity-40 text-black" />
+                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                 </button>
 
+                {/* Jurnal Budaya */}
                 <button
                   type="button"
                   onClick={() => {
                     closeAll();
-                    if (onOpenJurnalBudaya) {
-                      onOpenJurnalBudaya();
-                    } else if (onOpenCultureJournals) {
-                      onOpenCultureJournals();
-                    } else if (onOpenCultureBook) {
-                      onOpenCultureBook();
-                    }
+                    if (onOpenJurnalBudaya) onOpenJurnalBudaya();
+                    else if (onOpenCultureJournals) onOpenCultureJournals();
+                    else if (onOpenCultureBook) onOpenCultureBook();
                   }}
                   className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
                     currentView === 'jurnal'
                       ? 'bg-amber-100 text-amber-950 font-black'
-                      : 'text-black hover:bg-neutral-100'
+                      : 'text-neutral-800 hover:bg-neutral-100'
                   }`}
-                  style={{ border: 'none' }}
                 >
                   <div className="flex items-center gap-2">
-                    <BookOpen className={`w-3.5 h-3.5 ${currentView === 'jurnal' ? 'text-amber-800' : 'text-black'}`} />
-                    <span>Jurnal & Panduan Budaya</span>
+                    <BookOpen className="w-3.5 h-3.5 text-amber-800" />
+                    <span>Jurnal &amp; Panduan Budaya</span>
                   </div>
-                  <ChevronRight className="w-3 h-3 opacity-40 text-black" />
+                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                 </button>
-              </div>
 
-              {isAdmin && (
+                {/* Paspor Budaya */}
                 <button
                   type="button"
                   onClick={() => {
                     closeAll();
-                    if (onOpenAdmin) onOpenAdmin();
+                    if (onOpenCultureBook) onOpenCultureBook();
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer bg-amber-500 text-neutral-950 mt-1"
-                  style={{ border: 'none' }}
+                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-neutral-800 hover:bg-neutral-100"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>Admin CMS</span>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Paspor Budaya &amp; Lencana</span>
                   </div>
-                  <ChevronRight className="w-3 h-3 opacity-60" />
+                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                 </button>
+              </div>
+
+              {/* Admin CMS */}
+              {isAdmin && (
+                <div className="pt-1.5 border-t border-neutral-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      if (onOpenAdmin) onOpenAdmin();
+                    }}
+                    className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer bg-neutral-900 text-amber-400"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>Admin CMS Portal</span>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-70" />
+                  </button>
+                </div>
               )}
             </motion.div>
           )}

@@ -489,18 +489,8 @@ function NusantaraApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-3 sm:bottom-6 left-3 sm:left-auto right-3 sm:right-6 w-auto sm:w-[410px] max-w-[calc(100vw-1.5rem)] z-[9990] bg-white text-[#09090b] rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl border-2 border-[#0066ff]"
             style={{
-              position: 'fixed',
-              bottom: '1.5rem',
-              right: '1.5rem',
-              zIndex: 9990,
-              width: 'min(410px, calc(100vw - 2rem))',
-              backgroundColor: '#ffffff',
-              color: '#09090b',
-              borderRadius: '24px',
-              padding: '1.35rem 1.5rem',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.18)',
-              border: '2px solid #0066ff',
               fontFamily: "'Plus Jakarta Sans', sans-serif"
             }}
           >

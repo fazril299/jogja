@@ -652,6 +652,38 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
       id="storybook-viewport"
       className="storybook-main-container"
     >
+      {/* Floating Top Navigation Bar (Back & Close) */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '1rem',
+          left: '1rem',
+          right: '1rem',
+          zIndex: 10005,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          pointerEvents: 'none'
+        }}
+      >
+        <button
+          type="button"
+          onClick={onBack}
+          className="pointer-events-auto inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/75 hover:bg-black text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all cursor-pointer shadow-lg active:scale-95"
+        >
+          <ArrowLeft size={15} />
+          <span>Kembali ke Beranda</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Tutup Detail Destinasi"
+          className="pointer-events-auto w-9 h-9 rounded-full bg-black/75 hover:bg-black text-white flex items-center justify-center border border-white/20 backdrop-blur-md cursor-pointer transition-all shadow-lg active:scale-95"
+        >
+          <X size={16} />
+        </button>
+      </div>
 
 
       {/* =========================================================================
@@ -833,15 +865,12 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
               )}
             </div>
 
-            {/* Konsep Foto Gantung Tali Jemuran & Jepitan Kayu Persis https://ropecurvecarousel.framer.website/ */}
+            {/* Konsep Foto Gantung Tali Jemuran & Jepitan Kayu */}
             <div
               style={{
                 position: 'relative',
-                width: '100vw',
-                left: '50%',
-                right: '50%',
-                marginLeft: '-50vw',
-                marginRight: '-50vw',
+                width: '100%',
+                maxWidth: '100%',
                 overflow: 'hidden',
                 paddingTop: '20px',
                 paddingBottom: '50px'
@@ -1213,7 +1242,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
             gap: '1.75rem',
             marginBottom: '4rem'
           }}

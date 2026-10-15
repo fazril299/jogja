@@ -114,11 +114,11 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           </div>
         </motion.div>
 
-        {/* Right Column — Destination Pills */}
+        {/* Right Column / Centered Pills on Mobile — Destination Pills */}
         <motion.div
-          initial={{ opacity: 0, x: 35 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="hero-pills-col"
         >
           {[
