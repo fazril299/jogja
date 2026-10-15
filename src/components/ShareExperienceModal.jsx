@@ -20,16 +20,48 @@ const PRESET_PHOTOS = [
     url: '/assets/images/jogja_tamansari.jpg'
   },
   {
-    label: 'Bangsal Keraton',
+    label: 'Bangsal Keraton Ngayogyakarta',
     url: '/assets/images/jogja_keraton.jpg'
   },
   {
-    label: 'Malam Malioboro',
+    label: 'Suasana Malam Malioboro',
     url: '/assets/images/jogja_malioboro.jpg'
   },
   {
-    label: 'Sunrise Merapi',
+    label: 'Panorama Gunung Merapi',
     url: '/assets/images/jogja_merapi.jpg'
+  },
+  {
+    label: 'Hajad Dalem Gunungan Grebeg',
+    url: '/assets/images/real_gunungan_grebeg.jpg'
+  },
+  {
+    label: 'Sendratari Ramayana Prambanan',
+    url: '/assets/images/real_ramayana_stage.jpg'
+  },
+  {
+    label: 'Bregada Prajurit Keraton',
+    url: '/assets/images/real_bregada_keraton.jpg'
+  },
+  {
+    label: 'Tari Tradisional Srimanganti',
+    url: '/assets/images/real_tari_srimanganti.jpg'
+  },
+  {
+    label: 'Batik Tulis Pusaka Giriloyo',
+    url: '/assets/images/real_batik_keraton.jpg'
+  },
+  {
+    label: 'Senja Candi Ratu Boko',
+    url: '/assets/images/jogja_ratuboko.jpg'
+  },
+  {
+    label: 'Seni Kriya Gerabah Kasongan',
+    url: '/assets/images/jogja_kasongan.jpg'
+  },
+  {
+    label: 'Kuliner Gudeg Wijilan',
+    url: '/assets/images/jogja_gudeg.jpg'
   }
 ];
 

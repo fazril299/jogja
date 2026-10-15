@@ -24,8 +24,8 @@ export default function HeroOpening({ onStartExplore, onUseLocation, places = []
       {/* Background Cinematic Atmosphere */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?q=80&w=2000&auto=format&fit=crop"
-          alt="Lanskap Nusantara"
+          src="/assets/images/jogja_hero_stupa_warm_uhd.jpg"
+          alt="Lanskap Megah Yogyakarta"
           className="w-full h-full object-cover object-center opacity-25 scale-105 filter blur-[1px]"
           loading="eager"
           fetchpriority="high"

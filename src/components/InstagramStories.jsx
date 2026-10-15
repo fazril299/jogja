@@ -3,20 +3,30 @@ import { motion } from 'framer-motion';
 
 export default function InstagramStories() {
   const stories = [
-    { id: 1, image: '/assets/images/jogja_tugu.jpg' },
-    { id: 2, image: '/assets/images/jogja_keraton.jpg' },
-    { id: 3, image: '/assets/images/jogja_tamansari.jpg' },
-    { id: 4, image: '/assets/images/jogja_prambanan.jpg' },
-    { id: 5, image: '/assets/images/jogja_ratuboko.jpg' },
-    { id: 6, image: '/assets/images/jogja_merapi.jpg' },
-    { id: 7, image: '/assets/images/jogja_kotagede.jpg' },
-    { id: 8, image: '/assets/images/jogja_batik.jpg' },
-    { id: 9, image: '/assets/images/jogja_malioboro.jpg' },
-    { id: 10, image: '/assets/images/jogja_gudeg.jpg' },
+    { id: 1, image: '/assets/images/jogja_tugu.jpg', title: 'Tugu Pal Putih', category: 'Sumbu Filosofis' },
+    { id: 2, image: '/assets/images/jogja_keraton.jpg', title: 'Keraton Ngayogyakarta', category: 'Warisan UNESCO' },
+    { id: 3, image: '/assets/images/jogja_tamansari.jpg', title: 'Istana Air Tamansari', category: 'Cagar Budaya' },
+    { id: 4, image: '/assets/images/real_gunungan_grebeg.jpg', title: 'Hajad Dalem Grebeg', category: 'Tradisi Keraton' },
+    { id: 5, image: '/assets/images/jogja_prambanan.jpg', title: 'Candi Prambanan', category: 'Mahakarya Abad ke-9' },
+    { id: 6, image: '/assets/images/real_ramayana_stage.jpg', title: 'Sendratari Ramayana', category: 'Seni Pertunjukan' },
+    { id: 7, image: '/assets/images/jogja_ratuboko.jpg', title: 'Senja Ratu Boko', category: 'Arkeologi Mataram' },
+    { id: 8, image: '/assets/images/jogja_merapi.jpg', title: 'Gunung Merapi', category: 'Poros Kosmis Utara' },
+    { id: 9, image: '/assets/images/real_tari_srimanganti.jpg', title: 'Tari Klasik Srimanganti', category: 'Kesenian Keraton' },
+    { id: 10, image: '/assets/images/jogja_kotagede.jpg', title: 'Warisan Kotagede', category: 'Ibu Kota Mataram' },
+    { id: 11, image: '/assets/images/real_bregada_keraton.jpg', title: 'Bregada Prajurit', category: 'Kawal Pusaka' },
+    { id: 12, image: '/assets/images/real_batik_keraton.jpg', title: 'Batik Tulis Pusaka', category: 'Kriya Warisan' },
+    { id: 13, image: '/assets/images/jogja_batik.jpg', title: 'Kampung Batik Giriloyo', category: 'Sentra Batik Tulis' },
+    { id: 14, image: '/assets/images/jogja_malioboro.jpg', title: 'Malam Malioboro', category: 'Denyut Kota' },
+    { id: 15, image: '/assets/images/jogja_gudeg.jpg', title: 'Gudeg Kering Wijilan', category: 'Kuliner Legendaris' },
+    { id: 16, image: '/assets/images/real_artjog.jpg', title: 'ARTJOG Contemporary Art', category: 'Pameran Seni' },
+    { id: 17, image: '/assets/images/real_bekakak_gamping.jpg', title: 'Upacara Saparan Bekakak', category: 'Adat Istiadat' },
+    { id: 18, image: '/assets/images/jogja_kasongan.jpg', title: 'Gerabah Kasongan', category: 'Kriya Tanah Liat' },
+    { id: 19, image: '/assets/images/jogja_upacara_adat.jpg', title: 'Prosesi Adat Kasultanan', category: 'Paugeran Budaya' },
+    { id: 20, image: '/assets/images/jogja_parangtritis.jpg', title: 'Pantai Parangtritis', category: 'Poros Segara Kidul' }
   ];
 
   // Duplicate for seamless infinite loop
-  const marqueeItems = [...stories, ...stories, ...stories];
+  const marqueeItems = [...stories, ...stories];
 
   return (
     <section style={{
@@ -52,7 +62,7 @@ export default function InstagramStories() {
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
             <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
           </svg>
-          Galeri Visual JogjaKrama
+          Galeri Visual Faktual JogjaKrama
         </motion.div>
 
         <h2 style={{
@@ -67,7 +77,7 @@ export default function InstagramStories() {
         </h2>
       </div>
 
-      {/* INFINITE SCROLLING MARQUEE GALLERY (Edge fade mask removed!) */}
+      {/* INFINITE SCROLLING MARQUEE GALLERY */}
       <div style={{
         display: 'flex',
         width: '100%',
@@ -79,12 +89,12 @@ export default function InstagramStories() {
           transition={{
             repeat: Infinity,
             repeatType: 'loop',
-            duration: 35,
+            duration: 45,
             ease: 'linear'
           }}
           style={{
             display: 'flex',
-            gap: '1.2rem',
+            gap: '1.25rem',
             whiteSpace: 'nowrap',
             willChange: 'transform'
           }}
@@ -93,19 +103,23 @@ export default function InstagramStories() {
             <div
               key={`${item.id}-${idx}`}
               style={{
-                width: '180px',
-                height: '280px',
-                borderRadius: '20px',
+                width: '190px',
+                height: '290px',
+                borderRadius: '22px',
                 overflow: 'hidden',
                 flexShrink: 0,
                 boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
                 cursor: 'pointer',
-                background: '#f1f5f9'
+                background: '#f1f5f9',
+                position: 'relative',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
               }}
             >
               <img 
                 src={item.image} 
-                alt={`Foto galeri ${idx + 1}`} 
+                alt={`${item.title} - ${item.category}`} 
+                loading="lazy"
+                decoding="async"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -113,6 +127,38 @@ export default function InstagramStories() {
                   display: 'block'
                 }}
               />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(12, 10, 9, 0.85) 0%, rgba(12, 10, 9, 0.25) 45%, transparent 100%)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                  padding: '1rem 0.85rem',
+                  pointerEvents: 'none'
+                }}
+              >
+                <span style={{
+                  color: '#fef08a',
+                  fontSize: '0.66rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  marginBottom: '0.2rem'
+                }}>
+                  {item.category}
+                </span>
+                <span style={{
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  lineHeight: 1.25,
+                  whiteSpace: 'normal'
+                }}>
+                  {item.title}
+                </span>
+              </div>
             </div>
           ))}
         </motion.div>
@@ -126,7 +172,7 @@ export default function InstagramStories() {
         fontSize: '0.88rem',
         fontWeight: 500
       }}>
-        Tandai <span style={{ color: '#051926', fontWeight: 700 }}>@jogjakrama.official</span> agar foto Anda berkesempatan ditampilkan.
+        Tandai <span style={{ color: '#051926', fontWeight: 700 }}>@jogjakrama.official</span> agar foto dokumentasi budaya Anda berkesempatan dikurasi.
       </div>
     </section>
   );

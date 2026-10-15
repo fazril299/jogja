@@ -597,7 +597,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
   const heroImage =
     activeMapPlace?.coverImage ||
     place?.coverImage ||
-    'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=2400&auto=format&fit=crop';
+    '/assets/images/jogja_keraton.jpg';
 
   const handleInquireSubmit = (e) => {
     e.preventDefault();

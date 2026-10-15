@@ -107,8 +107,8 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
       province: formProvince,
       region: formRegion,
       regionLabel: formProvince.includes('Yogyakarta') ? 'Yogyakarta' : formProvince,
-      coverImage: formCoverImage || 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?q=80&w=1600&auto=format&fit=crop',
-      thumbnail: formCoverImage || 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?q=80&w=600&auto=format&fit=crop',
+      coverImage: formCoverImage || '/assets/images/jogja_keraton.jpg',
+      thumbnail: formCoverImage || '/assets/images/jogja_keraton.jpg',
       soundType: 'wind',
       coordinates: {
         lat: parseFloat(formLat) || -7.8053,
@@ -146,7 +146,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
           {
             category: 'Tradisi',
             name: `Upacara Adat ${formName}`,
-            image: formCoverImage || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=800&auto=format&fit=crop',
+            image: formCoverImage || '/assets/images/jogja_upacara_adat.jpg',
             detail: 'Ritual rasa syukur masyarakat kepada Sang Pencipta dan alam semesta.'
           }
         ]
@@ -165,7 +165,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
           {
             name: `Pusat Budaya ${formName}`,
             type: 'Situs Pusaka',
-            image: formCoverImage || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+            image: formCoverImage || '/assets/images/jogja_tamansari.jpg',
             desc: 'Pusat bertemunya masyarakat dalam perayaan budaya.'
           }
         ]
@@ -446,7 +446,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                   type="url"
                   value={formCoverImage}
                   onChange={(e) => setFormCoverImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/photo-..."
+                  placeholder="/assets/images/jogja_keraton.jpg atau URL gambar"
                   className="w-full p-2.5 rounded-xl bg-neutral-900 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400"
                 />
               </div>

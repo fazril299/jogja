@@ -39,7 +39,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Pasar Kembang, Sosromenduran, Gedong Tengen, Kota Yogyakarta, DIY 55271',
         coordinates: { lat: -7.7893, lng: 110.3639 },
         distanceFromWisata: '350 m dari Malioboro',
-        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_malioboro.jpg',
         status: 'enak',
         verdictLabel: 'Rekomendasi Otentik Lokal',
         tasteProfile: 'Kopi hitam kental diseduh arang kayu asem membara dengan Sego Kucing sambal teri.',
@@ -52,7 +52,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Malioboro No.18, Suryatmajan, Kec. Danurejan, Kota Yogyakarta, DIY 55213',
         coordinates: { lat: -7.7946, lng: 110.3657 },
         distanceFromWisata: '120 m dari Malioboro',
-        image: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_tugu.jpg',
         status: 'enak',
         verdictLabel: 'Rekomendasi • Kudapan Khas',
         tasteProfile: 'Kulit renyah berisi bengkuang segar, ayam cincang, dan telur puyuh dengan saus bawang putih tumbuk.',
@@ -65,7 +65,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Sosrowijayan No.41-43, Sosromenduran, Gedong Tengen, Kota Yogyakarta, DIY 55271',
         coordinates: { lat: -7.7916, lng: 110.3632 },
         distanceFromWisata: '280 m dari Malioboro',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Warisan Kuliner Legendaris',
         tasteProfile: 'Gudeg basah gurih-manis dengan krecek pedas lembut dan bubur santan areh kental.',
@@ -78,7 +78,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Perwakilan / Sirip Luar Malioboro, Kec. Danurejan, Kota Yogyakarta, DIY 55213',
         coordinates: { lat: -7.7935, lng: 110.3671 },
         distanceFromWisata: '190 m dari Malioboro',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_malioboro.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Harga Kurang Jelas',
         tasteProfile: 'Ayam/burung dara goreng cenderung dingin dan sambal encer.',
@@ -108,7 +108,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Wijilan No.167, Panembahan, Kecamatan Kraton, Kota Yogyakarta, DIY 55131',
         coordinates: { lat: -7.8046, lng: 110.3669 },
         distanceFromWisata: '240 m dari Keraton',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Standar Emas Gudeg Kering',
         tasteProfile: 'Gudeg kering cokelat kemerahan daun jati, areh kental legit, dan telur pindang.',
@@ -121,7 +121,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Magangan Kulon No.1, Panembahan, Kecamatan Kraton, Kota Yogyakarta, DIY 55131',
         coordinates: { lat: -7.8082, lng: 110.3638 },
         distanceFromWisata: '180 m dari Keraton',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_keraton.jpg',
         status: 'enak',
         verdictLabel: 'Gastronomi Resep Raja Mataram',
         tasteProfile: 'Bebek Suwar-Suwir saus kedondong segar, Semur Piyik, dan Bir Jawa rempah secang.',
@@ -134,7 +134,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Gading No.2, Patehan, Kecamatan Kraton, Kota Yogyakarta, DIY 55133',
         coordinates: { lat: -7.8139, lng: 110.3631 },
         distanceFromWisata: '420 m dari Alun-Alun Kidul',
-        image: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Favorit Warga Lokal Sejak 1975',
         tasteProfile: 'Kuah santan hitam kluwek kaya rempah dengan koyor sapi empuk, tahu, dan kacang tolo.',
@@ -147,7 +147,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Alun-Alun Kidul, Patehan, Kecamatan Kraton, Kota Yogyakarta, DIY 55133',
         coordinates: { lat: -7.8118, lng: 110.3632 },
         distanceFromWisata: '360 m dari Keraton',
-        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_tamansari.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Kuah Kurang Pekat',
         tasteProfile: 'Kuah jahe encer dominan gula pasir, ketan ronde cenderung keras.',
@@ -177,7 +177,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Nyi Ageng Nis No.9, Rejowinangun, Kec. Kotagede, Kota Yogyakarta, DIY 55171',
         coordinates: { lat: -7.8152, lng: 110.4024 },
         distanceFromWisata: '450 m dari Kotagede',
-        image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_kotagede.jpg',
         status: 'enak',
         verdictLabel: 'Otentik Dimasak Anglo Arang',
         tasteProfile: 'Bakmi Godhog dan Bakmi Nyemek kaldu ayam kampung asli dan telur bebek di atas tungku arang.',
@@ -190,7 +190,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Mondorakan No.27, Prenggan, Kec. Kotagede, Kota Yogyakarta, DIY 55172',
         coordinates: { lat: -7.8272, lng: 110.3995 },
         distanceFromWisata: '190 m dari Pasar Kotagede',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Kudapan Pusaka Sejak 1946',
         tasteProfile: 'Kue mungil tepung ketan hijau pandan berisi enten kelapa gula jawa panggang.',
@@ -203,7 +203,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Prawirotaman No.38B, Brontokusuman, Kec. Mergangsan, Kota Yogyakarta, DIY 55153',
         coordinates: { lat: -7.8190, lng: 110.3712 },
         distanceFromWisata: '110 m dari Kampung Turis Prawirotaman',
-        image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_kotagede.jpg',
         status: 'enak',
         verdictLabel: 'Artisan Gelato Rempah Lokal',
         tasteProfile: 'Gelato padat lembut dengan varian Kemangi, Jahe, Kayu Manis, dan Cokelat.',
@@ -216,7 +216,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Prawirotaman II, Brontokusuman, Kec. Mergangsan, Kota Yogyakarta, DIY 55153',
         coordinates: { lat: -7.8198, lng: 110.3698 },
         distanceFromWisata: '260 m dari Prawirotaman',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_tugu.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Harga Relatif Tinggi',
         tasteProfile: 'Menu western frozen standar dengan harga tinggi.',
@@ -246,7 +246,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Astomulyo No.50, Kaliurang, Hargobinangun, Kec. Pakem, Kabupaten Sleman, DIY 55582',
         coordinates: { lat: -7.5966, lng: 110.4245 },
         distanceFromWisata: '140 m dari Taman Kaliurang',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Ikonik Lereng Merapi Sejak 1950',
         tasteProfile: 'Ketan uli kelapa gurih kenyal (jadah) dijepit tempe dan tahu bacem gula aren.',
@@ -259,7 +259,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Kaliurang KM.16, Area Sawah, Pakembinangun, Kec. Pakem, Kabupaten Sleman, DIY 55582',
         coordinates: { lat: -7.6691, lng: 110.4209 },
         distanceFromWisata: 'Jalur Utama Kaliurang Pakem',
-        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_merapi.jpg',
         status: 'enak',
         verdictLabel: 'Masakan Desa dan Pisang Goreng',
         tasteProfile: 'Sayur lodeh tempe cabai hijau, telur krispi garing, pisang goreng hangat, dan kopi klotok.',
@@ -272,7 +272,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Astomulyo, Kaliurang, Hargobinangun, Kec. Pakem, Kabupaten Sleman, DIY 55582',
         coordinates: { lat: -7.5978, lng: 110.4265 },
         distanceFromWisata: '210 m dari Taman Wisata Kaliurang',
-        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Rekomendasi • Kuliner Khas Lereng Merapi',
         tasteProfile: 'Sate daging kelinci empuk rendah kolesterol dengan bumbu kacang halus dan kecap manis hangat.',
@@ -285,7 +285,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Kaliurang KM 22, Hargobinangun, Kec. Pakem, Kabupaten Sleman, DIY 55582',
         coordinates: { lat: -7.6145, lng: 110.4210 },
         distanceFromWisata: '1.8 km dari Ullen Sentalu',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_merapi.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Tekstur Ketan Keras',
         tasteProfile: 'Jadah cenderung keras dan baceman kurang meresap.',
@@ -315,7 +315,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Sultan Agung No.18, Jejeran II, Wonokromo, Kec. Pleret, Kabupaten Bantul, DIY 55791',
         coordinates: { lat: -7.8712, lng: 110.3879 },
         distanceFromWisata: '6.1 km dari Kasongan',
-        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Rekomendasi Olahan Kambing',
         tasteProfile: 'Sate kambing muda bumbu garam & merica ditusuk jeruji besi sepeda dengan kuah gulai.',
@@ -328,7 +328,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Sewon Indah, Ngireng-ireng, Panggungharjo, Kec. Sewon, Kabupaten Bantul, DIY 55188',
         coordinates: { lat: -7.8485, lng: 110.3585 },
         distanceFromWisata: '2.2 km dari Kasongan',
-        image: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Otentik Dapur Tungku Kayu Bakar',
         tasteProfile: 'Lele asap panggang pelepah kelapa dimasak dalam kuah santan pedas cabai rawit.',
@@ -341,7 +341,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Sarirejo Singosaren, Soropaten, Ringinharjo, Kec. Bantul, Kabupaten Bantul, DIY 55712',
         coordinates: { lat: -7.8825, lng: 110.3412 },
         distanceFromWisata: '4.1 km dari Kasongan',
-        image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_batik.jpg',
         status: 'enak',
         verdictLabel: 'Mie Singkong Alami Tanpa Pemutih',
         tasteProfile: 'Mie tepung gaplek singkong kenyal dimasak anglo arang dengan suwiran ayam kampung dan telur bebek.',
@@ -354,7 +354,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Ringroad Selatan, Tamantirto, Kec. Kasihan, Kabupaten Bantul, DIY 55184',
         coordinates: { lat: -7.8312, lng: 110.3298 },
         distanceFromWisata: '1.8 km dari Kasongan',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_kasongan.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Tekstur dan Harga',
         tasteProfile: 'Daging kambing cenderung alot dan tidak mencantumkan harga per porsi.',
@@ -384,7 +384,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Kawasan TPI Pantai Depok, Parangtritis, Kec. Kretek, Kabupaten Bantul, DIY 55772',
         coordinates: { lat: -8.0152, lng: 110.2908 },
         distanceFromWisata: '4.6 km dari Pantai Parangtritis',
-        image: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_parangtritis.jpg',
         status: 'enak',
         verdictLabel: 'Seafood Segar Timbangan Resmi',
         tasteProfile: 'Ikan cakalang, kakap merah, dan udang segar hasil tangkapan nelayan pagi hari dibakar bumbu madu/kuning.',
@@ -397,7 +397,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jl. Parangtritis KM 24, Donotirto, Kec. Kretek, Kabupaten Bantul, DIY 55772',
         coordinates: { lat: -7.9912, lng: 110.3195 },
         distanceFromWisata: '3.9 km dari Pantai Parangtritis',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_gudeg.jpg',
         status: 'enak',
         verdictLabel: 'Ayam Kampung Utuh Bumbu Areh Gurih',
         tasteProfile: 'Ayam kampung utuh dimasak perlahan dengan santan areh kental, daun salam, serai, dan sambal bawang.',
@@ -410,7 +410,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Area Hutan, Giricahyo, Kec. Purwosari, Kabupaten Gunungkidul, DIY 55872',
         coordinates: { lat: -8.0298, lng: 110.3486 },
         distanceFromWisata: '1.8 km dari Pantai Parangtritis',
-        image: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_parangtritis.jpg',
         status: 'enak',
         verdictLabel: 'Pemandangan Pantai Saat Senja',
         tasteProfile: 'Hidangan Nusantara hangat ditemani kelapa muda segar dan kopi jahe di atas tebing karst Samudra Hindia.',
@@ -423,7 +423,7 @@ export const JOGJA_GPS_ZONES = [
         spotName: 'Jalur Parkir Non-Resmi Pantai Selatan, DIY',
         coordinates: { lat: -8.0235, lng: 110.3301 },
         distanceFromWisata: '280 m dari Parkir Luar',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop',
+        image: '/assets/images/jogja_parangtritis.jpg',
         status: 'kurang',
         verdictLabel: 'Perlu Pertimbangan • Informasi Harga',
         tasteProfile: 'Ikan goreng kering dari bahan beku dan kelapa muda dengan harga yang relatif tinggi.',
@@ -489,19 +489,19 @@ export const CULTURAL_PLACES = [
         {
           category: 'Seni Tari Sakral',
           name: 'Tari Bedhaya Semang & Srimpi',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_tari_srimanganti.jpg',
           detail: 'Tarian sakral yang ditarikan oleh sembilan penari putri dengan gerakan meditatif halus, melambangkan sembilan lubang hawa nafsu manusia dan harmoni kosmis.'
         },
         {
           category: 'Upacara Adat Agung',
           name: 'Hajad Dalem Garebeg Mulud & Sekaten',
-          image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_gunungan_grebeg.jpg',
           detail: 'Arak-arakan tujuh Gunungan hasil bumi dari Keraton menuju Masjid Gedhe Kauman sebagai wujud sedekah raja kepada rakyatnya.'
         },
         {
           category: 'Gastronomi Kasultanan',
           name: 'Bebek Suwar-Suwir, Brongkos, & Bir Jawa',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Hidangan kegemaran raja-raja Yogyakarta yang dapat dicicipi langsung di Bale Raos dan Warung Brongkos Handayani Alun-Alun Kidul.'
         }
       ]
@@ -522,13 +522,13 @@ Sementara itu di Alun-Alun Selatan (Alkid), berdiri dua pohon beringin kembar "S
         {
           name: 'Kompleks Kedhaton & Museum Lukisan Raden Saleh',
           type: 'Istana Resmi & Museum Pusaka',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_bregada_keraton.jpg',
           desc: 'Menyaksikan pameran kereta kencana, silsilah pohon keluarga Mataram, dan pertunjukan reguler Gamelan/Wayang Wong setiap pagi.'
         },
         {
           name: 'Umbul Pasiraman & Sumur Gumuling Tamansari',
           type: 'Situs Cagar Budaya Istana Air',
-          image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_tamansari.jpg',
           desc: 'Menyusuri kolam pemandian kerajaan dan lorong akustik bawah tanah di tengah Kampung Wisata Taman.'
         },
         {
@@ -626,13 +626,13 @@ Sementara itu di Alun-Alun Selatan (Alkid), berdiri dua pohon beringin kembar "S
         {
           category: 'Kuliner Malam Ikonik',
           name: 'Kopi Joss Arang, Lumpia Samijaya, & Gudeg Mbah Lindu',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Perpaduan kopi arang membara di utara Stasiun Tugu, lumpia rebung bawang putih di depan Hotel Mutiara, dan gudeg pagi legendaris di Sosrowijayan.'
         },
         {
           category: 'Kriya & Perdagangan',
           name: 'Seni Tawar-Menawar Halus di Pasar Beringharjo',
-          image: '/assets/images/jogja_kotagede.jpg',
+          image: '/assets/images/jogja_malioboro.jpg',
           detail: 'Interaksi jual-beli menggunakan bahasa Jawa Krama yang santun ("Pinten menika, Bu?") untuk mendapatkan batik dan lurik berkualitas.'
         }
       ]
@@ -659,13 +659,13 @@ Pada tahun 1925, Sri Sultan Hamengkubuwono VIII membangun kios-kios permanen ber
         {
           name: 'Teras Malioboro 1 & Pasar Beringharjo',
           type: 'Sentra UMKM, Batik & Kuliner Resmi',
-          image: '/assets/images/jogja_kotagede.jpg',
+          image: '/assets/images/jogja_batik.jpg',
           desc: 'Pusat oleh-oleh terkurasi dengan harga transparan serta kuliner legendaris Sate Kere (sate gajih sapi bakar bumbu ketumbar) di pintu timur Beringharjo.'
         },
         {
           name: 'Museum Benteng Vredeburg & Titik Nol Km',
           type: 'Museum Sejarah & Ruang Publik',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_malioboro.jpg',
           desc: 'Benteng kolonial abad ke-18 yang kini telah direvitalisasi dengan tata cahaya modern dan pertunjukan air mancur malam.'
         }
       ]
@@ -757,13 +757,13 @@ Pada tahun 1925, Sri Sultan Hamengkubuwono VIII membangun kios-kios permanen ber
         {
           category: 'Kuliner Pusaka',
           name: 'Kue Kipo Bu Djito, Roti Kembang Waru, & Bakmi Mbah Gito',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Kue Kipo ketan pandan isi kelapa gula jawa, Roti Kembang Waru berkelopak 8 simbol Hasta Brata, dan Bakmi Jawa tungku arang.'
         },
         {
           category: 'Tradisi Ziarah Adat',
           name: 'Tata Cara Busana Peranakan di Makam Raja Mataram',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_bregada_keraton.jpg',
           detail: 'Setiap peziarah yang masuk ke ruang inti makam Panembahan Senopati wajib mengenakan pakaian adat Jawa lengkap (kemben bagi wanita, surjan/peranakan bagi pria).'
         }
       ]
@@ -790,13 +790,13 @@ Tak jauh di bawah pohon beringin raksasa berusia ratusan tahun, terdapat kolam S
         {
           name: 'Kampung Alun-Alun (Between Two Gates) & Rumah Kalang',
           type: 'Kampung Wisata Bersejarah',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_kotagede.jpg',
           desc: 'Menyusuri lorong sempit penuh rumah Joglo berusia ratusan tahun yang terawat sangat bersih oleh warga setempat.'
         },
         {
           name: 'Workshop Perak HS Silver / Ansor Silver & Bakmi Mbah Gito',
           type: 'Edukasi Kriya & Kuliner Malam',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_kotagede.jpg',
           desc: 'Melihat langsung proses pembuatan kerajinan perak lalu menutup sore dengan Bakmi Godhog hangat di Rejowinangun.'
         }
       ]
@@ -882,7 +882,7 @@ Tak jauh di bawah pohon beringin raksasa berusia ratusan tahun, terdapat kolam S
         {
           category: 'Pertunjukan Kelas Dunia',
           name: 'Sendratari Ramayana Ballet Prambanan',
-          image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_ramayana_stage.jpg',
           detail: 'Pertunjukan tari kolosal yang memegang rekor dunia sebagai pementasan tari rutin terlama, menampilkan adegan Hanoman Obong dengan lingkaran api nyata.'
         },
         {
@@ -894,7 +894,7 @@ Tak jauh di bawah pohon beringin raksasa berusia ratusan tahun, terdapat kolam S
         {
           category: 'Kuliner Khas Sleman Timur',
           name: 'Ayam Goreng Kalasan Mbok Berek & Soto Bathok Mbah Katro',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Ayam kampung ungkep air kelapa dengan kremesan renyah gurih, serta soto sapi kuah bening dalam mangkuk tempurung kelapa di tepi sawah Candi Sambisari.'
         }
       ]
@@ -915,19 +915,19 @@ Dengan kesaktian dan bantuan pasukan makhluk halus, Bandung Bondowoso hampir mer
         {
           name: 'Pelataran Inti Candi Prambanan & Candi Sewu',
           type: 'Monumen Warisan Dunia',
-          image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_prambanan.jpg',
           desc: 'Menjelajahi kemegahan candi Hindu Prambanan dan candi Buddha Sewu yang berdampingan dalam satu taman wisata sebagai bukti toleransi abad ke-9.'
         },
         {
           name: 'Alun-Alun & Gapura Utama Keraton Ratu Boko',
           type: 'Titik Pengamatan Senja',
-          image: '/assets/images/jogja_parangtritis.jpg',
+          image: '/assets/images/jogja_ratuboko.jpg',
           desc: 'Menikmati semburat jingga matahari terbenam yang membingkai pintu gerbang batu kuno di atas bukit.'
         },
         {
           name: 'Candi Sambisari & Soto Bathok Mbah Katro',
           type: 'Candi Bawah Tanah & Sarapan Pagi',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_prambanan.jpg',
           desc: 'Candi cantik yang terletak 6,5 meter di bawah permukaan tanah hamparan rumput hijau, hanya 50 meter dari warung Soto Bathok legendaris.'
         }
       ]
@@ -1019,13 +1019,13 @@ Dengan kesaktian dan bantuan pasukan makhluk halus, Bandung Bondowoso hampir mer
         {
           category: 'Edukasi Sejarah Bangsawan',
           name: 'TurAdikarya Museum Ullen Sentalu & Jamu Ratu Mas',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/real_batik_keraton.jpg',
           detail: 'Menjelajahi perbedaan halus motif batik Yogyakarta (latar putih tegas) dan Surakarta (latar sogan cokelat), ditutup suguhan hangat minuman rempah Ratu Mas.'
         },
         {
           category: 'Kuliner Khas Pegunungan',
           name: 'Jadah Tempe Mbah Carik, Sate Ratu, & Kopi Klotok Pakem',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Burger tradisional ketan kelapa dan tempe bacem manis di Kaliurang, sayur lodeh pisang goreng di Pakem, serta Sate Ayam Merah di Sleman.'
         }
       ]
@@ -1046,7 +1046,7 @@ Saat erupsi besar 26 Oktober 2010 terjadi setelah beliau memastikan keluarga dan
         {
           name: 'Museum Ullen Sentalu Kaliurang',
           type: 'Museum Budaya & Seni Jawa',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_merapi.jpg',
           desc: 'Tur terpandu 45 menit menyusuri lorong sejarah Mataram di tengah hutan sejuk Kaliurang.'
         },
         {
@@ -1058,7 +1058,7 @@ Saat erupsi besar 26 Oktober 2010 terjadi setelah beliau memastikan keluarga dan
         {
           name: 'Warung Kopi Klotok & Jadah Tempe Mbah Carik',
           type: 'Wisata Kuliner Pegunungan',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           desc: 'Menikmati sarapan pagi berlatar puncak Merapi dan membawa pulang oleh-oleh Jadah Tempe asli Kaliurang.'
         }
       ]
@@ -1144,13 +1144,13 @@ Saat erupsi besar 26 Oktober 2010 terjadi setelah beliau memastikan keluarga dan
         {
           category: 'Pusaka Kuliner Manis-Gurih',
           name: 'Gudeg Kering Wijilan vs Gudeg Basah Pawon / Mbah Lindu',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Gudeg kering memiliki areh kental yang dimasak lama (cocok untuk oleh-oleh kendil/besek), sedangkan gudeg basah berkuah santan gurih segar yang disantap pagi atau tengah malam.'
         },
         {
           category: 'Inovasi Tradisi Bantul',
           name: 'Sate Klathak Pak Pong & Pak Bari (Tusuk Jeruji Besi)',
-          image: '/assets/images/jogja_tugu.jpg',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Jeruji besi sepeda yang digunakan sebagai tusuk sate membantu menghantarkan panas ke bagian tengah daging kambing sehingga matang merata dan bertekstur empuk.'
         },
         {
@@ -1177,7 +1177,7 @@ Ketika potongan daging dan lemak kambing muda yang berbalut garam kasar tersebut
         {
           name: 'Sentra Gudeg Wijilan (Yu Djum) & Brongkos Handayani',
           type: 'Kuliner Pagi & Siang Pusat Kota',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           desc: 'Sarapan Gudeg di Wijilan atau menikmati sepiring Brongkos koyor sapi hangat di Alun-Alun Selatan.'
         },
         {
@@ -1281,13 +1281,13 @@ Ketika potongan daging dan lemak kambing muda yang berbalut garam kasar tersebut
         {
           category: 'Tradisi Sakral Suro',
           name: 'Upacara Adat Nguras Enceh (Gentong Pusaka) Imogiri',
-          image: 'https://images.unsplash.com/photo-1584810359583-96fc3448beaa?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_upacara_adat.jpg',
           detail: 'Ritual tahunan setiap bulan Suro menguras empat tempayan air pusaka persembahan kerajaan sahabat (Aceh, Palembang, Turki/Rum, dan Siam).'
         },
         {
           category: 'Minuman & Kuliner Herbal',
           name: 'Wedang Uwuh Imogiri & Pecel Kembang Turi',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_batik.jpg',
           detail: 'Minuman hangat berwarna merah menyala dari serutan kayu secang, jahe bakar, daun cengkeh, daun pala, dan gula batu ("uwuh" = dedaunan kering).'
         }
       ]
@@ -1314,13 +1314,13 @@ Di tangga ke-409 menuju makam Sultan Agung, terdapat sebuah batu pipih di tengah
         {
           name: 'Kampung Batik Tulis Giriloyo & Makam Raja Imogiri',
           type: 'Wisata Budaya & Ziarah Sejarah',
-          image: '/assets/images/jogja_kotagede.jpg',
+          image: '/assets/images/real_batik_keraton.jpg',
           desc: 'Mencoba mencanting batik tulis didampingi ibu-ibu perajin lalu mendaki 409 anak tangga Imogiri.'
         },
         {
           name: 'Hutan Pinus Mangunan & Puncak Becici Dlingo',
           type: 'Lanskap Alam Bantul Timur',
-          image: '/assets/images/jogja_parangtritis.jpg',
+          image: '/assets/images/jogja_merapi.jpg',
           desc: 'Hutan pinus asri dengan panggung teater alam kayu di perbukitan atas Imogiri.'
         }
       ]
@@ -1412,13 +1412,13 @@ Di tangga ke-409 menuju makam Sultan Agung, terdapat sebuah batu pipih di tengah
         {
           category: 'Kearifan Lokal Keselamatan',
           name: 'Pantangan Pakaian Hijau Pupus (Gadung Mlathi)',
-          image: 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_parangtritis.jpg',
           detail: 'Selain dipercaya sebagai warna kesukaan Kanjeng Ratu Kidul, secara ilmiah warna hijau pupus menyaru dengan warna air laut berarus rip current sehingga menyulitkan Tim SAR jika terjadi keadaan darurat.'
         },
         {
           category: 'Kuliner Pesisir & Geopark',
           name: 'Thiwul Yu Tum, Sego Abang Lombok Ijo, & Seafood TPI Depok',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_gudeg.jpg',
           detail: 'Nasi tiwul singkong kukus gula jawa, nasi merah sayur cabai hijau empal sapi, dan ikan bakar segar hasil tangkapan nelayan Depok.'
         }
       ]
@@ -1445,7 +1445,7 @@ Di atas batu karang hitam yang kini dikelilingi pagar Cepuri Parangkusumo, belia
         {
           name: 'Gua Jomblang & Pantai Timang Gunungkidul',
           type: 'Petualangan Geopark Karst',
-          image: 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?q=80&w=800&auto=format&fit=crop',
+          image: '/assets/images/jogja_parangtritis.jpg',
           desc: 'Menyaksikan berkas cahaya surga di dasar gua vertikal Jomblang dan menyeberangi jembatan gantung/gondola di atas debur ombak Pantai Timang.'
         },
         {
