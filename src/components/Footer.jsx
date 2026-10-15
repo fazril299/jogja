@@ -1,73 +1,64 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
 import {
   MapPin,
   Phone,
   Mail,
-  ArrowUp,
   ExternalLink,
   Compass,
-  BookOpen,
+  Radio,
+  BookMarked,
+  Scroll,
+  CalendarDays,
   Share2,
-  FileText,
-  X,
-  Globe,
-  ChevronRight,
   ShieldCheck,
-  HelpCircle,
-  Navigation
+  Globe,
+  ChevronRight
 } from 'lucide-react';
 
-function InstagramIcon({ size = 18 }) {
+function InstagramIcon({ size = 18, className = "" }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#000000"
-      strokeWidth="1.8"
+      stroke="currentColor"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={className}
     >
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="#000000" stroke="none" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
     </svg>
   );
 }
 
-function YoutubeIcon({ size = 18 }) {
+function YoutubeIcon({ size = 18, className = "" }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="#000000"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
+      className={className}
     >
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
-      <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000000" stroke="none" />
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
     </svg>
   );
 }
 
-function WhatsAppIcon({ size = 18 }) {
+function WhatsAppIcon({ size = 18, className = "" }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="#000000"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
+      className={className}
     >
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
     </svg>
   );
 }
@@ -167,8 +158,6 @@ export default function Footer({
   onOpenShareModal,
   onSelectPlaceById
 }) {
-  const [activeModal, setActiveModal] = useState(null); // 'privacy' | 'terms' | 'ethics' | 'accessibility'
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -240,11 +229,10 @@ export default function Footer({
           {/* COLUMN 2: DESTINASI & PUSAKA SEJARAH (Span 3) */}
           <div className="lg:col-span-3 space-y-4">
             <h3
-              className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2"
+              className="text-xs font-bold uppercase tracking-wider text-black"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              <Compass size={15} className="text-black" />
-              <span>Destinasi &amp; Pusaka</span>
+              Destinasi &amp; Pusaka
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm text-black">
               <li>
@@ -322,20 +310,19 @@ export default function Footer({
           {/* COLUMN 3: FITUR EKSPLORASI & KOMUNITAS (Span 2) */}
           <div className="lg:col-span-2 space-y-4">
             <h3
-              className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2"
+              className="text-xs font-bold uppercase tracking-wider text-black"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              <BookOpen size={15} className="text-black" />
-              <span>Fitur Budaya</span>
+              Fitur Budaya
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm text-black">
               <li>
                 <button
                   type="button"
                   onClick={() => onOpenNearMe && onOpenNearMe()}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
                 >
-                  <Navigation size={13} className="text-black" />
+                  <Radio size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Radar Wisata GPS</span>
                 </button>
               </li>
@@ -343,18 +330,18 @@ export default function Footer({
                 <button
                   type="button"
                   onClick={() => onOpenCultureBook && onOpenCultureBook()}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
                 >
-                  <BookOpen size={13} className="text-black" />
+                  <BookMarked size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Paspor Budaya</span>
                 </button>
               </li>
               <li>
                 <a
                   href="#packages"
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
                 >
-                  <Compass size={13} className="text-black" />
+                  <Compass size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Rute Ekspedisi</span>
                 </a>
               </li>
@@ -366,9 +353,9 @@ export default function Footer({
                     else if (onOpenCultureJournals) onOpenCultureJournals();
                     else if (onOpenCultureBook) onOpenCultureBook();
                   }}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-start gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
                 >
-                  <FileText size={13} className="text-black" />
+                  <Scroll size={14} className="text-amber-800 flex-shrink-0 mt-0.5" />
                   <span>Jurnal &amp; Panduan Budaya</span>
                 </button>
               </li>
@@ -380,9 +367,9 @@ export default function Footer({
                     else if (onOpenCultureEvents) onOpenCultureEvents();
                     else if (onOpenCultureBook) onOpenCultureBook();
                   }}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
                 >
-                  <BookOpen size={13} className="text-black" />
+                  <CalendarDays size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Kalender Acara Jogja</span>
                 </button>
               </li>
@@ -390,9 +377,9 @@ export default function Footer({
                 <button
                   type="button"
                   onClick={() => onOpenShareModal && onOpenShareModal()}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left font-medium text-black"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
                 >
-                  <Share2 size={13} className="text-black" />
+                  <Share2 size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Bagikan Momen</span>
                 </button>
               </li>
@@ -400,9 +387,9 @@ export default function Footer({
                 <button
                   type="button"
                   onClick={() => onOpenAdmin && onOpenAdmin()}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-1.5 text-left text-[11px] text-black font-semibold pt-1 underline"
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left text-[11px] text-black font-semibold pt-1 underline"
                 >
-                  <ShieldCheck size={13} className="text-black" />
+                  <ShieldCheck size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Portal Kurator &amp; CMS</span>
                 </button>
               </li>
@@ -412,17 +399,16 @@ export default function Footer({
           {/* COLUMN 4: KONTAK RESMI & SEKRETARIAT (Span 3) */}
           <div className="lg:col-span-3 space-y-4">
             <h3
-              className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2"
+              className="text-xs font-bold uppercase tracking-wider text-black"
               style={{ fontFamily: "'Outfit', sans-serif" }}
             >
-              <MapPin size={15} className="text-black" />
-              <span>Sekretariat &amp; Kontak</span>
+              Sekretariat &amp; Kontak
             </h3>
 
             <div className="space-y-3 text-xs sm:text-sm text-black">
               {/* Address */}
               <div className="flex items-start gap-2.5">
-                <MapPin size={16} className="text-black flex-shrink-0 mt-0.5" />
+                <MapPin size={16} className="text-amber-800 flex-shrink-0 mt-0.5" />
                 <span className="leading-relaxed text-black">
                   Kawasan Keraton Ngayogyakarta Hadiningrat, Kec. Kraton, Kota Yogyakarta, D.I. Yogyakarta 55133
                 </span>
@@ -430,7 +416,7 @@ export default function Footer({
 
               {/* Telephone */}
               <div className="flex items-center gap-2.5">
-                <Phone size={15} className="text-black flex-shrink-0" />
+                <Phone size={15} className="text-amber-800 flex-shrink-0" />
                 <a
                   href="tel:+622745550193"
                   className="hover:opacity-60 transition-opacity font-mono text-xs font-semibold text-black"
@@ -441,7 +427,7 @@ export default function Footer({
 
               {/* Email */}
               <div className="flex items-center gap-2.5">
-                <Mail size={15} className="text-black flex-shrink-0" />
+                <Mail size={15} className="text-amber-800 flex-shrink-0" />
                 <a
                   href="mailto:kontak@jogjakrama.id"
                   className="hover:opacity-60 transition-opacity font-mono text-xs font-semibold text-black"
@@ -449,8 +435,6 @@ export default function Footer({
                   kontak@jogjakrama.id
                 </a>
               </div>
-
-
             </div>
 
             {/* Social Media Pills */}
@@ -461,12 +445,12 @@ export default function Footer({
               >
                 Kanal Resmi &amp; Komunitas
               </span>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <a
                   href="https://wa.me/622745550193"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all flex items-center justify-center text-black"
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-[#25D366] text-slate-800 hover:text-white border border-slate-300 hover:border-[#25D366] hover:scale-105 transition-all flex items-center justify-center shadow-sm"
                   aria-label="WhatsApp JogjaKrama"
                   title="WhatsApp Resmi"
                 >
@@ -476,7 +460,7 @@ export default function Footer({
                   href="https://www.instagram.com/jogjakrama.official/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all flex items-center justify-center text-black"
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] text-slate-800 hover:text-white border border-slate-300 hover:border-transparent hover:scale-105 transition-all flex items-center justify-center shadow-sm"
                   aria-label="Instagram JogjaKrama"
                   title="Instagram Resmi"
                 >
@@ -486,7 +470,7 @@ export default function Footer({
                   href="https://www.youtube.com/@KratonJogjaOfficial"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all flex items-center justify-center text-black"
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-[#FF0000] text-slate-800 hover:text-white border border-slate-300 hover:border-[#FF0000] hover:scale-105 transition-all flex items-center justify-center shadow-sm"
                   aria-label="YouTube Dokumenter Kebudayaan"
                   title="YouTube Dokumenter"
                 >
@@ -496,15 +480,15 @@ export default function Footer({
                   href="https://tourism.kratonjogja.id"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-9 px-3.5 rounded-full bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all flex items-center gap-1.5 text-xs text-black"
+                  className="h-9 px-3.5 rounded-full bg-slate-100 hover:bg-[#2C221E] text-slate-800 hover:text-amber-200 border border-slate-300 hover:border-[#2C221E] hover:scale-105 transition-all flex items-center gap-1.5 text-xs font-semibold shadow-sm"
                   aria-label="Portal Resmi Keraton"
                   title="Situs Resmi Kasultanan"
                 >
-                  <Globe size={14} className="text-black" />
-                  <span className="text-[11px] font-bold text-black" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                  <Globe size={14} className="flex-shrink-0" />
+                  <span className="text-[11px] font-bold" style={{ fontFamily: "'Outfit', sans-serif" }}>
                     Keraton Jogja
                   </span>
-                  <ExternalLink size={11} className="text-black opacity-80" />
+                  <ExternalLink size={11} className="opacity-80" />
                 </a>
               </div>
             </div>
@@ -513,311 +497,6 @@ export default function Footer({
 
         </div>
       </div>
-
-      {/* =========================================================================
-          INSTITUTIONAL CITATIONS & CULTURAL ENDORSEMENT STRIP
-          ========================================================================= */}
-      <div className="border-t border-b border-slate-200 bg-slate-50 py-3.5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-black">
-          <div className="flex items-center gap-2 text-center md:text-left flex-wrap justify-center text-black">
-            <span className="font-bold text-black" style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Rujukan &amp; Mitra Terkait:
-            </span>
-            <span>UNESCO World Heritage</span>
-            <span>•</span>
-            <span>Keraton Ngayogyakarta Hadiningrat</span>
-            <span>•</span>
-            <span>Kundha Kabudayan DIY</span>
-            <span>•</span>
-            <span>Pesona Indonesia</span>
-          </div>
-          <div className="text-black text-center md:text-right font-medium">
-            <span>Kasultanan Ngayogyakarta Hadiningrat</span>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          BOTTOM LEGAL, SITEMAP & BACK-TO-TOP BAR
-          ========================================================================= */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          
-          {/* Copyright notice */}
-          <div className="text-xs text-black text-center sm:text-left space-y-0.5">
-            <div>
-              &copy; {new Date().getFullYear()}{' '}
-              <span className="text-black font-bold" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                JogjaKrama
-              </span>. Seluruh Hak Cipta Dilindungi Undang-Undang.
-            </div>
-            <div className="text-[11px] text-black">
-              Dirancang dengan dedikasi untuk pelestarian warisan budaya adiluhung Yogyakarta.
-            </div>
-          </div>
-
-          {/* Legal Navigation Modals */}
-          <div className="flex items-center gap-4 text-xs text-black flex-wrap justify-center font-semibold">
-            <button
-              type="button"
-              onClick={() => setActiveModal('privacy')}
-              className="text-black hover:opacity-60 transition-opacity"
-            >
-              Kebijakan Privasi
-            </button>
-            <span className="text-black">•</span>
-            <button
-              type="button"
-              onClick={() => setActiveModal('terms')}
-              className="text-black hover:opacity-60 transition-opacity"
-            >
-              Syarat &amp; Ketentuan
-            </button>
-            <span className="text-black">•</span>
-            <button
-              type="button"
-              onClick={() => setActiveModal('ethics')}
-              className="text-black hover:opacity-60 transition-opacity"
-            >
-              Pedoman Adat &amp; Etika
-            </button>
-            <span className="text-black">•</span>
-            <button
-              type="button"
-              onClick={() => setActiveModal('accessibility')}
-              className="text-black hover:opacity-60 transition-opacity"
-            >
-              Aksesibilitas
-            </button>
-          </div>
-
-          {/* Smooth Back to Top Button */}
-          <div className="flex-shrink-0">
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-black text-xs font-bold transition-all duration-200 group shadow-sm"
-              style={{ fontFamily: "'Outfit', sans-serif" }}
-              aria-label="Kembali ke atas halaman"
-            >
-              <span className="text-black">Kembali ke Atas</span>
-              <ArrowUp
-                size={14}
-                className="group-hover:-translate-y-0.5 transition-transform duration-200 text-black"
-              />
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* =========================================================================
-          MODAL DIALOG FOR LEGAL & CULTURAL POLICIES (WHITE THEMED, ALL BLACK TEXT)
-          ========================================================================= */}
-      <AnimatePresence>
-        {activeModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setActiveModal(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.2 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl bg-white border border-slate-300 p-6 sm:p-8 text-black shadow-2xl"
-            >
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setActiveModal(null)}
-                className="absolute top-5 right-5 p-2 rounded-full text-black hover:bg-slate-100 transition-colors"
-                aria-label="Tutup jendela informasi"
-              >
-                <X size={20} className="text-black" />
-              </button>
-
-              {/* PRIVACY POLICY CONTENT */}
-              {activeModal === 'privacy' && (
-                <div>
-                  <div className="flex items-center gap-2.5 text-black mb-2">
-                    <ShieldCheck size={24} className="text-black" />
-                    <h3
-                      className="text-xl font-bold text-black"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Kebijakan Privasi JogjaKrama
-                    </h3>
-                  </div>
-                  <p className="text-xs text-black mb-4">Pembaruan Terakhir: Oktober 2026</p>
-                  <div className="space-y-4 text-xs sm:text-sm text-black leading-relaxed">
-                    <p>
-                      Platform <strong>JogjaKrama</strong> berkomitmen penuh menjaga kerahasiaan dan keamanan data pengunjung kami. Kami hanya mengumpulkan informasi yang diperlukan untuk meningkatkan pengalaman penjelajahan budaya Anda.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      1. Data Lokasi GPS
-                    </h4>
-                    <p>
-                      Fitur <em>Radar Wisata Terdekat</em> mengakses koordinat perangkat Anda secara lokal di peramban hanya saat Anda memberikan izin. Koordinat tidak dijual atau disebarkan kepada pihak ketiga.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      2. Paspor Budaya &amp; Ulasan Komunitas
-                    </h4>
-                    <p>
-                      Catatan stempel paspor dan ulasan destinasi disimpan secara aman agar Anda dapat meninjau riwayat kunjungan wisata Anda dengan nyaman.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* TERMS OF SERVICE CONTENT */}
-              {activeModal === 'terms' && (
-                <div>
-                  <div className="flex items-center gap-2.5 text-black mb-2">
-                    <FileText size={24} className="text-black" />
-                    <h3
-                      className="text-xl font-bold text-black"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Syarat &amp; Ketentuan Layanan
-                    </h3>
-                  </div>
-                  <p className="text-xs text-black mb-4">Ketentuan Penggunaan Platform JogjaKrama</p>
-                  <div className="space-y-4 text-xs sm:text-sm text-black leading-relaxed">
-                    <p>
-                      Dengan mengakses situs web JogjaKrama, Anda setuju untuk menaati ketentuan hukum yang berlaku di Republik Indonesia serta menghormati pranata adat Daerah Istimewa Yogyakarta.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      1. Hak Cipta Konten
-                    </h4>
-                    <p>
-                      Seluruh teks kurasi sejarah, narasi filosofis, dan materi audio-visual di JogjaKrama dilindungi hak cipta. Pengutipan ilmiah diperbolehkan dengan mencantumkan atribusi resmi ke JogjaKrama.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      2. Akurasi Jadwal &amp; Tiket Wisata
-                    </h4>
-                    <p>
-                      Informasi operasional destinasi budaya (seperti jam buka Keraton dan Museum Ullen Sentalu) merujuk pada ketentuan pengelola resmi terkait dan dapat berubah sesuai upacara adat internal keraton.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* ETHICS & CULTURAL GUIDELINES CONTENT */}
-              {activeModal === 'ethics' && (
-                <div>
-                  <div className="flex items-center gap-2.5 text-black mb-2">
-                    <BookOpen size={24} className="text-black" />
-                    <h3
-                      className="text-xl font-bold text-black"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Pedoman Adat &amp; Tata Krama Budaya
-                    </h3>
-                  </div>
-                  <p className="text-xs text-black mb-4">Etika Luhur Mengunjungi Kawasan Bersejarah Kasultanan</p>
-                  <div className="space-y-4 text-xs sm:text-sm text-black leading-relaxed">
-                    <p>
-                      Yogyakarta menjunjung tinggi falsafah <em>Unggah-Ungguh</em> dan keharmonisan antara manusia, alam, serta sang Pencipta.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      1. Busana di Area Keraton &amp; Makam Imogiri
-                    </h4>
-                    <p>
-                      Wisatawan diwajibkan berpakaian sopan dan tertutup. Untuk ziarah Makam Raja-Raja Imogiri, pengunjung wajib mengenakan busana adat peranakan khas Mataram yang disewakan di lokasi.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      2. Etika Berfoto &amp; Dokumentasi
-                    </h4>
-                    <p>
-                      Dilarang membelakangi Abdi Dalem atau Singgasana dengan sikap tidak sopan. Patuhi tanda larangan kamera pada ruang pusaka sakral tertentu di dalam kompleks Keraton.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      3. Menjaga Kebersihan Kawasan Wisata
-                    </h4>
-                    <p>
-                      Jaga kebersihan di sepanjang Malioboro, Titik Nol, Panggung Krapyak, dan Tugu Pal Putih. Buang sampah pada tempat yang tersedia dan hormati para pedagang lokal.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* ACCESSIBILITY CONTENT */}
-              {activeModal === 'accessibility' && (
-                <div>
-                  <div className="flex items-center gap-2.5 text-black mb-2">
-                    <HelpCircle size={24} className="text-black" />
-                    <h3
-                      className="text-xl font-bold text-black"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Komitmen Aksesibilitas
-                    </h3>
-                  </div>
-                  <p className="text-xs text-black mb-4">Inklusivitas Wisata Ramah Disabilitas</p>
-                  <div className="space-y-4 text-xs sm:text-sm text-black leading-relaxed">
-                    <p>
-                      JogjaKrama terus berupaya memastikan seluruh wisatawan memiliki akses yang setara terhadap keindahan budaya Yogyakarta.
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      1. Fasilitas Ramah Kursi Roda
-                    </h4>
-                    <p>
-                      Sebagian besar kawasan pelataran Keraton, Tamansari (area luar), dan pedestrian Malioboro telah dilengkapi ramp kursi roda dan jalur pemandu tuna netra (guiding block).
-                    </p>
-                    <h4
-                      className="font-bold text-black pt-2"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      2. Aksesibilitas Digital
-                    </h4>
-                    <p>
-                      Antarmuka situs dirancang dengan rasio kontras warna tinggi, teks yang dapat diskalakan, dan label navigasi yang ramah pembaca layar (screen reader).
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Modal Footer Action */}
-              <div className="mt-8 pt-4 border-t border-slate-200 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setActiveModal(null)}
-                  className="px-6 py-2.5 rounded-full bg-black text-white hover:opacity-80 font-bold text-xs tracking-wide transition-all shadow-sm"
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  Tutup Informasi
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </footer>
   );
 }

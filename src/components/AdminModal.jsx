@@ -241,7 +241,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                 ) : (
                   <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                    Mode Demo Lokal (.env siap disambung)
+                    Penyimpanan Lokal Aktif (.env siap disambung)
                   </span>
                 )}
               </div>
@@ -616,6 +616,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                 {users.map((usr) => {
                   const isUserAdmin =
                     usr.role === 'admin' ||
+                    usr.email === 'fazriel@admin.com' ||
                     usr.email === 'admin@jogjakrama.id' ||
                     usr.email === 'fazrielmuliyael@gmail.com';
 

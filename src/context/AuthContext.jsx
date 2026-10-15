@@ -41,45 +41,27 @@ function ensureGoogleScriptLoaded() {
   });
 }
 
-// Pre-seeded Google Accounts (Primary: Gabriel's Google Accounts)
+// Pre-seeded Google Accounts (Admin Utama: Admin)
 const DEFAULT_GOOGLE_ACCOUNTS = [
   {
-    id: 'google-gabriel',
-    name: 'Gabriel',
-    email: 'fazrilkece258@gmail.com',
-    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
+    id: '115ae06d-2b4f-4a37-a34c-a6c5d63f7e8c',
+    name: 'Admin',
+    email: 'fazriel@admin.com',
+    avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true',
     role: 'admin',
     provider: 'google',
-    joinedAt: '2026-01-10T08:00:00.000Z'
-  },
-  {
-    id: 'google-gabriel-admin',
-    name: 'Gabriel (Admin)',
-    email: 'fazrielmuliyael@gmail.com',
-    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
-    role: 'admin',
-    provider: 'google',
-    joinedAt: '2026-01-10T08:00:00.000Z'
+    joinedAt: '2026-01-01T00:00:00.000Z'
   }
 ];
 
-// Akun Admin Sistem Utama (Gabriel)
+// Akun Sistem Utama (Admin)
 const DEFAULT_SEED_USERS = [
   {
-    id: 'user-gabriel-1',
-    name: 'Gabriel',
-    email: 'fazrilkece258@gmail.com',
-    password: 'adminpassword123',
-    avatar: 'https://ui-avatars.com/api/?name=Gabriel&background=2C221E&color=FAF8F5&size=200&bold=true',
-    role: 'admin',
-    joinedAt: '2026-01-01T00:00:00.000Z'
-  },
-  {
-    id: 'user-admin-1',
-    name: 'Gabriel (Administrator)',
-    email: 'admin@jogjakrama.id',
-    password: 'adminpassword123',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop',
+    id: '115ae06d-2b4f-4a37-a34c-a6c5d63f7e8c',
+    name: 'Admin',
+    email: 'fazriel@admin.com',
+    password: 'admin123',
+    avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true',
     role: 'admin',
     joinedAt: '2026-01-01T00:00:00.000Z'
   }
@@ -105,10 +87,17 @@ export function AuthProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const hasPrimary = parsed.some(
-            (a) => a.email.toLowerCase() === 'fazrielmuliyael@gmail.com'
+          const filtered = parsed.filter(
+            (a) =>
+              a.email?.toLowerCase() !== 'admin@jogjakrama.id' &&
+              a.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
+              a.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
+              a.email?.toLowerCase() !== 'zrealyael@gmail.com'
           );
-          return hasPrimary ? parsed : [...DEFAULT_GOOGLE_ACCOUNTS, ...parsed];
+          const hasPrimary = filtered.some(
+            (a) => a.email?.toLowerCase() === 'fazriel@admin.com'
+          );
+          return hasPrimary ? filtered : [...DEFAULT_GOOGLE_ACCOUNTS, ...filtered];
         }
       }
     } catch (e) {
@@ -146,12 +135,28 @@ export function AuthProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Pastikan admin@jogjakrama.id selalu ada di daftar users
-          const hasAdmin = parsed.some((u) => u.email.toLowerCase() === 'admin@jogjakrama.id');
+          // Bersihkan akun demo dan lama yang tidak diinginkan
+          const filtered = parsed.filter(
+            (u) =>
+              u.email?.toLowerCase() !== 'admin@jogjakrama.id' &&
+              u.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
+              u.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
+              u.email?.toLowerCase() !== 'zrealyael@gmail.com'
+          );
+          const cleaned = filtered.map((u) =>
+            u.email?.toLowerCase() === 'fazriel@admin.com'
+              ? {
+                  ...u,
+                  name: 'Admin',
+                  avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true'
+                }
+              : u
+          );
+          const hasAdmin = cleaned.some((u) => u.email?.toLowerCase() === 'fazriel@admin.com');
           if (!hasAdmin) {
-            return [DEFAULT_SEED_USERS[0], ...parsed];
+            return [DEFAULT_SEED_USERS[0], ...cleaned];
           }
-          return parsed;
+          return cleaned;
         }
       }
     } catch (e) {
@@ -166,7 +171,19 @@ export function AuthProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_SESSION_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.name && parsed.name !== 'Fazriel Muliyawan') {
+        if (
+          parsed &&
+          parsed.email &&
+          parsed.email.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
+          parsed.email.toLowerCase() !== 'fazrilkece258@gmail.com' &&
+          parsed.email.toLowerCase() !== 'zrealyael@gmail.com' &&
+          parsed.name !== 'Fazriel Muliyawan' &&
+          parsed.name !== 'Fazriel Nadirat Radinka'
+        ) {
+          if (parsed.email.toLowerCase() === 'fazriel@admin.com') {
+            parsed.name = 'Admin';
+            parsed.avatar = 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true';
+          }
           try {
             localStorage.setItem('jogjakrama_passport_user_name', parsed.name);
           } catch (e) {}
@@ -176,30 +193,18 @@ export function AuthProvider({ children }) {
     } catch (e) {
       console.error('Error loading active session:', e);
     }
-    // Ingat akun Gabriel sebagai default session
-    const rememberedName = (() => {
-      try {
-        const stored = localStorage.getItem('jogjakrama_passport_user_name');
-        if (stored && stored.trim() && stored !== 'Fazriel Muliyawan' && stored !== 'Penjelajah Jogja' && stored !== 'Tamu Penjelajah (Guest)') {
-          return stored.trim();
-        }
-        return 'Gabriel';
-      } catch (e) {
-        return 'Gabriel';
-      }
-    })();
     const defaultSession = {
-      id: 'user-gabriel-1',
-      name: rememberedName,
-      email: 'fazrilkece258@gmail.com',
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(rememberedName)}&background=2C221E&color=FAF8F5&size=200&bold=true`,
+      id: '115ae06d-2b4f-4a37-a34c-a6c5d63f7e8c',
+      name: 'Admin',
+      email: 'fazriel@admin.com',
+      avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true',
       role: 'admin',
       isGuest: false,
       joinedAt: '2026-01-01T00:00:00.000Z'
     };
     try {
       localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(defaultSession));
-      localStorage.setItem('jogjakrama_passport_user_name', rememberedName);
+      localStorage.setItem('jogjakrama_passport_user_name', 'Admin');
     } catch (e) {}
     return defaultSession;
   });
@@ -263,6 +268,19 @@ export function AuthProvider({ children }) {
             } else {
               merged.push(userObj);
             }
+
+            // Sinkronkan session aktif jika akun yang sama terupdate di Supabase
+            setCurrentUser((curr) => {
+              if (curr && (curr.email || '').toLowerCase() === (rp.email || '').toLowerCase()) {
+                return {
+                  ...curr,
+                  name: userObj.name,
+                  avatar: userObj.avatar,
+                  role: userObj.role
+                };
+              }
+              return curr;
+            });
           });
           return merged;
         });
@@ -301,7 +319,9 @@ export function AuthProvider({ children }) {
 
       const userEmail = (authUser.email || '').toLowerCase();
       const isAdminEmail =
-        userEmail === 'admin@jogjakrama.id' || userEmail === 'fazrielmuliyael@gmail.com';
+        userEmail === 'fazriel@admin.com' ||
+        userEmail === 'admin@jogjakrama.id' ||
+        userEmail === 'fazrielmuliyael@gmail.com';
 
       const determinedRole = profile?.role || (isAdminEmail ? 'admin' : 'user');
 
@@ -609,7 +629,9 @@ export function AuthProvider({ children }) {
       }
 
       const assignedRole =
-        trimmedEmail === 'admin@jogjakrama.id' || trimmedEmail === 'fazrielmuliyael@gmail.com'
+        trimmedEmail === 'fazriel@admin.com' ||
+        trimmedEmail === 'admin@jogjakrama.id' ||
+        trimmedEmail === 'fazrielmuliyael@gmail.com'
           ? 'admin'
           : 'user';
 
@@ -673,7 +695,9 @@ export function AuthProvider({ children }) {
 
       const existing = users.find((u) => u.email.toLowerCase() === emailLower);
       const isGabrielAdmin =
-        emailLower === 'fazrielmuliyael@gmail.com' || emailLower === 'admin@jogjakrama.id';
+        emailLower === 'fazriel@admin.com' ||
+        emailLower === 'fazrielmuliyael@gmail.com' ||
+        emailLower === 'admin@jogjakrama.id';
 
       const avatarUrl =
         accountInput?.avatar ||
@@ -804,7 +828,9 @@ export function AuthProvider({ children }) {
                 const profile = await res.json();
                 const emailLower = (profile.email || '').toLowerCase();
                 const isGabrielAdmin =
-                  emailLower === 'fazrielmuliyael@gmail.com' || emailLower === 'admin@jogjakrama.id';
+                  emailLower === 'fazriel@admin.com' ||
+                  emailLower === 'fazrielmuliyael@gmail.com' ||
+                  emailLower === 'admin@jogjakrama.id';
 
                 const existing = users.find((u) => u.email.toLowerCase() === emailLower);
 
@@ -904,19 +930,7 @@ export function AuthProvider({ children }) {
     [googleClientId, users, pendingBenefitAction]
   );
 
-  // Fast Demo Login
-  const loginWithDemo = useCallback(
-    (demoUserIndex = 0) => {
-      const target = DEFAULT_SEED_USERS[demoUserIndex] || DEFAULT_SEED_USERS[1];
-      return login(target.email, target.password);
-    },
-    [login]
-  );
 
-  // Fast Admin Login Shortcut
-  const loginWithAdminDemo = useCallback(() => {
-    return login('admin@jogjakrama.id', 'adminpassword123');
-  }, [login]);
 
   // Logout implementation
   const logout = useCallback(async () => {
@@ -964,6 +978,7 @@ export function AuthProvider({ children }) {
     currentUser &&
       (currentUser.role === 'admin' ||
         currentUser.role === 'Administrator' ||
+        currentUser.email === 'fazriel@admin.com' ||
         currentUser.email === 'admin@jogjakrama.id' ||
         currentUser.email === 'fazrielmuliyael@gmail.com')
   );
@@ -991,8 +1006,6 @@ export function AuthProvider({ children }) {
         googleAccounts,
         googleClientId,
         saveGoogleClientId,
-        loginWithDemo,
-        loginWithAdminDemo,
         loginAsGuest,
         logout,
         toggleUserRole,

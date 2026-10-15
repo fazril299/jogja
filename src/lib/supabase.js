@@ -268,7 +268,9 @@ export async function syncProfileToSupabase({ id, email, fullName, avatarUrl, ro
   if (!cleanEmail) return { success: false, error: 'Email missing' };
 
   const targetRole =
-    cleanEmail === 'admin@jogjakrama.id' || cleanEmail === 'fazrielmuliyael@gmail.com'
+    cleanEmail === 'fazriel@admin.com' ||
+    cleanEmail === 'admin@jogjakrama.id' ||
+    cleanEmail === 'fazrielmuliyael@gmail.com'
       ? 'admin'
       : (role || 'user');
 

@@ -109,45 +109,73 @@ export default function MyCultureBookModal({
 
   const isGuest = !currentUser || currentUser.isGuest;
 
-  // Paspor Budaya selalu mengingat nama Anda: Gabriel
+  // Paspor Budaya nama akun admin
   const rememberedName = (() => {
     try {
       const stored = localStorage.getItem('jogjakrama_passport_user_name');
-      if (stored && stored.trim() && stored !== 'Fazriel Muliyawan' && stored !== 'Penjelajah Jogja' && stored !== 'Tamu Penjelajah (Guest)') {
+      if (
+        stored &&
+        stored.trim() &&
+        stored !== 'Fazriel Muliyawan' &&
+        stored !== 'Fazriel Nadirat Radinka' &&
+        stored !== 'Penjelajah Jogja' &&
+        stored !== 'Tamu Penjelajah (Guest)'
+      ) {
         return stored.trim();
       }
     } catch (e) {}
-    if (currentUser?.name && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)') {
+    if (
+      currentUser?.name &&
+      !currentUser.isGuest &&
+      currentUser.name !== 'Fazriel Muliyawan' &&
+      currentUser.name !== 'Fazriel Nadirat Radinka' &&
+      currentUser.name !== 'Penjelajah Jogja' &&
+      currentUser.name !== 'Tamu Penjelajah (Guest)'
+    ) {
       return currentUser.name;
     }
-    return 'Gabriel';
+    return 'Admin';
   })();
 
   const displayName =
-    currentUser && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)'
-      ? currentUser.name
-      : rememberedName;
+    currentUser?.email === 'fazriel@admin.com'
+      ? 'Admin'
+      : (currentUser &&
+         !currentUser.isGuest &&
+         currentUser.name !== 'Fazriel Muliyawan' &&
+         currentUser.name !== 'Fazriel Nadirat Radinka' &&
+         currentUser.name !== 'Penjelajah Jogja' &&
+         currentUser.name !== 'Tamu Penjelajah (Guest)'
+          ? currentUser.name
+          : rememberedName);
 
   const displayRole =
     currentUser && !currentUser.isGuest
-      ? (currentUser.role === 'admin' || currentUser.email === 'admin@jogjakrama.id' || currentUser.email === 'fazrielmuliyael@gmail.com' || currentUser.email === 'fazrilkece258@gmail.com'
+      ? (currentUser.role === 'admin' || currentUser.email === 'fazriel@admin.com' || currentUser.email === 'admin@jogjakrama.id' || currentUser.email === 'fazrielmuliyael@gmail.com' || currentUser.email === 'fazrilkece258@gmail.com'
           ? `${currentUser.email || 'Admin'} • Administrator Sistem @ JogjaKrama`
           : `${currentUser.email || 'Member'} • Penjelajah Budaya @ JogjaKrama`)
       : (currentUser?.email
           ? `${currentUser.email} • Penjelajah Budaya @ JogjaKrama`
-          : 'fazrilkece258@gmail.com • Penjelajah Budaya @ JogjaKrama');
+          : 'fazriel@admin.com • Administrator Sistem @ JogjaKrama');
 
   const displayAvatar =
     currentUser?.avatar || '/assets/images/jogja_batik.jpg';
 
   useEffect(() => {
-    if (currentUser?.name && !currentUser.isGuest && currentUser.name !== 'Fazriel Muliyawan' && currentUser.name !== 'Penjelajah Jogja' && currentUser.name !== 'Tamu Penjelajah (Guest)') {
+    if (
+      currentUser?.name &&
+      !currentUser.isGuest &&
+      currentUser.name !== 'Fazriel Muliyawan' &&
+      currentUser.name !== 'Fazriel Nadirat Radinka' &&
+      currentUser.name !== 'Penjelajah Jogja' &&
+      currentUser.name !== 'Tamu Penjelajah (Guest)'
+    ) {
       try {
         localStorage.setItem('jogjakrama_passport_user_name', currentUser.name);
       } catch (e) {}
     } else {
       try {
-        localStorage.setItem('jogjakrama_passport_user_name', 'Gabriel');
+        localStorage.setItem('jogjakrama_passport_user_name', 'Admin');
       } catch (e) {}
     }
   }, [currentUser]);

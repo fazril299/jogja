@@ -32,8 +32,7 @@ export default function AuthModal() {
     loginAsGuest,
     loginWithGoogle,
     loginWithGoogleAccount,
-    googleAccounts,
-    loginWithAdminDemo
+    googleAccounts
   } = useAuth();
 
   // Form states
