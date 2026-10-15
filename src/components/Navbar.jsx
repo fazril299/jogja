@@ -53,6 +53,21 @@ const HEADER_VARIANTS = {
   }
 };
 
+const PROFILE_CONTAINER_VARIANTS = {
+  closed: (custom) => ({
+    width: custom?.isLoggedIn ? 154 : 124,
+    borderRadius: 100,
+    boxShadow: '0 6px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
+    transition: SPRING_TRANSITION
+  }),
+  open: {
+    width: 320,
+    borderRadius: 26,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
+    transition: SPRING_TRANSITION
+  }
+};
+
 const NAV_ITEMS = [
   { id: 'destinasi', label: 'Destinasi' },
   { id: 'tentang', label: 'Tentang' },
@@ -138,7 +153,24 @@ export default function Navbar({
   const [subFilter, setSubFilter] = useState('Populer');
   const closeTimerRef = useRef(null);
 
-  const { currentUser, openLogin, isAdmin } = useAuth();
+  const { currentUser, openLogin, isAdmin, logout } = useAuth();
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileTimerRef = useRef(null);
+
+  const handleProfileMouseEnter = useCallback(() => {
+    if (profileTimerRef.current) {
+      clearTimeout(profileTimerRef.current);
+      profileTimerRef.current = null;
+    }
+    setProfileOpen(true);
+  }, []);
+
+  const handleProfileMouseLeave = useCallback(() => {
+    profileTimerRef.current = setTimeout(() => {
+      setProfileOpen(false);
+    }, 240);
+  }, []);
 
   const handleTabMouseEnter = useCallback((id) => {
     if (closeTimerRef.current) {
@@ -163,6 +195,7 @@ export default function Navbar({
 
   const closeAll = () => {
     setHoveredTab(null);
+    setProfileOpen(false);
     setMobileMenuOpen(false);
   };
 
@@ -188,7 +221,7 @@ export default function Navbar({
 
   return (
     <>
-      {/* Top-Right Auth / Profile Pill (Direct Click Opens Full Profile Page) */}
+      {/* Top-Right Profile Pill with Floating Dropdown Animation */}
       <div
         style={{
           position: 'fixed',
@@ -197,236 +230,269 @@ export default function Navbar({
           zIndex: 100011,
           pointerEvents: 'auto',
           display: 'flex',
-          alignItems: 'center',
-          gap: '0.55rem'
+          justifyContent: 'flex-end'
         }}
       >
-        {/* Akses Kalender Acara di sebelah profile */}
-        <button
-          type="button"
-          onClick={() => {
-            closeAll();
-            if (onOpenKalenderAcara) {
-              onOpenKalenderAcara();
-            } else if (onOpenCultureEvents) {
-              onOpenCultureEvents();
-            } else if (onOpenCultureBook) {
-              onOpenCultureBook();
-            }
-          }}
-          className="hidden sm:flex items-center gap-2 cursor-pointer transition-all duration-300 active:scale-95"
-          style={{
-            height: '48px',
-            padding: '0 1.15rem',
-            borderRadius: '100px',
-            backgroundColor: currentView === 'kalender' ? '#c99b52' : '#ffffff',
-            color: currentView === 'kalender' ? '#ffffff' : '#09090b',
-            border: currentView === 'kalender' ? '1px solid #b8863b' : '1px solid rgba(0,0,0,0.05)',
-            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: "'Plus Jakarta Sans', sans-serif"
-          }}
-          onMouseEnter={(e) => {
-            if (currentView !== 'kalender') {
-              e.currentTarget.style.backgroundColor = '#fafafa';
-              e.currentTarget.style.color = '#c99b52';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentView !== 'kalender') {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = '#09090b';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-          title="Buka Kalender Acara Tradisi Jogja"
+        <motion.div
+          className="bg-white overflow-hidden flex flex-col will-change-transform border border-black/5"
+          onMouseEnter={handleProfileMouseEnter}
+          onMouseLeave={handleProfileMouseLeave}
+          initial="closed"
+          animate={profileOpen ? 'open' : 'closed'}
+          custom={{ isLoggedIn: Boolean(currentUser && !currentUser.isGuest) }}
+          variants={PROFILE_CONTAINER_VARIANTS}
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          <Calendar size={15} strokeWidth={2.2} className={currentView === 'kalender' ? 'text-white' : 'text-neutral-800'} />
-          <span className="hidden lg:inline">Kalender Acara</span>
-          <span className="inline lg:hidden">Kalender</span>
-        </button>
-
-        {/* Akses Jurnal Budaya di sebelah profile */}
-        <button
-          type="button"
-          onClick={() => {
-            closeAll();
-            if (onOpenJurnalBudaya) {
-              onOpenJurnalBudaya();
-            } else if (onOpenCultureJournals) {
-              onOpenCultureJournals();
-            } else if (onOpenCultureBook) {
-              onOpenCultureBook();
-            }
-          }}
-          className="hidden sm:flex items-center gap-2 cursor-pointer transition-all duration-300 active:scale-95"
-          style={{
-            height: '48px',
-            padding: '0 1.15rem',
-            borderRadius: '100px',
-            backgroundColor: currentView === 'jurnal' ? '#c99b52' : '#ffffff',
-            color: currentView === 'jurnal' ? '#ffffff' : '#09090b',
-            border: currentView === 'jurnal' ? '1px solid #b8863b' : '1px solid rgba(0,0,0,0.05)',
-            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: "'Plus Jakarta Sans', sans-serif"
-          }}
-          onMouseEnter={(e) => {
-            if (currentView !== 'jurnal') {
-              e.currentTarget.style.backgroundColor = '#fafafa';
-              e.currentTarget.style.color = '#c99b52';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentView !== 'jurnal') {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = '#09090b';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
-          }}
-          title="Buka Jurnal & Panduan Budaya Jogja"
-        >
-          <BookOpen size={15} strokeWidth={2.2} className={currentView === 'jurnal' ? 'text-white' : 'text-neutral-800'} />
-          <span className="hidden lg:inline">Jurnal Budaya</span>
-          <span className="inline lg:hidden">Jurnal</span>
-        </button>
-
-        {isAdmin && (
-          <button
-            type="button"
-            onClick={() => {
-              closeAll();
-              if (onOpenAdmin) onOpenAdmin();
-            }}
+          {/* Top Trigger Pill Header */}
+          <div
+            onClick={() => setProfileOpen(!profileOpen)}
+            className="flex items-center justify-between w-full cursor-pointer select-none"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              height: '48px',
-              padding: '0 1.15rem',
-              borderRadius: '100px',
-              backgroundColor: '#18181b',
-              color: '#fef08a',
-              border: '1px solid rgba(201, 155, 82, 0.45)',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.25), 0 0 10px rgba(201, 155, 82, 0.15)',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              transition: 'all 0.3s ease'
+              height: profileOpen ? '54px' : '48px',
+              padding: profileOpen ? '0 18px 0 14px' : '0 14px 0 8px',
+              transition: 'all 0.25s ease'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#c99b52';
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#18181b';
-              e.currentTarget.style.color = '#fef08a';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            title="Buka Panel Pengelola Budaya (Khusus Administrator)"
           >
-            <Shield size={14} className="text-amber-400" />
-            <span>Admin CMS</span>
-          </button>
-        )}
+            {currentUser && !currentUser.isGuest ? (
+              <div className="flex items-center gap-2.5 min-w-0">
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  referrerPolicy="no-referrer"
+                  className="w-8 h-8 rounded-full object-cover shrink-0 border-[1.5px] border-[#e5b869]"
+                />
+                <span className="text-[13px] font-semibold text-[#09090b] truncate max-w-[85px]">
+                  {currentUser.name.split(' ')[0]}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center shrink-0 text-black">
+                  <LogIn size={14} strokeWidth={2.2} />
+                </div>
+                <span className="text-[13px] font-semibold text-[#09090b]">
+                  Masuk
+                </span>
+              </div>
+            )}
 
-        {currentUser && !currentUser.isGuest ? (
-          <button
-            type="button"
-            onClick={() => {
-              closeAll();
-              if (onOpenCultureBook) onOpenCultureBook();
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              height: '48px',
-              padding: '0.35rem 1.05rem 0.35rem 0.45rem',
-              borderRadius: '100px',
-              backgroundColor: '#ffffff',
-              border: '1px solid rgba(0,0,0,0.05)',
-              boxShadow: '0 6px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
-              color: '#09090b',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              transition:
-                'background-color 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.45s cubic-bezier(0.25, 0.8, 0.25, 1)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#c99b52';
-              e.currentTarget.style.color = '#ffffff';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = '#09090b';
-            }}
-            title="Buka Profil Saya"
-          >
-            <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              referrerPolicy="no-referrer"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '1.5px solid #e5b869'
-              }}
+            <ChevronDown
+              size={13}
+              strokeWidth={2.4}
+              className={`text-neutral-500 transition-transform duration-200 shrink-0 ${
+                profileOpen ? 'rotate-180 text-black' : ''
+              }`}
             />
-            <span>{currentUser.name.split(' ')[0]}</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() =>
-              openLogin({
-                benefitType: 'general',
-                title: 'Selamat Datang di JogjaKrama',
-                description:
-                  'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
-              })
-            }
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              height: '48px',
-              padding: '0 1.35rem',
-              borderRadius: '100px',
-              backgroundColor: '#ffffff',
-              color: '#000000',
-              border: '1px solid rgba(0,0,0,0.04)',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              transition:
-                'background-color 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.45s cubic-bezier(0.25, 0.8, 0.25, 1)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#c99b52';
-              e.currentTarget.style.color = '#ffffff';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = '#000000';
-            }}
-          >
-            <LogIn size={14} strokeWidth={2.2} />
-            <span>Masuk</span>
-          </button>
-        )}
+          </div>
+
+          {/* Expanded Dropdown Content (Framer Spring Animation) */}
+          <AnimatePresence>
+            {profileOpen && (
+              <motion.div
+                key="profile-dropdown-content"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={SPRING_TRANSITION}
+                className="overflow-hidden px-3.5 pb-3.5 pt-1 space-y-2 border-t border-neutral-100"
+              >
+                {/* User Info Card */}
+                {currentUser && !currentUser.isGuest ? (
+                  <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-150 flex items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img
+                        src={currentUser.avatar}
+                        alt={currentUser.name}
+                        referrerPolicy="no-referrer"
+                        className="w-9 h-9 rounded-full object-cover shrink-0 border border-[#c99b52]"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-black truncate m-0 leading-tight">
+                          {currentUser.name}
+                        </p>
+                        <p className="text-[10px] text-neutral-500 font-medium truncate m-0 mt-0.5">
+                          {isAdmin ? '👑 Administrator CMS' : 'Penjelajah Budaya'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeAll();
+                        if (onOpenCultureBook) onOpenCultureBook();
+                      }}
+                      className="shrink-0 px-2.5 py-1.5 rounded-xl bg-white hover:bg-neutral-100 text-[11px] font-bold text-black border border-neutral-200 transition-colors cursor-pointer"
+                    >
+                      Profil
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/60 text-left">
+                    <p className="text-xs font-bold text-amber-950 m-0">
+                      Tamu Penjelajah
+                    </p>
+                    <p className="text-[11px] text-amber-900/80 m-0 mt-0.5">
+                      Masuk untuk menyimpan agenda budaya & momen favorit Anda.
+                    </p>
+                  </div>
+                )}
+
+                {/* Cultural Features: Kalender Acara & Jurnal Budaya */}
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-neutral-400 px-1 m-0">
+                    Agenda & Jurnal Budaya
+                  </p>
+
+                  {/* Kalender Acara */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      if (onOpenKalenderAcara) {
+                        onOpenKalenderAcara();
+                      } else if (onOpenCultureEvents) {
+                        onOpenCultureEvents();
+                      } else if (onOpenCultureBook) {
+                        onOpenCultureBook();
+                      }
+                    }}
+                    className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
+                      currentView === 'kalender'
+                        ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
+                        : 'bg-white hover:bg-neutral-50 border-neutral-100'
+                    }`}
+                  >
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                        currentView === 'kalender'
+                          ? 'bg-[#c99b52] text-white shadow-xs'
+                          : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
+                      }`}
+                    >
+                      <Calendar size={15} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`text-xs font-bold truncate m-0 ${
+                          currentView === 'kalender' ? 'text-amber-950' : 'text-black'
+                        }`}
+                      >
+                        Kalender Acara
+                      </p>
+                      <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
+                        Jadwal & Agenda Tradisi DIY
+                      </p>
+                    </div>
+                    <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+
+                  {/* Jurnal Budaya */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      if (onOpenJurnalBudaya) {
+                        onOpenJurnalBudaya();
+                      } else if (onOpenCultureJournals) {
+                        onOpenCultureJournals();
+                      } else if (onOpenCultureBook) {
+                        onOpenCultureBook();
+                      }
+                    }}
+                    className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
+                      currentView === 'jurnal'
+                        ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
+                        : 'bg-white hover:bg-neutral-50 border-neutral-100'
+                    }`}
+                  >
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                        currentView === 'jurnal'
+                          ? 'bg-[#c99b52] text-white shadow-xs'
+                          : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
+                      }`}
+                    >
+                      <BookOpen size={15} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`text-xs font-bold truncate m-0 ${
+                          currentView === 'jurnal' ? 'text-amber-950' : 'text-black'
+                        }`}
+                      >
+                        Jurnal Budaya
+                      </p>
+                      <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
+                        Panduan Adat, Etika & Esai
+                      </p>
+                    </div>
+                    <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+
+                  {/* Admin CMS (if admin) */}
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeAll();
+                        if (onOpenAdmin) onOpenAdmin();
+                      }}
+                      className="w-full flex items-center gap-3 p-2.5 rounded-2xl border border-amber-300/80 bg-amber-50 hover:bg-amber-100/80 text-left transition-all cursor-pointer group"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-neutral-900 text-amber-400 flex items-center justify-center shrink-0">
+                        <Shield size={15} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-neutral-950 truncate m-0">
+                          Admin CMS
+                        </p>
+                        <p className="text-[10px] text-neutral-600 truncate m-0 font-medium">
+                          Kelola Konten & Data Budaya
+                        </p>
+                      </div>
+                      <ChevronRight size={13} className="text-neutral-500 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Footer Action (Login or Logout) */}
+                <div className="pt-1.5 border-t border-neutral-100">
+                  {currentUser && !currentUser.isGuest ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeAll();
+                        if (logout) logout();
+                      }}
+                      className="w-full py-2 px-3 rounded-xl bg-neutral-100 hover:bg-rose-50 hover:text-rose-600 text-neutral-700 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <LogOut size={13} />
+                      <span>Keluar Akun</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeAll();
+                        openLogin({
+                          benefitType: 'general',
+                          title: 'Selamat Datang di JogjaKrama',
+                          description:
+                            'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
+                        });
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                    >
+                      <LogIn size={13} />
+                      <span>Masuk / Daftar Akun</span>
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       <div
