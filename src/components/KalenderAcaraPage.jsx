@@ -197,8 +197,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
             <span className="text-[11px] text-neutral-500">Waktu Indonesia Barat (WIB)</span>
           </div>
 
-          {/* Clean Grid Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* Clean Grid Cards (Bungee Framer Style) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {filteredEvents.map((ev) => (
               <motion.div
                 key={ev.id}
@@ -206,117 +206,30 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer"
+                className="bg-white rounded-[24px] border border-neutral-200/90 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col group cursor-pointer"
                 onClick={() => setActiveModalEvent(ev)}
               >
-                {/* Visual Cover Photo with Date Stamp */}
-                <div className="relative h-44 w-full overflow-hidden bg-neutral-900">
+                {/* Visual Cover Photo - Clean Full Bleed (No Overlays) */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
                   <img
                     src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
                     alt={ev.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                  {/* Floating Date Badge */}
-                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-xl border border-black/10 shadow-xs text-center">
-                    <div className="text-base font-black text-black leading-none">{ev.dayDate}</div>
-                    <div className="text-[9px] font-extrabold uppercase text-neutral-600 tracking-wider">
-                      {ev.monthName.slice(0, 3)} {ev.year}
-                    </div>
-                  </div>
-
-                  {/* Floating Category Pill */}
-                  <span className="absolute top-3 right-3 bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-lg border border-white/10">
-                    {ev.category}
-                  </span>
-
-                  {/* Bottom Highlight */}
-                  <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-bold flex items-center gap-1.5 drop-shadow">
-                    <Sparkles size={11} className="text-white shrink-0" />
-                    <span className="truncate">{ev.highlight}</span>
-                  </div>
                 </div>
 
-                {/* Card Content (Clean & Concise) */}
-                <div className="p-4 flex flex-col flex-1 justify-between gap-3">
-                  <div className="space-y-2">
-                    <h3 className="text-sm sm:text-base font-extrabold text-black m-0 leading-snug line-clamp-2">
-                      {ev.name}
-                    </h3>
-
-                    {/* Meta Row: Time & District */}
-                    <div className="flex items-center gap-3 text-xs text-neutral-600 font-medium">
-                      <span className="inline-flex items-center gap-1 text-black font-semibold">
-                        <Clock size={12} className="text-black shrink-0" />
-                        <span>{ev.time.split(' – ')[0]}</span>
-                      </span>
-                      <span className="inline-flex items-center gap-1 truncate">
-                        <MapPin size={12} className="text-black shrink-0" />
-                        <span className="truncate">{ev.district}</span>
-                      </span>
-                    </div>
-
-                    {/* Short concise brief */}
-                    <p className="text-xs text-neutral-600 leading-relaxed m-0 line-clamp-2">
-                      {ev.shortDesc || ev.description}
+                {/* Card Content - Pure Minimalist Typography */}
+                <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between">
+                  <div>
+                    {/* Date Stamp */}
+                    <p className="text-[13px] sm:text-[14px] text-neutral-500 font-normal tracking-normal mb-2">
+                      {ev.monthName} {ev.dayDate}, {ev.year}
                     </p>
 
-                    {/* Compact Adab Pill */}
-                    <div className="flex items-center gap-1.5 text-[11px] text-neutral-700 bg-neutral-100 rounded-lg px-2.5 py-1 border border-neutral-200">
-                      <AlertCircle size={11} className="text-black shrink-0" />
-                      <span className="truncate">{ev.shortTip || ev.tips}</span>
-                    </div>
-                  </div>
-
-                  {/* Card Action Buttons */}
-                  <div className="pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopySchedule(ev);
-                      }}
-                      className="py-1.5 px-2.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 text-black text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      {copiedId === ev.id ? (
-                        <>
-                          <Check size={12} className="text-black" />
-                          <span>Tersalin</span>
-                        </>
-                      ) : (
-                        <>
-                          <Share2 size={12} className="text-black" />
-                          <span>Salin</span>
-                        </>
-                      )}
-                    </button>
-
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveModalEvent(ev);
-                        }}
-                        className="py-1.5 px-3 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-black text-xs font-bold transition-colors cursor-pointer"
-                      >
-                        Detail
-                      </button>
-
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                          `${ev.name} ${ev.location} Yogyakarta`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="py-1.5 px-3 rounded-lg bg-black hover:bg-neutral-800 text-white text-xs font-bold inline-flex items-center gap-1 transition-colors no-underline"
-                      >
-                        <MapPin size={12} className="text-white" />
-                        <span>Peta</span>
-                      </a>
-                    </div>
+                    {/* Event Headline */}
+                    <h3 className="text-lg sm:text-[20px] font-bold text-neutral-950 leading-snug tracking-tight m-0 line-clamp-2 group-hover:text-amber-800 transition-colors">
+                      {ev.name}
+                    </h3>
                   </div>
                 </div>
               </motion.div>
