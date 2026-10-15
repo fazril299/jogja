@@ -6,7 +6,6 @@ import {
   Clock,
   MapPin,
   Sparkles,
-  Search,
   Share2,
   Check,
   ShieldCheck,
@@ -19,7 +18,6 @@ import { CULTURAL_EVENTS } from '../data/culturalEventsData';
 export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedPeriod, setSelectedPeriod] = useState('Semua');
-  const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [activeModalEvent, setActiveModalEvent] = useState(null);
 
@@ -46,17 +44,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
       }
     }
 
-    const q = searchQuery.trim().toLowerCase();
-    const matchQuery =
-      !q ||
-      ev.name.toLowerCase().includes(q) ||
-      ev.location.toLowerCase().includes(q) ||
-      ev.district.toLowerCase().includes(q) ||
-      ev.description.toLowerCase().includes(q) ||
-      ev.highlight.toLowerCase().includes(q) ||
-      ev.jawaCalendar.toLowerCase().includes(q);
-
-    return matchCat && matchPeriod && matchQuery;
+    return matchCat && matchPeriod;
   });
 
   const handleCopySchedule = (ev) => {
@@ -112,31 +100,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
 
         {/* Filter & Controls Section — Premium Editorial */}
         <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4 space-y-0">
-
-          {/* ── Search Bar ── full-width, dark glass */}
-          <div className="relative w-full mb-6">
-            <Search
-              size={18}
-              className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari acara, lokasi, atau upacara adat…"
-              className="w-full pl-14 pr-12 py-4 rounded-2xl border border-neutral-200 bg-white shadow-sm text-sm text-black placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors cursor-pointer"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
 
           {/* ── Period Selector ── bold tab-strip style */}
           <div className="flex items-center gap-0 border-b border-neutral-200 overflow-x-auto scrollbar-none mb-5">
@@ -241,14 +204,13 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
                 Tidak ada agenda yang cocok dengan filter
               </h3>
               <p className="text-xs text-neutral-600 m-0">
-                Coba ubah kata kunci pencarian atau pilih kategori dan periode lain.
+                Pilih kategori atau periode lain untuk melihat agenda acara budaya.
               </p>
               <button
                 type="button"
                 onClick={() => {
                   setSelectedCategory('Semua');
                   setSelectedPeriod('Semua');
-                  setSearchQuery('');
                 }}
                 className="px-4 py-2 bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
               >
