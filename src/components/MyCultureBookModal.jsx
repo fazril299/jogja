@@ -18,7 +18,6 @@ import {
   AlertTriangle,
   ChevronRight,
   RefreshCw,
-  LogOut,
   LogIn,
   Calendar,
   BookOpen,
@@ -105,7 +104,7 @@ export default function MyCultureBookModal({
     getBadgeTierStats,
     resetAllBadges
   } = useCultureBook();
-  const { currentUser, openLogin, logout } = useAuth();
+  const { currentUser, openLogin } = useAuth();
 
   const isGuest = !currentUser || currentUser.isGuest;
 
@@ -320,20 +319,6 @@ export default function MyCultureBookModal({
 
                 {/* Top Action Buttons */}
                 <div className="absolute top-2.5 right-2.5 flex items-center gap-2 z-10">
-                  {!isGuest && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        onClose();
-                      }}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 text-rose-700 text-[11px] font-bold shadow-sm cursor-pointer border border-rose-200"
-                      title="Keluar dari akun"
-                    >
-                      <LogOut size={11} />
-                      <span>Keluar</span>
-                    </button>
-                  )}
                   <button
                     type="button"
                     onClick={onClose}
@@ -990,36 +975,6 @@ export default function MyCultureBookModal({
                   zIndex: 10
                 }}
               >
-                {!isGuest && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      onClose();
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.3rem',
-                      padding: '0.4rem 0.75rem',
-                      borderRadius: '999px',
-                      backgroundColor: 'rgba(255, 241, 242, 0.95)',
-                      border: '1px solid #FECDD3',
-                      color: '#BE123C',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(44, 34, 30, 0.12)',
-                      backdropFilter: 'blur(8px)',
-                      transition: 'all 0.15s ease'
-                    }}
-                    title="Keluar dari akun"
-                  >
-                    <LogOut size={12} />
-                    <span>Keluar</span>
-                  </button>
-                )}
-
                 <button
                   type="button"
                   onClick={onClose}
