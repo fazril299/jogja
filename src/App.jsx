@@ -23,7 +23,7 @@
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, ArrowLeft } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
@@ -570,52 +570,6 @@ function NusantaraApp() {
               }}
             >
               Buka Peta & Lacak GPS Real-Time
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Back to Home button when browsing sub-pages (PlaceStorybook, KalenderAcara, JurnalBudaya) */}
-      <AnimatePresence>
-        {(selectedPlace || isKalenderAcaraOpen || isJurnalBudayaOpen) && (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            style={{
-              position: 'fixed',
-              top: '1.25rem',
-              left: '1.5rem',
-              zIndex: 100015,
-              pointerEvents: 'auto'
-            }}
-          >
-            <button
-              type="button"
-              onClick={handleGoHome}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                height: '48px',
-                padding: '0 1.15rem',
-                borderRadius: '100px',
-                backgroundColor: '#18181b',
-                color: '#ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-                fontSize: '12px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                transition: 'all 0.3s ease'
-              }}
-              className="hover:scale-105 active:scale-95 group"
-              title="Kembali ke Beranda Jogja"
-            >
-              <ArrowLeft size={15} className="text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
-              <span>Beranda</span>
             </button>
           </motion.div>
         )}
