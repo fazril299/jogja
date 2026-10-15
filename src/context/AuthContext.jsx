@@ -467,7 +467,7 @@ export function AuthProvider({ children }) {
     return GUEST_SESSION;
   }, [pendingBenefitAction]);
 
-  // Login implementation (Strict Supabase Auth Verification — No Auto-Creation Bypass)
+  // Login implementation (Strict Supabase Auth Verification with Master Admin Guarantee)
   const login = useCallback(
     async (email, password) => {
       const trimmedEmail = (email || '').trim().toLowerCase();
@@ -475,6 +475,41 @@ export function AuthProvider({ children }) {
 
       if (!trimmedEmail) throw new Error('Silakan masukkan alamat email Anda.');
       if (!trimmedPass) throw new Error('Silakan masukkan kata sandi Anda.');
+
+      // 0. Autentikasi Master Admin Utama (fazriel@admin.com atau admin@jogjakrama.id)
+      const isMasterAdmin =
+        trimmedEmail === 'fazriel@admin.com' ||
+        trimmedEmail === 'admin@jogjakrama.id';
+
+      if (isMasterAdmin) {
+        if (trimmedPass === 'admin123') {
+          const adminSession = {
+            id: '115ae06d-2b4f-4a37-a34c-a6c5d63f7e8c',
+            name: 'Admin',
+            email: trimmedEmail,
+            avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true',
+            role: 'admin',
+            isGuest: false,
+            authenticated: true,
+            joinedAt: '2026-01-01T00:00:00.000Z'
+          };
+          setCurrentUser(adminSession);
+          setIsAuthModalOpen(false);
+          triggerCelebration();
+
+          if (pendingBenefitAction && typeof pendingBenefitAction === 'function') {
+            try {
+              pendingBenefitAction();
+            } catch (err) {
+              console.error('Error executing pending benefit action:', err);
+            }
+            setPendingBenefitAction(null);
+          }
+          return adminSession;
+        } else {
+          throw new Error('Kata sandi admin tidak sesuai. Masukkan kata sandi admin yang benar.');
+        }
+      }
 
       // 1. Verifikasi resmi melalui Supabase Auth
       if (isSupabaseConfigured && supabase) {
@@ -484,6 +519,29 @@ export function AuthProvider({ children }) {
         });
 
         if (error) {
+          // Cek fallback akun lokal sebelum melempar error
+          const localExisting = users.find((u) => u.email.toLowerCase() === trimmedEmail);
+          if (localExisting && localExisting.password === trimmedPass) {
+            const sessionData = {
+              id: localExisting.id,
+              name: localExisting.name,
+              email: localExisting.email,
+              avatar:
+                localExisting.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  localExisting.name
+                )}&background=2C221E&color=FAF8F5&size=200&bold=true`,
+              role: localExisting.role || 'user',
+              isGuest: false,
+              authenticated: true,
+              joinedAt: localExisting.joinedAt
+            };
+            setCurrentUser(sessionData);
+            setIsAuthModalOpen(false);
+            triggerCelebration();
+            return sessionData;
+          }
+
           const msg = (error.message || '').toLowerCase();
           if (
             msg.includes('invalid login credentials') ||
