@@ -31,15 +31,8 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - EXACT FRAMER TEMPLATE)
           ========================================================================= */}
-      <section id="about-section" style={{ padding: 'clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 2rem) clamp(2.5rem, 5vw, 4rem)' }}>
-        <div style={{
-          maxWidth: '1180px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
-          gap: 'clamp(2rem, 5vw, 4rem)',
-          alignItems: 'center'
-        }}>
+      <section id="about-section" className="py-12 sm:py-20 px-4 sm:px-8">
+        <div className="max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -114,15 +107,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: 'clamp(320px, 55vh, 560px)',
-              borderRadius: '28px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.16)',
-              background: '#0b1a26'
-            }}
+            className="relative w-full h-[320px] sm:h-[440px] lg:h-[560px] rounded-[28px] overflow-hidden shadow-2xl bg-[#0b1a26]"
           >
             {/* Base Layer: Previous photo (100% solid, prevents black flashes) */}
             <img
@@ -167,7 +152,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 2: EXPLORE BY EXPERIENCE (4 PILAR WISATA & BUDAYA JOGJA)
           ========================================================================= */}
-      <section style={{ padding: 'clamp(3rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) clamp(3rem, 6vw, 6rem)', background: '#ffffff' }}>
+      <section className="py-12 sm:py-20 px-4 sm:px-8 bg-white">
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           
           {/* Header Tag & Title */}
@@ -175,7 +160,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
+            style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)' }}
           >
             <div style={{
               display: 'inline-flex',
@@ -209,13 +194,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
           </motion.div>
 
           {/* 4 Experience Category Cards Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
-            gap: '1.8rem',
-            alignItems: 'start',
-            marginBottom: 'clamp(2.5rem, 5vw, 4.5rem)'
-          }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start mb-12 sm:mb-16">
             
             {/* Card 1: Budaya & Sejarah Mataram */}
             <motion.div
@@ -335,11 +314,11 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
 
           {/* Section Footer Bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pt-6 text-center sm:text-left">
-            <span className="text-sm font-semibold text-slate-500">
+            <span className="text-[0.92rem] font-semibold text-[#64748b]">
               Temukan destinasi lain di Yogyakarta.
             </span>
 
-            <div className="hidden sm:block flex-grow h-px bg-slate-200 mx-4" />
+            <div className="hidden sm:block flex-1 h-[1px] bg-[#e2e8f0] mx-4" />
 
             <CustomPillButton 
               label="Lihat Pilihan Perjalanan"

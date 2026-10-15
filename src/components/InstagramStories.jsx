@@ -31,6 +31,7 @@ export default function InstagramStories() {
   return (
     <section style={{
       width: '100%',
+      maxWidth: '100vw',
       background: '#ffffff',
       padding: '5rem 0 4rem 0',
       position: 'relative',

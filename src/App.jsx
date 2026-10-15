@@ -478,7 +478,7 @@ function NusantaraApp() {
       : null;
 
   return (
-    <div className="app-container" style={{ position: 'relative', width: '100%', minHeight: '100vh', background: '#031926' }}>
+    <div className="app-container" style={{ position: 'relative', width: '100%', maxWidth: '100vw', overflowX: 'hidden', minHeight: '100vh', background: '#031926' }}>
       {/* =========================================================================
           NOTIFIKASI REAL-TIME GPS PERANGKAT (HANYA MUNCUL JIKA GPS ASLI TERDETEKSI)
           ========================================================================= */}

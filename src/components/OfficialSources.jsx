@@ -28,7 +28,7 @@ const officialSources = [
 
 export default function OfficialSources() {
   return (
-    <section style={{ width: '100%', padding: 'clamp(3rem, 5vw, 5rem) clamp(1rem, 4vw, 2rem)', background: '#f7f8f5', color: '#173f36' }}>
+    <section className="w-full max-w-[100vw] overflow-hidden py-12 sm:py-20 px-4 sm:px-8 bg-[#f7f8f5] text-[#173f36]">
       <div style={{ width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
         <header style={{ maxWidth: '720px', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <p style={{ margin: '0 0 0.65rem', color: '#a94e35', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>

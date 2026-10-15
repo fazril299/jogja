@@ -122,12 +122,7 @@ export default function TravelFAQ() {
   };
 
   return (
-    <section style={{
-      width: '100%',
-      background: '#ffffff',
-      padding: 'clamp(3rem, 6vw, 4rem) clamp(1rem, 4vw, 2.5rem) clamp(3.5rem, 6vw, 6.5rem)',
-      position: 'relative'
-    }}>
+    <section className="w-full bg-white py-12 sm:py-20 px-4 sm:px-8 relative">
       <div style={{
         maxWidth: '1240px',
         margin: '0 auto'
@@ -173,12 +168,7 @@ export default function TravelFAQ() {
         </div>
 
         {/* 2-COLUMN ACCORDION GRID */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
-          gap: '1.2rem',
-          alignItems: 'start'
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
           {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
             {leftQuestions.map((item) => renderFaqCard(item))}

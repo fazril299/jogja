@@ -30,6 +30,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
 }
 
 body {
@@ -37,8 +40,19 @@ body {
   background-color: var(--color-deep-ocean);
   color: #ffffff;
   line-height: 1.6;
-  overflow-x: clip;
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: relative;
   -webkit-font-smoothing: antialiased;
+}
+
+#root,
+.app-container {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: relative;
 }
 
 /* Custom Scrollbar matching blueprint */
@@ -640,6 +654,8 @@ body {
 @media (max-width: 1023px) {
   .hero-wrapper {
     padding: 1rem 0 2rem 0;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .hero-main {
@@ -647,11 +663,15 @@ body {
     grid-template-columns: 1fr;
     gap: 2.25rem;
     padding: clamp(4.5rem, 8vw, 6rem) clamp(1rem, 4vw, 2rem) 2.5rem clamp(1rem, 4vw, 2rem);
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .hero-left-col {
     align-items: center;
     text-align: center;
+    max-width: 100%;
   }
 
   .hero-tagline {
@@ -665,6 +685,8 @@ body {
     font-size: clamp(2.3rem, 7.5vw, 3.8rem);
     line-height: 1.08;
     text-align: center;
+    max-width: 100%;
+    word-break: break-word;
   }
 
   .hero-subtitle {
@@ -676,6 +698,7 @@ body {
 
   .hero-cta-row {
     justify-content: center;
+    max-width: 100%;
   }
 
   /* Destination Pills: Clean Vertical Stack on Mobile (TIDAK KE SAMPING/TIDAK OVERFLOW) */
@@ -865,10 +888,11 @@ body {
   align-items: center;
   gap: 10px;
   width: 100%;
+  max-width: 100vw;
   height: min-content;
   padding: 0;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   background-color: #ffffff;
 }
 
@@ -884,7 +908,7 @@ body {
   height: min-content;
   padding: 120px 20px 50px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .travfrick-dest-top {
