@@ -57,13 +57,32 @@ const PROFILE_CONTAINER_VARIANTS = {
   closed: (custom) => ({
     width: custom?.isLoggedIn ? 154 : 124,
     borderRadius: 100,
+    paddingTop: 0,
+    paddingRight: 14,
+    paddingBottom: 0,
+    paddingLeft: 12,
     boxShadow: '0 6px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)',
     transition: SPRING_TRANSITION
   }),
   open: {
     width: 320,
-    borderRadius: 26,
+    borderRadius: 24,
+    paddingTop: 0,
+    paddingRight: 16,
+    paddingBottom: 16,
+    paddingLeft: 16,
     boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05)',
+    transition: SPRING_TRANSITION
+  }
+};
+
+const PROFILE_HEADER_VARIANTS = {
+  closed: {
+    height: 48,
+    transition: SPRING_TRANSITION
+  },
+  open: {
+    height: 52,
     transition: SPRING_TRANSITION
   }
 };
@@ -244,14 +263,11 @@ export default function Navbar({
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {/* Top Trigger Pill Header */}
-          <div
+          <motion.div
+            layout
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center justify-between w-full cursor-pointer select-none"
-            style={{
-              height: profileOpen ? '54px' : '48px',
-              padding: profileOpen ? '0 18px 0 14px' : '0 14px 0 8px',
-              transition: 'all 0.25s ease'
-            }}
+            className="flex items-center justify-between w-full cursor-pointer select-none shrink-0"
+            variants={PROFILE_HEADER_VARIANTS}
           >
             {currentUser && !currentUser.isGuest ? (
               <div className="flex items-center gap-2.5 min-w-0">
@@ -283,7 +299,7 @@ export default function Navbar({
                 profileOpen ? 'rotate-180 text-black' : ''
               }`}
             />
-          </div>
+          </motion.div>
 
           {/* Expanded Dropdown Content (Framer Spring Animation) */}
           <AnimatePresence>
@@ -294,201 +310,212 @@ export default function Navbar({
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={SPRING_TRANSITION}
-                className="overflow-hidden px-3.5 pb-3.5 pt-1 space-y-2 border-t border-neutral-100"
+                className="w-full flex flex-col overflow-hidden"
               >
-                {/* User Info Card */}
-                {currentUser && !currentUser.isGuest ? (
-                  <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-150 flex items-center justify-between gap-2.5">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <img
-                        src={currentUser.avatar}
-                        alt={currentUser.name}
-                        referrerPolicy="no-referrer"
-                        className="w-9 h-9 rounded-full object-cover shrink-0 border border-[#c99b52]"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-black truncate m-0 leading-tight">
-                          {currentUser.name}
-                        </p>
-                        <p className="text-[10px] text-neutral-500 font-medium truncate m-0 mt-0.5">
-                          {isAdmin ? '👑 Administrator CMS' : 'Penjelajah Budaya'}
-                        </p>
+                <div className="w-full h-px bg-neutral-100 shrink-0 mb-3" />
+
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={CONTENT_TRANSITION}
+                  className="flex flex-col space-y-2 shrink-0"
+                  style={{ width: 288 }}
+                >
+                  {/* User Info Card */}
+                  {currentUser && !currentUser.isGuest ? (
+                    <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-150 flex items-center justify-between gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img
+                          src={currentUser.avatar}
+                          alt={currentUser.name}
+                          referrerPolicy="no-referrer"
+                          className="w-9 h-9 rounded-full object-cover shrink-0 border border-[#c99b52]"
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-black truncate m-0 leading-tight">
+                            {currentUser.name}
+                          </p>
+                          <p className="text-[10px] text-neutral-500 font-medium truncate m-0 mt-0.5">
+                            {isAdmin ? '👑 Administrator CMS' : 'Penjelajah Budaya'}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeAll();
+                          if (onOpenCultureBook) onOpenCultureBook();
+                        }}
+                        className="shrink-0 px-2.5 py-1.5 rounded-xl bg-white hover:bg-neutral-100 text-[11px] font-bold text-black border border-neutral-200 transition-colors cursor-pointer"
+                      >
+                        Profil
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/60 text-left">
+                      <p className="text-xs font-bold text-amber-950 m-0">
+                        Tamu Penjelajah
+                      </p>
+                      <p className="text-[11px] text-amber-900/80 m-0 mt-0.5">
+                        Masuk untuk menyimpan agenda budaya & momen favorit Anda.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Cultural Features: Kalender Acara & Jurnal Budaya */}
+                  <div className="space-y-1.5 pt-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-neutral-400 px-1 m-0">
+                      Agenda & Jurnal Budaya
+                    </p>
+
+                    {/* Kalender Acara */}
                     <button
                       type="button"
                       onClick={() => {
                         closeAll();
-                        if (onOpenCultureBook) onOpenCultureBook();
+                        if (onOpenKalenderAcara) {
+                          onOpenKalenderAcara();
+                        } else if (onOpenCultureEvents) {
+                          onOpenCultureEvents();
+                        } else if (onOpenCultureBook) {
+                          onOpenCultureBook();
+                        }
                       }}
-                      className="shrink-0 px-2.5 py-1.5 rounded-xl bg-white hover:bg-neutral-100 text-[11px] font-bold text-black border border-neutral-200 transition-colors cursor-pointer"
-                    >
-                      Profil
-                    </button>
-                  </div>
-                ) : (
-                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/60 text-left">
-                    <p className="text-xs font-bold text-amber-950 m-0">
-                      Tamu Penjelajah
-                    </p>
-                    <p className="text-[11px] text-amber-900/80 m-0 mt-0.5">
-                      Masuk untuk menyimpan agenda budaya & momen favorit Anda.
-                    </p>
-                  </div>
-                )}
-
-                {/* Cultural Features: Kalender Acara & Jurnal Budaya */}
-                <div className="space-y-1.5 pt-1">
-                  <p className="text-[10px] font-black uppercase tracking-wider text-neutral-400 px-1 m-0">
-                    Agenda & Jurnal Budaya
-                  </p>
-
-                  {/* Kalender Acara */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      closeAll();
-                      if (onOpenKalenderAcara) {
-                        onOpenKalenderAcara();
-                      } else if (onOpenCultureEvents) {
-                        onOpenCultureEvents();
-                      } else if (onOpenCultureBook) {
-                        onOpenCultureBook();
-                      }
-                    }}
-                    className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
-                      currentView === 'kalender'
-                        ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
-                        : 'bg-white hover:bg-neutral-50 border-neutral-100'
-                    }`}
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
                         currentView === 'kalender'
-                          ? 'bg-[#c99b52] text-white shadow-xs'
-                          : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
+                          ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
+                          : 'bg-white hover:bg-neutral-50 border-neutral-100'
                       }`}
                     >
-                      <Calendar size={15} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-xs font-bold truncate m-0 ${
-                          currentView === 'kalender' ? 'text-amber-950' : 'text-black'
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                          currentView === 'kalender'
+                            ? 'bg-[#c99b52] text-white shadow-xs'
+                            : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
                         }`}
                       >
-                        Kalender Acara
-                      </p>
-                      <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
-                        Jadwal & Agenda Tradisi DIY
-                      </p>
-                    </div>
-                    <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  {/* Jurnal Budaya */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      closeAll();
-                      if (onOpenJurnalBudaya) {
-                        onOpenJurnalBudaya();
-                      } else if (onOpenCultureJournals) {
-                        onOpenCultureJournals();
-                      } else if (onOpenCultureBook) {
-                        onOpenCultureBook();
-                      }
-                    }}
-                    className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
-                      currentView === 'jurnal'
-                        ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
-                        : 'bg-white hover:bg-neutral-50 border-neutral-100'
-                    }`}
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        currentView === 'jurnal'
-                          ? 'bg-[#c99b52] text-white shadow-xs'
-                          : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
-                      }`}
-                    >
-                      <BookOpen size={15} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-xs font-bold truncate m-0 ${
-                          currentView === 'jurnal' ? 'text-amber-950' : 'text-black'
-                        }`}
-                      >
-                        Jurnal Budaya
-                      </p>
-                      <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
-                        Panduan Adat, Etika & Esai
-                      </p>
-                    </div>
-                    <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-
-                  {/* Admin CMS (if admin) */}
-                  {isAdmin && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeAll();
-                        if (onOpenAdmin) onOpenAdmin();
-                      }}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-2xl border border-amber-300/80 bg-amber-50 hover:bg-amber-100/80 text-left transition-all cursor-pointer group"
-                    >
-                      <div className="w-9 h-9 rounded-xl bg-neutral-900 text-amber-400 flex items-center justify-center shrink-0">
-                        <Shield size={15} />
+                        <Calendar size={15} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-neutral-950 truncate m-0">
-                          Admin CMS
+                        <p
+                          className={`text-xs font-bold truncate m-0 ${
+                            currentView === 'kalender' ? 'text-amber-950' : 'text-black'
+                          }`}
+                        >
+                          Kalender Acara
                         </p>
-                        <p className="text-[10px] text-neutral-600 truncate m-0 font-medium">
-                          Kelola Konten & Data Budaya
+                        <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
+                          Jadwal & Agenda Tradisi DIY
                         </p>
                       </div>
-                      <ChevronRight size={13} className="text-neutral-500 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
                     </button>
-                  )}
-                </div>
 
-                {/* Footer Action (Login or Logout) */}
-                <div className="pt-1.5 border-t border-neutral-100">
-                  {currentUser && !currentUser.isGuest ? (
+                    {/* Jurnal Budaya */}
                     <button
                       type="button"
                       onClick={() => {
                         closeAll();
-                        if (logout) logout();
+                        if (onOpenJurnalBudaya) {
+                          onOpenJurnalBudaya();
+                        } else if (onOpenCultureJournals) {
+                          onOpenCultureJournals();
+                        } else if (onOpenCultureBook) {
+                          onOpenCultureBook();
+                        }
                       }}
-                      className="w-full py-2 px-3 rounded-xl bg-neutral-100 hover:bg-rose-50 hover:text-rose-600 text-neutral-700 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
+                        currentView === 'jurnal'
+                          ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
+                          : 'bg-white hover:bg-neutral-50 border-neutral-100'
+                      }`}
                     >
-                      <LogOut size={13} />
-                      <span>Keluar Akun</span>
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                          currentView === 'jurnal'
+                            ? 'bg-[#c99b52] text-white shadow-xs'
+                            : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
+                        }`}
+                      >
+                        <BookOpen size={15} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`text-xs font-bold truncate m-0 ${
+                            currentView === 'jurnal' ? 'text-amber-950' : 'text-black'
+                          }`}
+                        >
+                          Jurnal Budaya
+                        </p>
+                        <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
+                          Panduan Adat, Etika & Esai
+                        </p>
+                      </div>
+                      <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
                     </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeAll();
-                        openLogin({
-                          benefitType: 'general',
-                          title: 'Selamat Datang di JogjaKrama',
-                          description:
-                            'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
-                        });
-                      }}
-                      className="w-full py-2.5 px-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
-                    >
-                      <LogIn size={13} />
-                      <span>Masuk / Daftar Akun</span>
-                    </button>
-                  )}
-                </div>
+
+                    {/* Admin CMS (if admin) */}
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeAll();
+                          if (onOpenAdmin) onOpenAdmin();
+                        }}
+                        className="w-full flex items-center gap-3 p-2.5 rounded-2xl border border-amber-300/80 bg-amber-50 hover:bg-amber-100/80 text-left transition-all cursor-pointer group"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-neutral-900 text-amber-400 flex items-center justify-center shrink-0">
+                          <Shield size={15} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-neutral-950 truncate m-0">
+                            Admin CMS
+                          </p>
+                          <p className="text-[10px] text-neutral-600 truncate m-0 font-medium">
+                            Kelola Konten & Data Budaya
+                          </p>
+                        </div>
+                        <ChevronRight size={13} className="text-neutral-500 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Footer Action (Login or Logout) */}
+                  <div className="pt-1.5 border-t border-neutral-100">
+                    {currentUser && !currentUser.isGuest ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeAll();
+                          if (logout) logout();
+                        }}
+                        className="w-full py-2 px-3 rounded-xl bg-neutral-100 hover:bg-rose-50 hover:text-rose-600 text-neutral-700 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      >
+                        <LogOut size={13} />
+                        <span>Keluar Akun</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeAll();
+                          openLogin({
+                            benefitType: 'general',
+                            title: 'Selamat Datang di JogjaKrama',
+                            description:
+                              'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
+                          });
+                        }}
+                        className="w-full py-2.5 px-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                      >
+                        <LogIn size={13} />
+                        <span>Masuk / Daftar Akun</span>
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
