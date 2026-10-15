@@ -86,15 +86,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
             <p className="text-xs sm:text-sm text-white/95 max-w-xl m-0 leading-relaxed font-medium drop-shadow-md">
               Jadwal resmi perayaan upacara adat, prosesi grebeg keraton, dan festival budaya D.I. Yogyakarta 2025–2026.
             </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold text-white">
-              <span className="px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 shadow-sm">
-                11 Agenda Terverifikasi
-              </span>
-              <span className="px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 shadow-sm">
-                Data Resmi Keraton &amp; Dispar DIY
-              </span>
-            </div>
           </div>
         </section>
 
