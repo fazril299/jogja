@@ -347,7 +347,7 @@ export default function MyCultureBookModal({
 
               {/* Profile Details */}
               <div className="px-4 pb-4 pt-1 relative">
-                {/* Avatar + Heritage Badge Pill */}
+                {/* Avatar */}
                 <div className="flex items-end justify-between -mt-9 mb-2.5">
                   <div className="w-16 h-16 rounded-full bg-white border-2 border-white shadow-md overflow-hidden flex-shrink-0">
                     <img
@@ -355,10 +355,6 @@ export default function MyCultureBookModal({
                       alt={displayName}
                       className="w-full h-full object-cover"
                     />
-                  </div>
-                  <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FAF6EE] border border-[#E5D7BE] text-[#8A5D26] text-[10px] font-bold">
-                    <Sparkles size={11} className="text-[#8A5D26]" />
-                    <span>Paspor Budaya D.I.Y</span>
                   </div>
                 </div>
 
@@ -1084,24 +1080,6 @@ export default function MyCultureBookModal({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.45rem',
-                      padding: '0.4rem 0.85rem',
-                      borderRadius: '999px',
-                      backgroundColor: '#FAF6EE',
-                      border: '1px solid #E5D7BE',
-                      color: '#8A5D26',
-                      fontSize: '0.72rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    <Sparkles size={13} color="#8A5D26" />
-                    <span>Paspor Budaya D.I. Yogyakarta</span>
-                  </div>
-
                   {isGuest && (
                     <button
                       type="button"
