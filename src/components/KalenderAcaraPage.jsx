@@ -78,32 +78,32 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
         }}
       >
         {/* Hero Section with Upacara Adat Photo Background (Top padded for global floating navbar) */}
-        <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 border-b border-neutral-800">
+        <section className="relative overflow-hidden bg-neutral-900 text-white pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-8 border-b border-neutral-200">
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <img
               src="/assets/images/real_bregada_gunungan.jpg"
               alt="Upacara Adat Kirab Grebeg Prajurit Keraton Yogyakarta"
-              className="w-full h-full object-cover object-center scale-105 opacity-80"
+              className="w-full h-full object-cover object-center scale-100 brightness-105"
             />
           </div>
-          {/* Modern Cinematic Contrast Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/35 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30 pointer-events-none" />
+          {/* Subtle soft gradient only behind headline for readability, keeping photo natural and bright */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/10 pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto space-y-3">
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-2xl leading-tight">
+          <div className="relative max-w-7xl mx-auto space-y-3 drop-shadow-md">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-2xl leading-tight drop-shadow-lg">
               Kalender Acara Tradisi Jogja
             </h2>
 
-            <p className="text-xs sm:text-sm text-neutral-200 max-w-xl m-0 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-white/95 max-w-xl m-0 leading-relaxed font-medium drop-shadow-md">
               Jadwal resmi perayaan upacara adat, prosesi grebeg keraton, dan festival budaya D.I. Yogyakarta 2025–2026.
             </p>
 
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold text-neutral-300">
-              <span className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-bold text-white">
+              <span className="px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 shadow-sm">
                 11 Agenda Terverifikasi
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10">
+              <span className="px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 shadow-sm">
                 Data Resmi Keraton &amp; Dispar DIY
               </span>
             </div>
