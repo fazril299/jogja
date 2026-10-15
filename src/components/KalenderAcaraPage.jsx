@@ -7,7 +7,6 @@ import {
   MapPin,
   Sparkles,
   Search,
-  Filter,
   Share2,
   Check,
   ShieldCheck,
@@ -111,90 +110,89 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
           </div>
         </section>
 
-        {/* Filter & Controls Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-5">
-          <div className="bg-white rounded-2xl border border-neutral-200 p-4 shadow-2xs space-y-3.5">
-            {/* Top row: Search input & Period Pills */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-              {/* Search Bar */}
-              <div className="relative flex-1 max-w-md">
-                <Search
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400"
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari acara, lokasi, atau upacara adat..."
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-300 bg-neutral-50 text-xs text-black focus:outline-none focus:border-black transition-colors"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black cursor-pointer"
-                  >
-                    <X size={14} className="text-black" />
-                  </button>
-                )}
-              </div>
+        {/* Filter & Controls Section — Premium Editorial */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4 space-y-0">
 
-              {/* Period / Bulan Filter */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                {periods.map((p) => {
-                  const active = selectedPeriod === p.value;
-                  return (
-                    <button
-                      key={p.value}
-                      type="button"
-                      onClick={() => setSelectedPeriod(p.value)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                        active
-                          ? 'bg-black text-white shadow-xs'
-                          : 'bg-neutral-100 text-black hover:bg-neutral-200 border border-neutral-200'
-                      }`}
-                    >
-                      {p.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom row: Category Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pt-2 border-t border-neutral-100 scrollbar-none">
-              <span className="text-xs font-bold text-black shrink-0 flex items-center gap-1">
-                <Filter size={12} className="text-black" />
-                <span>Kategori:</span>
-              </span>
-
-              {categories.map((cat) => {
-                const isSelected = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-black text-white shadow-xs'
-                        : 'bg-neutral-100 text-black hover:bg-neutral-200 border border-neutral-200'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
+          {/* ── Search Bar ── full-width, dark glass */}
+          <div className="relative w-full mb-6">
+            <Search
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari acara, lokasi, atau upacara adat…"
+              className="w-full pl-14 pr-12 py-4 rounded-2xl border border-neutral-200 bg-white shadow-sm text-sm text-black placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
 
-          {/* Results Summary Bar */}
-          <div className="flex items-center justify-between text-xs text-neutral-600 px-1 font-medium">
-            <span>
-              Menampilkan <strong className="text-black font-bold">{filteredEvents.length}</strong> agenda acara budaya
+          {/* ── Period Selector ── bold tab-strip style */}
+          <div className="flex items-center gap-0 border-b border-neutral-200 overflow-x-auto scrollbar-none mb-5">
+            {periods.map((p) => {
+              const active = selectedPeriod === p.value;
+              return (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setSelectedPeriod(p.value)}
+                  className={`relative px-5 py-3 text-xs font-extrabold uppercase tracking-widest whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                    active
+                      ? 'text-black'
+                      : 'text-neutral-400 hover:text-black'
+                  }`}
+                  style={{ letterSpacing: '0.08em' }}
+                >
+                  {p.label}
+                  {active && (
+                    <motion.div
+                      layoutId="period-underline"
+                      className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-black rounded-full"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ── Category Chips ── amber accent on active */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-6">
+            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400 shrink-0 pr-1" style={{ letterSpacing: '0.12em' }}>
+              Filter
             </span>
-            <span className="text-[11px] text-neutral-500">Waktu Indonesia Barat (WIB)</span>
+            {categories.map((cat) => {
+              const isSelected = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
+                    isSelected
+                      ? 'bg-black text-white border-black shadow-sm'
+                      : 'bg-white text-neutral-600 border-neutral-200 hover:border-black hover:text-black'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+
+            {/* Results count — inline right side */}
+            <span className="ml-auto shrink-0 text-[11px] font-semibold text-neutral-400 whitespace-nowrap">
+              {filteredEvents.length} acara ditemukan
+            </span>
           </div>
 
           {/* Clean Grid Cards (Bungee Framer Style) */}
