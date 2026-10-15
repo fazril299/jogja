@@ -54,6 +54,18 @@ const DEFAULT_GOOGLE_ACCOUNTS = [
   }
 ];
 
+// Sesi Default Tamu (Unauthenticated Guest)
+export const GUEST_SESSION = {
+  id: 'guest-user',
+  name: 'Tamu Penjelajah (Guest)',
+  email: 'guest@jogjakrama.id',
+  avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
+  role: 'guest',
+  isGuest: true,
+  authenticated: false,
+  joinedAt: '2026-01-01T00:00:00.000Z'
+};
+
 // Akun Sistem Utama (Admin)
 const DEFAULT_SEED_USERS = [
   {
@@ -165,15 +177,20 @@ export function AuthProvider({ children }) {
     return DEFAULT_SEED_USERS;
   });
 
-  // 2. Active Session State
+  // 2. Active Session State (WAJIB GUEST / TAMU JIKA PENGUNJUNG BARU)
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_SESSION_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        // HANYA gunakan sesi jika user BENAR-BENAR sudah pernah login (authenticated: true)
+        // dan bukan sesi tamu atau akun lama yang tidak diinginkan
         if (
           parsed &&
+          parsed.authenticated === true &&
+          !parsed.isGuest &&
           parsed.email &&
+          parsed.email.toLowerCase() !== 'guest@jogjakrama.id' &&
           parsed.email.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
           parsed.email.toLowerCase() !== 'fazrilkece258@gmail.com' &&
           parsed.email.toLowerCase() !== 'zrealyael@gmail.com' &&
@@ -182,31 +199,18 @@ export function AuthProvider({ children }) {
         ) {
           if (parsed.email.toLowerCase() === 'fazriel@admin.com') {
             parsed.name = 'Admin';
+            parsed.role = 'admin';
             parsed.avatar = 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true';
           }
-          try {
-            localStorage.setItem('jogjakrama_passport_user_name', parsed.name);
-          } catch (e) {}
           return parsed;
         }
       }
     } catch (e) {
       console.error('Error loading active session:', e);
     }
-    const defaultSession = {
-      id: '115ae06d-2b4f-4a37-a34c-a6c5d63f7e8c',
-      name: 'Admin',
-      email: 'fazriel@admin.com',
-      avatar: 'https://ui-avatars.com/api/?name=Admin&background=2C221E&color=FAF8F5&size=200&bold=true',
-      role: 'admin',
-      isGuest: false,
-      joinedAt: '2026-01-01T00:00:00.000Z'
-    };
-    try {
-      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(defaultSession));
-      localStorage.setItem('jogjakrama_passport_user_name', 'Admin');
-    } catch (e) {}
-    return defaultSession;
+
+    // Default mutlak saat pengunjung pertama kali membuka website: MODE TAMU (GUEST)
+    return GUEST_SESSION;
   });
 
   // 3. Auth Modal State
@@ -229,10 +233,10 @@ export function AuthProvider({ children }) {
     }
   }, [users]);
 
-  // Sync session to localStorage
+  // Sync session to localStorage (HANYA jika terautentikasi dan bukan guest)
   useEffect(() => {
     try {
-      if (currentUser) {
+      if (currentUser && !currentUser.isGuest && currentUser.authenticated) {
         localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(currentUser));
       } else {
         localStorage.removeItem(STORAGE_SESSION_KEY);
@@ -300,7 +304,7 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         syncSupabaseProfile(session.user);
       } else if (_event === 'SIGNED_OUT') {
-        setCurrentUser(null);
+        setCurrentUser(GUEST_SESSION);
       }
     });
 
@@ -339,6 +343,8 @@ export function AuthProvider({ children }) {
             userEmail.split('@')[0]
           )}&background=2C221E&color=FAF8F5&size=200&bold=true`,
         role: determinedRole,
+        isGuest: false,
+        authenticated: true,
         provider: authUser.app_metadata?.provider || 'supabase',
         joinedAt: profile?.created_at || authUser.created_at || new Date().toISOString()
       };
@@ -440,21 +446,13 @@ export function AuthProvider({ children }) {
 
   // Mode Tamu (Guest)
   const loginAsGuest = useCallback(() => {
-    const guestSession = {
-      id: 'guest-user',
-      name: 'Tamu Penjelajah (Guest)',
-      email: 'guest@jogjakrama.id',
-      avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
-      role: 'guest',
-      isGuest: true,
-      joinedAt: new Date().toISOString()
-    };
     try {
       localStorage.removeItem('jogjakrama_culture_book_v4_guest-user');
       localStorage.removeItem('jogjakrama_culture_book_v4_guest');
       localStorage.removeItem('jogjakrama_culture_book_v3');
+      localStorage.removeItem(STORAGE_SESSION_KEY);
     } catch (err) {}
-    setCurrentUser(guestSession);
+    setCurrentUser(GUEST_SESSION);
     setIsAuthModalOpen(false);
 
     if (pendingBenefitAction && typeof pendingBenefitAction === 'function') {
@@ -466,7 +464,7 @@ export function AuthProvider({ children }) {
       setPendingBenefitAction(null);
     }
 
-    return guestSession;
+    return GUEST_SESSION;
   }, [pendingBenefitAction]);
 
   // Login implementation (Strict Supabase Auth Verification — No Auto-Creation Bypass)
@@ -542,6 +540,8 @@ export function AuthProvider({ children }) {
             existing.name
           )}&background=2C221E&color=FAF8F5&size=200&bold=true`,
         role: existing.role || (existing.email === 'admin@jogjakrama.id' ? 'admin' : 'user'),
+        isGuest: false,
+        authenticated: true,
         joinedAt: existing.joinedAt
       };
 
@@ -661,6 +661,8 @@ export function AuthProvider({ children }) {
         email: newUser.email,
         avatar: newUser.avatar,
         role: newUser.role,
+        isGuest: false,
+        authenticated: true,
         joinedAt: newUser.joinedAt
       };
 
@@ -772,6 +774,8 @@ export function AuthProvider({ children }) {
         avatar: googleAccountObj.avatar,
         role: googleAccountObj.role,
         provider: 'google',
+        isGuest: false,
+        authenticated: true,
         joinedAt: googleAccountObj.joinedAt
       };
 
@@ -862,6 +866,8 @@ export function AuthProvider({ children }) {
                   avatar: googleUserRecord.avatar,
                   role: googleUserRecord.role,
                   provider: 'google',
+                  isGuest: false,
+                  authenticated: true,
                   joinedAt: googleUserRecord.joinedAt
                 };
 
@@ -948,7 +954,11 @@ export function AuthProvider({ children }) {
         // ignore
       }
     }
-    setCurrentUser(null);
+    try {
+      localStorage.removeItem(STORAGE_SESSION_KEY);
+      localStorage.removeItem('jogjakrama_passport_user_name');
+    } catch (e) {}
+    setCurrentUser(GUEST_SESSION);
     setPendingBenefitAction(null);
   }, []);
 
@@ -973,9 +983,11 @@ export function AuthProvider({ children }) {
     [currentUser]
   );
 
-  // Status Role Admin Aktif
+  // Status Role Admin Aktif (Wajib login dan terautentikasi)
   const isAdmin = Boolean(
     currentUser &&
+      !currentUser.isGuest &&
+      currentUser.authenticated &&
       (currentUser.role === 'admin' ||
         currentUser.role === 'Administrator' ||
         currentUser.email === 'fazriel@admin.com' ||
@@ -983,11 +995,15 @@ export function AuthProvider({ children }) {
         currentUser.email === 'fazrielmuliyael@gmail.com')
   );
 
+  const isLoggedIn = Boolean(
+    currentUser && !currentUser.isGuest && currentUser.authenticated
+  );
+
   return (
     <AuthContext.Provider
       value={{
         currentUser,
-        isLoggedIn: !!currentUser,
+        isLoggedIn,
         isAdmin,
         users,
         setUsers,

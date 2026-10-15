@@ -129,7 +129,7 @@ export default function MenuOverlay({
                   flexDirection: 'column',
                   gap: '0.6rem'
                 }}>
-                  {currentUser ? (
+                  {currentUser && !currentUser.isGuest ? (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                         <img
