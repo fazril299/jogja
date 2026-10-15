@@ -16,14 +16,11 @@ import {
 import { CULTURAL_EVENTS } from '../data/culturalEventsData';
 
 export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
-  const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedPeriod, setSelectedPeriod] = useState('Semua');
   const [copiedId, setCopiedId] = useState(null);
   const [activeModalEvent, setActiveModalEvent] = useState(null);
 
   if (!isOpen) return null;
-
-  const categories = ['Semua', 'Upacara Keraton', 'Pertunjukan Seni', 'Festival Rakyat', 'Pameran Seni'];
 
   const periods = [
     { label: 'Semua Periode', value: 'Semua' },
@@ -34,8 +31,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
   ];
 
   const filteredEvents = CULTURAL_EVENTS.filter((ev) => {
-    const matchCat = selectedCategory === 'Semua' || ev.category === selectedCategory;
-
     let matchPeriod = true;
     if (selectedPeriod !== 'Semua') {
       const activeP = periods.find((p) => p.value === selectedPeriod);
@@ -44,7 +39,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
       }
     }
 
-    return matchCat && matchPeriod;
+    return matchPeriod;
   });
 
   const handleCopySchedule = (ev) => {
@@ -93,59 +88,37 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
         <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4 space-y-0">
 
           {/* ── Period Selector ── bold tab-strip style */}
-          <div className="flex items-center gap-0 border-b border-neutral-200 overflow-x-auto scrollbar-none mb-5">
-            {periods.map((p) => {
-              const active = selectedPeriod === p.value;
-              return (
-                <button
-                  key={p.value}
-                  type="button"
-                  onClick={() => setSelectedPeriod(p.value)}
-                  className={`relative px-5 py-3 text-xs font-extrabold uppercase tracking-widest whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-                    active
-                      ? 'text-black'
-                      : 'text-neutral-400 hover:text-black'
-                  }`}
-                  style={{ letterSpacing: '0.08em' }}
-                >
-                  {p.label}
-                  {active && (
-                    <motion.div
-                      layoutId="period-underline"
-                      className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-black rounded-full"
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <div className="flex items-center justify-between border-b border-neutral-200 mb-8 pb-0 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-0 shrink-0">
+              {periods.map((p) => {
+                const active = selectedPeriod === p.value;
+                return (
+                  <button
+                    key={p.value}
+                    type="button"
+                    onClick={() => setSelectedPeriod(p.value)}
+                    className={`relative px-5 py-3 text-xs font-extrabold uppercase tracking-widest whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                      active
+                        ? 'text-black'
+                        : 'text-neutral-400 hover:text-black'
+                    }`}
+                    style={{ letterSpacing: '0.08em' }}
+                  >
+                    {p.label}
+                    {active && (
+                      <motion.div
+                        layoutId="period-underline"
+                        className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-black rounded-full"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* ── Category Chips ── amber accent on active */}
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-6">
-            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400 shrink-0 pr-1" style={{ letterSpacing: '0.12em' }}>
-              Filter
-            </span>
-            {categories.map((cat) => {
-              const isSelected = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
-                    isSelected
-                      ? 'bg-black text-white border-black shadow-sm'
-                      : 'bg-white text-neutral-600 border-neutral-200 hover:border-black hover:text-black'
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-
-            {/* Results count — inline right side */}
-            <span className="ml-auto shrink-0 text-[11px] font-semibold text-neutral-400 whitespace-nowrap">
-              {filteredEvents.length} acara ditemukan
+            {/* Results count — subtle right side */}
+            <span className="hidden sm:inline-block shrink-0 text-xs font-semibold text-neutral-400 whitespace-nowrap pl-4 py-3">
+              {filteredEvents.length} acara
             </span>
           </div>
 
@@ -195,17 +168,16 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
                 Tidak ada agenda yang cocok dengan filter
               </h3>
               <p className="text-xs text-neutral-600 m-0">
-                Pilih kategori atau periode lain untuk melihat agenda acara budaya.
+                Pilih periode lain untuk melihat agenda acara budaya.
               </p>
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedCategory('Semua');
                   setSelectedPeriod('Semua');
                 }}
                 className="px-4 py-2 bg-black text-white text-xs font-bold rounded-xl cursor-pointer"
               >
-                Reset Filter
+                Reset Periode
               </button>
             </div>
           )}
