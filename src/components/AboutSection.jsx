@@ -31,15 +31,8 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - EXACT FRAMER TEMPLATE)
           ========================================================================= */}
-      <section id="about-section" style={{ padding: '6rem 2rem 4rem 2rem' }}>
-        <div style={{
-          maxWidth: '1180px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '4rem',
-          alignItems: 'center'
-        }}>
+      <section id="about-section" className="py-12 sm:py-20 px-4 sm:px-8">
+        <div className="max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -114,15 +107,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: '560px',
-              borderRadius: '28px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.16)',
-              background: '#0b1a26'
-            }}
+            className="relative w-full h-[320px] sm:h-[440px] lg:h-[560px] rounded-[28px] overflow-hidden shadow-2xl bg-[#0b1a26]"
           >
             {/* Base Layer: Previous photo (100% solid, prevents black flashes) */}
             <img
@@ -167,7 +152,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
       {/* =========================================================================
           SECTION 2: EXPLORE BY EXPERIENCE (4 PILAR WISATA & BUDAYA JOGJA)
           ========================================================================= */}
-      <section style={{ padding: '4rem 2rem 6rem 2rem', background: '#ffffff' }}>
+      <section className="py-12 sm:py-20 px-4 sm:px-8 bg-white">
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           
           {/* Header Tag & Title */}
@@ -175,7 +160,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ textAlign: 'center', marginBottom: '4rem' }}
+            style={{ textAlign: 'center', marginBottom: '3.5rem' }}
           >
             <div style={{
               display: 'inline-flex',
@@ -209,13 +194,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
           </motion.div>
 
           {/* 4 Experience Category Cards Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.8rem',
-            alignItems: 'start',
-            marginBottom: '4.5rem'
-          }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start mb-12 sm:mb-16">
             
             {/* Card 1: Budaya & Sejarah Mataram */}
             <motion.div
@@ -334,18 +313,12 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
           </div>
 
           {/* Section Footer Bar */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '2rem',
-            paddingTop: '1.5rem'
-          }}>
-            <span style={{ fontSize: '0.92rem', fontWeight: 600, color: '#64748b', whiteSpace: 'nowrap' }}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 pt-6">
+            <span className="text-[0.92rem] font-semibold text-[#64748b]">
               Temukan destinasi lain di Yogyakarta.
             </span>
 
-            <div style={{ flexGrow: 1, height: '1px', background: '#e2e8f0', margin: '0 1rem' }} />
+            <div className="hidden sm:block flex-1 h-[1px] bg-[#e2e8f0] mx-4" />
 
             <CustomPillButton 
               label="Lihat Pilihan Perjalanan"

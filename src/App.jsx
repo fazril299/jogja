@@ -478,7 +478,7 @@ function NusantaraApp() {
       : null;
 
   return (
-    <div className="app-container" style={{ position: 'relative', width: '100%', minHeight: '100vh', background: '#031926' }}>
+    <div className="app-container" style={{ position: 'relative', width: '100%', maxWidth: '100vw', overflowX: 'hidden', minHeight: '100vh', background: '#031926' }}>
       {/* =========================================================================
           NOTIFIKASI REAL-TIME GPS PERANGKAT (HANYA MUNCUL JIKA GPS ASLI TERDETEKSI)
           ========================================================================= */}
@@ -489,20 +489,7 @@ function NusantaraApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: 'fixed',
-              bottom: '1.5rem',
-              right: '1.5rem',
-              zIndex: 9990,
-              width: 'min(410px, calc(100vw - 2rem))',
-              backgroundColor: '#ffffff',
-              color: '#09090b',
-              borderRadius: '24px',
-              padding: '1.35rem 1.5rem',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.18)',
-              border: '2px solid #0066ff',
-              fontFamily: "'Plus Jakarta Sans', sans-serif"
-            }}
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9990] w-[calc(100vw-2rem)] sm:w-[410px] max-w-[410px] bg-white text-[#09090b] rounded-[24px] p-4 sm:p-5 shadow-2xl border-2 border-[#0066ff] font-sans"
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
               <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>

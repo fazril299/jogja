@@ -191,7 +191,20 @@ export default function Navbar({
     }, 240);
   }, []);
 
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= 768
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleTabMouseEnter = useCallback((id) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
@@ -206,6 +219,7 @@ export default function Navbar({
   }, []);
 
   const handleContainerMouseEnter = useCallback(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
@@ -234,21 +248,21 @@ export default function Navbar({
     }
   };
 
-  const isOpen = hoveredTab !== null;
+  const isOpen = hoveredTab !== null && isDesktop;
   const displayedDestinations =
     subFilter === 'Populer' ? DESTINASI_POPULER : DESTINASI_WARISAN;
 
   return (
     <>
-      {/* Top-Right Profile Pill with Floating Dropdown Animation */}
+      {/* Top-Right Profile Pill with Floating Dropdown Animation (Desktop only) */}
       <div
+        className="hidden sm:flex"
         style={{
           position: 'fixed',
           top: '1.25rem',
           right: '1.5rem',
           zIndex: 100011,
           pointerEvents: 'auto',
-          display: 'flex',
           justifyContent: 'flex-end'
         }}
       >
@@ -523,11 +537,11 @@ export default function Navbar({
       </div>
 
       <div
-        className="fixed top-5 left-1/2 -translate-x-1/2 pointer-events-none"
+        className="fixed top-3.5 sm:top-5 left-1/2 -translate-x-1/2 pointer-events-none max-w-[calc(100vw-1.5rem)]"
         style={{ zIndex: 100010 }}
       >
         <motion.div
-          className="pointer-events-auto bg-white overflow-hidden flex flex-col will-change-transform"
+          className="pointer-events-auto bg-white overflow-hidden flex flex-col will-change-transform max-w-[calc(100vw-1.5rem)]"
           onMouseLeave={handleContainerMouseLeave}
           onMouseEnter={handleContainerMouseEnter}
           initial="closed"
@@ -599,31 +613,70 @@ export default function Navbar({
               })}
             </motion.div>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation Menu"
-              className="sm:hidden w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center text-black ml-3 cursor-pointer"
-              style={{ background: 'none', border: 'none' }}
-            >
-              {mobileMenuOpen ? (
-                <X className="w-4 h-4" />
-              ) : (
-                <svg
-                  width="18"
-                  height="12"
-                  viewBox="0 0 18 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
+            {/* Mobile Actions: Quick Profile Avatar + Menu Toggle (Integrated cleanly) */}
+            <div className="flex sm:hidden items-center gap-1.5 ml-auto">
+              {currentUser && !currentUser.isGuest ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeAll();
+                    if (onOpenCultureBook) onOpenCultureBook();
+                  }}
+                  className="flex items-center gap-1.5 py-0.5 px-2 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors cursor-pointer border border-neutral-200/80"
+                  aria-label="Profil Pengguna"
                 >
-                  <line x1="1" y1="2" x2="17" y2="2" />
-                  <line x1="1" y1="10" x2="17" y2="10" />
-                </svg>
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-5 h-5 rounded-full object-cover border border-[#c99b52]"
+                  />
+                  <span className="text-[11px] font-bold text-neutral-800 max-w-[65px] truncate">
+                    {currentUser.name.split(' ')[0]}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeAll();
+                    openLogin({
+                      benefitType: 'general',
+                      title: 'Selamat Datang di JogjaKrama',
+                      description: 'Masuk untuk mengakses seluruh fitur budaya.'
+                    });
+                  }}
+                  className="py-1 px-2.5 rounded-full bg-black text-white text-[11px] font-bold hover:bg-neutral-800 transition-colors cursor-pointer"
+                >
+                  Masuk
+                </button>
               )}
-            </button>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle Navigation Menu"
+                className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center text-black cursor-pointer"
+                style={{ background: 'none', border: 'none' }}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-4 h-4" />
+                ) : (
+                  <svg
+                    width="18"
+                    height="12"
+                    viewBox="0 0 18 12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
+                    <line x1="1" y1="2" x2="17" y2="2" />
+                    <line x1="1" y1="10" x2="17" y2="10" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </motion.div>
 
           {/* Expandable Dropdown Panel */}
@@ -887,12 +940,44 @@ export default function Navbar({
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.96 }}
+              initial={{ opacity: 0, y: 8, scale: 0.96, x: '-50%' }}
+              animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
+              exit={{ opacity: 0, y: 8, scale: 0.96, x: '-50%' }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="pointer-events-auto absolute top-14 left-1/2 -translate-x-1/2 w-48 bg-white rounded-2xl p-2.5 border border-gray-100 shadow-xl space-y-0.5 z-50"
+              className="pointer-events-auto absolute top-14 left-1/2 w-[min(320px,calc(100vw-2rem))] bg-white rounded-2xl p-3 border border-gray-100 shadow-2xl space-y-1 z-50 font-sans"
             >
+              {/* User Profile Card on Mobile Dropdown if logged in */}
+              {currentUser && !currentUser.isGuest ? (
+                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-150 flex items-center justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      referrerPolicy="no-referrer"
+                      className="w-7 h-7 rounded-full object-cover shrink-0 border border-[#c99b52]"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-bold text-black truncate m-0 leading-tight">
+                        {currentUser.name}
+                      </p>
+                      <p className="text-[9px] text-neutral-500 font-medium truncate m-0">
+                        {isAdmin ? '👑 Administrator CMS' : 'Penjelajah Budaya'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeAll();
+                      if (onOpenCultureBook) onOpenCultureBook();
+                    }}
+                    className="shrink-0 px-2 py-1 rounded-lg bg-white hover:bg-neutral-100 text-[10px] font-bold text-black border border-neutral-200 transition-colors cursor-pointer"
+                  >
+                    Profil
+                  </button>
+                </div>
+              ) : null}
+
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item.id}
@@ -978,6 +1063,22 @@ export default function Navbar({
                     <span>Admin CMS</span>
                   </div>
                   <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+              )}
+
+              {/* Logout button for mobile dropdown */}
+              {currentUser && !currentUser.isGuest && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeAll();
+                    if (logout) logout();
+                  }}
+                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[11px] text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors cursor-pointer mt-1 pt-1 border-t border-gray-100"
+                  style={{ border: 'none' }}
+                >
+                  <LogOut size={13} />
+                  <span>Keluar Akun</span>
                 </button>
               )}
             </motion.div>
