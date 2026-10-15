@@ -201,6 +201,100 @@ export default function Navbar({
           gap: '0.55rem'
         }}
       >
+        {/* Akses Kalender Acara di sebelah profile */}
+        <button
+          type="button"
+          onClick={() => {
+            closeAll();
+            if (onOpenKalenderAcara) {
+              onOpenKalenderAcara();
+            } else if (onOpenCultureEvents) {
+              onOpenCultureEvents();
+            } else if (onOpenCultureBook) {
+              onOpenCultureBook();
+            }
+          }}
+          className="hidden sm:flex items-center gap-2 cursor-pointer transition-all duration-300 active:scale-95"
+          style={{
+            height: '48px',
+            padding: '0 1.15rem',
+            borderRadius: '100px',
+            backgroundColor: currentView === 'kalender' ? '#c99b52' : '#ffffff',
+            color: currentView === 'kalender' ? '#ffffff' : '#09090b',
+            border: currentView === 'kalender' ? '1px solid #b8863b' : '1px solid rgba(0,0,0,0.05)',
+            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+            fontSize: '13px',
+            fontWeight: 600,
+            fontFamily: "'Plus Jakarta Sans', sans-serif"
+          }}
+          onMouseEnter={(e) => {
+            if (currentView !== 'kalender') {
+              e.currentTarget.style.backgroundColor = '#fafafa';
+              e.currentTarget.style.color = '#c99b52';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (currentView !== 'kalender') {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.color = '#09090b';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }
+          }}
+          title="Buka Kalender Acara Tradisi Jogja"
+        >
+          <Calendar size={15} strokeWidth={2.2} className={currentView === 'kalender' ? 'text-white' : 'text-neutral-800'} />
+          <span className="hidden lg:inline">Kalender Acara</span>
+          <span className="inline lg:hidden">Kalender</span>
+        </button>
+
+        {/* Akses Jurnal Budaya di sebelah profile */}
+        <button
+          type="button"
+          onClick={() => {
+            closeAll();
+            if (onOpenJurnalBudaya) {
+              onOpenJurnalBudaya();
+            } else if (onOpenCultureJournals) {
+              onOpenCultureJournals();
+            } else if (onOpenCultureBook) {
+              onOpenCultureBook();
+            }
+          }}
+          className="hidden sm:flex items-center gap-2 cursor-pointer transition-all duration-300 active:scale-95"
+          style={{
+            height: '48px',
+            padding: '0 1.15rem',
+            borderRadius: '100px',
+            backgroundColor: currentView === 'jurnal' ? '#c99b52' : '#ffffff',
+            color: currentView === 'jurnal' ? '#ffffff' : '#09090b',
+            border: currentView === 'jurnal' ? '1px solid #b8863b' : '1px solid rgba(0,0,0,0.05)',
+            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)',
+            fontSize: '13px',
+            fontWeight: 600,
+            fontFamily: "'Plus Jakarta Sans', sans-serif"
+          }}
+          onMouseEnter={(e) => {
+            if (currentView !== 'jurnal') {
+              e.currentTarget.style.backgroundColor = '#fafafa';
+              e.currentTarget.style.color = '#c99b52';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (currentView !== 'jurnal') {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.color = '#09090b';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }
+          }}
+          title="Buka Jurnal & Panduan Budaya Jogja"
+        >
+          <BookOpen size={15} strokeWidth={2.2} className={currentView === 'jurnal' ? 'text-white' : 'text-neutral-800'} />
+          <span className="hidden lg:inline">Jurnal Budaya</span>
+          <span className="inline lg:hidden">Jurnal</span>
+        </button>
+
         {isAdmin && (
           <button
             type="button"
@@ -539,71 +633,6 @@ export default function Navbar({
                             </div>
                           </button>
                         ))}
-                      </div>
-
-                      {/* Akses Cepat Kalender Acara & Jurnal Budaya (Masing-Masing Halaman) */}
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#f0f0f0]">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            closeAll();
-                            if (onOpenKalenderAcara) {
-                              onOpenKalenderAcara();
-                            } else if (onOpenCultureEvents) {
-                              onOpenCultureEvents();
-                            } else if (onOpenCultureBook) {
-                              onOpenCultureBook();
-                            }
-                          }}
-                          className={`flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-all cursor-pointer group ${
-                            currentView === 'kalender'
-                              ? 'bg-amber-50/80 border-[#c99b52] shadow-xs'
-                              : 'bg-white hover:bg-[#f5f5f5] border-black/5'
-                          }`}
-                        >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                            currentView === 'kalender' ? 'bg-[#c99b52] text-white' : 'bg-[#f2f2f2] text-black'
-                          }`}>
-                            <Calendar size={14} className="group-hover:scale-105 transition-transform" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className={`text-[12px] font-bold truncate m-0 ${
-                              currentView === 'kalender' ? 'text-amber-900' : 'text-black'
-                            }`}>Kalender Acara</p>
-                            <p className="text-[10px] text-[#8a8a8a] truncate m-0 font-medium">Jadwal & Agenda DIY</p>
-                          </div>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            closeAll();
-                            if (onOpenJurnalBudaya) {
-                              onOpenJurnalBudaya();
-                            } else if (onOpenCultureJournals) {
-                              onOpenCultureJournals();
-                            } else if (onOpenCultureBook) {
-                              onOpenCultureBook();
-                            }
-                          }}
-                          className={`flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-all cursor-pointer group ${
-                            currentView === 'jurnal'
-                              ? 'bg-amber-50/80 border-[#c99b52] shadow-xs'
-                              : 'bg-white hover:bg-[#f5f5f5] border-black/5'
-                          }`}
-                        >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                            currentView === 'jurnal' ? 'bg-[#c99b52] text-white' : 'bg-[#f2f2f2] text-black'
-                          }`}>
-                            <BookOpen size={14} className="group-hover:scale-105 transition-transform" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className={`text-[12px] font-bold truncate m-0 ${
-                              currentView === 'jurnal' ? 'text-amber-900' : 'text-black'
-                            }`}>Jurnal Budaya</p>
-                            <p className="text-[10px] text-[#8a8a8a] truncate m-0 font-medium">Panduan Adat & Esai</p>
-                          </div>
-                        </button>
                       </div>
 
                       <button
