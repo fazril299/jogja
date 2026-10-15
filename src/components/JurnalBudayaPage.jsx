@@ -73,60 +73,13 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100005] bg-[#F8F9FA] overflow-y-auto text-black"
+        className="fixed inset-0 z-[99995] bg-[#F8F9FA] overflow-y-auto text-black"
         style={{
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
       >
-        {/* Sticky Header Nav */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200 px-4 sm:px-8 py-3.5 shadow-2xs">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 flex items-center justify-center text-black transition-all cursor-pointer shadow-xs active:scale-95"
-                aria-label="Kembali ke Beranda"
-                title="Kembali ke Beranda"
-              >
-                <ArrowLeft size={18} className="text-black" />
-              </button>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-black flex items-center justify-center text-white shadow-xs">
-                  <BookOpen size={18} className="text-white" />
-                </div>
-                <div>
-                  <h1 className="text-base sm:text-lg font-black text-black m-0 leading-tight font-['Outfit']">
-                    Jurnal Budaya &amp; Panduan Adat Jogja
-                  </h1>
-                  <p className="text-[11px] sm:text-xs text-neutral-600 m-0 font-medium">
-                    Tata Krama Kasultanan, Esai Heritage &amp; Unggah-Ungguh Luhur
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-black text-xs font-bold">
-                <ShieldCheck size={14} className="text-black" />
-                <span>Kearifan Lokal Keraton D.I. Yogyakarta</span>
-              </span>
-
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 flex items-center justify-center text-black cursor-pointer"
-                aria-label="Tutup"
-              >
-                <X size={16} className="text-black" />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Hero Section */}
-        <section className="relative overflow-hidden bg-black text-white py-12 px-4 sm:px-8 border-b border-neutral-800">
+        {/* Hero Section (Top padded for global floating navbar) */}
+        <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-12 px-4 sm:px-8 border-b border-neutral-800">
           <div className="absolute inset-0 opacity-20 pointer-events-none">
             <img
               src="/assets/images/jogja_keraton.jpg"

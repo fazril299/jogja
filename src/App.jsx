@@ -23,7 +23,7 @@
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, ArrowLeft } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
@@ -395,6 +395,8 @@ function NusantaraApp() {
   const handleGoHome = () => {
     setSelectedPlace(null);
     setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
     setIsNearMeOpen(false);
     setIsCultureBookOpen(false);
     setIsMapOpen(false);
@@ -405,6 +407,8 @@ function NusantaraApp() {
 
   const handleScrollToDestinations = () => {
     setSelectedPlace(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsMapOpen(false);
@@ -420,6 +424,8 @@ function NusantaraApp() {
 
   const handleScrollToAbout = () => {
     setSelectedPlace(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsMapOpen(false);
@@ -437,6 +443,8 @@ function NusantaraApp() {
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsMapOpen(false);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
     const found = places.find((p) => p.id === id) || places[0];
     if (found) {
       setSelectedPlace(found);
@@ -567,8 +575,63 @@ function NusantaraApp() {
         )}
       </AnimatePresence>
 
+      {/* Floating Back to Home button when browsing sub-pages (PlaceStorybook, KalenderAcara, JurnalBudaya) */}
+      <AnimatePresence>
+        {(selectedPlace || isKalenderAcaraOpen || isJurnalBudayaOpen) && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            style={{
+              position: 'fixed',
+              top: '1.25rem',
+              left: '1.5rem',
+              zIndex: 100015,
+              pointerEvents: 'auto'
+            }}
+          >
+            <button
+              type="button"
+              onClick={handleGoHome}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                height: '48px',
+                padding: '0 1.15rem',
+                borderRadius: '100px',
+                backgroundColor: '#18181b',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                transition: 'all 0.3s ease'
+              }}
+              className="hover:scale-105 active:scale-95 group"
+              title="Kembali ke Beranda Jogja"
+            >
+              <ArrowLeft size={15} className="text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Beranda</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 1. SINGLE PERSISTENT TOP GLASS PILL NAVBAR */}
       <Navbar
+        currentView={
+          selectedPlace
+            ? 'storybook'
+            : isKalenderAcaraOpen
+            ? 'kalender'
+            : isJurnalBudayaOpen
+            ? 'jurnal'
+            : 'home'
+        }
         onOpenBooking={() => {
           setIsNearMeOpen(false);
           setIsCultureBookOpen(false);

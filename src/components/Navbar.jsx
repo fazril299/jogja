@@ -129,7 +129,8 @@ export default function Navbar({
   onOpenKalenderAcara,
   onOpenJurnalBudaya,
   onOpenAdmin,
-  onSelectPlaceById
+  onSelectPlaceById,
+  currentView = 'home'
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('destinasi');
@@ -193,7 +194,7 @@ export default function Navbar({
           position: 'fixed',
           top: '1.25rem',
           right: '1.5rem',
-          zIndex: 100002,
+          zIndex: 100011,
           pointerEvents: 'auto',
           display: 'flex',
           alignItems: 'center',
@@ -336,7 +337,7 @@ export default function Navbar({
 
       <div
         className="fixed top-5 left-1/2 -translate-x-1/2 pointer-events-none"
-        style={{ zIndex: 100001 }}
+        style={{ zIndex: 100010 }}
       >
         <motion.div
           className="pointer-events-auto bg-white overflow-hidden flex flex-col will-change-transform"
@@ -554,13 +555,21 @@ export default function Navbar({
                               onOpenCultureBook();
                             }
                           }}
-                          className="flex items-center gap-2.5 p-2 rounded-2xl bg-white hover:bg-[#f5f5f5] border border-black/5 text-left transition-all cursor-pointer group"
+                          className={`flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-all cursor-pointer group ${
+                            currentView === 'kalender'
+                              ? 'bg-amber-50/80 border-[#c99b52] shadow-xs'
+                              : 'bg-white hover:bg-[#f5f5f5] border-black/5'
+                          }`}
                         >
-                          <div className="w-8 h-8 rounded-xl bg-[#f2f2f2] text-black flex items-center justify-center shrink-0">
-                            <Calendar size={14} className="group-hover:scale-105 transition-transform text-black" />
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                            currentView === 'kalender' ? 'bg-[#c99b52] text-white' : 'bg-[#f2f2f2] text-black'
+                          }`}>
+                            <Calendar size={14} className="group-hover:scale-105 transition-transform" />
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[12px] font-bold text-black truncate m-0">Kalender Acara</p>
+                            <p className={`text-[12px] font-bold truncate m-0 ${
+                              currentView === 'kalender' ? 'text-amber-900' : 'text-black'
+                            }`}>Kalender Acara</p>
                             <p className="text-[10px] text-[#8a8a8a] truncate m-0 font-medium">Jadwal & Agenda DIY</p>
                           </div>
                         </button>
@@ -577,13 +586,21 @@ export default function Navbar({
                               onOpenCultureBook();
                             }
                           }}
-                          className="flex items-center gap-2.5 p-2 rounded-2xl bg-white hover:bg-[#f5f5f5] border border-black/5 text-left transition-all cursor-pointer group"
+                          className={`flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-all cursor-pointer group ${
+                            currentView === 'jurnal'
+                              ? 'bg-amber-50/80 border-[#c99b52] shadow-xs'
+                              : 'bg-white hover:bg-[#f5f5f5] border-black/5'
+                          }`}
                         >
-                          <div className="w-8 h-8 rounded-xl bg-[#f2f2f2] text-black flex items-center justify-center shrink-0">
-                            <BookOpen size={14} className="group-hover:scale-105 transition-transform text-black" />
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                            currentView === 'jurnal' ? 'bg-[#c99b52] text-white' : 'bg-[#f2f2f2] text-black'
+                          }`}>
+                            <BookOpen size={14} className="group-hover:scale-105 transition-transform" />
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[12px] font-bold text-black truncate m-0">Jurnal Budaya</p>
+                            <p className={`text-[12px] font-bold truncate m-0 ${
+                              currentView === 'jurnal' ? 'text-amber-900' : 'text-black'
+                            }`}>Jurnal Budaya</p>
                             <p className="text-[10px] text-[#8a8a8a] truncate m-0 font-medium">Panduan Adat & Esai</p>
                           </div>
                         </button>
@@ -783,11 +800,15 @@ export default function Navbar({
                       onOpenCultureBook();
                     }
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-black hover:bg-neutral-100"
+                  className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
+                    currentView === 'kalender'
+                      ? 'bg-amber-100 text-amber-950 font-black'
+                      : 'text-black hover:bg-neutral-100'
+                  }`}
                   style={{ border: 'none' }}
                 >
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5 text-black" />
+                    <Calendar className={`w-3.5 h-3.5 ${currentView === 'kalender' ? 'text-amber-800' : 'text-black'}`} />
                     <span>Kalender Acara Jogja</span>
                   </div>
                   <ChevronRight className="w-3 h-3 opacity-40 text-black" />
@@ -805,11 +826,15 @@ export default function Navbar({
                       onOpenCultureBook();
                     }
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-black hover:bg-neutral-100"
+                  className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
+                    currentView === 'jurnal'
+                      ? 'bg-amber-100 text-amber-950 font-black'
+                      : 'text-black hover:bg-neutral-100'
+                  }`}
                   style={{ border: 'none' }}
                 >
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-3.5 h-3.5 text-black" />
+                    <BookOpen className={`w-3.5 h-3.5 ${currentView === 'jurnal' ? 'text-amber-800' : 'text-black'}`} />
                     <span>Jurnal & Panduan Budaya</span>
                   </div>
                   <ChevronRight className="w-3 h-3 opacity-40 text-black" />
