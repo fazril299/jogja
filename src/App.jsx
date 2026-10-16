@@ -21,7 +21,7 @@
  *      (saat ini state `places` di App.jsx kembali ke default saat halaman di-refresh).
  * ============================================================================
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
@@ -30,9 +30,8 @@ import { CultureBookProvider } from './context/CultureBookContext';
 import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
 import { isSupabaseConfigured, fetchPlacesFromSupabase } from './lib/supabase';
 
-// Auth & Community Modals
+// Auth & Core Modals
 import AuthModal from './components/AuthModal';
-import ShareExperienceModal from './components/ShareExperienceModal';
 
 // Core Blueprint Components
 import Navbar from './components/Navbar';
@@ -46,15 +45,16 @@ import InstagramStories from './components/InstagramStories';
 import CTAHeroBanner from './components/CTAHeroBanner';
 import Footer from './components/Footer';
 import QuickViewModal from './components/QuickViewModal';
-
-// Cultural Platform Specialized Modules
-import PlaceStorybook from './components/PlaceStorybook';
-import NearMeModal from './components/NearMeModal';
-import MyCultureBookModal from './components/MyCultureBookModal';
-import KalenderAcaraPage from './components/KalenderAcaraPage';
-import JurnalBudayaPage from './components/JurnalBudayaPage';
-import AdminModal from './components/AdminModal';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// Cultural Platform Specialized Modules (Lazy-loaded to keep initial bundle ultra-light)
+const PlaceStorybook = lazy(() => import('./components/PlaceStorybook'));
+const NearMeModal = lazy(() => import('./components/NearMeModal'));
+const MyCultureBookModal = lazy(() => import('./components/MyCultureBookModal'));
+const KalenderAcaraPage = lazy(() => import('./components/KalenderAcaraPage'));
+const JurnalBudayaPage = lazy(() => import('./components/JurnalBudayaPage'));
+const AdminModal = lazy(() => import('./components/AdminModal'));
+const ShareExperienceModal = lazy(() => import('./components/ShareExperienceModal'));
 
 // Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
 export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
@@ -369,18 +369,21 @@ function NusantaraApp() {
   };
 
 
-  // Cek otomatis saat aplikasi dibuka: hanya menyalakan GPS jika pengguna di wilayah D.I. Yogyakarta
+  // Cek sekali saat aplikasi dibuka: hanya menyalakan GPS jika pengguna di wilayah D.I. Yogyakarta
   useEffect(() => {
     triggerDeviceGpsDetection(false);
+  }, []);
 
+  // Hanya pasang active hardware tracking watcher saat modal/peta Near Me sedang aktif dibuka
+  useEffect(() => {
     let watchId = null;
-    if ('geolocation' in navigator) {
+    if (isNearMeOpen && 'geolocation' in navigator) {
       watchId = navigator.geolocation.watchPosition(
         (pos) => {
           handleRealPositionUpdate(pos, false);
         },
         () => {},
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 }
       );
     }
 
@@ -389,7 +392,7 @@ function NusantaraApp() {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, []);
+  }, [isNearMeOpen]);
 
   // Navigation handlers
   const handleGoHome = () => {
@@ -694,109 +697,124 @@ function NusantaraApp() {
           MODALS & DEDICATED FULL-SCREEN PAGES
           ========================================================================= */}
 
-      {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
-      <AnimatePresence>
-        {selectedPlace && (
-          <ErrorBoundary onReset={() => setSelectedPlace(null)}>
-            <PlaceStorybook
-              place={selectedPlace}
-              places={places}
-              onSelectPlace={(p) => setSelectedPlace(p)}
-              onBack={() => setSelectedPlace(null)}
-              onOpenMapWithPlace={handleOpenMapWithPlace}
-              onOpenCultureBook={() => setIsCultureBookOpen(true)}
-            />
-          </ErrorBoundary>
+      {/* Lazy Modals & Dedicated Pages */}
+      <Suspense fallback={null}>
+        {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
+        <AnimatePresence>
+          {selectedPlace && (
+            <ErrorBoundary onReset={() => setSelectedPlace(null)}>
+              <PlaceStorybook
+                place={selectedPlace}
+                places={places}
+                onSelectPlace={(p) => setSelectedPlace(p)}
+                onBack={() => setSelectedPlace(null)}
+                onOpenMapWithPlace={handleOpenMapWithPlace}
+                onOpenCultureBook={() => setIsCultureBookOpen(true)}
+              />
+            </ErrorBoundary>
+          )}
+        </AnimatePresence>
+
+        {/* Quick View Modal for Floating Landmark Cards */}
+        <QuickViewModal
+          landmark={quickViewLandmark}
+          onClose={() => setQuickViewLandmark(null)}
+          onBookLandmark={(lm) => {
+            const targetId = lm?.id || quickViewLandmark?.id;
+            if (targetId) {
+              handleSelectPlaceById(targetId);
+            } else {
+              handleScrollToExplore();
+            }
+            setQuickViewLandmark(null);
+          }}
+          onViewFullItinerary={() => {
+            if (quickViewLandmark) {
+              handleSelectPlaceById(quickViewLandmark.id);
+            }
+            setQuickViewLandmark(null);
+          }}
+        />
+
+        {/* HALAMAN KHUSUS GPS REAL-TIME AKURAT (TERKUNCI KHUSUS WILAYAH JOGJA & RADIUS 5-10 KM) */}
+        {isNearMeOpen && (
+          <NearMeModal
+            isOpen={isNearMeOpen}
+            onClose={() => setIsNearMeOpen(false)}
+            places={places}
+            onSelectPlace={(place) => setSelectedPlace(place)}
+            autoDetectedZoneId={autoDetectedZoneId}
+            userLiveCoords={userLiveCoords}
+            isOutsideJogja={isOutsideJogja}
+            outsideJogjaCoords={outsideJogjaCoords}
+            userLiveAddress={userLiveAddress}
+            gpsErrorMsg={gpsErrorMsg}
+            onRefreshDeviceGps={() => triggerDeviceGpsDetection(false)}
+            isGpsLoading={isGpsLoading}
+          />
         )}
-      </AnimatePresence>
 
-      {/* Quick View Modal for Floating Landmark Cards */}
-      <QuickViewModal
-        landmark={quickViewLandmark}
-        onClose={() => setQuickViewLandmark(null)}
-        onBookLandmark={(lm) => {
-          const targetId = lm?.id || quickViewLandmark?.id;
-          if (targetId) {
-            handleSelectPlaceById(targetId);
-          } else {
-            handleScrollToExplore();
-          }
-          setQuickViewLandmark(null);
-        }}
-        onViewFullItinerary={() => {
-          if (quickViewLandmark) {
-            handleSelectPlaceById(quickViewLandmark.id);
-          }
-          setQuickViewLandmark(null);
-        }}
-      />
+        {/* My Culture Book (Paspor Budaya) Drawer */}
+        {isCultureBookOpen && (
+          <MyCultureBookModal
+            isOpen={isCultureBookOpen}
+            initialTab={cultureBookInitialTab}
+            onClose={() => setIsCultureBookOpen(false)}
+            places={places}
+            userLiveCoords={userLiveCoords}
+            userLiveAddress={userLiveAddress}
+            onRefreshGps={() => triggerDeviceGpsDetection(false)}
+            isGpsLoading={isGpsLoading}
+            onSelectPlace={(place) => {
+              setIsCultureBookOpen(false);
+              setSelectedPlace(place);
+            }}
+          />
+        )}
 
-      {/* HALAMAN KHUSUS GPS REAL-TIME AKURAT (TERKUNCI KHUSUS WILAYAH JOGJA & RADIUS 5-10 KM) */}
-      <NearMeModal
-        isOpen={isNearMeOpen}
-        onClose={() => setIsNearMeOpen(false)}
-        places={places}
-        onSelectPlace={(place) => setSelectedPlace(place)}
-        autoDetectedZoneId={autoDetectedZoneId}
-        userLiveCoords={userLiveCoords}
-        isOutsideJogja={isOutsideJogja}
-        outsideJogjaCoords={outsideJogjaCoords}
-        userLiveAddress={userLiveAddress}
-        gpsErrorMsg={gpsErrorMsg}
-        onRefreshDeviceGps={() => triggerDeviceGpsDetection(false)}
-        isGpsLoading={isGpsLoading}
-      />
+        {/* HALAMAN DEDIKASI 1: KALENDER ACARA BUDAYA JOGJA (DATA REAL, TANGGAL, JAM, BULAN, TAHUN) */}
+        {isKalenderAcaraOpen && (
+          <KalenderAcaraPage
+            isOpen={isKalenderAcaraOpen}
+            onClose={() => setIsKalenderAcaraOpen(false)}
+            onSelectPlace={(place) => {
+              setIsKalenderAcaraOpen(false);
+              setSelectedPlace(place);
+            }}
+          />
+        )}
 
-      {/* My Culture Book (Paspor Budaya) Drawer */}
-      <MyCultureBookModal
-        isOpen={isCultureBookOpen}
-        initialTab={cultureBookInitialTab}
-        onClose={() => setIsCultureBookOpen(false)}
-        places={places}
-        userLiveCoords={userLiveCoords}
-        userLiveAddress={userLiveAddress}
-        onRefreshGps={() => triggerDeviceGpsDetection(false)}
-        isGpsLoading={isGpsLoading}
-        onSelectPlace={(place) => {
-          setIsCultureBookOpen(false);
-          setSelectedPlace(place);
-        }}
-      />
+        {/* HALAMAN DEDIKASI 2: JURNAL BUDAYA & PANDUAN CARA BERBUDAYA DENGAN BENAR (FOTO ASSET & CONTOH) */}
+        {isJurnalBudayaOpen && (
+          <JurnalBudayaPage
+            isOpen={isJurnalBudayaOpen}
+            onClose={() => setIsJurnalBudayaOpen(false)}
+          />
+        )}
 
-      {/* HALAMAN DEDIKASI 1: KALENDER ACARA BUDAYA JOGJA (DATA REAL, TANGGAL, JAM, BULAN, TAHUN) */}
-      <KalenderAcaraPage
-        isOpen={isKalenderAcaraOpen}
-        onClose={() => setIsKalenderAcaraOpen(false)}
-        onSelectPlace={(place) => {
-          setIsKalenderAcaraOpen(false);
-          setSelectedPlace(place);
-        }}
-      />
+        {/* Admin Panel & CMS Modal */}
+        {isAdminOpen && (
+          <AdminModal
+            isOpen={isAdminOpen}
+            onClose={() => setIsAdminOpen(false)}
+            places={places}
+            onAddNewPlace={handleAddNewPlace}
+            onDeletePlace={handleDeletePlace}
+          />
+        )}
 
-      {/* HALAMAN DEDIKASI 2: JURNAL BUDAYA & PANDUAN CARA BERBUDAYA DENGAN BENAR (FOTO ASSET & CONTOH) */}
-      <JurnalBudayaPage
-        isOpen={isJurnalBudayaOpen}
-        onClose={() => setIsJurnalBudayaOpen(false)}
-      />
+        {/* Global Authentication Modal (Login / Register with Benefit Triggers) */}
+        <AuthModal />
 
-      {/* Admin Panel & CMS Modal */}
-      <AdminModal
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        places={places}
-        onAddNewPlace={handleAddNewPlace}
-        onDeletePlace={handleDeletePlace}
-      />
-
-      {/* Global Authentication Modal (Login / Register with Benefit Triggers) */}
-      <AuthModal />
-
-      {/* Global Share Experience Modal */}
-      <ShareExperienceModal
-        isOpen={isGlobalShareOpen}
-        onClose={() => setIsGlobalShareOpen(false)}
-        places={places}
-      />
+        {/* Global Share Experience Modal */}
+        {isGlobalShareOpen && (
+          <ShareExperienceModal
+            isOpen={isGlobalShareOpen}
+            onClose={() => setIsGlobalShareOpen(false)}
+            places={places}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

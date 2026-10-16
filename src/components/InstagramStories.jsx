@@ -79,27 +79,30 @@ export default function InstagramStories() {
       </div>
 
       {/* INFINITE SCROLLING MARQUEE GALLERY */}
+      <style>{`
+        @keyframes jogjaMarqueeScroll {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        .jogja-marquee-track {
+          display: flex;
+          gap: 1.25rem;
+          white-space: nowrap;
+          width: max-content;
+          will-change: transform;
+          animation: jogjaMarqueeScroll 45s linear infinite;
+        }
+        .jogja-marquee-track:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
       <div style={{
         display: 'flex',
         width: '100%',
         overflow: 'hidden',
         position: 'relative'
       }}>
-        <motion.div
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{
-            repeat: Infinity,
-            repeatType: 'loop',
-            duration: 45,
-            ease: 'linear'
-          }}
-          style={{
-            display: 'flex',
-            gap: '1.25rem',
-            whiteSpace: 'nowrap',
-            willChange: 'transform'
-          }}
-        >
+        <div className="jogja-marquee-track">
           {marqueeItems.map((item, idx) => (
             <div
               key={`${item.id}-${idx}`}
@@ -162,7 +165,7 @@ export default function InstagramStories() {
               </div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* SUBTEXT BELOW MARQUEE */}

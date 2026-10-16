@@ -1028,9 +1028,9 @@ export default function Navbar({
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.96, x: '-50%' }}
-              animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
-              exit={{ opacity: 0, y: 8, scale: 0.96, x: '-50%' }}
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
               className="mt-2 w-full max-h-[82vh] overflow-y-auto bg-white rounded-2xl p-3 border border-neutral-200/80 shadow-2xl space-y-2 text-left"
             >

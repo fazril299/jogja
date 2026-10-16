@@ -5,19 +5,6 @@ import { LANDMARKS } from '../data/landmarks';
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
   return (
     <div className="hero-wrapper">
-      {/* Hardware-Accelerated SVG Micro-Contrast & Edge Sharpening */}
-      <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }}>
-        <defs>
-          <filter id="jogja-photo-uhd-sharpen" colorInterpolationFilters="sRGB">
-            <feConvolveMatrix
-              order="3 3"
-              preserveAlpha="true"
-              kernelMatrix="0 -0.28 0 -0.28 2.12 -0.28 0 -0.28 0"
-            />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Background Image */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -29,7 +16,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           src="/assets/images/jogja_hero_stupa_uhd.jpg"
           alt="Borobudur & Mataram Stupa Warm Sunrise Ultra HD"
           fetchPriority="high"
-          decoding="sync"
+          decoding="async"
           style={{
             position: 'absolute',
             top: 0,
@@ -38,7 +25,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
             height: '100%',
             objectFit: 'cover',
             objectPosition: 'center center',
-            filter: 'url(#jogja-photo-uhd-sharpen) brightness(0.96) contrast(1.06) saturate(1.14) sepia(0.14)',
+            filter: 'brightness(0.96) contrast(1.06) saturate(1.14) sepia(0.14)',
             imageRendering: 'auto',
             transform: 'translateZ(0)',
             display: 'block'
