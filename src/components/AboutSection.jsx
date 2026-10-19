@@ -79,11 +79,6 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               Dari Sumbu Filosofis Keraton Ngayogyakarta hingga lereng Gunung Merapi, setiap kawasan menyimpan kisah yang berharga. Temukan kuliner khas melalui panduan berbasis lokasi, lengkap dengan informasi yang membantu Anda memilih tempat makan secara bijak.
             </p>
 
-            <CustomPillButton 
-              label="Pelajari Lebih Lanjut" 
-              onClick={onOpenAboutUs || onOpenBooking} 
-            />
-
             {/* Bottom Landscape Card matching exact template */}
             <div style={{
               marginTop: '2.5rem',

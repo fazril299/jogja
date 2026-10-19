@@ -69,36 +69,6 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
             untuk menemukan kelezatan lokal terdekatmu.
           </p>
 
-          {/* CTA Button */}
-          <div className="hero-cta-row">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onOpenBooking}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.85rem',
-                height: '52px',
-                padding: '0 2.2rem',
-                backgroundColor: '#c99b52',
-                color: '#fffdf9',
-                borderRadius: '100px',
-                border: '1px solid rgba(255, 236, 200, 0.35)',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: '0.96rem',
-                letterSpacing: '0.01em',
-                cursor: 'pointer',
-                boxShadow: '0 12px 35px rgba(15, 9, 3, 0.45)',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <span style={{ fontSize: '0.7rem', color: '#fffdf9' }}>●</span>
-              <span>Mulai Eksplorasi Budaya</span>
-              <span style={{ fontSize: '0.7rem', color: '#fffdf9' }}>●</span>
-            </motion.button>
-          </div>
         </motion.div>
 
         {/* Right Column / Centered Pills on Mobile — Destination Pills */}

@@ -8,7 +8,6 @@ import {
   Radio,
   BookMarked,
   Scroll,
-  CalendarDays,
   Share2,
   ShieldCheck,
   Globe,
@@ -357,20 +356,6 @@ export default function Footer({
                 >
                   <Scroll size={14} className="text-amber-800 flex-shrink-0 mt-0.5" />
                   <span>Jurnal &amp; Panduan Budaya</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenKalenderAcara) onOpenKalenderAcara();
-                    else if (onOpenCultureEvents) onOpenCultureEvents();
-                    else if (onOpenCultureBook) onOpenCultureBook();
-                  }}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
-                >
-                  <CalendarDays size={14} className="text-amber-800 flex-shrink-0" />
-                  <span>Kalender Acara Jogja</span>
                 </button>
               </li>
               <li>

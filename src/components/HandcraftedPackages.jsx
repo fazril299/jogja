@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import CustomPillButton from './CustomPillButton';
 
 export default function HandcraftedPackages({ onOpenBooking, onOpenTourDetail }) {
   const packages = [
@@ -97,17 +96,11 @@ export default function HandcraftedPackages({ onOpenBooking, onOpenTourDetail })
           ))}
         </div>
 
-        {/* BOTTOM ROW (Left Text + Divider Line + Right CustomPillButton) */}
+        {/* BOTTOM ROW (Informational guidance note) */}
         <div className="handcrafted-footer">
           <span className="handcrafted-footer-copy">
-            Pilih destinasi untuk melihat informasi selengkapnya.
+            Pilih salah satu destinasi di atas untuk menyingkap cerita budaya, sejarah, dan panduan lengkapnya.
           </span>
-
-          <CustomPillButton 
-            label="Buka Katalog Lengkap" 
-            onClick={() => onOpenTourDetail ? onOpenTourDetail({ id: 'keraton-yogyakarta' }) : onOpenBooking()} 
-            variant="dark"
-          />
         </div>
 
       </div>

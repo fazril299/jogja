@@ -645,8 +645,8 @@ function NusantaraApp() {
 
       {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
       <AboutSection
-        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenAboutUs={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenBooking={handleScrollToDestinations}
+        onOpenAboutUs={handleScrollToAbout}
       />
 
       {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}
@@ -678,7 +678,7 @@ function NusantaraApp() {
       <InstagramStories />
 
       {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
-      <CTAHeroBanner onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')} />
+      <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
 
       {/* 10. MODERN DARK FOOTER */}
       <Footer
