@@ -456,13 +456,7 @@ function NusantaraApp() {
     const performScroll = () => {
       const el = document.getElementById(sectionId);
       if (el) {
-        const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-        const targetY = rect.top + scrollTop - offset;
-        window.scrollTo({
-          top: Math.max(0, targetY),
-          behavior: 'smooth'
-        });
+        el.scrollIntoView({ behavior: 'smooth' });
         return true;
       }
       return false;
@@ -487,10 +481,25 @@ function NusantaraApp() {
     setIsMapOpen(false);
     setIsAdminOpen(false);
     setIsGlobalShareOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleScrollToDestinations = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
     smoothScrollToSection('destinations-section', 85);
   };
 
@@ -584,7 +593,18 @@ function NusantaraApp() {
       : null;
 
   return (
-    <div className="app-container" style={{ position: 'relative', width: '100%', minHeight: '100vh', background: '#031926' }}>
+    <div
+      className="app-container"
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        overflowY: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        background: '#FAF6EE'
+      }}
+    >
       {/* =========================================================================
           NOTIFIKASI REAL-TIME GPS PERANGKAT (HANYA MUNCUL JIKA GPS ASLI TERDETEKSI)
           ========================================================================= */}
@@ -734,20 +754,17 @@ function NusantaraApp() {
       />
 
       {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
-      <div id="packages">
-        <HandcraftedPackages
-          onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-          onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
-        />
-      </div>
+      <HandcraftedPackages
+        id="packages"
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
+      />
 
       {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
       <OfficialSources />
 
       {/* 7. TRAVEL FAQ */}
-      <div id="faq-section">
-        <TravelFAQ />
-      </div>
+      <TravelFAQ id="faq-section" />
 
       {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
       <InstagramStories />
@@ -868,14 +885,16 @@ function NusantaraApp() {
           />
         )}
 
-        {/* HALAMAN DEDIKASI 3: TENTANG KAMI & MANIFESTO KEISTIMEWAAN JOGJA (NON-CARD PHOTO EXPERIENCE) */}
+        {/* HALAMAN DEDIKASI 3: TENTANG KAMI & PENGENALAN FITUR WEB JOGJAKRAMA */}
         {isAboutPageOpen && (
           <TentangKamiPage
             isOpen={isAboutPageOpen}
             onClose={() => setIsAboutPageOpen(false)}
             onOpenKalender={handleOpenKalenderAcara}
             onOpenMap={handleOpenMap}
+            onOpenNearMe={handleOpenNearMe}
             onOpenJurnal={handleOpenJurnalBudaya}
+            onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
           />
         )}
 

@@ -5,7 +5,7 @@ import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
   return (
-    <div className="hero-wrapper">
+    <div className="hero-wrapper web-section-100vh">
       {/* Background Image */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -165,12 +165,13 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         </motion.div>
       </main>
 
-      {/* Curved Bottom Divider */}
+      {/* Curved Bottom Divider (Seamlessly connected to AboutSection with 0 gap) */}
       <div
         style={{
           position: 'absolute',
-          bottom: -1,
+          bottom: 0,
           left: 0,
+          right: 0,
           width: '100%',
           overflow: 'hidden',
           lineHeight: 0,
@@ -183,7 +184,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
-          style={{ position: 'relative', display: 'block', width: '100%', height: '75px' }}
+          style={{ position: 'relative', display: 'block', width: '100%', height: '85px', marginBottom: '-2px' }}
         >
           <path d="M0,90 L1440,90 L1440,0 C1080,75 360,75 0,0 Z" fill="#ffffff" />
         </svg>

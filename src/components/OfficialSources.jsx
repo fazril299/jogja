@@ -28,8 +28,8 @@ const officialSources = [
 
 export default function OfficialSources() {
   return (
-    <section className="w-full max-w-[100vw] overflow-hidden py-12 sm:py-20 px-4 sm:px-8 bg-[#f7f8f5] text-[#2d180c]">
-      <div style={{ width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
+    <section className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 bg-[#f7f8f5] text-[#2d180c]">
+      <div style={{ width: '100%', maxWidth: '1180px', margin: 'auto auto', maxHeight: '78vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <header style={{ maxWidth: '720px', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
           <p style={{ margin: '0 0 0.65rem', color: '#8c532b', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
             Referensi Resmi

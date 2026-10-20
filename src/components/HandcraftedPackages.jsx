@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function HandcraftedPackages({ onOpenBooking, onOpenTourDetail }) {
+export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetail }) {
   const packages = [
     {
       id: 'prambanan-ratuboko',
@@ -30,7 +30,7 @@ export default function HandcraftedPackages({ onOpenBooking, onOpenTourDetail })
   ];
 
   return (
-    <section className="handcrafted-section">
+    <section id={id || "packages"} className="handcrafted-section web-section-100vh">
       <div className="handcrafted-container">
         {/* SECTION HEADER */}
         <div className="handcrafted-header">

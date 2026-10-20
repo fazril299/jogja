@@ -29,19 +29,21 @@ export default function InstagramStories() {
   const marqueeItems = [...stories, ...stories];
 
   return (
-    <section style={{
-      width: '100%',
-      maxWidth: '100vw',
-      background: '#ffffff',
-      padding: '5rem 0 4rem 0',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
+    <section
+      className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 flex flex-col justify-between"
+      style={{
+        width: '100%',
+        maxWidth: '100vw',
+        background: '#ffffff',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       {/* SECTION HEADER */}
       <div style={{
         textAlign: 'center',
         maxWidth: '750px',
-        margin: '0 auto 3rem auto',
+        margin: '0 auto 1.5rem auto',
         padding: '0 2rem'
       }}>
         <motion.div 

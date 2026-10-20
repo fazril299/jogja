@@ -210,7 +210,7 @@ export default function Navbar({
       ? 'kalender'
       : currentView === 'kuliner'
       ? 'kuliner'
-      : currentView === 'jurnal'
+      : currentView === 'tentang' || currentView === 'jurnal'
       ? 'tentang'
       : 'destinasi');
 
@@ -846,7 +846,7 @@ export default function Navbar({
                       >
                         <img
                           src="/images/icon_culture.svg"
-                          alt="JogjaKrama"
+                          alt="Hamemayu"
                           style={{ width: 38, height: 38, objectFit: 'contain', display: 'block' }}
                         />
                       </div>
@@ -1026,11 +1026,10 @@ export default function Navbar({
                             onOpenCultureEvents();
                           }
                         }}
-                        className="w-full py-2.5 rounded-full bg-[#2C221E] hover:bg-[#C99B52] text-white text-[12px] font-bold text-center transition-colors cursor-pointer mt-1 flex items-center justify-center gap-2"
+                        className="w-full py-2.5 rounded-full bg-[#f0f0f0] hover:bg-[#e3e3e3] text-black text-[12px] font-bold text-center transition-colors cursor-pointer mt-1"
                         style={{ border: 'none' }}
                       >
-                        <Calendar size={13} />
-                        <span>Buka Kalender Acara Tradisi Lengkap</span>
+                        Lihat semua
                       </button>
                     </motion.div>
                   )}
@@ -1203,7 +1202,7 @@ export default function Navbar({
                       closeAll();
                       openLogin({
                         benefitType: 'general',
-                        title: 'Selamat Datang di JogjaKrama',
+                        title: 'Selamat Datang di Hamemayu',
                         description: 'Akses penuh ke paspor budaya & wishlist destinasi.'
                       });
                     }}

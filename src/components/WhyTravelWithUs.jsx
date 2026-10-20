@@ -25,7 +25,7 @@ export default function WhyTravelWithUs() {
 
     // Tile Layer Esri World Street Map Resmi (Bebas Watermark & CORS Handal)
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri • Peta Budaya & Kuliner D.I. Yogyakarta',
+      attribution: '&copy; Esri Peta Budaya & Kuliner D.I. Yogyakarta',
       maxZoom: 19
     }).addTo(map);
 

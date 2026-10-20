@@ -27,19 +27,43 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-  overflow-x: hidden;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-primary);
+  background-color: #FAF6EE;
+  color: #1a1a1a;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  font-family: var(--font-primary);
-  background-color: var(--color-deep-ocean);
-  color: #ffffff;
-  line-height: 1.6;
+/* ==========================================================================
+   Full-Screen Section System (Smooth, Fluid Natural Scrolling - Single Scrollbar)
+   ========================================================================== */
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100vh;
+  overflow-y: auto;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  background-color: #FAF6EE;
+}
+
+.web-section-100vh {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  overflow: visible !important; /* Sections never have their own scrollbar */
 }
 
 /* Custom Scrollbar - Sleek Black */
@@ -309,15 +333,24 @@ body {
 
 .handcrafted-section {
   width: 100%;
-  padding: 5.5rem 2.5rem 4.5rem;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  padding: 6.5rem 2rem 2rem 2rem;
   background: #f7f8f5;
   color: #2d180c;
+  box-sizing: border-box;
 }
 
 .handcrafted-container {
   width: 100%;
   max-width: 1240px;
   margin-inline: auto;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .handcrafted-header {
@@ -558,8 +591,9 @@ body {
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
-  padding: 2rem 2rem 2.5rem 2rem;
+  padding: 1.5rem 1.5rem 0 1.5rem;
   background-color: #140e08;
+  box-sizing: border-box;
 }
 
 /* Main 2-column grid */
@@ -648,7 +682,7 @@ body {
 /* ---- MOBILE & TABLET BREAKPOINTS ---- */
 @media (max-width: 1023px) {
   .hero-wrapper {
-    padding: 1rem 0 2rem 0;
+    padding: 1rem 0 0 0;
     max-width: 100vw;
     overflow-x: hidden;
   }

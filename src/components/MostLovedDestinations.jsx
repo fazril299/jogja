@@ -1,432 +1,258 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
-
-// Exact Framer Sl(el, document.documentElement) offset calculation
-function getOffsetTop(el) {
-  let top = 0;
-  let curr = el;
-  while (curr && curr !== document.documentElement && curr instanceof HTMLElement) {
-    top += curr.offsetTop;
-    curr = curr.offsetParent;
-  }
-  return top;
-}
-
-// Exact Framer Pe(value, inputRange, outputRange) linear clamped interpolation
-function interpolateClamped(val, inputRange, outputRange) {
-  const len = inputRange.length;
-  if (len === 0) return 1;
-  if (val <= inputRange[0]) return outputRange[0];
-  if (val >= inputRange[len - 1]) return outputRange[len - 1];
-
-  for (let i = 0; i < len - 1; i++) {
-    const x0 = inputRange[i];
-    const x1 = inputRange[i + 1];
-    if (val >= x0 && val <= x1) {
-      if (x1 === x0) return outputRange[i + 1];
-      const t = (val - x0) / (x1 - x0);
-      return outputRange[i] + t * (outputRange[i + 1] - outputRange[i]);
-    }
-  }
-  return outputRange[len - 1];
-}
-
-// Exact Framer Cl + jl scroll target scale computation (threshold = 0.5)
-function computeFramerTargetScale(scrollY, viewportHeight, targets) {
-  const thresholdOffset = 0.5 * viewportHeight;
-  const rawStarts = [];
-  const inputRange = [];
-  const outputRange = [];
-
-  for (let a = targets.length; a >= 0; a--) {
-    const item = targets[a];
-    if (!item || !item.ref || !item.ref.current) continue;
-    const el = item.ref.current;
-    const c = getOffsetTop(el) - thresholdOffset;
-    const l = el.clientHeight || 0;
-    const u = rawStarts[rawStarts.length - 1];
-    const d = Math.max(c + l, 0);
-    rawStarts.push(c);
-    inputRange.unshift(
-      Math.max(c, 0),
-      u === undefined ? d : Math.min(d, Math.max(u - 1, 0))
-    );
-    const prevScale = targets[a - 1]?.target ?? 1;
-    const currScale = targets[a]?.target ?? 1;
-    outputRange.unshift(prevScale, currScale);
-  }
-
-  if (inputRange.length === 0) return 1;
-  return interpolateClamped(scrollY, inputRange, outputRange);
-}
-
-// Exact TravFrick spring for card scroll scaling
-const SCROLL_SCALE_SPRING = {
-  damping: 69,
-  mass: 2.3,
-  stiffness: 422,
-  restDelta: 0.001
-};
-
-// Exact TravFrick hover transitions from bundle
-const HOVER_BG_TRANSITION = {
-  type: 'spring',
-  bounce: 0.2,
-  duration: 0.6,
-  delay: 0
-};
-
-const HOVER_TEXT_TRANSITION = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 50,
-  mass: 1,
-  delay: 0
-};
-
-function DestinationCard({ dest, onOpenBooking }) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => {
-        if (dest.onClick) dest.onClick();
-        else if (onOpenBooking) onOpenBooking(dest);
-      }}
-      style={{
-        cursor: 'pointer',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '10px',
-        width: '100%',
-        height: '100%',
-        padding: 0,
-        position: 'relative',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Background Image Wrapper */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }}
-      >
-        <img
-          decoding="async"
-          src={dest.bgImage}
-          alt={dest.title}
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            objectPosition: 'center',
-            objectFit: 'cover'
-          }}
-        />
-      </div>
-
-      {/* Hover / Always-visible Mobile Gradient Overlay */}
-      <motion.div
-        initial={false}
-        animate={{ opacity: isHovered ? 1 : 0 }}
-        transition={HOVER_BG_TRANSITION}
-        className="travfrick-card-overlay"
-      >
-        {/* Hover / Always-visible Mobile Text Container */}
-        <motion.div
-          initial={false}
-          animate={{
-            opacity: isHovered ? 1 : 0,
-            y: isHovered ? 0 : 20
-          }}
-          transition={HOVER_TEXT_TRANSITION}
-          className="travfrick-card-text"
-        >
-          <div style={{ width: '100%', position: 'relative' }}>
-            <h3
-              style={{
-                fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                fontSize: 'clamp(1.15rem, 2.06vw, 2.06rem)',
-                fontWeight: 700,
-                lineHeight: 1.15,
-                color: '#ffffff',
-                margin: 0
-              }}
-            >
-              {dest.title}
-            </h3>
-          </div>
-          <div style={{ width: '100%', position: 'relative' }}>
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 'clamp(0.85rem, 1.3vw, 1.4rem)',
-                fontWeight: 400,
-                lineHeight: 1.45,
-                color: 'rgb(220, 220, 220)',
-                margin: 0
-              }}
-            >
-              {dest.tagline}
-            </p>
-          </div>
-        </motion.div>
-      </motion.div>
-    </div>
-  );
-}
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Sparkles,
+  ArrowRight,
+  Compass,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause
+} from 'lucide-react';
 
 export default function MostLovedDestinations({
   onOpenBooking,
   onOpenJapanDetail,
+  onOpenSwissDetail,
   onOpenParisDetail,
-  onOpenNYDetail,
-  onOpenSwissDetail
+  onOpenNYDetail
 }) {
-  const card1Ref = useRef(null);
-  const card2Ref = useRef(null);
-  const card3Ref = useRef(null);
-  const card4Ref = useRef(null);
-
-  const rawScale1 = useMotionValue(1);
-  const rawScale2 = useMotionValue(1);
-  const rawScale3 = useMotionValue(1);
-  const rawScale4 = useMotionValue(1);
-
-  const scale1 = useSpring(rawScale1, SCROLL_SCALE_SPRING);
-  const scale2 = useSpring(rawScale2, SCROLL_SCALE_SPRING);
-  const scale3 = useSpring(rawScale3, SCROLL_SCALE_SPRING);
-  const scale4 = useSpring(rawScale4, SCROLL_SCALE_SPRING);
-
-  useEffect(() => {
-    const targets1 = [
-      { target: 1 },
-      { ref: card2Ref, target: 0.7 },
-      { ref: card3Ref, target: 0.7 }
-    ];
-    const targets2 = [
-      { target: 1 },
-      { ref: card3Ref, target: 0.75 },
-      { ref: card4Ref, target: 0.75 }
-    ];
-    const targets3 = [
-      { target: 1 },
-      { ref: card4Ref, target: 0.8 }
-    ];
-    const targets4 = [
-      { target: 1 },
-      { ref: card4Ref, target: 0.9 }
-    ];
-
-    let rafId = null;
-    const updateScales = () => {
-      const scrollY = window.scrollY || window.pageYOffset || 0;
-      const vh = window.innerHeight || 900;
-
-      rawScale1.set(computeFramerTargetScale(scrollY, vh, targets1));
-      rawScale2.set(computeFramerTargetScale(scrollY, vh, targets2));
-      rawScale3.set(computeFramerTargetScale(scrollY, vh, targets3));
-      rawScale4.set(computeFramerTargetScale(scrollY, vh, targets4));
-    };
-
-    const onScrollOrResize = () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        updateScales();
-        rafId = null;
-      });
-    };
-
-    updateScales();
-    window.addEventListener('scroll', onScrollOrResize, { passive: true });
-    window.addEventListener('resize', onScrollOrResize, { passive: true });
-
-    return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', onScrollOrResize);
-      window.removeEventListener('resize', onScrollOrResize);
-    };
-  }, [rawScale1, rawScale2, rawScale3, rawScale4]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const sectionRef = useRef(null);
 
   const destinations = [
     {
       id: 'keraton-yogyakarta',
-      title: 'Keraton & Tamansari',
-      tagline: 'Poros Sumbu Filosofis UNESCO, Istana Air & Kuliner Raja Mataram.',
+      shortName: 'Keraton & Tamansari',
+      title: 'Keraton & Tamansari Yogyakarta',
+      category: 'Poros Sumbu Filosofis UNESCO',
+      tagline: 'Pusat kosmologi Kasultanan Mataram Islam, istana air sakral Tamansari, dan keluhuran tradisi warisan dunia.',
       bgImage: '/assets/images/jogja_keraton.jpg',
       onClick: onOpenJapanDetail
     },
     {
       id: 'malioboro-tugu',
-      title: 'Malioboro & Tugu Jogja',
-      tagline: 'Denyut malam kota, Pasar Beringharjo & Kopi Joss arang membara.',
+      shortName: 'Malioboro & Tugu',
+      title: 'Malioboro & Tugu Pal Putih',
+      category: 'Denyut Kehidupan & Kota Pusaka',
+      tagline: 'Simbol garis kosmologis utara, denyut malam legendaris Pasar Beringharjo, sentra batik, dan aroma arang Kopi Joss.',
       bgImage: '/assets/images/jogja_tugu.jpg',
       onClick: onOpenSwissDetail
     },
     {
       id: 'kotagede',
-      title: 'Warisan Kotagede',
-      tagline: 'Ibu kota awal Mataram Islam 1586, lorong Kalang & kerajinan perak.',
+      shortName: 'Warisan Kotagede',
+      title: 'Warisan Pusaka Kotagede',
+      category: 'Ibu Kota Awal Mataram 1586',
+      tagline: 'Lorong bersejarah arsitektur Rumah Kalang, makam pendiri Mataram Islam, serta kriya perak yang mendunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       onClick: onOpenParisDetail
     },
     {
       id: 'merapi-kaliurang',
-      title: 'Merapi & Kaliurang',
-      tagline: 'Poros sakral utara, Museum Ullen Sentalu & Jadah Tempe Mbah Carik.',
+      shortName: 'Merapi & Kaliurang',
+      title: 'Merapi, Kaliurang & Ullen Sentalu',
+      category: 'Poros Kosmis Utara & Sejarah Keraton',
+      tagline: 'Kemegahan gunung sakral Mataram, pesona koleksi seni budaya Museum Ullen Sentalu, dan kesejukan lereng utara.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       onClick: onOpenNYDetail
     }
   ];
 
+  // Auto-play rotation (every 5s), pauses on hover so user can enjoy undisturbed
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % destinations.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [isPaused, destinations.length]);
+
+  const handlePrev = (e) => {
+    if (e) e.stopPropagation();
+    setActiveIdx((prev) => (prev - 1 + destinations.length) % destinations.length);
+  };
+
+  const handleNext = (e) => {
+    if (e) e.stopPropagation();
+    setActiveIdx((prev) => (prev + 1) % destinations.length);
+  };
+
+  const activeDest = destinations[activeIdx];
+
+  const handleOpenDetail = () => {
+    if (activeDest.onClick) {
+      activeDest.onClick();
+    } else if (onOpenBooking) {
+      onOpenBooking(activeDest);
+    }
+  };
+
   return (
     <section
       id="destinations-section"
-      className="travfrick-dest-section"
-      data-framer-name="destination_section"
+      ref={sectionRef}
+      className="web-section-100vh px-4 sm:px-8 pt-24 sm:pt-28 pb-6 bg-[#FAF6EE] relative overflow-hidden flex flex-col justify-center"
     >
-      <div className="travfrick-dest-container" data-framer-name="container">
-        {/* Top Header Section */}
-        <div className="travfrick-dest-top" data-framer-name="top div">
-          <div className="travfrick-dest-header" data-framer-name="Header">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: 'spring', stiffness: 150, damping: 40, mass: 1, delay: 0.1 }}
-              style={{ width: '100%', willChange: 'transform' }}
-            >
-              <h4
-                style={{
-                  fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                  fontSize: 'clamp(0.9rem, 1.25vw, 1.25rem)',
-                  fontWeight: 600,
-                  lineHeight: 1.1,
-                  color: '#8c532b',
-                  textAlign: 'center',
-                  margin: 0
-                }}
-              >
-                Kawasan Ikonik Yogyakarta
-              </h4>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: 'spring', stiffness: 150, damping: 40, mass: 1, delay: 0.3 }}
-              style={{ width: '100%', maxWidth: '1000px', willChange: 'transform' }}
-            >
-              <h2
-                style={{
-                  fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                  fontSize: 'clamp(1.66rem, 3.2vw, 3.75rem)',
-                  fontWeight: 700,
-                  letterSpacing: '-2px',
-                  lineHeight: 1.2,
-                  color: '#2d180c',
-                  textAlign: 'center',
-                  margin: 0
-                }}
-              >
-                Jelajahi Poros Budaya & Kuliner Utama Jogja
-              </h2>
-            </motion.div>
+      <div className="max-w-[1360px] mx-auto w-full flex-1 max-h-[82vh] flex flex-col justify-between my-auto">
+        
+        {/* =========================================================================
+            HEADER (OUTSIDE THE PHOTO: Displays current active destination info)
+            ========================================================================= */}
+        <div className="text-center max-w-2xl mx-auto space-y-1 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] shadow-2xs">
+            <Sparkles size={12} className="text-[#8c532b]" />
+            <span>Kawasan Ikonik Yogyakarta • Destinasi 0{activeIdx + 1} / 0{destinations.length}</span>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: 'spring', stiffness: 150, damping: 40, mass: 1, delay: 0.5 }}
-            style={{ width: '100%', maxWidth: '1185px', willChange: 'transform' }}
-          >
-            <p
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 'clamp(0.94rem, 1.5vw, 1.88rem)',
-                fontWeight: 400,
-                lineHeight: 1.4,
-                color: '#666666',
-                textAlign: 'center',
-                margin: 0
-              }}
+          {/* Animated Destination Title on Photo Change */}
+          <AnimatePresence mode="wait">
+            <motion.h2
+              key={`title-${activeDest.id}`}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 leading-tight"
             >
-              Telusuri berbagai destinasi wisata budaya dan kuliner paling populer yang paling dicintai wisatawan saat ini.
-            </p>
-          </motion.div>
+              {activeDest.title}
+            </motion.h2>
+          </AnimatePresence>
+
+          {/* Animated Tagline */}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`tagline-${activeDest.id}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-xs sm:text-sm text-neutral-600 m-0 line-clamp-1 max-w-xl mx-auto"
+            >
+              {activeDest.tagline}
+            </motion.p>
+          </AnimatePresence>
         </div>
 
-        {/* Sticky Cards Stack (.framer-5fsyk0) */}
-        <div className="travfrick-dest-bottom" data-framer-name="bottom">
-          {/* Card 1 */}
-          <motion.div
-            id="card1"
-            ref={card1Ref}
-            className="travfrick-dest-card-sticky"
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: 'spring', stiffness: 150, damping: 60, mass: 1, delay: 0.6 }}
-            style={{
-              scale: scale1,
-              transformPerspective: 1200,
-              willChange: 'transform'
-            }}
-          >
-            <DestinationCard dest={destinations[0]} onOpenBooking={onOpenBooking} />
-          </motion.div>
+        {/* =========================================================================
+            CLEAN PHOTO VIEWPORT (100% CLEAN: ZERO TEXT, ZERO BADGES, ZERO OVERLAYS)
+            ========================================================================= */}
+        <div 
+          onClick={handleOpenDetail}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          className="relative w-full flex-1 max-h-[58vh] min-h-[280px] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-2xl border-2 border-[#E8DFC9] bg-neutral-900 cursor-pointer group select-none"
+          title="Klik foto untuk membuka direktori lengkap"
+        >
+          {/* Pure, Uninterrupted Photographic Canvas */}
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={activeDest.id}
+              src={activeDest.bgImage}
+              alt={activeDest.title}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full h-full object-cover object-center select-none group-hover:scale-[1.02] transition-transform duration-700"
+            />
+          </AnimatePresence>
 
-          {/* Card 2 */}
-          <motion.div
-            id="card2"
-            ref={card2Ref}
-            className="travfrick-dest-card-sticky"
-            style={{
-              scale: scale2,
-              transformPerspective: 1200,
-              willChange: 'transform'
-            }}
+          {/* Floating Left & Right Arrows (Outside text, subtle glassmorphic controls) */}
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Foto Sebelumnya"
+            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
           >
-            <DestinationCard dest={destinations[1]} onOpenBooking={onOpenBooking} />
-          </motion.div>
+            <ChevronLeft size={20} />
+          </button>
 
-          {/* Card 3 */}
-          <motion.div
-            id="card3"
-            ref={card3Ref}
-            className="travfrick-dest-card-sticky"
-            style={{
-              scale: scale3,
-              willChange: 'transform'
-            }}
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Foto Berikutnya"
+            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
           >
-            <DestinationCard dest={destinations[2]} onOpenBooking={onOpenBooking} />
-          </motion.div>
-
-          {/* Card 4 */}
-          <motion.div
-            id="card4"
-            ref={card4Ref}
-            className="travfrick-dest-card-sticky"
-            style={{
-              scale: scale4,
-              willChange: 'transform'
-            }}
-          >
-            <DestinationCard dest={destinations[3]} onOpenBooking={onOpenBooking} />
-          </motion.div>
+            <ChevronRight size={20} />
+          </button>
         </div>
+
+        {/* =========================================================================
+            BOTTOM CONTROLS & NAVIGATION CAPSULES (OUTSIDE THE PHOTO)
+            ========================================================================= */}
+        <div className="pt-2.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          {/* Destination Selector Capsules */}
+          <div className="flex items-center gap-2 flex-wrap justify-center">
+            {destinations.map((dest, idx) => {
+              const isActive = activeIdx === idx;
+              return (
+                <button
+                  key={dest.id}
+                  type="button"
+                  onClick={() => setActiveIdx(idx)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                    isActive
+                      ? 'bg-[#2d180c] text-white border-[#2d180c] shadow-xs scale-105'
+                      : 'bg-white text-neutral-600 border-[#E8DFC9] hover:bg-neutral-50'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-amber-400 animate-pulse' : 'bg-neutral-300'}`} />
+                  <span>{dest.shortName}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Controls: Pause/Play toggle, Prev/Next & Detail Action Button */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsPaused(!isPaused)}
+              title={isPaused ? "Putar Otomatis" : "Jeda Otomatis"}
+              aria-label={isPaused ? "Putar Otomatis" : "Jeda Otomatis"}
+              className="w-8 h-8 rounded-full bg-white border border-[#E8DFC9] hover:bg-[#FAF6EE] text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+            >
+              {isPaused ? <Play size={13} className="ml-0.5 text-emerald-600" /> : <Pause size={13} className="text-[#8c532b]" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrev}
+              title="Destinasi Sebelumnya"
+              aria-label="Destinasi Sebelumnya"
+              className="w-8 h-8 rounded-full bg-white border border-[#E8DFC9] hover:bg-[#FAF6EE] text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+            >
+              <ChevronLeft size={15} />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              title="Destinasi Berikutnya"
+              aria-label="Destinasi Berikutnya"
+              className="w-8 h-8 rounded-full bg-white border border-[#E8DFC9] hover:bg-[#FAF6EE] text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+            >
+              <ChevronRight size={15} />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleOpenDetail}
+              className="ml-1 px-4 py-1.5 rounded-full bg-[#8c532b] hover:bg-[#a06034] text-white text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <Compass size={13} />
+              <span>Detail Destinasi</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+
       </div>
     </section>
   );
 }
+

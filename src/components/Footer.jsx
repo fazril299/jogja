@@ -161,6 +161,13 @@ export default function Footer({
   onSelectPlaceById
 }) {
   const scrollToTop = () => {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -187,7 +194,7 @@ export default function Footer({
       {/* =========================================================================
           MAIN MULTI-COLUMN NAVIGATION & INSTITUTIONAL INFO (WHITE THEME, ALL BLACK TEXT)
           ========================================================================= */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-8 sm:pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           
           {/* COLUMN 1: BRAND IDENTITY & PHILOSOPHICAL FOUNDATION (Span 4) */}
@@ -201,7 +208,7 @@ export default function Footer({
                   scrollToTop();
                 }}
                 className="group inline-flex items-center transition-transform duration-300 hover:rotate-12"
-                aria-label="Kembali ke Beranda JogjaKrama"
+                aria-label="Kembali ke Beranda Hamemayu"
               >
                 <EastwardMandalaMedallion />
               </a>
@@ -210,7 +217,7 @@ export default function Footer({
                   className="block text-2xl font-extrabold tracking-tight text-black hover:opacity-75 transition-opacity"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
-                  JogjaKrama
+                  Hamemayu
                 </span>
                 <span
                   className="block text-[11px] tracking-wider uppercase text-black font-bold"
@@ -325,7 +332,7 @@ export default function Footer({
                   className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
                 >
                   <Sparkles size={14} className="text-amber-800 flex-shrink-0" />
-                  <span>Tentang JogjaKrama</span>
+                  <span>Tentang Hamemayu</span>
                 </button>
               </li>
               <li>
@@ -437,10 +444,10 @@ export default function Footer({
               <div className="flex items-center gap-2.5">
                 <Mail size={15} className="text-amber-800 flex-shrink-0" />
                 <a
-                  href="mailto:kontak@jogjakrama.id"
+                  href="mailto:kontak@hamemayu.id"
                   className="hover:opacity-60 transition-opacity font-mono text-xs font-semibold text-black"
                 >
-                  kontak@jogjakrama.id
+                  kontak@hamemayu.id
                 </a>
               </div>
             </div>
@@ -459,7 +466,7 @@ export default function Footer({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-slate-100 hover:bg-[#25D366] text-slate-800 hover:text-white border border-slate-300 hover:border-[#25D366] hover:scale-105 transition-all flex items-center justify-center shadow-sm"
-                  aria-label="WhatsApp JogjaKrama"
+                  aria-label="WhatsApp Hamemayu"
                   title="WhatsApp Resmi"
                 >
                   <WhatsAppIcon size={17} />
@@ -469,7 +476,7 @@ export default function Footer({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-slate-100 hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] text-slate-800 hover:text-white border border-slate-300 hover:border-transparent hover:scale-105 transition-all flex items-center justify-center shadow-sm"
-                  aria-label="Instagram JogjaKrama"
+                  aria-label="Instagram Hamemayu"
                   title="Instagram Resmi"
                 >
                   <InstagramIcon size={17} />
@@ -503,6 +510,18 @@ export default function Footer({
 
           </div>
 
+        </div>
+
+        {/* =========================================================================
+            BOTTOM COPYRIGHT BAR
+            ========================================================================= */}
+        <div className="mt-8 sm:mt-10 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
+          <p className="m-0 font-medium text-black">
+            © {new Date().getFullYear()} Hamemayu Hayuning Bawana. Seluruh Hak Cipta Dilindungi.
+          </p>
+          <p className="m-0 text-[11px] text-neutral-500">
+            Dedikasi Pelestarian Nilai Luhur Budaya Yogyakarta
+          </p>
         </div>
       </div>
     </footer>

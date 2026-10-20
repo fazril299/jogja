@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 
-export default function TravelFAQ() {
+export default function TravelFAQ({ id }) {
   const [openIdx, setOpenIdx] = useState(null);
 
   const toggleQuestion = (idx) => {
@@ -122,16 +122,21 @@ export default function TravelFAQ() {
   };
 
   return (
-    <section className="w-full bg-white py-12 sm:py-20 px-4 sm:px-8 relative">
+    <section id={id || "faq-section"} className="web-section-100vh w-full bg-white px-4 sm:px-8 pt-28 sm:pt-32 pb-8 relative flex flex-col">
       <div style={{
         maxWidth: '1240px',
-        margin: '0 auto'
+        margin: 'auto auto',
+        maxHeight: '78vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        width: '100%'
       }}>
         {/* SECTION HEADER */}
         <div style={{
           textAlign: 'center',
           maxWidth: '750px',
-          margin: '0 auto clamp(2rem, 5vw, 3.5rem) auto'
+          margin: '0 auto clamp(1.2rem, 3vw, 2rem) auto'
         }}>
           <motion.div 
             initial={{ opacity: 0, y: -15 }}
