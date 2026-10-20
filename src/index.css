@@ -30,6 +30,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -37,23 +38,30 @@ body {
   background-color: var(--color-deep-ocean);
   color: #ffffff;
   line-height: 1.6;
-  overflow-x: clip;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Scrollbar matching blueprint */
+/* Custom Scrollbar - Sleek Black */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1a1a1a transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #020b12;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 209, 0.3);
-  border-radius: 4px;
+  background: #1a1a1a;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-cyan);
+  background: #000000;
 }
 
 /* Base Utility Classes */
@@ -303,7 +311,7 @@ body {
   width: 100%;
   padding: 5.5rem 2.5rem 4.5rem;
   background: #f7f8f5;
-  color: #173f36;
+  color: #2d180c;
 }
 
 .handcrafted-container {
@@ -322,7 +330,7 @@ body {
   align-items: center;
   gap: 0.55rem;
   margin-bottom: 0.8rem;
-  color: #a94e35;
+  color: #8c532b;
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -337,7 +345,7 @@ body {
 .handcrafted-title {
   max-width: 720px;
   margin: 0;
-  color: #173f36;
+  color: #2d180c;
   font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   font-size: 2.75rem;
   font-weight: 700;
@@ -407,7 +415,7 @@ body {
 
 .handcrafted-card-title {
   margin: 0 0 0.55rem;
-  color: #173f36;
+  color: #2d180c;
   font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   font-size: 1.18rem;
   font-weight: 700;
@@ -425,7 +433,7 @@ body {
 }
 
 .handcrafted-card-price span {
-  color: #173f36;
+  color: #2d180c;
   font-weight: 800;
 }
 
@@ -627,6 +635,7 @@ body {
   gap: 0.9rem;
   align-items: flex-end;
   width: 100%;
+  padding-top: 1.5rem;
 }
 
 /* Each pill wrapper on desktop */
@@ -697,7 +706,7 @@ body {
     max-width: 440px;
     margin: 0 auto;
     overflow-x: visible;
-    padding: 0;
+    padding: 1.5rem 0 0 0;
   }
 
   .hero-pill-wrapper {
@@ -743,6 +752,7 @@ body {
     gap: 0.85rem;
     max-width: 640px;
     margin: 0 auto;
+    padding: 1.5rem 0 0 0;
   }
 
   .hero-pill-wrapper {
@@ -756,6 +766,7 @@ body {
 }
 
 .hero-feature-pill {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1.1rem;
@@ -772,6 +783,134 @@ body {
     border-color 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Khusus container pertama: Efek aura dan petunjuk klik */
+.hero-feature-pill--hinted {
+  border-color: #e5b869;
+  box-shadow:
+    0 10px 28px rgba(10, 6, 2, 0.22),
+    0 0 0 1.5px rgba(229, 184, 105, 0.45);
+  animation: heroHintedPillGlow 3s ease-in-out infinite;
+}
+
+@keyframes heroHintedPillGlow {
+  0%, 100% {
+    box-shadow:
+      0 10px 28px rgba(10, 6, 2, 0.22),
+      0 0 0 1.5px rgba(229, 184, 105, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 14px 32px rgba(10, 6, 2, 0.28),
+      0 0 0 2.5px rgba(229, 184, 105, 0.85),
+      0 0 16px rgba(229, 184, 105, 0.3);
+  }
+}
+
+.hero-feature-pill--hinted:hover {
+  animation: none;
+  box-shadow: 0 16px 36px rgba(10, 6, 2, 0.42);
+}
+
+/* Floating callout badge di atas container pertama (Ultra Clean & Sleek) */
+.hero-pill-floating-hint {
+  position: absolute;
+  top: -30px;
+  right: 22px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  animation: heroHintBob 2.6s ease-in-out infinite;
+}
+
+@keyframes heroHintBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.hero-hint-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.22rem 0.65rem 0.22rem 0.55rem;
+  background: rgba(18, 12, 7, 0.88);
+  border: 1px solid rgba(245, 198, 120, 0.42);
+  border-radius: 9999px;
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.28),
+    0 0 12px rgba(229, 184, 105, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-hint-sparkle {
+  color: #f7ca7d;
+  flex-shrink: 0;
+  animation: heroSparkleGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes heroSparkleGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.16);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(247, 202, 125, 0.85));
+  }
+}
+
+.hero-hint-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #fff9ee;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}
+
+.hero-hint-arrow-icon {
+  color: #f3c97e;
+  flex-shrink: 0;
+  opacity: 0.85;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+.hero-hint-arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(18, 12, 7, 0.88);
+  margin-top: -1px;
+}
+
+/* Interaksi saat hover container pertama */
+.hero-feature-pill:hover .hero-hint-content {
+  background: rgba(26, 17, 9, 0.96);
+  border-color: rgba(245, 198, 120, 0.75);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.35),
+    0 0 16px rgba(229, 184, 105, 0.3);
+}
+
+@media (max-width: 600px) {
+  .hero-pill-floating-hint {
+    top: -30px;
+    right: 14px;
+  }
+  .hero-hint-text {
+    font-size: 0.68rem;
+  }
 }
 
 .hero-feature-pill-thumb {
@@ -1040,6 +1179,3 @@ body {
 .leaflet-layer {
   background-color: #FAF8F5 !important;
 }
-
-
-

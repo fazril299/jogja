@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, LogIn, LogOut, Heart, Camera, ChevronDown, Sparkles, Shield, Calendar, BookOpen } from 'lucide-react';
+import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const SPRING_TRANSITION = {
@@ -87,13 +87,6 @@ const PROFILE_HEADER_VARIANTS = {
   }
 };
 
-const NAV_ITEMS = [
-  { id: 'destinasi', label: 'Destinasi' },
-  { id: 'tentang', label: 'Tentang' },
-  { id: 'kuliner', label: 'Kuliner' },
-  { id: 'kalender', label: 'Kalender' }
-];
-
 const DESTINASI_POPULER = [
   {
     id: 'keraton-yogyakarta',
@@ -148,6 +141,12 @@ const KULINER_FEATURES = [
     name: 'Radar GPS Kuliner Jogja',
     hours: 'Radius 5–10 KM • Pelacakan Real-Time',
     image: '/assets/images/jogja_gudeg.jpg'
+  },
+  {
+    id: 'map',
+    name: 'Peta Budaya & Cagar Wisata DIY',
+    hours: 'Peta Interaktif • 5 Wilayah Kabupaten/Kota',
+    image: '/assets/images/jogja_keraton.jpg'
   }
 ];
 
@@ -172,6 +171,13 @@ const KALENDER_PREVIEW = [
   }
 ];
 
+const NAV_ITEMS = [
+  { id: 'destinasi', label: 'Destinasi' },
+  { id: 'tentang', label: 'Tentang' },
+  { id: 'kuliner', label: 'Kuliner' },
+  { id: 'kalender', label: 'Kalender' }
+];
+
 export default function Navbar({
   onGoHome,
   onOpenAboutUs,
@@ -189,7 +195,29 @@ export default function Navbar({
   currentView = 'home'
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('destinasi');
+  const [userSelectedTab, setUserSelectedTab] = useState(null);
+  const [prevView, setPrevView] = useState(currentView);
+
+  // Sync state during render when currentView prop changes
+  if (prevView !== currentView) {
+    setPrevView(currentView);
+    setUserSelectedTab(null);
+  }
+
+  const activeTab =
+    userSelectedTab ??
+    (currentView === 'kalender'
+      ? 'kalender'
+      : currentView === 'kuliner'
+      ? 'kuliner'
+      : currentView === 'jurnal'
+      ? 'tentang'
+      : 'destinasi');
+
+  const setActiveTab = (tab) => {
+    setUserSelectedTab(tab);
+  };
+
   const [hoveredTab, setHoveredTab] = useState(null);
   const [subFilter, setSubFilter] = useState('Populer');
   const closeTimerRef = useRef(null);
@@ -252,6 +280,10 @@ export default function Navbar({
     setHoveredTab(null);
     setProfileOpen(false);
     setMobileMenuOpen(false);
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
   };
 
   const handleNavClick = (id) => {
@@ -282,7 +314,7 @@ export default function Navbar({
 
   return (
     <>
-      {/* Top-Right Profile Pill with Floating Dropdown Animation (Desktop only) */}
+      {/* Top-Right Profile / Masuk Dynamic Island Pill */}
       <div
         className="hidden sm:flex"
         style={{
@@ -290,8 +322,7 @@ export default function Navbar({
           top: '1.25rem',
           right: '1.5rem',
           zIndex: 100011,
-          pointerEvents: 'auto',
-          justifyContent: 'flex-end'
+          pointerEvents: 'auto'
         }}
       >
         <motion.div
@@ -406,54 +437,11 @@ export default function Navbar({
                     </div>
                   )}
 
-                  {/* Cultural Features: Kalender Acara & Jurnal Budaya */}
+                  {/* Cultural Features: Jurnal Budaya */}
                   <div className="space-y-1.5 pt-1">
                     <p className="text-[10px] font-black uppercase tracking-wider text-neutral-400 px-1 m-0">
-                      Agenda & Jurnal Budaya
+                      Jurnal Budaya
                     </p>
-
-                    {/* Kalender Acara */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeAll();
-                        if (onOpenKalenderAcara) {
-                          onOpenKalenderAcara();
-                        } else if (onOpenCultureEvents) {
-                          onOpenCultureEvents();
-                        } else if (onOpenCultureBook) {
-                          onOpenCultureBook();
-                        }
-                      }}
-                      className={`w-full flex items-center gap-3 p-2.5 rounded-2xl border text-left transition-all cursor-pointer group ${
-                        currentView === 'kalender'
-                          ? 'bg-amber-50/90 border-[#c99b52] shadow-xs'
-                          : 'bg-white hover:bg-neutral-50 border-neutral-100'
-                      }`}
-                    >
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                          currentView === 'kalender'
-                            ? 'bg-[#c99b52] text-white shadow-xs'
-                            : 'bg-neutral-100 text-black group-hover:bg-neutral-200'
-                        }`}
-                      >
-                        <Calendar size={15} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={`text-xs font-bold truncate m-0 ${
-                            currentView === 'kalender' ? 'text-amber-950' : 'text-black'
-                          }`}
-                        >
-                          Kalender Acara
-                        </p>
-                        <p className="text-[10px] text-neutral-500 truncate m-0 font-medium">
-                          Jadwal & Agenda Tradisi DIY
-                        </p>
-                      </div>
-                      <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
 
                     {/* Jurnal Budaya */}
                     <button
@@ -618,25 +606,16 @@ export default function Navbar({
               {NAV_ITEMS.map((item) => {
                 const isHighlighted =
                   hoveredTab === item.id ||
-                  (activeTab === item.id && !hoveredTab) ||
-                  (item.id === 'kalender' && currentView === 'kalender');
+                  (!hoveredTab && activeTab === item.id);
                 return (
                   <button
                     key={item.id}
                     type="button"
                     onClick={() => handleNavClick(item.id)}
                     onMouseEnter={() => handleTabMouseEnter(item.id)}
-                    className="relative cursor-pointer flex items-center gap-1.5 justify-center leading-none"
+                    className="relative cursor-pointer flex items-center justify-center leading-none"
                     style={{ padding: '4px 0', background: 'none', border: 'none' }}
                   >
-                    {item.id === 'kalender' && (
-                      <Calendar
-                        size={13}
-                        className={
-                          isHighlighted ? 'text-[#c99b52]' : 'text-[#8a8a8a]'
-                        }
-                      />
-                    )}
                     <span
                       className="text-[13px] leading-none select-none tracking-normal inline-block"
                       style={{
@@ -1238,9 +1217,7 @@ export default function Navbar({
               {/* Main Navigation Items */}
               <div className="space-y-1">
                 {NAV_ITEMS.map((item) => {
-                  const isActive =
-                    activeTab === item.id ||
-                    (item.id === 'kalender' && currentView === 'kalender');
+                  const isActive = activeTab === item.id;
                   return (
                     <button
                       key={item.id}
@@ -1252,17 +1229,7 @@ export default function Navbar({
                           : 'text-neutral-700 hover:bg-neutral-100'
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        {item.id === 'kalender' && (
-                          <Calendar
-                            size={13}
-                            className={
-                              isActive ? 'text-amber-300' : 'text-neutral-500'
-                            }
-                          />
-                        )}
-                        <span>{item.label}</span>
-                      </div>
+                      <span>{item.label}</span>
                       <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                     </button>
                   );
@@ -1291,26 +1258,20 @@ export default function Navbar({
                   <ChevronRight className="w-3.5 h-3.5 text-amber-800" />
                 </button>
 
-                {/* Kalender Acara */}
+                {/* Peta Budaya & Cagar Wisata DIY */}
                 <button
                   type="button"
                   onClick={() => {
                     closeAll();
-                    if (onOpenKalenderAcara) onOpenKalenderAcara();
-                    else if (onOpenCultureEvents) onOpenCultureEvents();
-                    else if (onOpenCultureBook) onOpenCultureBook();
+                    if (onOpenMap) onOpenMap();
                   }}
-                  className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
-                    currentView === 'kalender'
-                      ? 'bg-amber-100 text-amber-950 font-black'
-                      : 'text-neutral-800 hover:bg-neutral-100'
-                  }`}
+                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-cyan-950 bg-cyan-50/70 hover:bg-cyan-100/80 border border-cyan-200/60"
                 >
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5 text-amber-800" />
-                    <span>Kalender Acara Tradisi</span>
+                    <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                    <span>Peta Budaya &amp; Cagar Wisata DIY</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                  <ChevronRight className="w-3.5 h-3.5 text-cyan-800" />
                 </button>
 
                 {/* Jurnal Budaya */}

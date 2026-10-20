@@ -272,14 +272,13 @@ export default function MyCultureBookModal({
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={false}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
         style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 100010,
+          zIndex: 99995,
           backgroundColor: '#FAF8F5',
           color: '#2C221E',
           overflowY: 'auto',

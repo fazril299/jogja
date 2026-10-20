@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, MapPin, Compass, ExternalLink, Sparkles, Layers, Info } from 'lucide-react';
 
@@ -12,6 +12,14 @@ export default function InteractiveMapModal({
   const [activePlace, setActivePlace] = useState(selectedPlace || places[0]);
   const [mapViewMode, setMapViewMode] = useState('google-embed'); // 'google-embed' | 'svg'
   const [regionFilter, setRegionFilter] = useState('all');
+
+  useEffect(() => {
+    if (selectedPlace) {
+      setActivePlace(selectedPlace);
+    } else if (!activePlace && places.length > 0) {
+      setActivePlace(places[0]);
+    }
+  }, [selectedPlace, places]);
 
   if (!isOpen) return null;
 
@@ -41,7 +49,7 @@ export default function InteractiveMapModal({
                 </span>
               </h2>
               <p className="text-xs text-neutral-400">
-                Jelajahi lokasi budaya dan kuliner di kawasan Yogyakarta.
+                Jelajahi lokasi cagar budaya dan kuliner otentik di 5 Kabupaten/Kota Yogyakarta.
               </p>
             </div>
           </div>
@@ -67,13 +75,13 @@ export default function InteractiveMapModal({
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
-                  Peta Google Maps
+                Peta Google Maps
               </button>
             </div>
 
             <button
               onClick={onClose}
-                aria-label="Tutup peta"
+              aria-label="Tutup peta"
               className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -83,8 +91,8 @@ export default function InteractiveMapModal({
 
         {/* Region Filter Bar */}
         <div className="px-5 py-2.5 bg-neutral-900/90 border-b border-neutral-800 flex items-center gap-2 overflow-x-auto scrollbar-none text-xs">
-              <span className="text-neutral-500 font-mono mr-1">KABUPATEN / KOTA:</span>
-          {['all', 'kota-jogja', 'sleman', 'bantul', 'gunungkidul'].map((reg) => (
+          <span className="text-neutral-500 font-mono mr-1">KABUPATEN / KOTA:</span>
+          {['all', 'kota-jogja', 'sleman', 'bantul', 'gunungkidul', 'kulonprogo'].map((reg) => (
             <button
               key={reg}
               onClick={() => setRegionFilter(reg)}
@@ -102,7 +110,9 @@ export default function InteractiveMapModal({
                 ? 'Sleman'
                 : reg === 'bantul'
                 ? 'Bantul'
-                : 'Gunungkidul'}
+                : reg === 'gunungkidul'
+                ? 'Gunungkidul'
+                : 'Kulon Progo'}
             </button>
           ))}
         </div>
@@ -115,35 +125,36 @@ export default function InteractiveMapModal({
               <div className="w-full h-full relative rounded-2xl border border-neutral-800/80 bg-gradient-to-b from-[#111827] via-[#0D1117] to-[#070A0E] flex flex-col items-center justify-center p-6">
                 {/* Visual Archipelago Grid Graphic */}
                 <div className="absolute inset-0 opacity-10 bg-batik-pattern"></div>
-                <div className="absolute top-4 left-4 text-xs font-mono text-neutral-500 flex items-center gap-2">
+                <div className="absolute top-4 left-4 text-xs font-mono text-neutral-400 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                  <span>KOORDINAT INDONESIA: 6°LU - 11°LS / 95°BT - 141°BT</span>
+                  <span>KOORDINAT D.I. YOGYAKARTA: 7°31'LS - 8°13'LS / 110°00'BT - 110°50'BT</span>
                 </div>
 
-                {/* Archipelago Pins Canvas representation */}
+                {/* Yogyakarta Pins Canvas representation */}
                 <div className="relative w-full max-w-4xl h-80 sm:h-96 border border-neutral-800 rounded-2xl bg-neutral-950/70 p-6 flex items-center justify-center">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-                    <span className="font-serif text-6xl sm:text-8xl font-black tracking-widest text-[#D4AF37]/20 select-none">
-                      INDONESIA
+                  <div className="absolute inset-0 flex items-center justify-center opacity-15 pointer-events-none">
+                    <span className="font-serif text-5xl sm:text-7xl font-black tracking-widest text-[#D4AF37]/20 select-none">
+                      D.I. YOGYAKARTA
                     </span>
                   </div>
 
-                  {/* Marker Pinpoints across Indonesia Map Canvas */}
+                  {/* Marker Pinpoints across Yogyakarta Map Canvas */}
                   {filteredPlaces.map((p) => {
-                    // Approximate relative X and Y positions on Indonesian map canvas:
-                    // Westernmost: Toba (98°E), Minang (100°E), Baduy (106°E), Jogja (110°E), Bali (115°E), Lombok (116°E), Toraja (119°E), Raja Ampat (130°E)
-                    const minLng = 95;
-                    const maxLng = 135;
-                    const minLat = -11;
-                    const maxLat = 5;
+                    const minLng = 110.00;
+                    const maxLng = 110.85;
+                    const minLat = -8.22;
+                    const maxLat = -7.52;
+
+                    const pLng = p.coordinates?.lng || 110.36;
+                    const pLat = p.coordinates?.lat || -7.80;
 
                     const leftPct = Math.min(
-                      92,
-                      Math.max(8, ((p.coordinates.lng - minLng) / (maxLng - minLng)) * 100)
+                      90,
+                      Math.max(10, ((pLng - minLng) / (maxLng - minLng)) * 100)
                     );
                     const topPct = Math.min(
                       88,
-                      Math.max(12, ((maxLat - p.coordinates.lat) / (maxLat - minLat)) * 100)
+                      Math.max(12, ((maxLat - pLat) / (maxLat - minLat)) * 100)
                     );
 
                     const isSelected = activePlace?.id === p.id;
@@ -153,7 +164,7 @@ export default function InteractiveMapModal({
                         key={p.id}
                         onClick={() => setActivePlace(p)}
                         style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-                        className={`absolute -translate-x-1/2 -translate-y-1/2 group transition-all duration-300 z-10 focus:outline-none`}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 group transition-all duration-300 z-10 focus:outline-none cursor-pointer"
                       >
                         <div
                           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full backdrop-blur-md border transition-all ${
@@ -184,8 +195,11 @@ export default function InteractiveMapModal({
             ) : (
               <div className="w-full h-full rounded-2xl overflow-hidden border border-neutral-800">
                 <iframe
-                  title="Peta Google Maps Indonesia"
-                  src={activePlace?.chapter07?.mapEmbedUrl || 'https://www.google.com/maps?q=Indonesia&z=5&output=embed'}
+                  title="Peta Google Maps D.I. Yogyakarta"
+                  src={
+                    activePlace?.chapter07?.mapEmbedUrl ||
+                    `https://maps.google.com/maps?q=${activePlace?.coordinates?.lat || -7.8053},${activePlace?.coordinates?.lng || 110.3644}&hl=id&z=13&output=embed`
+                  }
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -203,19 +217,19 @@ export default function InteractiveMapModal({
               <div className="space-y-4">
                 <div className="relative h-44 rounded-xl overflow-hidden bg-neutral-800">
                   <img
-                    src={activePlace.coverImage}
+                    src={activePlace.coverImage || activePlace.thumbnail}
                     alt={activePlace.name}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-2 left-2 px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-neutral-950/80 text-amber-300 border border-amber-500/30">
-                    {activePlace.province}
+                    {activePlace.province || 'D.I. Yogyakarta'}
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Compass className="w-5 h-5 text-amber-300" />
-                    <span className="text-xs text-neutral-400">{activePlace.regionLabel}</span>
+                    <span className="text-xs text-neutral-400">{activePlace.regionLabel || 'Yogyakarta'}</span>
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-white mb-1">
                     {activePlace.name}
@@ -224,37 +238,42 @@ export default function InteractiveMapModal({
                     “{activePlace.subtitle}”
                   </p>
                   <p className="text-xs text-neutral-300 leading-relaxed line-clamp-3">
-                    {activePlace.chapter01.overview}
+                    {activePlace.chapter01?.overview || activePlace.subtitle || 'Destinasi cagar budaya dan kuliner Daerah Istimewa Yogyakarta.'}
                   </p>
                 </div>
 
                 {/* Badges */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {activePlace.badges?.map((b, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700"
-                    >
-                      {b}
-                    </span>
-                  ))}
-                </div>
+                {activePlace.badges && activePlace.badges.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {activePlace.badges.map((b, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 rounded text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700"
+                      >
+                        {b}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="pt-6 border-t border-neutral-800 mt-4 space-y-2">
                 <button
                   onClick={() => {
-                    onSelectPlace(activePlace);
+                    if (onSelectPlace) onSelectPlace(activePlace);
                     onClose();
                   }}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#9E2A2B] to-[#D4AF37] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 hover:shadow-lg transition-all"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#9E2A2B] to-[#D4AF37] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 hover:shadow-lg transition-all cursor-pointer"
                 >
                   <Compass className="w-4 h-4" />
                   <span>Baca Kisah ({activePlace.name})</span>
                 </button>
 
                 <a
-                  href={activePlace.chapter07.mapsDirectLink}
+                  href={
+                    activePlace.chapter07?.mapsDirectLink ||
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activePlace.name + ' Yogyakarta')}`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2.5 px-4 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center justify-center gap-2 transition-colors border border-neutral-700"

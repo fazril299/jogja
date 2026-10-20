@@ -81,7 +81,7 @@ export default function TravelFAQ() {
             fontFamily: 'Outfit, sans-serif',
             fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
             fontWeight: 700,
-            color: '#051926',
+            color: '#3d2314',
             lineHeight: 1.35
           }}>
             {item.q}
@@ -141,7 +141,7 @@ export default function TravelFAQ() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              color: '#556877',
+              color: '#8c532b',
               fontSize: '0.9rem',
               fontWeight: 600,
               marginBottom: '0.8rem'
@@ -159,7 +159,7 @@ export default function TravelFAQ() {
             fontFamily: 'Outfit, sans-serif',
             fontSize: 'clamp(1.8rem, 3.8vw, 3.2rem)',
             fontWeight: 800,
-            color: '#051926',
+            color: '#2d180c',
             lineHeight: 1.15,
             letterSpacing: '-0.02em'
           }}>

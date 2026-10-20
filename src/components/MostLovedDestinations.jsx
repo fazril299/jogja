@@ -308,9 +308,9 @@ export default function MostLovedDestinations({
                 style={{
                   fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
                   fontSize: 'clamp(0.9rem, 1.25vw, 1.25rem)',
-                  fontWeight: 400,
+                  fontWeight: 600,
                   lineHeight: 1.1,
-                  color: '#000000',
+                  color: '#8c532b',
                   textAlign: 'center',
                   margin: 0
                 }}
@@ -333,7 +333,7 @@ export default function MostLovedDestinations({
                   fontWeight: 700,
                   letterSpacing: '-2px',
                   lineHeight: 1.2,
-                  color: '#000000',
+                  color: '#2d180c',
                   textAlign: 'center',
                   margin: 0
                 }}

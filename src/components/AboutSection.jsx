@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import CustomPillButton from './CustomPillButton';
 
 export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
+
   // Pure photographic images of iconic Yogyakarta landmarks
   const slideshowImages = [
     "/assets/images/jogja_prambanan.jpg",
@@ -26,7 +27,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
   }, [slideshowImages.length]);
 
   return (
-    <div id="about" style={{ width: '100%', background: '#ffffff', color: '#0b1a26' }}>
+    <div id="about" style={{ width: '100%', background: '#ffffff', color: '#2d180c' }}>
       
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - EXACT FRAMER TEMPLATE)
@@ -46,7 +47,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               gap: '0.5rem',
               fontSize: '0.85rem',
               fontWeight: 600,
-              color: '#475569',
+              color: '#8c532b',
               marginBottom: '1rem'
             }}>
               <img 
@@ -63,7 +64,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               fontWeight: 800,
               lineHeight: 1.15,
               marginBottom: '1.2rem',
-              color: '#0b1a26',
+              color: '#2d180c',
               letterSpacing: '-0.02em'
             }}>
               Menyingkap Falsafah, Tata Krama & Cita Rasa Asli Yogyakarta
@@ -78,6 +79,19 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
             }}>
               Dari Sumbu Filosofis Keraton Ngayogyakarta hingga lereng Gunung Merapi, setiap kawasan menyimpan kisah yang berharga. Temukan kuliner khas melalui panduan berbasis lokasi, lengkap dengan informasi yang membantu Anda memilih tempat makan secara bijak.
             </p>
+
+            {onOpenAboutUs && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <button
+                  type="button"
+                  onClick={onOpenAboutUs}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FAF6EE] hover:bg-[#F5EEDC] text-[#8c532b] border border-[#E8DFC9] text-xs font-semibold transition-all cursor-pointer active:scale-95"
+                >
+                  <span>Pelajari Selengkapnya Tentang Nilai &amp; Sumbu Filosofis</span>
+                  <span>→</span>
+                </button>
+              </div>
+            )}
 
             {/* Bottom Landscape Card matching exact template */}
             <div style={{
@@ -163,7 +177,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               gap: '0.5rem',
               fontSize: '0.88rem',
               fontWeight: 600,
-              color: '#334155',
+              color: '#8c532b',
               marginBottom: '0.8rem'
             }}>
               <img 
@@ -178,7 +192,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               fontFamily: 'Outfit, sans-serif',
               fontSize: 'clamp(1.9rem, 4vw, 3.2rem)',
               fontWeight: 800,
-              color: '#0b1a26',
+              color: '#2d180c',
               letterSpacing: '-0.025em',
               lineHeight: 1.15,
               maxWidth: '750px',
@@ -212,7 +226,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                 />
               </div>
-              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#0b1a26' }}>
+              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#3d2314' }}>
                 Budaya & Sejarah
               </h4>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.55 }}>
@@ -227,7 +241,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#0b1a26' }}>
+              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#3d2314' }}>
                 Wisata Alam & Hiburan
               </h4>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.55, marginBottom: '1.2rem' }}>
@@ -269,7 +283,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                 />
               </div>
-              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#0b1a26' }}>
+              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#3d2314' }}>
                 Pilihan Kuliner Terverifikasi
               </h4>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.55 }}>
@@ -284,7 +298,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
             >
-              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#0b1a26' }}>
+              <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.35rem', color: '#3d2314' }}>
                 Kampung Wisata & Krama
               </h4>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.55, marginBottom: '1.2rem' }}>

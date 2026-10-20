@@ -52,7 +52,7 @@ export default function InstagramStories() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            color: '#556877',
+            color: '#8c532b',
             fontSize: '0.9rem',
             fontWeight: 600,
             marginBottom: '0.8rem'
@@ -70,7 +70,7 @@ export default function InstagramStories() {
           fontFamily: 'Outfit, sans-serif',
           fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)',
           fontWeight: 800,
-          color: '#051926',
+          color: '#2d180c',
           lineHeight: 1.15,
           letterSpacing: '-0.02em'
         }}>

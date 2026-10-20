@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
@@ -53,7 +54,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         >
           {/* Tagline */}
           <span className="hero-tagline">
-            Eksplorasi Pusaka &amp; Kuliner Jogja
+            Eksplorasi Pusaka & Kuliner Jogja
           </span>
 
           {/* Main Headline */}
@@ -103,35 +104,64 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
               subtitle: 'Ullen Sentalu & Jadah Tempe',
               image: '/assets/images/jogja_merapi.jpg'
             }
-          ].map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.35 + idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="hero-pill-wrapper"
-            >
-              <div
-                className="hero-feature-pill"
-                onClick={() => {
-                  const landmark = LANDMARKS.find((l) => l.id === item.id) || LANDMARKS[idx];
-                  if (onSelectLandmark) onSelectLandmark(landmark);
-                }}
+          ].map((item, idx) => {
+            const isFirst = idx === 0;
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.35 + idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className={`hero-pill-wrapper ${isFirst ? 'hero-pill-wrapper--first' : ''}`}
               >
-                <div className="hero-feature-pill-thumb">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  />
+                <div
+                  className={`hero-feature-pill ${isFirst ? 'hero-feature-pill--hinted' : ''}`}
+                  onClick={() => {
+                    const landmark = LANDMARKS.find((l) => l.id === item.id) || LANDMARKS[idx];
+                    if (onSelectLandmark) onSelectLandmark(landmark);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${item.title} - ${item.subtitle}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      const landmark = LANDMARKS.find((l) => l.id === item.id) || LANDMARKS[idx];
+                      if (onSelectLandmark) onSelectLandmark(landmark);
+                    }
+                  }}
+                >
+                  {/* Petunjuk / Hint khusus container pertama */}
+                  {isFirst && (
+                    <motion.div
+                      className="hero-pill-floating-hint"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.85, duration: 0.45, ease: 'easeOut' }}
+                    >
+                      <div className="hero-hint-content">
+                        <Sparkles size={12} className="hero-hint-sparkle" />
+                        <span className="hero-hint-text">Ayo Klik Aku!</span>
+                      </div>
+                      <div className="hero-hint-arrow-down" />
+                    </motion.div>
+                  )}
+
+                  <div className="hero-feature-pill-thumb">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span className="hero-feature-pill-title">{item.title}</span>
+                    <span className="hero-feature-pill-subtitle">{item.subtitle}</span>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className="hero-feature-pill-title">{item.title}</span>
-                  <span className="hero-feature-pill-subtitle">{item.subtitle}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </main>
 

@@ -28,13 +28,13 @@ const officialSources = [
 
 export default function OfficialSources() {
   return (
-    <section className="w-full max-w-[100vw] overflow-hidden py-12 sm:py-20 px-4 sm:px-8 bg-[#f7f8f5] text-[#173f36]">
+    <section className="w-full max-w-[100vw] overflow-hidden py-12 sm:py-20 px-4 sm:px-8 bg-[#f7f8f5] text-[#2d180c]">
       <div style={{ width: '100%', maxWidth: '1180px', margin: '0 auto' }}>
         <header style={{ maxWidth: '720px', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
-          <p style={{ margin: '0 0 0.65rem', color: '#a94e35', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
+          <p style={{ margin: '0 0 0.65rem', color: '#8c532b', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
             Referensi Resmi
           </p>
-          <h2 style={{ margin: '0 0 0.7rem', fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', lineHeight: 1.2 }}>
+          <h2 style={{ margin: '0 0 0.7rem', fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', lineHeight: 1.2, color: '#2d180c' }}>
             Informasi yang dapat diperiksa
           </h2>
           <p style={{ margin: 0, color: '#64766d', fontSize: '0.95rem', lineHeight: 1.6 }}>
@@ -52,10 +52,10 @@ export default function OfficialSources() {
             >
               <div>
                 <img src={iconSrc} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.82 }} />
-                <h3 style={{ margin: '0.85rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', lineHeight: 1.3 }}>{title}</h3>
+                <h3 style={{ margin: '0.85rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', lineHeight: 1.3, color: '#3d2314' }}>{title}</h3>
                 <p style={{ margin: '0 0 1rem', color: '#52665d', fontSize: '0.88rem', lineHeight: 1.6 }}>{detail}</p>
               </div>
-              <a href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#8b3d2a', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none', paddingTop: '0.5rem' }}>
+              <a href={href} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#8c532b', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none', paddingTop: '0.5rem' }}>
                 {source} <ExternalLink size={14} aria-hidden="true" />
               </a>
             </motion.article>

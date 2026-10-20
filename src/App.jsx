@@ -21,7 +21,7 @@
  *      (saat ini state `places` di App.jsx kembali ke default saat halaman di-refresh).
  * ============================================================================
  */
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { AuthProvider } from './context/AuthContext';
@@ -47,14 +47,16 @@ import Footer from './components/Footer';
 import QuickViewModal from './components/QuickViewModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Cultural Platform Specialized Modules (Lazy-loaded to keep initial bundle ultra-light)
-const PlaceStorybook = lazy(() => import('./components/PlaceStorybook'));
-const NearMeModal = lazy(() => import('./components/NearMeModal'));
-const MyCultureBookModal = lazy(() => import('./components/MyCultureBookModal'));
-const KalenderAcaraPage = lazy(() => import('./components/KalenderAcaraPage'));
-const JurnalBudayaPage = lazy(() => import('./components/JurnalBudayaPage'));
-const AdminModal = lazy(() => import('./components/AdminModal'));
-const ShareExperienceModal = lazy(() => import('./components/ShareExperienceModal'));
+// Cultural Platform Dedicated Modules (Direct imports for instant, seamless zero-latency switching)
+import PlaceStorybook from './components/PlaceStorybook';
+import NearMeModal from './components/NearMeModal';
+import MyCultureBookModal from './components/MyCultureBookModal';
+import KalenderAcaraPage from './components/KalenderAcaraPage';
+import JurnalBudayaPage from './components/JurnalBudayaPage';
+import TentangKamiPage from './components/TentangKamiPage';
+import AdminModal from './components/AdminModal';
+import ShareExperienceModal from './components/ShareExperienceModal';
+import InteractiveMapModal from './components/InteractiveMapModal';
 
 // Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
 export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
@@ -169,6 +171,7 @@ function NusantaraApp() {
   const [cultureBookInitialTab, setCultureBookInitialTab] = useState('badges-quests');
   const [isKalenderAcaraOpen, setIsKalenderAcaraOpen] = useState(false);
   const [isJurnalBudayaOpen, setIsJurnalBudayaOpen] = useState(false);
+  const [isAboutPageOpen, setIsAboutPageOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
 
@@ -177,6 +180,7 @@ function NusantaraApp() {
     setSelectedPlace(null);
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
     setCultureBookInitialTab(tab);
     setIsCultureBookOpen(true);
   };
@@ -186,6 +190,7 @@ function NusantaraApp() {
     setIsCultureBookOpen(false);
     setSelectedPlace(null);
     setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
     setIsKalenderAcaraOpen(true);
   };
 
@@ -194,7 +199,21 @@ function NusantaraApp() {
     setIsCultureBookOpen(false);
     setSelectedPlace(null);
     setIsKalenderAcaraOpen(false);
+    setIsAboutPageOpen(false);
     setIsJurnalBudayaOpen(true);
+  };
+
+  const handleOpenAboutUs = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
+    setIsAboutPageOpen(true);
   };
 
   // REAL Hardware GPS Tracking States (Khusus Menyala di Wilayah D.I. Yogyakarta)
@@ -394,8 +413,36 @@ function NusantaraApp() {
     };
   }, [isNearMeOpen]);
 
-  // Navigation handlers
-  const handleGoHome = () => {
+  // Lock body & html scroll when any full-screen overlay or modal is active to eliminate double scrollbars
+  const isAnyOverlayActive = Boolean(
+    isKalenderAcaraOpen ||
+    isNearMeOpen ||
+    selectedPlace ||
+    isJurnalBudayaOpen ||
+    isCultureBookOpen ||
+    isAdminOpen ||
+    isGlobalShareOpen ||
+    quickViewLandmark ||
+    isMapOpen
+  );
+
+  useEffect(() => {
+    if (isAnyOverlayActive) {
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      const prevBodyOverflow = document.body.style.overflow;
+
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.documentElement.style.overflow = prevHtmlOverflow;
+        document.body.style.overflow = prevBodyOverflow;
+      };
+    }
+  }, [isAnyOverlayActive]);
+
+  // Progressive smooth scroll helper to guarantee viewport moves to section even after unmounting full-screen modals
+  const smoothScrollToSection = (sectionId, offset = 85) => {
     setSelectedPlace(null);
     setQuickViewLandmark(null);
     setIsKalenderAcaraOpen(false);
@@ -405,49 +452,105 @@ function NusantaraApp() {
     setIsMapOpen(false);
     setIsAdminOpen(false);
     setIsGlobalShareOpen(false);
+
+    const performScroll = () => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+        const targetY = rect.top + scrollTop - offset;
+        window.scrollTo({
+          top: Math.max(0, targetY),
+          behavior: 'smooth'
+        });
+        return true;
+      }
+      return false;
+    };
+
+    performScroll();
+    requestAnimationFrame(performScroll);
+    setTimeout(performScroll, 50);
+    setTimeout(performScroll, 150);
+    setTimeout(performScroll, 320);
+  };
+
+  // Navigation handlers
+  const handleGoHome = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setIsMapOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleScrollToDestinations = () => {
-    setSelectedPlace(null);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
-    setTimeout(() => {
-      const el = document.getElementById('destinations-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
+    smoothScrollToSection('destinations-section', 85);
   };
 
   const handleScrollToAbout = () => {
+    handleOpenAboutUs();
+  };
+
+  const handleOpenNearMe = () => {
     setSelectedPlace(null);
+    setQuickViewLandmark(null);
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
     setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
     setIsMapOpen(false);
     setIsAdminOpen(false);
     setIsGlobalShareOpen(false);
-    setTimeout(() => {
-      const el = document.getElementById('about-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
+    setIsNearMeOpen(true);
+  };
+
+  const handleOpenMap = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
+    setIsMapOpen(true);
+  };
+
+  const handleOpenAdmin = () => {
+    setSelectedPlace(null);
+    setQuickViewLandmark(null);
+    setIsKalenderAcaraOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsCultureBookOpen(false);
+    setIsNearMeOpen(false);
+    setIsMapOpen(false);
+    setIsGlobalShareOpen(false);
+    setIsAdminOpen(true);
+  };
+
+  const handleOpenShareModal = () => {
+    setIsGlobalShareOpen(true);
   };
 
   const handleSelectPlaceById = (id) => {
+    setQuickViewLandmark(null);
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsMapOpen(false);
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsAdminOpen(false);
+    setIsGlobalShareOpen(false);
     const found = places.find((p) => p.id === id) || places[0];
     if (found) {
       setSelectedPlace(found);
@@ -577,62 +680,34 @@ function NusantaraApp() {
             ? 'kalender'
             : isJurnalBudayaOpen
             ? 'jurnal'
+            : isAboutPageOpen
+            ? 'tentang'
+            : isNearMeOpen
+            ? 'kuliner'
             : 'home'
         }
-        onOpenBooking={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          handleSelectPlaceById('keraton-yogyakarta');
-        }}
-        onSelectPlaceById={(placeId) => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          handleSelectPlaceById(placeId);
-        }}
+        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onSelectPlaceById={handleSelectPlaceById}
         onGoHome={handleGoHome}
         onOpenDestinations={handleScrollToDestinations}
-        onOpenAboutUs={handleScrollToAbout}
-        onOpenTours={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          handleSelectPlaceById('keraton-yogyakarta');
-        }}
-        onOpenBlogs={() => {
-          handleOpenCultureBookWithTab('jurnal');
-        }}
-        onOpenNearMe={() => {
-          setSelectedPlace(null);
-          setIsCultureBookOpen(false);
-          setIsNearMeOpen(true);
-        }}
-        onOpenMap={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          setIsMapOpen(true);
-        }}
-        onOpenCultureBook={() => {
-          handleOpenCultureBookWithTab('badges-quests');
-        }}
+        onOpenAboutUs={handleOpenAboutUs}
+        onOpenTours={() => handleSelectPlaceById('keraton-yogyakarta')}
+        onOpenBlogs={() => handleOpenCultureBookWithTab('jurnal')}
+        onOpenNearMe={handleOpenNearMe}
+        onOpenMap={handleOpenMap}
+        onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
         onOpenCultureEvents={handleOpenKalenderAcara}
         onOpenCultureJournals={handleOpenJurnalBudaya}
         onOpenKalenderAcara={handleOpenKalenderAcara}
         onOpenJurnalBudaya={handleOpenJurnalBudaya}
-        onOpenAdmin={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          setIsAdminOpen(true);
-        }}
-        onOpenShareModal={() => {
-          setIsNearMeOpen(false);
-          setIsCultureBookOpen(false);
-          setIsGlobalShareOpen(true);
-        }}
+        onOpenAdmin={handleOpenAdmin}
+        onOpenShareModal={handleOpenShareModal}
       />
 
       {/* 2. FULL-BLEED OCEAN VIDEO HERO WITH 4 YOGYAKARTA FLOATING PILLS & GPS TRIGGER */}
       <Hero
         onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenNearMe={() => setIsNearMeOpen(true)}
+        onOpenNearMe={handleOpenNearMe}
         onSelectLandmark={(landmark) => {
           const match = places.find((p) => p.id === landmark.id);
           if (match) {
@@ -682,14 +757,16 @@ function NusantaraApp() {
 
       {/* 10. MODERN DARK FOOTER */}
       <Footer
-        onOpenNearMe={() => setIsNearMeOpen(true)}
+        onOpenAboutUs={handleOpenAboutUs}
+        onOpenNearMe={handleOpenNearMe}
+        onOpenMap={handleOpenMap}
         onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
         onOpenCultureEvents={handleOpenKalenderAcara}
         onOpenCultureJournals={handleOpenJurnalBudaya}
         onOpenKalenderAcara={handleOpenKalenderAcara}
         onOpenJurnalBudaya={handleOpenJurnalBudaya}
-        onOpenAdmin={() => setIsAdminOpen(true)}
-        onOpenShareModal={() => setIsGlobalShareOpen(true)}
+        onOpenAdmin={handleOpenAdmin}
+        onOpenShareModal={handleOpenShareModal}
         onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
       />
 
@@ -697,8 +774,7 @@ function NusantaraApp() {
           MODALS & DEDICATED FULL-SCREEN PAGES
           ========================================================================= */}
 
-      {/* Lazy Modals & Dedicated Pages */}
-      <Suspense fallback={null}>
+      {/* Dedicated Modals & Full-Screen Pages */}
         {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
         <AnimatePresence>
           {selectedPlace && (
@@ -792,6 +868,17 @@ function NusantaraApp() {
           />
         )}
 
+        {/* HALAMAN DEDIKASI 3: TENTANG KAMI & MANIFESTO KEISTIMEWAAN JOGJA (NON-CARD PHOTO EXPERIENCE) */}
+        {isAboutPageOpen && (
+          <TentangKamiPage
+            isOpen={isAboutPageOpen}
+            onClose={() => setIsAboutPageOpen(false)}
+            onOpenKalender={handleOpenKalenderAcara}
+            onOpenMap={handleOpenMap}
+            onOpenJurnal={handleOpenJurnalBudaya}
+          />
+        )}
+
         {/* Admin Panel & CMS Modal */}
         {isAdminOpen && (
           <AdminModal
@@ -814,7 +901,20 @@ function NusantaraApp() {
             places={places}
           />
         )}
-      </Suspense>
+
+        {/* Peta Budaya & Cagar Wisata DIY Modal */}
+        {isMapOpen && (
+          <InteractiveMapModal
+            isOpen={isMapOpen}
+            onClose={() => setIsMapOpen(false)}
+            places={places}
+            selectedPlace={selectedPlace}
+            onSelectPlace={(place) => {
+              setIsMapOpen(false);
+              setSelectedPlace(place);
+            }}
+          />
+        )}
     </div>
   );
 }

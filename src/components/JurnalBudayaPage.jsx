@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeft,
   BookOpen,
   Sparkles,
   Search,
@@ -10,14 +9,8 @@ import {
   XCircle,
   Lightbulb,
   Clock,
-  MapPin,
-  Tag,
-  Share2,
   X,
-  ShieldCheck,
-  ChevronRight,
-  Compass,
-  Check
+  ShieldCheck
 } from 'lucide-react';
 import {
   CULTURAL_ETIQUETTE_GUIDE,
@@ -25,7 +18,7 @@ import {
   CULTURAL_JOURNALS
 } from '../data/culturalEventsData';
 
-export default function JurnalBudayaPage({ isOpen, onClose }) {
+export default function JurnalBudayaPage({ isOpen, _onClose }) {
   const [activeMainTab, setActiveMainTab] = useState('panduan'); // 'panduan' | 'artikel'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEtiquetteCategory, setSelectedEtiquetteCategory] = useState('Semua');
@@ -70,7 +63,7 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={false}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[99995] bg-[#F8F9FA] overflow-y-auto text-black"
@@ -79,7 +72,7 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
         }}
       >
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-black text-white pt-20 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-8 border-b border-neutral-800">
+        <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-8 border-b border-neutral-800">
           <div className="absolute inset-0 opacity-25 pointer-events-none">
             <img
               src="/assets/images/jogja_keraton.jpg"
@@ -88,26 +81,6 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-transparent pointer-events-none" />
-
-          {/* Top Bar Navigation: Close / Back to Home Button */}
-          <div className="relative max-w-7xl mx-auto mb-6 flex items-center justify-between z-10">
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/25 backdrop-blur-md transition-all cursor-pointer shadow-sm active:scale-95"
-            >
-              <ArrowLeft size={14} />
-              <span>Kembali ke Beranda</span>
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Tutup Halaman"
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/25 backdrop-blur-md cursor-pointer transition-all active:scale-95"
-            >
-              <X size={15} />
-            </button>
-          </div>
 
           <div className="relative max-w-7xl mx-auto space-y-2">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 max-w-3xl leading-snug">

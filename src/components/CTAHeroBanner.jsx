@@ -100,7 +100,10 @@ export default function CTAHeroBanner({ onOpenBooking }) {
               justifyContent: 'center'
             }}
           >
-            <CustomPillButton label="Mulai Eksplorasi Sekarang" onClick={onOpenBooking} />
+            <CustomPillButton 
+              label="Mulai Eksplorasi Sekarang" 
+              onClick={onOpenBooking} 
+            />
           </div>
         </div>
       </div>

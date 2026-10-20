@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircle2,
   X,
-  ArrowLeft,
   Heart,
   Star,
   MessageSquare,
@@ -635,15 +634,14 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={false}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: 'easeInOut' }}
       onScroll={handleStorybookScroll}
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 9999,
+        zIndex: 99995,
         backgroundColor: '#ffffff',
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
@@ -652,40 +650,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
       id="storybook-viewport"
       className="storybook-main-container"
     >
-      {/* Floating Top Navigation Bar (Back & Close) */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '1rem',
-          left: '1rem',
-          right: '1rem',
-          zIndex: 10005,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          pointerEvents: 'none'
-        }}
-      >
-        <button
-          type="button"
-          onClick={onBack}
-          className="pointer-events-auto inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/75 hover:bg-black text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all cursor-pointer shadow-lg active:scale-95"
-        >
-          <ArrowLeft size={15} />
-          <span>Kembali ke Beranda</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Tutup Detail Destinasi"
-          className="pointer-events-auto w-9 h-9 rounded-full bg-black/75 hover:bg-black text-white flex items-center justify-center border border-white/20 backdrop-blur-md cursor-pointer transition-all shadow-lg active:scale-95"
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-
       {/* =========================================================================
           SECTION 1: HERO VIEW (100VH - FOKUS 100% PADA DESTINASI TERPILIH)
           ========================================================================= */}

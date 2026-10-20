@@ -11,7 +11,8 @@ import {
   Share2,
   ShieldCheck,
   Globe,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 
 function InstagramIcon({ size = 18, className = "" }) {
@@ -147,7 +148,9 @@ function EastwardMandalaMedallion() {
 }
 
 export default function Footer({
+  onOpenAboutUs,
   onOpenNearMe,
+  onOpenMap,
   onOpenCultureBook,
   onOpenCultureEvents,
   onOpenCultureJournals,
@@ -318,11 +321,31 @@ export default function Footer({
               <li>
                 <button
                   type="button"
+                  onClick={() => onOpenAboutUs && onOpenAboutUs()}
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
+                >
+                  <Sparkles size={14} className="text-amber-800 flex-shrink-0" />
+                  <span>Tentang JogjaKrama</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
                   onClick={() => onOpenNearMe && onOpenNearMe()}
                   className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
                 >
                   <Radio size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Radar Wisata GPS</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onOpenMap && onOpenMap()}
+                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
+                >
+                  <MapPin size={14} className="text-amber-800 flex-shrink-0" />
+                  <span>Peta Wilayah &amp; Budaya DIY</span>
                 </button>
               </li>
               <li>

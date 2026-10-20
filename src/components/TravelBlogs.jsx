@@ -61,7 +61,7 @@ export default function TravelBlogs() {
             fontFamily: 'Outfit, sans-serif',
             fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)',
             fontWeight: 800,
-            color: '#051926',
+            color: '#2d180c',
             lineHeight: 1.15,
             letterSpacing: '-0.02em'
           }}>

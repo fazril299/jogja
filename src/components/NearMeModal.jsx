@@ -333,14 +333,13 @@ export default function NearMeModal({
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={false}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
         style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 99990,
+          zIndex: 99995,
           backgroundColor: '#FAF8F5',
           color: '#2C221E',
           overflowY: 'auto',
@@ -438,28 +437,6 @@ export default function NearMeModal({
                   Radius {km} KM
                 </button>
               ))}
-
-              <button
-                onClick={onClose}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.45rem 1.15rem',
-                  borderRadius: '9999px',
-                  backgroundColor: '#2C221E',
-                  color: '#FAF8F5',
-                  border: '1.5px solid #C99B52',
-                  fontSize: '0.76rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(44, 34, 30, 0.15)',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <X size={14} />
-                <span>Tutup</span>
-              </button>
             </div>
           </div>
 
