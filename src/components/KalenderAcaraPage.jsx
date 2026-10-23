@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar as CalendarIcon,
@@ -14,14 +14,18 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  Filter,
+  Bookmark,
+  CalendarPlus,
   Compass,
   ArrowRight,
-  ArrowLeft,
-  Filter
+  Info,
+  Award
 } from 'lucide-react';
 import { CULTURAL_EVENTS } from '../data/culturalEventsData';
 import { CULTURAL_PLACES } from '../data/culturalData';
 
+// Month names in Indonesian
 const MONTH_NAMES = [
   'Januari',
   'Februari',
@@ -37,58 +41,188 @@ const MONTH_NAMES = [
   'Desember'
 ];
 
-const DAY_NAMES = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+// Weekday abbreviations
+const DAY_HEADERS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-// Months that contain official cultural events in the dataset
-const ACTIVE_EVENT_MONTH_INDICES = [2, 4, 5, 6, 7, 8, 9]; // Mar, Mei, Jun, Jul, Ags, Sep, Okt
+// Master categories matching Jogja cultural palette
+const CATEGORY_CONFIG = {
+  'Upacara Keraton': {
+    colorBg: 'bg-[#8c532b]', // Heritage Terracotta / Soga
+    colorText: 'text-white',
+    colorBorder: 'border-[#754422]',
+    label: 'Upacara Keraton'
+  },
+  'Pertunjukan Seni': {
+    colorBg: 'bg-[#9E1C64]', // Royal Keraton Magenta
+    colorText: 'text-white',
+    colorBorder: 'border-[#821451]',
+    label: 'Pertunjukan Seni'
+  },
+  'Festival Rakyat': {
+    colorBg: 'bg-[#2d5a27]', // Deep Forest Green
+    colorText: 'text-white',
+    colorBorder: 'border-[#22451d]',
+    label: 'Festival Rakyat'
+  },
+  'Pameran Seni': {
+    colorBg: 'bg-[#b45309]', // Warm Amber / Ochre ArtJog
+    colorText: 'text-white',
+    colorBorder: 'border-[#92400e]',
+    label: 'Pameran Seni'
+  }
+};
 
-const CATEGORIES = [
-  'Semua Kategori',
+const CATEGORIES_LIST = [
   'Upacara Keraton',
   'Pertunjukan Seni',
   'Festival Rakyat',
   'Pameran Seni'
 ];
 
-const DISTRICTS = [
-  'Semua Wilayah',
-  'Kota Yogyakarta',
-  'Sleman',
-  'Bantul'
+const LOCATIONS_LIST = [
+  { id: 'Semua', label: 'Semua Wilayah' },
+  { id: 'Kota Yogyakarta', label: 'Kota Yogyakarta' },
+  { id: 'Sleman', label: 'Kabupaten Sleman' },
+  { id: 'Bantul', label: 'Kabupaten Bantul' }
 ];
 
-export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
-  // Calendar state
-  const [realToday] = useState(() => new Date());
-  const [activeYear, setActiveYear] = useState(() => new Date().getFullYear());
-  const [activeMonth, setActiveMonth] = useState(() => {
-    const curMonth = new Date().getMonth();
-    return ACTIVE_EVENT_MONTH_INDICES.includes(curMonth) ? curMonth : 2; // Default to Maret
-  });
-  const [selectedDay, setSelectedDay] = useState(18); // Default to iconic event date (Labuhan / Grebeg)
+export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange }) {
+  // Calendar time state
+  const [activeYear, setActiveYear] = useState(2025);
+  const [activeMonth, setActiveMonth] = useState(2); // Default to Maret (Bulan awal tahun agenda budaya)
+  const [selectedDay, setSelectedDay] = useState(18);
 
-  // Search & Filter state
+  // Active view toggle: 'Bulan' | 'Minggu' | 'Hari' | 'Daftar'
+  const [viewTab, setViewTab] = useState('Bulan');
+
+  // Filter state in left sidebar
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Semua Kategori');
-  const [selectedDistrict, setSelectedDistrict] = useState('Semua Wilayah');
+  const [selectedCategories, setSelectedCategories] = useState(CATEGORIES_LIST);
+  const [selectedLocation, setSelectedLocation] = useState('Semua');
 
-  // Interactive modal & copy state
-  const [activeModalEvent, setActiveModalEvent] = useState(null);
-  const [copiedId, setCopiedId] = useState(null);
-
-  // Month list with event counts for current year
-  const eventMonths = useMemo(() => {
-    return ACTIVE_EVENT_MONTH_INDICES.map((mIdx) => {
-      const count = CULTURAL_EVENTS.filter((ev) => ev.monthIndex === mIdx).length;
-      return {
-        index: mIdx,
-        name: MONTH_NAMES[mIdx],
-        count
-      };
+  // Real event counts per category
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    CATEGORIES_LIST.forEach((cat) => {
+      counts[cat] = CULTURAL_EVENTS.filter((e) => e.category === cat).length;
     });
+    return counts;
   }, []);
 
-  // Calendar cells matrix (7 columns x N weeks)
+  // Real event counts per location/district
+  const locationCounts = useMemo(() => {
+    return {
+      Semua: CULTURAL_EVENTS.length,
+      'Kota Yogyakarta': CULTURAL_EVENTS.filter(
+        (e) =>
+          e.district &&
+          (e.district.toLowerCase().includes('kota') ||
+            e.district.toLowerCase().includes('yogyakarta'))
+      ).length,
+      Sleman: CULTURAL_EVENTS.filter(
+        (e) => e.district && e.district.toLowerCase().includes('sleman')
+      ).length,
+      Bantul: CULTURAL_EVENTS.filter(
+        (e) => e.district && e.district.toLowerCase().includes('bantul')
+      ).length
+    };
+  }, []);
+
+  // Detail Modal state
+  const [activeModalEvent, setActiveModalEvent] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [modalTab, setModalTab] = useState('ringkasan');
+
+  const handleOpenModal = (ev) => {
+    setModalTab('ringkasan');
+    setActiveModalEvent(ev);
+    onPopupChange?.(true);
+  };
+
+  const handleCloseModal = () => {
+    setActiveModalEvent(null);
+    onPopupChange?.(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      onPopupChange?.(false);
+    };
+  }, [onPopupChange]);
+
+  // Close modal on Escape key press
+  useEffect(() => {
+    if (!activeModalEvent) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModalEvent]);
+
+  const handleCopyAddress = (address) => {
+    if (!address) return;
+    navigator.clipboard?.writeText(address);
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
+  const getGoogleCalendarUrl = (ev) => {
+    if (!ev) return '#';
+    const title = encodeURIComponent(ev.name);
+    const details = encodeURIComponent(
+      `[Agenda Budaya Yogyakarta]\n${ev.name}\n\nMakna & Rangkaian:\n${ev.description}\n\nAdab & Tata Krama:\n${ev.tips}\n\nSumber: ${ev.source}`
+    );
+    const location = encodeURIComponent(`${ev.location}, ${ev.district}, D.I. Yogyakarta`);
+    const year = ev.year || activeYear || 2025;
+    const month = String((ev.monthIndex !== undefined ? ev.monthIndex : 2) + 1).padStart(2, '0');
+    const day = String(ev.dayDate || '01').padStart(2, '0');
+    const dateStr = `${year}${month}${day}`;
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateStr}/${dateStr}`;
+  };
+
+  // Handle category checkbox toggle
+  const toggleCategory = (cat) => {
+    setSelectedCategories((prev) => {
+      if (prev.includes(cat)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((c) => c !== cat);
+      } else {
+        return [...prev, cat];
+      }
+    });
+  };
+
+  // Master filtered events based on left sidebar filters
+  const filteredEvents = useMemo(() => {
+    return CULTURAL_EVENTS.filter((ev) => {
+      const matchCategory = selectedCategories.includes(ev.category);
+      const matchLocation =
+        selectedLocation === 'Semua' ||
+        (ev.district &&
+          (selectedLocation === 'Kota Yogyakarta'
+            ? ev.district.toLowerCase().includes('kota') ||
+            ev.district.toLowerCase().includes('yogyakarta')
+            : ev.district.toLowerCase().includes(selectedLocation.toLowerCase())));
+
+      const q = searchQuery.trim().toLowerCase();
+      const matchQuery =
+        !q ||
+        ev.name.toLowerCase().includes(q) ||
+        ev.location.toLowerCase().includes(q) ||
+        ev.category.toLowerCase().includes(q) ||
+        ev.jawaCalendar.toLowerCase().includes(q) ||
+        ev.shortDesc.toLowerCase().includes(q) ||
+        (ev.district && ev.district.toLowerCase().includes(q));
+
+      return matchCategory && matchLocation && matchQuery;
+    });
+  }, [selectedCategories, selectedLocation, searchQuery]);
+
+  // Calendar cells matrix calculation (7 columns x N rows)
   const calendarCells = useMemo(() => {
     const firstDay = new Date(activeYear, activeMonth, 1).getDay(); // 0 is Sunday
     const daysInCurrentMonth = new Date(activeYear, activeMonth + 1, 0).getDate();
@@ -96,7 +230,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
 
     const cells = [];
 
-    // Previous month padding
+    // Prev month padding
     for (let i = firstDay - 1; i >= 0; i--) {
       cells.push({
         day: daysInPrevMonth - i,
@@ -138,61 +272,13 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
     calendarCells.forEach((cell) => {
       const key = `${cell.year}-${cell.month}-${cell.day}`;
       if (!map[key]) {
-        const matches = CULTURAL_EVENTS.filter((ev) => {
-          const matchDate = ev.monthIndex === cell.month && parseInt(ev.dayDate, 10) === cell.day;
-          const matchCat = selectedCategory === 'Semua Kategori' || ev.category === selectedCategory;
-          const matchDist =
-            selectedDistrict === 'Semua Wilayah' ||
-            (ev.district && ev.district.toLowerCase().includes(selectedDistrict.toLowerCase()));
-          const q = searchQuery.trim().toLowerCase();
-          const matchQuery =
-            !q ||
-            ev.name.toLowerCase().includes(q) ||
-            ev.location.toLowerCase().includes(q) ||
-            ev.category.toLowerCase().includes(q) ||
-            ev.jawaCalendar.toLowerCase().includes(q) ||
-            ev.shortDesc.toLowerCase().includes(q);
-
-          return matchDate && matchCat && matchDist && matchQuery;
-        }).map((ev) => ({
-          ...ev,
-          year: String(cell.year),
-          dateFull: `${ev.dayDate} ${ev.monthName} ${cell.year} • ${ev.time}`
-        }));
-        map[key] = matches;
+        map[key] = filteredEvents.filter(
+          (ev) => ev.monthIndex === cell.month && parseInt(ev.dayDate, 10) === cell.day
+        );
       }
     });
     return map;
-  }, [calendarCells, selectedCategory, selectedDistrict, searchQuery]);
-
-  // Events in the active month
-  const activeMonthEvents = useMemo(() => {
-    return CULTURAL_EVENTS.filter((ev) => {
-      const matchMonth = ev.monthIndex === activeMonth;
-      const matchCat = selectedCategory === 'Semua Kategori' || ev.category === selectedCategory;
-      const matchDist =
-        selectedDistrict === 'Semua Wilayah' ||
-        (ev.district && ev.district.toLowerCase().includes(selectedDistrict.toLowerCase()));
-      const q = searchQuery.trim().toLowerCase();
-      const matchQuery =
-        !q ||
-        ev.name.toLowerCase().includes(q) ||
-        ev.location.toLowerCase().includes(q) ||
-        ev.category.toLowerCase().includes(q) ||
-        ev.jawaCalendar.toLowerCase().includes(q) ||
-        ev.shortDesc.toLowerCase().includes(q);
-
-      return matchMonth && matchCat && matchDist && matchQuery;
-    }).map((ev) => ({
-      ...ev,
-      year: String(activeYear),
-      dateFull: `${ev.dayDate} ${ev.monthName} ${activeYear} • ${ev.time}`
-    }));
-  }, [activeYear, activeMonth, selectedCategory, selectedDistrict, searchQuery]);
-
-  // Selected date events
-  const selectedDateKey = `${activeYear}-${activeMonth}-${selectedDay}`;
-  const selectedDayEvents = eventsByDateKey[selectedDateKey] || [];
+  }, [calendarCells, filteredEvents]);
 
   // Navigation handlers
   const handlePrevMonth = () => {
@@ -202,9 +288,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
     } else {
       setActiveMonth((m) => m - 1);
     }
-    const targetMonth = activeMonth === 0 ? 11 : activeMonth - 1;
-    const firstEv = CULTURAL_EVENTS.find((ev) => ev.monthIndex === targetMonth);
-    setSelectedDay(firstEv ? parseInt(firstEv.dayDate, 10) : 1);
   };
 
   const handleNextMonth = () => {
@@ -214,42 +297,28 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
     } else {
       setActiveMonth((m) => m + 1);
     }
-    const targetMonth = activeMonth === 11 ? 0 : activeMonth + 1;
-    const firstEv = CULTURAL_EVENTS.find((ev) => ev.monthIndex === targetMonth);
-    setSelectedDay(firstEv ? parseInt(firstEv.dayDate, 10) : 1);
   };
 
-  const handleSelectMonth = (monthIdx) => {
-    setActiveMonth(monthIdx);
-    const firstEv = CULTURAL_EVENTS.find((ev) => ev.monthIndex === monthIdx);
-    setSelectedDay(firstEv ? parseInt(firstEv.dayDate, 10) : 1);
-  };
+  // Events of selected date or active month for right column
+  const selectedDateKey = `${activeYear}-${activeMonth}-${selectedDay}`;
+  const selectedDayEvents = eventsByDateKey[selectedDateKey] || [];
 
-  const handleGoToToday = () => {
-    const now = new Date();
-    setActiveYear(now.getFullYear());
-    setActiveMonth(now.getMonth());
-    setSelectedDay(now.getDate());
-  };
-
-  const handleCellClick = (cell) => {
-    if (cell.isPrevMonth) {
-      if (activeMonth === 0) {
-        setActiveMonth(11);
-        setActiveYear((y) => y - 1);
-      } else {
-        setActiveMonth((m) => m - 1);
-      }
-    } else if (cell.isNextMonth) {
-      if (activeMonth === 11) {
-        setActiveMonth(0);
-        setActiveYear((y) => y + 1);
-      } else {
-        setActiveMonth((m) => m + 1);
-      }
+  // Events displayed in the right sidebar (prioritize selected day, fallback to active month)
+  const rightSidebarEvents = useMemo(() => {
+    if (selectedDayEvents.length > 0) {
+      return selectedDayEvents;
     }
-    setSelectedDay(cell.day);
-  };
+    const inMonth = filteredEvents.filter((ev) => ev.monthIndex === activeMonth);
+    return inMonth.length > 0 ? inMonth.slice(0, 2) : filteredEvents.slice(0, 2);
+  }, [selectedDayEvents, filteredEvents, activeMonth]);
+
+  // Top popular events for left sidebar
+  const popularEvents = useMemo(() => {
+    return [
+      CULTURAL_EVENTS.find((e) => e.id === 'sekaten-grebeg-mulud'),
+      CULTURAL_EVENTS.find((e) => e.id === 'ramayana-ballet-prambanan')
+    ].filter(Boolean);
+  }, []);
 
   const handleCopySchedule = (ev) => {
     const text = `[Agenda Budaya Yogyakarta]\n${ev.name}\nTanggal: ${ev.dayDate} ${ev.monthName} ${ev.year || activeYear} (${ev.jawaCalendar})\nWaktu: ${ev.time}\nLokasi: ${ev.location} (${ev.district})\nAdab & Tata Krama: ${ev.tips}\nSumber: ${ev.source}`;
@@ -258,21 +327,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
     setTimeout(() => setCopiedId(null), 2500);
   };
 
-  // Find associated cultural place for deep exploration
   const getAssociatedPlace = (ev) => {
     if (!ev) return null;
-    if (ev.id.includes('merapi')) {
-      return CULTURAL_PLACES.find((p) => p.id === 'merapi-kaliurang');
-    }
-    if (ev.id.includes('prambanan') || ev.id.includes('ramayana')) {
-      return CULTURAL_PLACES.find((p) => p.id === 'prambanan-ratuboko');
-    }
+    if (ev.id.includes('merapi')) return CULTURAL_PLACES.find((p) => p.id === 'merapi-kaliurang');
+    if (ev.id.includes('prambanan') || ev.id.includes('ramayana')) return CULTURAL_PLACES.find((p) => p.id === 'prambanan-ratuboko');
     if (ev.id.includes('grebeg') || ev.id.includes('sekaten') || ev.id.includes('keraton') || ev.id.includes('tapa-bisu') || ev.id.includes('jamasan')) {
       return CULTURAL_PLACES.find((p) => p.id === 'keraton-yogyakarta');
     }
-    if (ev.id.includes('batik')) {
-      return CULTURAL_PLACES.find((p) => p.id === 'kotagede') || CULTURAL_PLACES[0];
-    }
+    if (ev.id.includes('batik')) return CULTURAL_PLACES.find((p) => p.id === 'kotagede') || CULTURAL_PLACES[0];
     return CULTURAL_PLACES[0];
   };
 
@@ -284,835 +346,924 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-[99995] bg-[#FBF9F5] text-[#1C1917] overflow-y-auto"
-        style={{
-          fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif"
-        }}
+        className="fixed inset-0 z-40 bg-[#FAF6EE] text-[#2d180c] overflow-y-auto pt-24 sm:pt-28 pb-16"
+        style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}
       >
         {/* =========================================================================
-            1. MINIMALIST TOP APP BAR (Ultra-clean, No Clutter)
+            PAGE TITLE AREA (Harmonious Homepage Typography & Palette)
             ========================================================================= */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer active:scale-95"
-              aria-label="Kembali ke Beranda"
-            >
-              <ArrowLeft size={14} className="text-neutral-700" />
-              <span>Kembali</span>
-            </button>
-
-            <div className="h-4 w-px bg-neutral-300 hidden sm:block" />
-
-            <h1 className="text-sm sm:text-base font-bold text-[#1C1917] tracking-tight m-0 font-['Outfit']">
-              Kalender Budaya Jogja
-            </h1>
-          </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup Halaman Kalender"
-            className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
-          >
-            <X size={17} />
-          </button>
-        </header>
-
-        {/* =========================================================================
-            2. HERO BANNER: UPACARA ADAT & TRADISI KASULTANAN (Photographic Editorial)
-            ========================================================================= */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-4 pb-2">
-          <div className="relative overflow-hidden rounded-3xl min-h-[200px] sm:min-h-[260px] md:min-h-[280px] flex flex-col justify-end p-6 sm:p-10 border border-neutral-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-neutral-900">
-            {/* Authentic Upacara Adat Kirab Grebeg Prajurit Photo */}
-            <img
-              src="/assets/images/real_bregada_gunungan.jpg"
-              alt="Upacara Adat Kirab Grebeg Prajurit Keraton Yogyakarta"
-              className="absolute inset-0 w-full h-full object-cover object-center scale-100"
-            />
-            {/* Soft Dark Gradient Overlay for optimal readability while keeping photo vivid and natural */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/15 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/25 to-transparent pointer-events-none" />
-
-            {/* Typography Content */}
-            <div className="relative z-10 max-w-2xl space-y-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-200 block">
-                Upacara &amp; Tradisi Kasultanan
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-['Outfit'] m-0 leading-tight">
-                Kalender Upacara &amp; Tradisi Jogja
-              </h2>
-              <p className="text-xs sm:text-sm text-white/90 max-w-xl m-0 leading-relaxed font-normal">
-                Jadwal prosesi upacara adat sakral, kirab gunungan grebeg, dan agenda perayaan seni budaya Kraton Ngayogyakarta Hadiningrat.
-              </p>
-            </div>
-
-            {/* Subtle photo caption tag on bottom right */}
-            <div className="absolute bottom-4 right-5 hidden sm:flex items-center gap-1.5 text-[11px] text-white/80 bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15">
-              <span>Kirab Grebeg Prajurit &amp; Gunungan Keraton</span>
-            </div>
-          </div>
+        <section className="text-center pt-2 pb-6 px-4">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-[#2d180c] tracking-tight font-['Outfit'] m-0 leading-tight">
+            Kalender Event Mendatang
+          </h1>
+          <p className="text-xs sm:text-sm text-[#786154] m-0 mt-1 max-w-xl mx-auto font-normal">
+            Jadwal upacara adat sakral, kirab pusaka keraton, dan pentas seni budaya warisan leluhur D.I. Yogyakarta
+          </p>
         </section>
 
         {/* =========================================================================
-            3. SEARCH & FILTER STRIP
+            3. EXACT 3-COLUMN MAIN LAYOUT (Harmonized with Homepage)
             ========================================================================= */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-4 pb-2">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-neutral-200/80 shadow-xs">
-            {/* Search Input */}
-            <div className="relative flex-1 min-w-0">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari prosesi upacara (misal: Sekaten, Grebeg, Ramayana, Labuhan)..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-neutral-50 border border-neutral-200/80 text-neutral-900 text-xs placeholder:text-neutral-400 focus:outline-none focus:border-[#8c532b] focus:bg-white transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black text-xs"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Filter Dropdowns */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 md:pb-0">
-              <div className="flex items-center gap-1.5 shrink-0">
-                <Filter size={13} className="text-[#8c532b] ml-1 mr-0.5" />
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="py-2 px-3 rounded-xl bg-neutral-50 border border-neutral-200/80 text-xs text-neutral-800 focus:outline-none focus:border-[#8c532b] cursor-pointer"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-1.5 shrink-0">
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => setSelectedDistrict(e.target.value)}
-                  className="py-2 px-3 rounded-xl bg-neutral-50 border border-neutral-200/80 text-xs text-neutral-800 focus:outline-none focus:border-[#8c532b] cursor-pointer"
-                >
-                  {DISTRICTS.map((dist) => (
-                    <option key={dist} value={dist}>
-                      {dist}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================================================
-            4. CLEAN PAPAN KALENDER (Interactive Calendar + Day Inspector)
-            ========================================================================= */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 space-y-6">
-          {/* Month Quick Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 shrink-0 pr-1">
-              Bulan Acara:
-            </span>
-            {eventMonths.map((m) => {
-              const isActive = activeMonth === m.index;
-              return (
-                <button
-                  key={m.index}
-                  type="button"
-                  onClick={() => handleSelectMonth(m.index)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer shrink-0 inline-flex items-center gap-2 border active:scale-95 ${
-                    isActive
-                      ? 'bg-black text-white border-black font-bold shadow-xs'
-                      : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400 hover:text-black'
-                  }`}
-                >
-                  <span>{m.name}</span>
-                  <span
-                    className={`w-4 h-4 rounded-full text-[10px] font-bold inline-flex items-center justify-center ${
-                      isActive
-                        ? 'bg-[#8c532b] text-white'
-                        : 'bg-neutral-100 text-neutral-600'
-                    }`}
+        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* ─────────────────────────────────────────────────────────────────
+                COLUMN 1 (LEFT SIDEBAR): FILTERS & POPULAR EVENTS
+                ───────────────────────────────────────────────────────────────── */}
+            <div className="lg:col-span-3 space-y-4">
+              {/* TOP CARD: FILTERS (Warm Cream Container matching homepage) */}
+              <div className="bg-[#F5EEDC] border border-[#E8DFC9] rounded-2xl p-4 sm:p-5 space-y-5 shadow-xs">
+                {/* Search Bar with Heritage Brown Button */}
+                <div className="relative">
+                  <input
+                    id="search-input-field"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Pencarian event..."
+                    className="w-full bg-white text-xs text-[#2d180c] placeholder:text-neutral-400 pl-3.5 pr-10 py-2.5 rounded-xl border border-[#E8DFC9] focus:outline-none focus:border-[#8c532b] shadow-2xs"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Cari"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-[#8c532b] hover:bg-[#704222] text-white rounded-lg flex items-center justify-center transition-colors cursor-pointer"
                   >
-                    {m.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+                    <Search size={13} />
+                  </button>
+                </div>
 
-          {/* 2-Column Responsive Layout: Left Calendar Grid / Right Agenda Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* ── LEFT COLUMN: Clean Minimalist Calendar Grid ── */}
-            <div className="lg:col-span-7 bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-5">
-              {/* Calendar Navigation Header */}
-              <div className="flex items-center justify-between gap-3 border-b border-neutral-100 pb-4">
-                <div className="flex items-center gap-2">
+                {/* Kategori Checkboxes (Real Event Categories & Counts) */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-[#2d180c] tracking-tight uppercase m-0">
+                      Kategori
+                    </h3>
+                    <span className="text-[10px] text-[#786154] font-semibold">
+                      {selectedCategories.length} Dipilih
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {CATEGORIES_LIST.map((cat) => {
+                      const isChecked = selectedCategories.includes(cat);
+                      const conf = CATEGORY_CONFIG[cat];
+                      const count = categoryCounts[cat] || 0;
+                      return (
+                        <label
+                          key={cat}
+                          onClick={() => toggleCategory(cat)}
+                          className="flex items-center justify-between text-xs text-[#2d180c] cursor-pointer select-none group"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={`w-4 h-4 rounded flex items-center justify-center transition-all shrink-0 ${isChecked
+                                  ? 'bg-[#8c532b] text-white'
+                                  : 'bg-white border border-[#D6CAAF] group-hover:border-[#8c532b]'
+                                }`}
+                            >
+                              {isChecked && <Check size={11} strokeWidth={3} />}
+                            </div>
+                            <span className={`w-2.5 h-2.5 rounded-full ${conf.colorBg} shrink-0`} />
+                            <span className="font-medium text-xs text-[#2d180c] group-hover:text-[#8c532b] truncate">
+                              {cat}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-bold text-[#786154] bg-white/80 px-1.5 py-0.5 rounded border border-[#E8DFC9] shrink-0">
+                            {count}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Lokasi (Radio options with Real Event Counts) */}
+                <div className="space-y-2.5 pt-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-[#2d180c] tracking-tight uppercase m-0">
+                      Lokasi
+                    </h3>
+                  </div>
+                  <div className="space-y-1.5">
+                    {LOCATIONS_LIST.map((loc) => {
+                      const isSelected = selectedLocation === loc.id;
+                      const count = locationCounts[loc.id] || 0;
+                      return (
+                        <label
+                          key={loc.id}
+                          onClick={() => setSelectedLocation(loc.id)}
+                          className="flex items-center justify-between text-xs text-[#2d180c] cursor-pointer select-none group p-1 rounded-lg hover:bg-white/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className={`w-4 h-4 rounded-full flex items-center justify-center border transition-all shrink-0 ${isSelected
+                                  ? 'border-[#8c532b] bg-white'
+                                  : 'border-[#D6CAAF] bg-white group-hover:border-[#8c532b]'
+                                }`}
+                            >
+                              {isSelected && (
+                                <div className="w-2 h-2 rounded-full bg-[#8c532b]" />
+                              )}
+                            </div>
+                            <span className="font-medium text-xs text-[#2d180c] group-hover:text-[#8c532b] truncate">
+                              {loc.label}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-bold text-[#786154] bg-white/80 px-1.5 py-0.5 rounded border border-[#E8DFC9] shrink-0">
+                            {count}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Tanggal (Date selector input matching layout with real event indicators) */}
+                <div className="space-y-1.5 pt-1">
+                  <h3 className="text-xs font-bold text-[#2d180c] tracking-tight uppercase m-0">
+                    Tanggal
+                  </h3>
+                  <div className="relative">
+                    <select
+                      value={activeMonth}
+                      onChange={(e) => setActiveMonth(parseInt(e.target.value, 10))}
+                      className="w-full bg-white text-xs text-[#2d180c] font-medium pl-8 pr-4 py-2.5 rounded-xl border border-[#E8DFC9] focus:outline-none focus:border-[#8c532b] cursor-pointer appearance-none shadow-2xs"
+                    >
+                      {MONTH_NAMES.map((m, idx) => {
+                        const monthEventsCount = CULTURAL_EVENTS.filter(
+                          (e) => e.monthIndex === idx
+                        ).length;
+                        return (
+                          <option key={m} value={idx}>
+                            {m} {activeYear}{' '}
+                            {monthEventsCount > 0 ? `• (${monthEventsCount} Acara)` : ''}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <CalendarIcon
+                      size={14}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8c532b] pointer-events-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* BOTTOM CARD: EVENT TERPOPULER (White Container matching homepage card style) */}
+              <div className="bg-white rounded-2xl border border-[#E8DFC9] p-4 space-y-3.5 shadow-xs">
+                <h3 className="text-xs font-bold text-[#2d180c] tracking-tight uppercase m-0">
+                  Event Terpopuler
+                </h3>
+
+                <div className="space-y-3">
+                  {popularEvents.map((ev) => (
+                    <button
+                      key={ev.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveMonth(ev.monthIndex);
+                        setSelectedDay(parseInt(ev.dayDate, 10));
+                        handleOpenModal(ev);
+                      }}
+                      className="w-full flex items-center gap-3 text-left p-1.5 rounded-xl hover:bg-[#FAF6EE] transition-colors cursor-pointer group"
+                    >
+                      <div className="relative shrink-0">
+                        <img
+                          src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                          alt={ev.name}
+                          className="w-12 h-12 rounded-xl object-cover border border-[#E8DFC9]"
+                        />
+                        {ev.isAiGenerated && (
+                          <span className="absolute -bottom-1 -right-1 px-1 py-0.2 bg-amber-950 text-amber-200 text-[8px] font-bold rounded-sm border border-amber-400/40">
+                            AI
+                          </span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <strong className="text-xs font-bold text-[#2d180c] block truncate group-hover:text-[#8c532b] leading-snug">
+                          {ev.name}
+                        </strong>
+                        <div className="text-[11px] text-[#786154] flex items-center gap-1 mt-0.5">
+                          <CalendarIcon size={11} className="text-[#8c532b] shrink-0" />
+                          <span>
+                            {ev.dayDate} {ev.monthName.slice(0, 3)} {ev.year} • {ev.time.split('–')[0]}
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* ─────────────────────────────────────────────────────────────────
+                COLUMN 2 (CENTER MAIN CALENDAR): FULL MONTH MATRIX
+                ───────────────────────────────────────────────────────────────── */}
+            <div className="lg:col-span-6 bg-white rounded-2xl border border-[#E8DFC9] p-5 sm:p-6 shadow-xs space-y-4">
+              {/* Calendar Top Control Header */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E8DFC9]/70 pb-4">
+                {/* Month Navigation (< > Month Year) */}
+                <div className="flex items-center gap-2.5">
                   <button
                     type="button"
                     onClick={handlePrevMonth}
                     aria-label="Bulan Sebelumnya"
-                    className="w-9 h-9 rounded-xl bg-neutral-50 hover:bg-neutral-100 text-neutral-800 border border-neutral-200 flex items-center justify-center transition-all cursor-pointer active:scale-95"
+                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                   >
-                    <ChevronLeft size={18} />
+                    <ChevronLeft size={16} />
                   </button>
-
-                  <div className="px-2">
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#1C1917] font-['Outfit'] m-0 leading-tight">
-                      {MONTH_NAMES[activeMonth]} {activeYear}
-                    </h3>
-                  </div>
 
                   <button
                     type="button"
                     onClick={handleNextMonth}
                     aria-label="Bulan Berikutnya"
-                    className="w-9 h-9 rounded-xl bg-neutral-50 hover:bg-neutral-100 text-neutral-800 border border-neutral-200 flex items-center justify-center transition-all cursor-pointer active:scale-95"
+                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer active:scale-95"
                   >
-                    <ChevronRight size={18} />
+                    <ChevronRight size={16} />
                   </button>
+
+                  <h2 className="text-lg sm:text-xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 ml-1">
+                    {MONTH_NAMES[activeMonth]} {activeYear}
+                  </h2>
+                </div>
+
+                {/* Right Mode Toggle Pills ([Bulan] [Minggu] [Hari] [Daftar]) + Filter Icon */}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center bg-[#FAF6EE] p-0.5 rounded-lg border border-[#E8DFC9] text-xs">
+                    {['Bulan', 'Minggu', 'Hari', 'Daftar'].map((tab) => {
+                      const isActive = viewTab === tab;
+                      return (
+                        <button
+                          key={tab}
+                          type="button"
+                          onClick={() => setViewTab(tab)}
+                          className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${isActive
+                              ? 'bg-[#2d180c] text-white shadow-2xs font-bold'
+                              : 'text-[#786154] hover:text-[#2d180c]'
+                            }`}
+                        >
+                          {tab}
+                        </button>
+                      );
+                    })}
+                  </div>
 
                   <button
                     type="button"
-                    onClick={handleGoToToday}
-                    className="ml-2 px-3 py-1.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 text-neutral-700 hover:text-black text-xs font-semibold transition-all cursor-pointer active:scale-95 border border-neutral-200"
-                    title="Kembali ke Hari Ini"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategories(CATEGORIES_LIST);
+                      setSelectedLocation('Semua');
+                    }}
+                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#786154] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer"
+                    title="Reset Filter"
                   >
-                    Hari Ini
+                    <Filter size={14} />
                   </button>
                 </div>
-
-                {/* Clean Legend */}
-                <div className="hidden sm:flex items-center gap-4 text-xs font-medium text-neutral-500">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#8c532b]" />
-                    <span className="text-[11px]">Ada Tradisi</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-black" />
-                    <span className="text-[11px]">Terpilih</span>
-                  </div>
-                </div>
               </div>
 
-              {/* 7-Days Weekday Header */}
-              <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center">
-                {DAY_NAMES.map((dayName, idx) => (
-                  <div
-                    key={dayName}
-                    className={`text-[11px] font-semibold py-1 uppercase tracking-wider ${
-                      idx === 0 ? 'text-rose-500 font-bold' : 'text-neutral-400'
-                    }`}
-                  >
-                    {dayName}
-                  </div>
-                ))}
-              </div>
-
-              {/* Calendar Matrix Cells */}
-              <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5">
-                {calendarCells.map((cell, idx) => {
-                  const cellKey = `${cell.year}-${cell.month}-${cell.day}`;
-                  const cellEvents = eventsByDateKey[cellKey] || [];
-                  const hasEvent = cellEvents.length > 0;
-                  const isSelected =
-                    cell.isCurrentMonth && cell.day === selectedDay;
-
-                  const isRealToday =
-                    cell.isCurrentMonth &&
-                    cell.day === realToday.getDate() &&
-                    cell.month === realToday.getMonth() &&
-                    cell.year === realToday.getFullYear();
-
-                  return (
-                    <button
-                      key={`${cellKey}-${idx}`}
-                      type="button"
-                      onClick={() => handleCellClick(cell)}
-                      className={`relative aspect-square sm:aspect-auto sm:min-h-[76px] p-2 sm:p-2.5 rounded-2xl flex flex-col justify-between items-start transition-all cursor-pointer border text-left active:scale-[0.98] ${
-                        !cell.isCurrentMonth
-                          ? 'opacity-25 bg-transparent border-transparent text-neutral-300 pointer-events-none'
-                          : isSelected
-                          ? 'bg-black text-white border-black font-bold shadow-md z-10'
-                          : hasEvent
-                          ? 'bg-[#FAF6EE] border-[#E8DFC9] text-[#1C1917] hover:border-[#8c532b] hover:bg-[#F5EEDC]'
-                          : 'bg-white border-neutral-100 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-200'
-                      }`}
-                    >
-                      {/* Top Row: Date Number & Dot */}
-                      <div className="w-full flex items-center justify-between">
-                        <span
-                          className={`text-xs sm:text-sm font-bold ${
-                            isSelected
-                              ? 'text-white font-black'
-                              : hasEvent
-                              ? 'text-[#8c532b] font-black'
-                              : 'text-neutral-800'
+              {/* ── SUB-VIEW: BULAN (Default Monthly Matrix Grid) ── */}
+              {viewTab === 'Bulan' && (
+                <div className="border border-[#E8DFC9] rounded-xl overflow-hidden">
+                  {/* 7 Columns Weekday Header Row */}
+                  <div className="grid grid-cols-7 bg-[#FAF6EE] border-b border-[#E8DFC9] text-center">
+                    {DAY_HEADERS.map((dayName, idx) => (
+                      <div
+                        key={dayName}
+                        className={`py-2 text-[11px] font-bold uppercase tracking-wider ${idx === 0 ? 'text-rose-600 font-extrabold' : 'text-[#786154]'
                           }`}
-                        >
-                          {cell.day}
-                        </span>
-
-                        {hasEvent && cell.isCurrentMonth && (
-                          <span
-                            className={`w-2 h-2 rounded-full shrink-0 ${
-                              isSelected
-                                ? 'bg-[#E5C378]'
-                                : 'bg-[#8c532b]'
-                            }`}
-                          />
-                        )}
+                      >
+                        {dayName}
                       </div>
-
-                      {/* Bottom Row: Micro Status Label */}
-                      <div className="w-full mt-auto pt-1">
-                        {isRealToday && cell.isCurrentMonth ? (
-                          <span
-                            className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded leading-none inline-block ${
-                              isSelected
-                                ? 'bg-white/20 text-white'
-                                : 'bg-neutral-200 text-neutral-800'
-                            }`}
-                          >
-                            Hari Ini
-                          </span>
-                        ) : hasEvent && cell.isCurrentMonth ? (
-                          <span
-                            className={`text-[10px] font-semibold truncate block leading-tight ${
-                              isSelected
-                                ? 'text-neutral-300'
-                                : 'text-[#8c532b]'
-                            }`}
-                          >
-                            {cellEvents.length > 1
-                              ? `${cellEvents.length} Acara`
-                              : cellEvents[0].category.replace('Upacara ', '')}
-                          </span>
-                        ) : null}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* ── RIGHT COLUMN: Agenda Details for Selected Date ── */}
-            <div className="lg:col-span-5 space-y-4">
-              {/* Selected Date Card */}
-              <div className="bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] space-y-4">
-                <div className="flex items-start justify-between gap-3 border-b border-neutral-100 pb-4">
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8c532b] block">
-                      Agenda Tanggal Terpilih
-                    </span>
-                    <h4 className="text-xl sm:text-2xl font-bold text-[#1C1917] font-['Outfit'] m-0 leading-tight mt-0.5">
-                      {selectedDay} {MONTH_NAMES[activeMonth]} {activeYear}
-                    </h4>
-                    {selectedDay === realToday.getDate() &&
-                      activeMonth === realToday.getMonth() &&
-                      activeYear === realToday.getFullYear() && (
-                        <span className="text-[10px] font-semibold text-[#8c532b] bg-[#8c532b]/10 px-2 py-0.5 rounded-full inline-block mt-1">
-                          Hari Ini
-                        </span>
-                      )}
+                    ))}
                   </div>
 
-                  {selectedDayEvents.length > 0 ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-bold border border-[#E8DFC9] shrink-0">
-                      <Sparkles size={12} className="text-[#8c532b]" />
-                      <span>{selectedDayEvents.length} Prosesi</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-500 text-xs font-medium shrink-0">
-                      Bebas Agenda
-                    </span>
-                  )}
-                </div>
+                  {/* Calendar Grid Matrix */}
+                  <div className="grid grid-cols-7 divide-x divide-y divide-[#E8DFC9] bg-white">
+                    {calendarCells.map((cell, idx) => {
+                      const cellKey = `${cell.year}-${cell.month}-${cell.day}`;
+                      const cellEvents = eventsByDateKey[cellKey] || [];
+                      const isSelected =
+                        cell.isCurrentMonth && cell.day === selectedDay;
 
-                {/* If selected date has event(s) */}
-                {selectedDayEvents.length > 0 ? (
-                  <div className="space-y-4">
-                    {selectedDayEvents.map((ev) => {
-                      const associatedPlace = getAssociatedPlace(ev);
                       return (
                         <div
-                          key={ev.id}
-                          className="rounded-2xl bg-[#FAF9F5] border border-neutral-200/80 p-4 sm:p-5 space-y-4 hover:border-[#8c532b]/50 transition-colors"
+                          key={`${cellKey}-${idx}`}
+                          onClick={() => {
+                            if (cell.isCurrentMonth) setSelectedDay(cell.day);
+                          }}
+                          className={`min-h-[82px] sm:min-h-[96px] p-1.5 flex flex-col justify-between transition-colors cursor-pointer ${!cell.isCurrentMonth
+                              ? 'bg-[#FBF9F5] text-neutral-300'
+                              : isSelected
+                                ? 'bg-[#FAF6EE]/80'
+                                : 'bg-white hover:bg-[#FAF6EE]/40'
+                            }`}
                         >
-                          {/* Event Image */}
-                          <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-neutral-100">
-                            <img
-                              src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
-                              alt={ev.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-                            <div className="absolute top-2.5 left-2.5">
-                              <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold border border-white/20">
-                                {ev.category}
+                          {/* Top Row: Date Number */}
+                          <div className="flex items-center justify-end">
+                            {isSelected && cell.isCurrentMonth ? (
+                              <span className="w-5 h-5 rounded-full bg-[#8c532b] text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
+                                {cell.day}
                               </span>
-                            </div>
-                            <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                              <span className="text-[11px] font-medium text-amber-200 line-clamp-1">
-                                {ev.jawaCalendar}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Title & Coordinates */}
-                          <div>
-                            <h5 className="text-base sm:text-lg font-bold text-[#1C1917] leading-snug m-0 font-['Outfit']">
-                              {ev.name}
-                            </h5>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-neutral-600">
-                              <span className="inline-flex items-center gap-1">
-                                <Clock size={12} className="text-[#8c532b]" />
-                                <span>{ev.time}</span>
-                              </span>
-                              <span className="inline-flex items-center gap-1">
-                                <MapPin size={12} className="text-[#8c532b]" />
-                                <span className="line-clamp-1">{ev.location}</span>
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Short Description */}
-                          <p className="text-xs text-neutral-600 leading-relaxed m-0 font-normal">
-                            {ev.shortDesc}
-                          </p>
-
-                          {/* Action Buttons */}
-                          <div className="pt-1 flex flex-wrap items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => setActiveModalEvent(ev)}
-                              className="flex-1 py-2.5 px-4 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold transition-all cursor-pointer text-center shadow-xs active:scale-95 inline-flex items-center justify-center gap-1.5"
-                            >
-                              <span>Detail &amp; Adab Adat</span>
-                              <ExternalLink size={12} />
-                            </button>
-
-                            {associatedPlace && onSelectPlace && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (onClose) onClose();
-                                  onSelectPlace(associatedPlace);
-                                }}
-                                className="p-2.5 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer active:scale-95 shrink-0 inline-flex items-center gap-1.5"
-                                title={`Jelajahi ${associatedPlace.name}`}
+                            ) : (
+                              <span
+                                className={`text-xs font-semibold ${!cell.isCurrentMonth
+                                    ? 'text-neutral-300'
+                                    : 'text-[#2d180c]'
+                                  }`}
                               >
-                                <Compass size={14} className="text-[#8c532b]" />
-                                <span className="hidden sm:inline">Cagar Budaya</span>
-                              </button>
+                                {cell.day}
+                              </span>
                             )}
+                          </div>
 
-                            <button
-                              type="button"
-                              onClick={() => handleCopySchedule(ev)}
-                              aria-label="Salin Jadwal"
-                              className="p-2.5 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-700 transition-all cursor-pointer active:scale-95 shrink-0"
-                              title="Salin Rincian Agenda"
-                            >
-                              {copiedId === ev.id ? (
-                                <Check size={14} className="text-emerald-600" />
-                              ) : (
-                                <Share2 size={14} />
-                              )}
-                            </button>
+                          {/* Event Colored Badges inside cell matching layout */}
+                          <div className="mt-1 space-y-1 overflow-hidden">
+                            {cellEvents.map((ev) => {
+                              const conf =
+                                CATEGORY_CONFIG[ev.category] ||
+                                CATEGORY_CONFIG['Upacara Keraton'];
+                              return (
+                                <button
+                                  key={ev.id}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedDay(cell.day);
+                                    handleOpenModal(ev);
+                                  }}
+                                  className={`w-full text-left px-1.5 py-1 rounded-md ${conf.colorBg} ${conf.colorText} text-[10px] font-medium leading-tight truncate block transition-transform hover:scale-[1.02] shadow-2xs cursor-pointer`}
+                                  title={`${ev.name} • Kategori: ${ev.category} (${ev.time})`}
+                                >
+                                  <div className="font-bold truncate">{ev.name}</div>
+                                  <div className="text-[9px] opacity-90 truncate flex items-center justify-between gap-1 mt-0.5">
+                                    <span>{ev.time.split('–')[0]}</span>
+                                    <span className="text-[8px] opacity-90 uppercase tracking-tighter truncate font-bold">
+                                      {ev.category === 'Upacara Keraton'
+                                        ? 'Keraton'
+                                        : ev.category === 'Pertunjukan Seni'
+                                        ? 'Seni'
+                                        : ev.category === 'Festival Rakyat'
+                                        ? 'Festival'
+                                        : 'Pameran'}
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                ) : (
-                  /* Empty State with Curated Month Recommendations */
-                  <div className="py-6 px-4 text-center space-y-4 bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">
-                    <div className="w-10 h-10 rounded-2xl bg-white text-neutral-500 flex items-center justify-center mx-auto border border-neutral-200">
-                      <CalendarIcon size={18} />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-bold text-neutral-800 m-0">
-                        Tidak Ada Prosesi pada Tanggal Ini
-                      </p>
-                      <p className="text-xs text-neutral-500 m-0 max-w-xs mx-auto leading-relaxed">
-                        Pilih tanggal bertitik cokelat pada kalender atau klik salah satu agenda di bawah:
-                      </p>
-                    </div>
+                </div>
+              )}
 
-                    {/* Quick Jump to Events in Active Month */}
-                    {activeMonthEvents.length > 0 && (
-                      <div className="pt-2 text-left space-y-2">
-                        <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block">
-                          Agenda di Bulan {MONTH_NAMES[activeMonth]}:
-                        </span>
-                        <div className="flex flex-col gap-2">
-                          {activeMonthEvents.map((ev) => (
-                            <button
-                              key={ev.id}
-                              type="button"
-                              onClick={() => setSelectedDay(parseInt(ev.dayDate, 10))}
-                              className="text-left p-3 rounded-xl bg-white hover:bg-[#FAF6EE] border border-neutral-200/80 transition-all cursor-pointer text-xs flex items-center justify-between group active:scale-98"
-                            >
-                              <div className="min-w-0 pr-2">
-                                <span className="font-bold text-neutral-900 block truncate group-hover:text-[#8c532b]">
-                                  {ev.dayDate} {MONTH_NAMES[activeMonth]}: {ev.name}
-                                </span>
-                                <span className="text-[10px] text-neutral-500 truncate block mt-0.5">
+              {/* ── SUB-VIEW: MINGGU / HARI / DAFTAR ── */}
+              {viewTab !== 'Bulan' && (
+                <div className="border border-[#E8DFC9] rounded-xl p-4 space-y-3 bg-[#FAF6EE]">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#2d180c] uppercase">
+                      Tampilan {viewTab}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setViewTab('Bulan')}
+                      className="text-xs font-semibold text-[#8c532b] hover:underline cursor-pointer"
+                    >
+                      Kembali ke Tampilan Bulan
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {filteredEvents
+                      .filter((e) => e.monthIndex === activeMonth)
+                      .map((ev) => {
+                        const conf =
+                          CATEGORY_CONFIG[ev.category] ||
+                          CATEGORY_CONFIG['Upacara Keraton'];
+                        return (
+                          <div
+                            key={ev.id}
+                            className="p-3 rounded-xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 hover:border-[#8c532b] transition-colors cursor-pointer"
+                            onClick={() => {
+                              setSelectedDay(parseInt(ev.dayDate, 10));
+                              handleOpenModal(ev);
+                            }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
+                              >
+                                {ev.dayDate} {ev.monthName.slice(0, 3)}
+                              </span>
+                              <div>
+                                <h4 className="text-xs font-bold text-[#2d180c] m-0">
+                                  {ev.name}
+                                </h4>
+                                <span className="text-[11px] text-[#786154]">
                                   {ev.location} • {ev.time}
                                 </span>
                               </div>
-                              <ArrowRight size={13} className="text-neutral-400 group-hover:text-[#8c532b] shrink-0" />
+                            </div>
+                            <button
+                              type="button"
+                              className="px-3 py-1 rounded-lg bg-[#2d180c] text-white text-[11px] font-semibold"
+                            >
+                              Detail
                             </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                          </div>
+                        );
+                      })}
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* ── SECTION: Agenda Upacara & Acara di Bulan Aktif (Visual Photo Cards) ── */}
-          <div className="pt-4 space-y-4">
-            <div className="flex items-center justify-between border-b border-neutral-200/80 pb-3">
-              <div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#1C1917] font-['Outfit'] m-0">
-                  Agenda Upacara &amp; Budaya Bulan {MONTH_NAMES[activeMonth]} {activeYear}
-                </h3>
-                <p className="text-xs text-neutral-500 m-0 mt-0.5">
-                  {activeMonthEvents.length > 0
-                    ? `Ditemukan ${activeMonthEvents.length} prosesi upacara sakral dan pertunjukan seni di bulan ${MONTH_NAMES[activeMonth]}.`
-                    : `Belum ada agenda upacara terdaftar pada bulan ${MONTH_NAMES[activeMonth]}.`}
-                </p>
-              </div>
-
-              {activeMonthEvents.length > 0 && (
-                <span className="text-xs font-semibold text-neutral-500 bg-neutral-100 px-3 py-1 rounded-full">
-                  {activeMonthEvents.length} Prosesi
-                </span>
+                </div>
               )}
             </div>
 
-            {activeMonthEvents.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {activeMonthEvents.map((ev) => (
+            {/* ─────────────────────────────────────────────────────────────────
+                COLUMN 3 (RIGHT SIDEBAR): EVENT CARDS STACK MATCHING LAYOUT
+                ───────────────────────────────────────────────────────────────── */}
+            <div className="lg:col-span-3 space-y-4">
+              {rightSidebarEvents.map((ev) => {
+                return (
                   <div
                     key={ev.id}
-                    className="bg-white rounded-2xl border border-neutral-200/80 overflow-hidden shadow-xs hover:shadow-md hover:border-[#8c532b]/50 transition-all flex flex-col justify-between group"
+                    className="bg-white rounded-2xl border border-[#E8DFC9] overflow-hidden shadow-xs p-3.5 space-y-3 flex flex-col justify-between"
                   >
-                    <div>
-                      {/* Ceremony Image Header */}
-                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-neutral-100">
+                    <div className="space-y-2.5">
+                      {/* Event Banner Image */}
+                      <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-neutral-100">
                         <img
                           src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
                           alt={ev.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold border border-white/20">
-                            {ev.category}
-                          </span>
-                        </div>
-
-                        <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                          <span className="text-[11px] font-medium text-amber-200 line-clamp-1">
-                            {ev.jawaCalendar}
-                          </span>
-                        </div>
+                        {ev.isAiGenerated && (
+                          <div className="absolute top-2 left-2">
+                            <span className="px-2 py-0.5 rounded-full bg-black/65 backdrop-blur-md text-amber-200 text-[9px] font-semibold border border-amber-400/30 flex items-center gap-1">
+                              <Sparkles size={9} className="text-amber-300" />
+                              <span>Ilustrasi AI</span>
+                            </span>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Content Info */}
-                      <div className="p-4 sm:p-5 space-y-2">
-                        <div className="flex items-center gap-2 text-xs font-bold text-[#8c532b]">
-                          <CalendarIcon size={13} />
-                          <span>
-                            {ev.dayDate} {MONTH_NAMES[activeMonth]} {activeYear}
-                          </span>
-                          <span className="text-neutral-300">•</span>
-                          <Clock size={13} className="text-neutral-400" />
-                          <span className="text-neutral-600 font-normal">{ev.time}</span>
-                        </div>
-
-                        <h4 className="text-base font-bold text-neutral-900 group-hover:text-[#8c532b] transition-colors leading-snug m-0 font-['Outfit'] line-clamp-2">
+                      {/* Event Title & Category */}
+                      <div>
+                        <span className="text-[10px] font-bold tracking-wider uppercase text-[#8c532b] block mb-0.5">
+                          {ev.category}
+                        </span>
+                        <h3 className="text-sm font-bold text-[#2d180c] m-0 font-['Outfit'] leading-snug line-clamp-2">
                           {ev.name}
-                        </h4>
+                        </h3>
+                      </div>
 
-                        <div className="flex items-start gap-1.5 text-xs text-neutral-500 pt-0.5">
-                          <MapPin size={13} className="text-neutral-400 shrink-0 mt-0.5" />
-                          <span className="line-clamp-1">{ev.location}</span>
-                        </div>
+                      {/* Date & Time with Calendar Icon */}
+                      <div className="flex items-center gap-1.5 text-xs text-[#786154] font-medium">
+                        <CalendarIcon size={12} className="text-[#8c532b] shrink-0" />
+                        <span>
+                          {ev.dayDate} {ev.monthName} {ev.year} - {ev.time.split('–')[0]}
+                        </span>
+                      </div>
 
-                        <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed m-0 pt-1 font-normal">
-                          {ev.shortDesc}
-                        </p>
+                      {/* Location with MapPin Icon */}
+                      <div className="flex items-start gap-1.5 text-xs text-[#786154]">
+                        <MapPin size={12} className="text-[#8c532b] shrink-0 mt-0.5" />
+                        <span className="line-clamp-1">{ev.location}</span>
                       </div>
                     </div>
 
-                    {/* Card Actions */}
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 flex items-center gap-2 border-t border-neutral-100 mt-2">
+                    {/* Deep Warm Espresso CTA Button (Matching Homepage) */}
+                    <div className="pt-1">
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelectedDay(parseInt(ev.dayDate, 10));
-                          setActiveModalEvent(ev);
-                        }}
-                        className="flex-1 py-2 px-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                        onClick={() => handleOpenModal(ev)}
+                        className="w-full py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#4a2815] text-white text-xs font-bold text-center transition-all cursor-pointer shadow-xs active:scale-98"
                       >
-                        <span>Lihat Detail &amp; Adab</span>
-                        <ArrowRight size={12} />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setSelectedDay(parseInt(ev.dayDate, 10))}
-                        className="py-2 px-3 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold transition-all cursor-pointer active:scale-95"
-                        title="Tandai tanggal di kalender"
-                      >
-                        Pilih Tanggal
+                        {ev.category === 'Pertunjukan Seni' ? 'Beli Tiket' : 'Lihat Detail & Adab'}
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="p-8 text-center bg-white rounded-2xl border border-neutral-200/80">
-                <p className="text-xs text-neutral-500 m-0">
-                  Tidak ada prosesi upacara yang cocok dengan filter atau kata kunci di bulan ini.
-                </p>
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
         </main>
 
         {/* =========================================================================
-            5. CLEAN DETAIL EVENT & TATA KRAMA MODAL
+            4. EVENT DETAIL & ADAB MODAL (Harmonized, Clean & Elevated)
             ========================================================================= */}
         <AnimatePresence>
           {activeModalEvent && (
-            <div
-              className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm"
-              onClick={() => setActiveModalEvent(null)}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="fixed inset-0 z-[100060] flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/60 backdrop-blur-md overflow-y-auto"
+              onClick={handleCloseModal}
             >
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                initial={{ opacity: 0, scale: 0.94, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 16 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
+                exit={{ opacity: 0, scale: 0.94, y: 16 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-3xl border border-neutral-200 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-neutral-900 overflow-hidden"
+                className="bg-[#FCFBF7] rounded-[28px] border border-[#E8DFC9] max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_30px_90px_rgba(45,24,12,0.3)] relative text-[#2d180c] overflow-hidden my-auto"
               >
-                {/* Modal Cover Image Banner */}
-                <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 shrink-0">
+                {/* ── HERO BANNER SECTION ── */}
+                <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 shrink-0 select-none">
                   <img
                     src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
                     alt={activeModalEvent.name}
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
 
-                  {/* Top Badges & Close Button */}
+                  {/* Top Bar: 1 Single AI Badge (if AI) & Close Button */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-3 z-10">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold border border-white/20">
-                        {activeModalEvent.category}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-semibold border border-white/25">
-                        <ShieldCheck size={12} />
-                        <span>{activeModalEvent.status}</span>
-                      </span>
+                    <div>
+                      {activeModalEvent.isAiGenerated && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200 text-xs font-semibold border border-amber-400/40 shadow-xs">
+                          <Sparkles size={12} className="text-amber-300" />
+                          <span>Ilustrasi AI</span>
+                        </span>
+                      )}
                     </div>
 
                     <button
                       type="button"
-                      onClick={() => setActiveModalEvent(null)}
-                      className="w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-md active:scale-95"
-                      aria-label="Tutup Detail"
+                      onClick={handleCloseModal}
+                      className="w-9 h-9 rounded-full bg-black/55 backdrop-blur-md hover:bg-black/85 text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-xs active:scale-95"
+                      aria-label="Tutup"
+                      title="Tutup (Esc)"
                     >
-                      <X size={18} />
+                      <X size={17} />
                     </button>
                   </div>
 
-                  {/* Bottom Header Overlay */}
-                  <div className="absolute bottom-4 left-5 right-5 text-white z-10">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#8c532b] text-white text-xs font-bold shadow-xs mb-1.5">
-                      <Sparkles size={12} />
-                      <span>{activeModalEvent.highlight}</span>
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight m-0 font-['Outfit']">
+                  {/* Hero Bottom: Nama Acara Only */}
+                  <div className="absolute bottom-5 left-5 right-5 text-white z-10">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight m-0 font-['Outfit'] drop-shadow-md">
                       {activeModalEvent.name}
                     </h3>
                   </div>
                 </div>
 
-                {/* Modal Body */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5 scrollbar-thin">
-                  {/* Parameter Grid (3 Columns) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    {/* Schedule */}
-                    <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex flex-col justify-between gap-1.5">
-                      <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">
-                        <CalendarIcon size={13} className="text-[#8c532b]" />
-                        <span>Jadwal Masehi</span>
-                      </div>
-                      <div>
-                        <strong className="text-neutral-900 text-xs sm:text-sm block leading-snug">
-                          {activeModalEvent.dayDate} {activeModalEvent.monthName} {activeModalEvent.year}
-                        </strong>
-                        <div className="text-[11px] text-neutral-600 mt-0.5 font-medium flex items-center gap-1">
-                          <Clock size={11} className="text-neutral-400 shrink-0" />
-                          <span>{activeModalEvent.time}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Javanese Calendar */}
-                    <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex flex-col justify-between gap-1.5">
-                      <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">
-                        <Sparkles size={13} className="text-[#8c532b]" />
-                        <span>Kalender Jawa</span>
-                      </div>
-                      <div>
-                        <strong className="text-neutral-900 text-xs sm:text-sm block leading-snug">
-                          {activeModalEvent.jawaCalendar}
-                        </strong>
-                        <div className="text-[11px] text-[#8c532b] mt-0.5 font-medium">
-                          {activeModalEvent.badge}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Region / District */}
-                    <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex flex-col justify-between gap-1.5">
-                      <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">
-                        <MapPin size={13} className="text-[#8c532b]" />
-                        <span>Wilayah &amp; Posisi</span>
-                      </div>
-                      <div>
-                        <strong className="text-neutral-900 text-xs sm:text-sm block leading-snug">
-                          {activeModalEvent.district}
-                        </strong>
-                        <div className="text-[11px] text-neutral-600 mt-0.5 font-medium">
-                          Daerah Istimewa Yogyakarta
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Location Card */}
-                  <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-neutral-200 text-neutral-800 flex items-center justify-center shrink-0 mt-0.5">
-                      <MapPin size={16} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider block">
-                        Titik Lokasi Utama
-                      </span>
-                      <strong className="text-neutral-900 text-xs sm:text-sm block leading-snug mt-0.5">
-                        {activeModalEvent.location}
-                      </strong>
-                      <span className="text-[11px] text-neutral-600 block mt-0.5">
-                        Kawasan {activeModalEvent.district}, D.I. Yogyakarta
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <div className="space-y-1.5">
-                    <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider m-0">
-                      Makna Filosofis &amp; Prosesi Tradisi
-                    </h4>
-                    <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed m-0 font-normal">
-                      {activeModalEvent.description}
-                    </p>
-                  </div>
-
-                  {/* Cultural Etiquette / Tata Krama (Advisory Card) */}
-                  <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6EE] border border-[#E8DFC9] space-y-2">
-                    <div className="flex items-center gap-2 font-bold text-[#8c532b] text-xs sm:text-sm">
-                      <AlertCircle size={15} className="text-[#8c532b] shrink-0" />
-                      <span>Adab &amp; Tata Krama Menghadiri Prosesi:</span>
-                    </div>
-                    <p className="text-neutral-700 leading-relaxed m-0 text-xs font-normal">
-                      {activeModalEvent.tips}
-                    </p>
-                    <div className="pt-1 text-[10px] text-neutral-500 font-medium flex items-center gap-1.5">
-                      <ShieldCheck size={12} className="text-emerald-600 shrink-0" />
-                      <span>Patuhi petunjuk Abdi Dalem &amp; petugas demi menjaga kesucian dan kelancaran upacara adat.</span>
-                    </div>
-                  </div>
-
-                  {/* Attribution Source */}
-                  <div className="flex items-center gap-2 text-[11px] text-neutral-500 font-medium pt-1">
-                    <ShieldCheck size={13} className="text-neutral-400 shrink-0" />
-                    <span>
-                      Rujukan Resmi:{' '}
-                      <strong className="text-neutral-800 font-bold">
-                        {activeModalEvent.source}
-                      </strong>
-                    </span>
+                {/* ── CLEAN SEGMENTED TAB SWITCHER ── */}
+                <div className="px-5 sm:px-6 pt-3 pb-2 bg-white border-b border-[#E8DFC9] shrink-0">
+                  <div className="flex items-center gap-1.5 p-1 bg-[#F5EEDC] rounded-xl border border-[#E8DFC9]">
+                    {[
+                      { id: 'ringkasan', label: 'Ringkasan & Makna', icon: Info },
+                      { id: 'adab', label: 'Adab & Tata Krama', icon: ShieldCheck },
+                      { id: 'lokasi', label: 'Lokasi & Akses', icon: MapPin }
+                    ].map((tab) => {
+                      const isActive = modalTab === tab.id;
+                      const Icon = tab.icon;
+                      return (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setModalTab(tab.id)}
+                          className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${isActive
+                              ? 'bg-white text-[#2d180c] shadow-xs'
+                              : 'text-[#786154] hover:text-[#2d180c] hover:bg-white/40'
+                            }`}
+                        >
+                          <Icon size={13} className={isActive ? 'text-[#8c532b]' : 'opacity-70'} />
+                          <span className="truncate">{tab.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Sticky Action Footer */}
-                <div className="px-5 sm:px-7 py-4 bg-neutral-50 border-t border-neutral-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0 z-20">
-                  <button
-                    type="button"
-                    onClick={() => setActiveModalEvent(null)}
-                    className="py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-700 text-xs font-semibold transition-colors cursor-pointer text-center"
-                  >
-                    Tutup
-                  </button>
+                {/* ── SCROLLABLE MODAL BODY CONTENT ── */}
+                <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+                  {/* TAB 1: RINGKASAN & MAKNA */}
+                  {modalTab === 'ringkasan' && (
+                    <div className="space-y-4">
+                      {/* 4 Clean Metric Cards */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                            <CalendarIcon size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-tight">Tanggal</span>
+                          </div>
+                          <strong className="text-[#2d180c] block text-xs truncate">
+                            {activeModalEvent.dayDate} {activeModalEvent.monthName} {activeModalEvent.year}
+                          </strong>
+                          <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
+                            {activeModalEvent.time.split('–')[0]}
+                          </span>
+                        </div>
 
-                  <div className="flex items-center gap-2.5">
-                    {getAssociatedPlace(activeModalEvent) && onSelectPlace && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const p = getAssociatedPlace(activeModalEvent);
-                          setActiveModalEvent(null);
-                          if (onClose) onClose();
-                          onSelectPlace(p);
-                        }}
-                        className="flex-1 sm:flex-none py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
-                      >
-                        <Compass size={14} className="text-[#8c532b]" />
-                        <span>Kunjungi Cagar Budaya</span>
-                      </button>
-                    )}
+                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                            <Sparkles size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-tight">Kategori Acara</span>
+                          </div>
+                          {(() => {
+                            const conf =
+                              CATEGORY_CONFIG[activeModalEvent.category] ||
+                              CATEGORY_CONFIG['Upacara Keraton'];
+                            return (
+                              <span
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
+                              >
+                                {activeModalEvent.category}
+                              </span>
+                            );
+                          })()}
+                          <span className="text-[#786154] text-[10px] block mt-1 truncate">
+                            {activeModalEvent.category === 'Upacara Keraton'
+                              ? 'Adat Sakral Kasultanan'
+                              : activeModalEvent.category === 'Pertunjukan Seni'
+                              ? 'Pentas Seni Teater'
+                              : activeModalEvent.category === 'Festival Rakyat'
+                              ? 'Tradisi Kerakyatan'
+                              : 'Pameran & Galeri Seni'}
+                          </span>
+                        </div>
 
+                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                            <Compass size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-tight">Wilayah</span>
+                          </div>
+                          <strong className="text-[#2d180c] block text-xs truncate">
+                            {activeModalEvent.district}
+                          </strong>
+                          <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
+                            D.I. Yogyakarta
+                          </span>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                            <Clock size={12} />
+                            <span className="text-[10px] font-bold uppercase tracking-tight">Waktu</span>
+                          </div>
+                          <strong className="text-[#2d180c] block text-xs truncate">
+                            {activeModalEvent.time}
+                          </strong>
+                          <span className="text-emerald-700 text-[10px] font-bold block mt-0.5 truncate">
+                            Sesuai Jadwal
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Makna Filosofis Card */}
+                      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E8DFC9] space-y-2.5 shadow-2xs">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-[#8c532b]" />
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#2d180c] m-0">
+                            Makna Filosofis &amp; Prosesi Sakral
+                          </h4>
+                        </div>
+                        <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed m-0 font-normal">
+                          {activeModalEvent.description}
+                        </p>
+
+                        {/* Highlight Pill */}
+                        {activeModalEvent.highlight && (
+                          <div className="mt-3 p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9]/80 flex items-start gap-2.5 text-xs text-[#2d180c]">
+                            <Award size={15} className="text-[#8c532b] shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-bold block text-[11px] text-[#8c532b] uppercase tracking-wide">
+                                Sorotan Utama Acara:
+                              </span>
+                              <span className="font-semibold text-[#2d180c]">{activeModalEvent.highlight}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Official Source Reference & AI/Real Image Notice */}
+                      <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-2xs">
+                        <div className="flex items-center gap-2 text-[#786154]">
+                          <ShieldCheck size={15} className="text-[#8c532b] shrink-0" />
+                          <span>
+                            Rujukan Resmi:{' '}
+                            <strong className="text-[#2d180c]">{activeModalEvent.source}</strong>
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
+                          Data Terverifikasi 2025
+                        </span>
+                      </div>
+
+                      {/* Photo Attribution Notice Box */}
+                      {activeModalEvent.isAiGenerated ? (
+                        <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300/80 flex items-start gap-2.5 text-xs text-amber-950 shadow-2xs">
+                          <Sparkles size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                          <div className="space-y-0.5">
+                            <strong className="block font-bold text-[#2d180c]">
+                              Keterangan Foto: Dihasilkan oleh AI (Ilustrasi Tradisi)
+                            </strong>
+                            <p className="text-amber-900/90 leading-relaxed m-0 text-[11px] sm:text-xs">
+                              Foto visualisasi di atas dihasilkan oleh AI untuk memberikan gambaran visual kepada pengunjung mengenai prosesi upacara sakral, sedangkan seluruh informasi jadwal, makna filosofis, dan tata krama adalah <strong>100% fakta riil Kasultanan Yogyakarta</strong>.
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-200/80 flex items-start gap-2.5 text-xs text-emerald-950 shadow-2xs">
+                          <ShieldCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                          <div className="space-y-0.5">
+                            <strong className="block font-bold text-emerald-950">
+                              Keterangan Foto: Dokumentasi Foto Asli Lapangan
+                            </strong>
+                            <p className="text-emerald-900/90 leading-relaxed m-0 text-[11px] sm:text-xs">
+                              Foto di atas merupakan dokumentasi asli lapangan ({activeModalEvent.imageCaption || activeModalEvent.source}).
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 2: ADAB & TATA KRAMA */}
+                  {modalTab === 'adab' && (
+                    <div className="space-y-3.5">
+                      {/* Alert Guidance Banner */}
+                      <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-start gap-3">
+                        <AlertCircle size={18} className="text-[#8c532b] shrink-0 mt-0.5" />
+                        <div className="text-xs space-y-1">
+                          <strong className="text-[#2d180c] block font-bold text-sm">
+                            Tata Krama Menghadiri Upacara Adat
+                          </strong>
+                          <p className="text-[#786154] m-0 leading-relaxed">
+                            Prosesi adat dan tradisi Kasultanan Yogyakarta memiliki nilai spiritual luhur. Pengunjung dimohon senantiasa menjaga ketertiban dan menghormati kesakralan acara.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* 3 Dedicated Guidance Cards */}
+                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
+                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
+                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
+                            1
+                          </span>
+                          <span>Ketentuan Busana &amp; Pakaian</span>
+                        </div>
+                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
+                          Wajib berpakaian sopan, tertutup, dan rapi. Di area sakral Pagelaran Keraton dan Masjid Kauman dilarang memakai celana pendek, kaos tanpa lengan, atau sandal jepit.
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
+                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
+                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
+                            2
+                          </span>
+                          <span>Perilaku &amp; Ketertiban Sakral</span>
+                        </div>
+                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
+                          {activeModalEvent.tips} Dilarang keras melangkah di atas instrumen pusaka atau memotong barisan bregada prajurit yang sedang bertugas.
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
+                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
+                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
+                            3
+                          </span>
+                          <span>Etika Dokumentasi &amp; Fotografi</span>
+                        </div>
+                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
+                          Dilarang menggunakan lampu kilat (flash) ke arah Sultan, abdi dalem, maupun pusaka. Berdirilah di luar garis pembatas yang ditentukan aparat keamanan keraton.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: LOKASI & AKSES */}
+                  {modalTab === 'lokasi' && (
+                    <div className="space-y-3.5">
+                      {/* Venue Address Card */}
+                      <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-3 shadow-2xs">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3 text-xs">
+                            <MapPin size={16} className="text-[#8c532b] shrink-0 mt-0.5" />
+                            <div>
+                              <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
+                                Tempat Pelaksanaan
+                              </span>
+                              <strong className="text-sm font-bold text-[#2d180c] block mt-0.5">
+                                {activeModalEvent.location}
+                              </strong>
+                              <span className="text-[#786154] text-xs block mt-0.5">
+                                Kawasan {activeModalEvent.district}, Daerah Istimewa Yogyakarta
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleCopyAddress(`${activeModalEvent.location}, ${activeModalEvent.district}, Yogyakarta`)}
+                            className="py-1.5 px-3 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-[11px] font-semibold shrink-0 cursor-pointer transition-colors"
+                          >
+                            {copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat'}
+                          </button>
+                        </div>
+
+                        {/* Coordinates info if present */}
+                        {activeModalEvent.coordinates && (
+                          <div className="pt-2 border-t border-[#E8DFC9]/70 flex items-center justify-between text-[11px] text-[#786154]">
+                            <span>
+                              Titik GPS: {activeModalEvent.coordinates.lat.toFixed(4)},{' '}
+                              {activeModalEvent.coordinates.lng.toFixed(4)}
+                            </span>
+                            <span className="text-emerald-700 font-bold">Koordinat Asli</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Associated Destination Card */}
+                      {(() => {
+                        const associatedPlace = getAssociatedPlace(activeModalEvent);
+                        if (!associatedPlace) return null;
+                        return (
+                          <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 shadow-2xs">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <img
+                                src={associatedPlace.image || '/assets/images/jogja_keraton.jpg'}
+                                alt={associatedPlace.name}
+                                className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#E8DFC9]"
+                              />
+                              <div className="min-w-0">
+                                <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
+                                  Destinasi Warisan Terkait
+                                </span>
+                                <strong className="text-xs font-bold text-[#2d180c] block truncate">
+                                  {associatedPlace.name}
+                                </strong>
+                                <span className="text-[11px] text-[#786154] truncate block">
+                                  {associatedPlace.subtitle || associatedPlace.location}
+                                </span>
+                              </div>
+                            </div>
+
+                            {onSelectPlace && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleCloseModal();
+                                  onSelectPlace(associatedPlace);
+                                }}
+                                className="py-2 px-3.5 rounded-xl bg-[#8c532b] hover:bg-[#754422] text-white text-xs font-bold shrink-0 cursor-pointer transition-all shadow-xs"
+                              >
+                                Eksplorasi
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── CLEAN FOOTER ACTIONS ROW ── */}
+                <div className="p-4 sm:p-5 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-3 shrink-0">
+                  {/* Left Action Buttons */}
+                  <div className="flex items-center gap-2 flex-wrap">
                     <button
                       type="button"
                       onClick={() => handleCopySchedule(activeModalEvent)}
-                      className="flex-1 sm:flex-none py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-800 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+                      className="py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs"
                     >
                       {copiedId === activeModalEvent.id ? (
                         <>
                           <Check size={14} className="text-emerald-600" />
-                          <span>Jadwal Tersalin</span>
+                          <span className="text-emerald-700 font-bold">Jadwal Tersalin!</span>
                         </>
                       ) : (
                         <>
-                          <Share2 size={14} />
+                          <Share2 size={14} className="text-[#8c532b]" />
                           <span>Salin Jadwal</span>
                         </>
                       )}
+                    </button>
+
+                    <a
+                      href={getGoogleCalendarUrl(activeModalEvent)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hidden sm:inline-flex py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold items-center gap-1.5 no-underline transition-all active:scale-95 shadow-2xs cursor-pointer"
+                      title="Tambahkan ke Google Calendar"
+                    >
+                      <CalendarPlus size={14} className="text-[#8c532b]" />
+                      <span>Simpan Kalender</span>
+                    </a>
+                  </div>
+
+                  {/* Right Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="py-2.5 px-4 rounded-xl bg-white hover:bg-[#FAF6EE] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold cursor-pointer transition-all active:scale-95"
+                    >
+                      Tutup
                     </button>
 
                     <a
@@ -1121,16 +1272,16 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace }) {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none py-2.5 px-5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all no-underline shadow-xs cursor-pointer active:scale-95"
+                      className="py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#432311] text-white text-xs font-bold inline-flex items-center gap-1.5 no-underline shadow-xs transition-all active:scale-95 cursor-pointer"
                     >
-                      <MapPin size={14} className="text-white" />
-                      <span>Buka Google Maps</span>
-                      <ExternalLink size={12} className="text-white/70" />
+                      <MapPin size={13} />
+                      <span>Buka Maps</span>
+                      <ExternalLink size={11} className="text-white/70" />
                     </a>
                   </div>
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>

@@ -28,6 +28,7 @@ export default function MostLovedDestinations({
       category: 'Poros Sumbu Filosofis UNESCO',
       tagline: 'Pusat kosmologi Kasultanan Mataram Islam, istana air sakral Tamansari, dan keluhuran tradisi warisan dunia.',
       bgImage: '/assets/images/jogja_keraton.jpg',
+      imagePosition: 'center 45%',
       onClick: onOpenJapanDetail
     },
     {
@@ -36,7 +37,8 @@ export default function MostLovedDestinations({
       title: 'Malioboro & Tugu Pal Putih',
       category: 'Denyut Kehidupan & Kota Pusaka',
       tagline: 'Simbol garis kosmologis utara, denyut malam legendaris Pasar Beringharjo, sentra batik, dan aroma arang Kopi Joss.',
-      bgImage: '/assets/images/jogja_tugu.jpg',
+      bgImage: '/assets/images/jogja_malioboro.jpg',
+      imagePosition: 'center 50%',
       onClick: onOpenSwissDetail
     },
     {
@@ -46,6 +48,7 @@ export default function MostLovedDestinations({
       category: 'Ibu Kota Awal Mataram 1586',
       tagline: 'Lorong bersejarah arsitektur Rumah Kalang, makam pendiri Mataram Islam, serta kriya perak yang mendunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
+      imagePosition: 'center 72%',
       onClick: onOpenParisDetail
     },
     {
@@ -55,6 +58,7 @@ export default function MostLovedDestinations({
       category: 'Poros Kosmis Utara & Sejarah Keraton',
       tagline: 'Kemegahan gunung sakral Mataram, pesona koleksi seni budaya Museum Ullen Sentalu, dan kesejukan lereng utara.',
       bgImage: '/assets/images/jogja_merapi.jpg',
+      imagePosition: 'center 38%',
       onClick: onOpenNYDetail
     }
   ];
@@ -95,14 +99,14 @@ export default function MostLovedDestinations({
     <section
       id="destinations-section"
       ref={sectionRef}
-      className="web-section-100vh px-4 sm:px-8 pt-24 sm:pt-28 pb-6 bg-[#FAF6EE] relative overflow-hidden flex flex-col justify-center"
+      className="web-section-100vh px-4 sm:px-8 pt-24 sm:pt-28 pb-10 sm:pb-12 bg-[#FAF6EE] relative flex flex-col justify-center"
     >
-      <div className="max-w-[1360px] mx-auto w-full flex-1 max-h-[82vh] flex flex-col justify-between my-auto">
+      <div className="max-w-[1240px] mx-auto w-full flex flex-col justify-center gap-3.5 sm:gap-4 my-auto">
         
         {/* =========================================================================
             HEADER (OUTSIDE THE PHOTO: Displays current active destination info)
             ========================================================================= */}
-        <div className="text-center max-w-2xl mx-auto space-y-1 mb-2">
+        <div className="text-center max-w-2xl mx-auto space-y-1 mb-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] shadow-2xs">
             <Sparkles size={12} className="text-[#8c532b]" />
             <span>Kawasan Ikonik Yogyakarta • Destinasi 0{activeIdx + 1} / 0{destinations.length}</span>
@@ -138,46 +142,47 @@ export default function MostLovedDestinations({
         </div>
 
         {/* =========================================================================
-            CLEAN PHOTO VIEWPORT (100% CLEAN: ZERO TEXT, ZERO BADGES, ZERO OVERLAYS)
+            CLEAN PHOTO VIEWPORT (GENEROUS PROPORTIONS & ACCURATE FRAMING)
             ========================================================================= */}
         <div 
           onClick={handleOpenDetail}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="relative w-full flex-1 max-h-[58vh] min-h-[280px] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-2xl border-2 border-[#E8DFC9] bg-neutral-900 cursor-pointer group select-none"
+          className="relative w-full h-[440px] sm:h-[520px] md:h-[580px] lg:h-[620px] xl:h-[660px] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-2xl border-2 border-[#E8DFC9] bg-neutral-900 cursor-pointer group select-none"
           title="Klik foto untuk membuka direktori lengkap"
         >
-          {/* Pure, Uninterrupted Photographic Canvas */}
+          {/* Pure, Uninterrupted Photographic Canvas with Precise Framing */}
           <AnimatePresence mode="wait">
             <motion.img
               key={activeDest.id}
               src={activeDest.bgImage}
               alt={activeDest.title}
+              style={{ objectPosition: activeDest.imagePosition || 'center center' }}
               initial={{ opacity: 0, scale: 1.03 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full h-full object-cover object-center select-none group-hover:scale-[1.02] transition-transform duration-700"
+              className="w-full h-full object-cover select-none group-hover:scale-[1.02] transition-transform duration-700"
             />
           </AnimatePresence>
 
-          {/* Floating Left & Right Arrows (Outside text, subtle glassmorphic controls) */}
+          {/* Floating Left & Right Arrows (Subtle glassmorphic controls) */}
           <button
             type="button"
             onClick={handlePrev}
             aria-label="Foto Sebelumnya"
-            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
+            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={22} />
           </button>
 
           <button
             type="button"
             onClick={handleNext}
             aria-label="Foto Berikutnya"
-            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
+            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/20 hover:scale-110 active:scale-95"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={22} />
           </button>
         </div>
 

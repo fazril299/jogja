@@ -10,8 +10,8 @@ export default function CustomPillButton({
   const [isHovered, setIsHovered] = useState(false);
 
   const isLight = variant === "light";
-  const bg = isLight ? '#ffffff' : '#2d180c';
-  const textColor = isLight ? '#2d180c' : '#ffffff';
+  const bg = isLight ? '#ffffff' : '#000000';
+  const textColor = isLight ? '#000000' : '#ffffff';
 
   return (
     <div

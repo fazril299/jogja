@@ -4,6 +4,7 @@ import CustomPillButton from './CustomPillButton';
 export default function CTAHeroBanner({ onOpenBooking }) {
   return (
     <section
+      id="cta-section"
       style={{
         width: '100%',
         position: 'relative',

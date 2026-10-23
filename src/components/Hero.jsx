@@ -5,7 +5,7 @@ import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
   return (
-    <div className="hero-wrapper web-section-100vh">
+    <div id="hero-section" className="hero-wrapper web-section-100vh">
       {/* Background Image */}
       <motion.div
         initial={{ opacity: 0 }}

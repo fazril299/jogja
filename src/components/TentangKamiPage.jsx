@@ -212,38 +212,18 @@ export default function TentangKamiPage({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-[99995] bg-[#FBF9F5] text-[#1C1917] overflow-y-auto scroll-smooth"
+        className="fixed inset-0 z-40 bg-[#FBF9F5] text-[#1C1917] overflow-y-auto scroll-smooth"
         style={{
           fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif"
         }}
       >
-        {/* =========================================================================
-            1. FIXED TOP APP BAR (NO "KEMBALI" BUTTON, NO NUMBERS, ONLY BRAND & CLOSE)
-            ========================================================================= */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 sm:px-8 py-3 flex items-center justify-between h-14">
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-sm sm:text-base font-bold text-[#1C1917] tracking-tight m-0 font-['Outfit']">
-              Mengenal Hamemayu
-            </h1>
-          </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup Halaman Tentang"
-            className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
-          >
-            <X size={16} />
-          </button>
-        </header>
-
         {/* =========================================================================
             SECTION 1 (100VH): FILOSOFI NAMA WEB "HAMEMAYU"
             Foto: Keraton Bangsal Kencono (NO NUMBERS, NO YELLOW BANNER)
             ========================================================================= */}
         <section
           id="section-filosofi"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative overflow-hidden"
+          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-24 sm:pt-28 pb-6 box-border relative overflow-hidden"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center flex-1 max-h-[82vh]">
             {/* Left Column: Narrative & Values */}

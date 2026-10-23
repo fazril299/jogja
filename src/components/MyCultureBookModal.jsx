@@ -296,7 +296,7 @@ export default function MyCultureBookModal({
             maxWidth: '1180px',
             width: '100%',
             margin: '0 auto',
-            paddingTop: '0.75rem',
+            paddingTop: '5rem',
             paddingBottom: '5rem',
             boxSizing: 'border-box'
           }}

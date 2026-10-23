@@ -30,6 +30,7 @@ export default function InstagramStories() {
 
   return (
     <section
+      id="stories-section"
       className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 flex flex-col justify-between"
       style={{
         width: '100%',

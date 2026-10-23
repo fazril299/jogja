@@ -66,7 +66,7 @@ export default function JurnalBudayaPage({ isOpen, _onClose }) {
         initial={false}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[99995] bg-[#F8F9FA] overflow-y-auto text-black"
+        className="fixed inset-0 z-40 bg-[#F8F9FA] overflow-y-auto text-black"
         style={{
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
