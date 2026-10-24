@@ -748,54 +748,59 @@ function NusantaraApp() {
         }}
       />
 
-      {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
-      <AboutSection
-        onOpenBooking={handleScrollToDestinations}
-        onOpenAboutUs={handleScrollToAbout}
-      />
+      {/* CURTAIN OVERLAP CONTAINER FOR SECTIONS AFTER HERO */}
+      <div className="relative z-20 bg-white rounded-t-[48px] md:rounded-t-[80px] -mt-12 shadow-[0_-25px_60px_rgba(0,0,0,0.5)]">
+        {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
+        <AboutSection
+          onOpenBooking={handleScrollToDestinations}
+          onOpenAboutUs={handleScrollToAbout}
+          onSelectPlaceById={handleSelectPlaceById}
+          onOpenNearMe={handleOpenNearMe}
+        />
 
-      {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}
-      <MostLovedDestinations
-        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenJapanDetail={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenSwissDetail={() => handleSelectPlaceById('malioboro-tugu')}
-        onOpenParisDetail={() => handleSelectPlaceById('kotagede')}
-        onOpenNYDetail={() => handleSelectPlaceById('merapi-kaliurang')}
-      />
+        {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}
+        <MostLovedDestinations
+          onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+          onOpenJapanDetail={() => handleSelectPlaceById('keraton-yogyakarta')}
+          onOpenSwissDetail={() => handleSelectPlaceById('malioboro-tugu')}
+          onOpenParisDetail={() => handleSelectPlaceById('kotagede')}
+          onOpenNYDetail={() => handleSelectPlaceById('merapi-kaliurang')}
+        />
 
-      {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
-      <HandcraftedPackages
-        id="packages"
-        onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
-        onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
-      />
+        {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}
+        <HandcraftedPackages
+          id="packages"
+          onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
+          onOpenTourDetail={(pkg) => handleSelectPlaceById(pkg?.id || 'keraton-yogyakarta')}
+        />
 
-      {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
-      <OfficialSources />
+        {/* 6. INFORMASI DENGAN RUJUKAN RESMI */}
+        <OfficialSources />
 
-      {/* 7. TRAVEL FAQ */}
-      <TravelFAQ id="faq-section" />
+        {/* 7. TRAVEL FAQ */}
+        <TravelFAQ id="faq-section" />
 
-      {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
-      <InstagramStories />
+        {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
+        <InstagramStories />
 
-      {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
-      <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
+        {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
+        <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
 
-      {/* 10. MODERN DARK FOOTER */}
-      <Footer
-        onOpenAboutUs={handleOpenAboutUs}
-        onOpenNearMe={handleOpenNearMe}
-        onOpenMap={handleOpenMap}
-        onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
-        onOpenCultureEvents={handleOpenKalenderAcara}
-        onOpenCultureJournals={handleOpenJurnalBudaya}
-        onOpenKalenderAcara={handleOpenKalenderAcara}
-        onOpenJurnalBudaya={handleOpenJurnalBudaya}
-        onOpenAdmin={handleOpenAdmin}
-        onOpenShareModal={handleOpenShareModal}
-        onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
-      />
+        {/* 10. MODERN DARK FOOTER */}
+        <Footer
+          onOpenAboutUs={handleOpenAboutUs}
+          onOpenNearMe={handleOpenNearMe}
+          onOpenMap={handleOpenMap}
+          onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
+          onOpenCultureEvents={handleOpenKalenderAcara}
+          onOpenCultureJournals={handleOpenJurnalBudaya}
+          onOpenKalenderAcara={handleOpenKalenderAcara}
+          onOpenJurnalBudaya={handleOpenJurnalBudaya}
+          onOpenAdmin={handleOpenAdmin}
+          onOpenShareModal={handleOpenShareModal}
+          onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
+        />
+      </div>
 
       {/* 11. DYNAMIC CULTURAL MASCOT TOUR GUIDE (JOJO) - PRESENT ON ALL PAGES (EXCEPT HERO SECTION) */}
       {!isKalenderPopupOpen && (
