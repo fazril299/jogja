@@ -15,7 +15,7 @@ export const JOGJA_GEO_BOUNDS = {
 export const MAX_CHECKIN_RADIUS_METERS = 1500; // 1.5 KM dari titik episentrum cagar budaya
 
 // Secret salt untuk integritas signature checksum di client-side
-const INTEGRITY_SALT = 'JOGJAKRAMA_MATARAM_SACRED_2026';
+const INTEGRITY_SALT = 'HAMEMAYU_MATARAM_SACRED_2026';
 
 /**
  * Menghitung jarak geodetik Haversine nyata antara dua titik koordinat (dalam meter)

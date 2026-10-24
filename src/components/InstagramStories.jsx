@@ -66,7 +66,7 @@ export default function InstagramStories() {
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
             <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
           </svg>
-          Galeri Visual Faktual JogjaKrama
+          Galeri Visual Faktual Hamemayu
         </motion.div>
 
         <h2 style={{
@@ -179,7 +179,7 @@ export default function InstagramStories() {
         fontSize: '0.88rem',
         fontWeight: 500
       }}>
-        Tandai <span style={{ color: '#051926', fontWeight: 700 }}>@jogjakrama.official</span> agar foto dokumentasi budaya Anda berkesempatan dikurasi.
+        Tandai <span style={{ color: '#051926', fontWeight: 700 }}>@hamemayu.official</span> agar foto dokumentasi budaya Anda berkesempatan dikurasi.
       </div>
     </section>
   );

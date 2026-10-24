@@ -1850,7 +1850,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                             openLogin({
                               benefitType: 'review',
                               title: 'Selamat datang',
-                              description: 'Masuk ke akun Anda atau buat akun baru penjelajah JogjaKrama.'
+                              description: 'Masuk ke akun Anda atau buat akun baru penjelajah Hamemayu.'
                             })
                           }
                           style={{
@@ -2132,7 +2132,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       openLogin({
                         benefitType: 'review',
                         title: 'Buat Akun untuk Mengulas',
-                        description: 'Masuk atau daftarkan akun Anda untuk memberikan ulasan dan terhubung dengan komunitas penjelajah JogjaKrama.'
+                        description: 'Masuk atau daftarkan akun Anda untuk memberikan ulasan dan terhubung dengan komunitas penjelajah Hamemayu.'
                       })
                     }
                     style={{
@@ -2248,7 +2248,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                             </span>
                           </div>
                           <div style={{ fontSize: '0.74rem', color: '#786B5E' }}>
-                            {currentUser.email || 'Member JogjaKrama'} • Klik untuk melihat profil
+                            {currentUser.email || 'Member Hamemayu'} • Klik untuk melihat profil
                           </div>
                         </div>
                       </div>
@@ -3061,7 +3061,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                     <div style={{ fontSize: '13.5px', color: '#3c4043', lineHeight: 1.45 }}>
                       {expandedBio ? (
                         <span>
-                          Jika tempat yang Anda cari belum ada di daftar destinasi atau peta JogjaKrama, silakan tambahkan ulasan atau bagikan foto pengalaman Anda langsung melalui panduan budaya ini.{' '}
+                          Jika tempat yang Anda cari belum ada di daftar destinasi atau peta Hamemayu, silakan tambahkan ulasan atau bagikan foto pengalaman Anda langsung melalui panduan budaya ini.{' '}
                           <span
                             onClick={() => setExpandedBio(false)}
                             style={{ color: '#00838f', fontWeight: 500, cursor: 'pointer' }}

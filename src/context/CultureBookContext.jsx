@@ -18,9 +18,9 @@ const CultureBookContext = createContext(null);
 
 export const getUserCultureStorageKey = (userId) => {
   if (!userId || userId === 'guest' || userId === 'guest-user') {
-    return 'jogjakrama_culture_book_v4_guest';
+    return 'hamemayu_culture_book_v4_guest';
   }
-  return `jogjakrama_culture_book_v4_${userId}`;
+  return `hamemayu_culture_book_v4_${userId}`;
 };
 
 // Data awal paspor budaya bersih tanpa dummy (Mulai dari 0 badge untuk akun baru)
@@ -50,7 +50,7 @@ export function CultureBookProvider({ children }) {
     try {
       // Hapus data cache legacy v3 agar badge lama tidak pernah bocor ke akun baru
       try {
-        localStorage.removeItem('jogjakrama_culture_book_v3');
+        localStorage.removeItem('hamemayu_culture_book_v3');
       } catch (err) {}
 
       const key = getUserCultureStorageKey(uid);
@@ -123,9 +123,9 @@ export function CultureBookProvider({ children }) {
     try {
       const key = getUserCultureStorageKey(activeUserIdRef.current);
       localStorage.setItem(key, JSON.stringify(fresh));
-      localStorage.removeItem('jogjakrama_culture_book_v3');
-      localStorage.removeItem('jogjakrama_culture_book_v4_guest');
-      localStorage.removeItem('jogjakrama_culture_book_v4_guest-user');
+      localStorage.removeItem('hamemayu_culture_book_v3');
+      localStorage.removeItem('hamemayu_culture_book_v4_guest');
+      localStorage.removeItem('hamemayu_culture_book_v4_guest-user');
       if (
         isSupabaseConfigured &&
         activeUserIdRef.current &&

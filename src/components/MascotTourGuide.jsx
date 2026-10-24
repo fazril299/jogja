@@ -2,13 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
-  ChevronDown,
-  ChevronUp,
   X,
   Volume2,
   VolumeX,
-  MessageCircle,
-  Compass,
   ArrowRight
 } from 'lucide-react';
 
@@ -170,7 +166,7 @@ const MASCOT_CONFIG = {
     badge: 'Abadikan Momenmu!',
     headline: 'Bagikan Kenangan di Tanah Mataram',
     message: 'Kamera saya siap jepret! Ayo simpan momen terindahmu saat berkunjung ke Yogyakarta dan jadilah bagian dari pelestari budaya.',
-    funFact: 'Lebih dari 10.000 wisatawan telah membagikan cerita dan stempel paspor budayanya di Jogjakrama!',
+    funFact: 'Lebih dari 10.000 wisatawan telah membagikan cerita dan stempel paspor budayanya di Hamemayu!',
     ctaText: 'Mulai Petualangan',
     actionTarget: 'cta-section'
   },
@@ -182,7 +178,7 @@ const MASCOT_CONFIG = {
     image: '/assets/images/mascot_stories.jpg',
     badge: 'Sampai Jumpa di Pelataran!',
     headline: 'Siap Menjelajahi Keagungan Jogja?',
-    message: 'Maturnuwun sudah berkelana bersama Si Kromo! Klik tombol di bawah untuk pesan tur atau simpan paspor budayamu sekarang.',
+    message: 'Maturnuwun sudah berkelana bersama Jojo! Klik tombol di bawah untuk pesan tur atau simpan paspor budayamu sekarang.',
     funFact: 'Semboyan Jogja Berhati Nyaman senantiasa menyambut kehadiran Anda dengan kehangatan khas masyarakat Jawa.',
     ctaText: 'Kembali ke Atas',
     actionTarget: 'about-section'
@@ -201,11 +197,13 @@ const ORDERED_SECTIONS = [
 
 export default function MascotTourGuide({ currentView = 'home', selectedPlace, onNavigateSection }) {
   const [activeKey, setActiveKey] = useState(null);
-  const [isBubbleVisible, setIsBubbleVisible] = useState(true);
+  const [isBubbleVisible, setIsBubbleVisible] = useState(false);
+  const [showHintToast, setShowHintToast] = useState(false);
   const [transitionBurst, setTransitionBurst] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [interactiveBounce, setInteractiveBounce] = useState(false);
+  const toastTimeoutRef = useRef(null);
   const prevKeyRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Sound effect
   const playTransitionSound = () => {
@@ -228,7 +226,7 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
     }
   };
 
-  // Trigger transition burst and sound when key changes
+  // Trigger transition burst and gentle toast hint when key changes
   const triggerTransition = (newKey) => {
     if (newKey !== activeKey) {
       setTransitionBurst(true);
@@ -236,8 +234,48 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
       playTransitionSound();
       prevKeyRef.current = activeKey;
       setActiveKey(newKey);
+
+      // Show brief gentle toast hint (3.5s) if speech bubble is not open
+      if (!isBubbleVisible) {
+        setShowHintToast(true);
+        if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+        toastTimeoutRef.current = setTimeout(() => {
+          setShowHintToast(false);
+        }, 3500);
+      }
     }
   };
+
+  // Click outside to collapse speech bubble so it never obstructs reading
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsBubbleVisible(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsBubbleVisible(false);
+      }
+    };
+
+    if (isBubbleVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isBubbleVisible]);
+
+  // Clean up toast timeout
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
 
   // Effect: Page-level tracking OR Homepage scroll-level tracking
   useEffect(() => {
@@ -289,14 +327,6 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentView, activeKey, soundEnabled]);
 
-  // Click mascot for playful bounce
-  const handleMascotClick = () => {
-    setInteractiveBounce(true);
-    setTimeout(() => setInteractiveBounce(false), 700);
-    setIsBubbleVisible(true);
-    playTransitionSound();
-  };
-
   const handleActionClick = (target) => {
     if (target === 'home') {
       if (onNavigateSection) onNavigateSection('about-section');
@@ -317,19 +347,13 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
 
   const currentConfig = MASCOT_CONFIG[activeKey];
   const isSection = currentConfig.type === 'section';
-  const currentIndex = ORDERED_SECTIONS.indexOf(activeKey);
-  const nextSectionId =
-    currentIndex < ORDERED_SECTIONS.length - 1
-      ? ORDERED_SECTIONS[currentIndex + 1]
-      : ORDERED_SECTIONS[0];
-  const prevSectionId =
-    currentIndex > 0 ? ORDERED_SECTIONS[currentIndex - 1] : ORDERED_SECTIONS[0];
 
   return (
     <aside
-      aria-label="Pemandu Budaya Si Kromo"
-      className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 pointer-events-auto select-none font-['Plus_Jakarta_Sans',sans-serif]"
-      style={{ zIndex: 100005 }}
+      ref={containerRef}
+      aria-label="Pemandu Budaya Jojo"
+      className="fixed bottom-3 sm:bottom-5 right-3 sm:right-6 pointer-events-auto select-none font-['Plus_Jakarta_Sans',sans-serif]"
+      style={{ zIndex: 900 }}
     >
       <div className="relative flex flex-col items-end">
         {/* ── BURST TRANSITION PARTICLES EFFECT ── */}
@@ -337,35 +361,38 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
           {transitionBurst && (
             <motion.div
               initial={{ scale: 0.5, opacity: 1 }}
-              animate={{ scale: 2.2, opacity: 0 }}
+              animate={{ scale: 2.0, opacity: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.75, ease: 'easeOut' }}
-              className="absolute -inset-10 rounded-full border-2 border-amber-400/80 bg-amber-400/10 pointer-events-none z-0 blur-xs"
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="absolute -inset-6 rounded-full border border-amber-400/80 bg-amber-400/10 pointer-events-none z-0"
             >
-              <div className="absolute top-2 left-6 text-amber-500 font-extrabold text-xs">✨</div>
-              <div className="absolute bottom-4 left-2 text-amber-600 font-extrabold text-xs">✦</div>
-              <div className="absolute top-4 right-4 text-amber-500 font-extrabold text-xs">✨</div>
+              <div className="absolute top-1 left-4 text-amber-500 font-extrabold text-[10px]">✨</div>
+              <div className="absolute bottom-2 left-1 text-amber-600 font-extrabold text-[10px]">✦</div>
+              <div className="absolute top-2 right-2 text-amber-500 font-extrabold text-[10px]">✨</div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── INTERACTIVE SPEECH BUBBLE ── */}
+        {/* ── INTERACTIVE REDESIGNED GUIDE POPOVER CARD ── */}
         <AnimatePresence mode="wait">
           {isBubbleVisible && (
             <motion.div
               key={`speech-bubble-${activeKey}`}
-              initial={{ opacity: 0, y: 20, scale: 0.92 }}
+              initial={{ opacity: 0, y: 14, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 15, scale: 0.92 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-              className="mb-3 w-[290px] sm:w-[340px] bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-[0_20px_50px_rgba(45,24,12,0.25)] border-2 border-[#E8DFC9] text-[#2d180c] relative z-10"
+              exit={{ opacity: 0, y: 12, scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+              className="mb-2.5 w-[295px] sm:w-[335px] max-w-[calc(100vw-1.5rem)] bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-[0_16px_45px_rgba(45,24,12,0.18)] border border-[#E8DFC9] text-[#2d180c] relative z-10"
             >
-              {/* Header Bar */}
-              <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-[#E8DFC9]/70">
+              {/* Header Bar - Redesigned luxury cultural banner */}
+              <div className="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-[#E8DFC9]/70">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#8c532b] animate-pulse" />
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#8c532b]">
-                    Si Kromo • Pemandu Budaya
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#8c532b]" />
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8c532b] font-['Outfit']">
+                    Jojo si Pemandu Budaya
                   </span>
                 </div>
 
@@ -374,158 +401,155 @@ export default function MascotTourGuide({ currentView = 'home', selectedPlace, o
                   <button
                     type="button"
                     onClick={() => setSoundEnabled(!soundEnabled)}
-                    className="p-1 rounded-md text-neutral-500 hover:text-[#8c532b] hover:bg-neutral-100 transition-colors cursor-pointer"
+                    className="p-1 rounded-md text-neutral-400 hover:text-[#8c532b] hover:bg-[#FAF6EE] transition-colors cursor-pointer"
                     title={soundEnabled ? 'Matikan Suara Transisi' : 'Aktifkan Suara Gamelan'}
+                    aria-label="Toggle Sound"
                   >
-                    {soundEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
+                    {soundEnabled ? <Volume2 size={13} className="text-[#8c532b]" /> : <VolumeX size={13} />}
                   </button>
 
                   {/* Close Bubble */}
                   <button
                     type="button"
                     onClick={() => setIsBubbleVisible(false)}
-                    className="p-1 rounded-md text-neutral-500 hover:text-black hover:bg-neutral-100 transition-colors cursor-pointer"
-                    title="Sembunyikan Balon Ucapan"
+                    className="p-1 rounded-md text-neutral-400 hover:text-neutral-800 hover:bg-[#FAF6EE] transition-colors cursor-pointer"
+                    title="Tutup Panduan"
+                    aria-label="Tutup"
                   >
-                    <X size={13} />
+                    <X size={14} />
                   </button>
                 </div>
               </div>
 
               {/* Progress/Location Badge */}
-              <div className="flex items-center justify-between text-[10px] font-bold text-[#786154] mb-1.5">
-                <span className="px-2 py-0.5 rounded-full bg-[#F5EEDC] text-[#8c532b] border border-[#E8DFC9]">
-                  {isSection ? `Section ${currentConfig.sectionNumber} dari ${currentConfig.totalSections}` : currentConfig.badge}
+              <div className="flex items-center justify-between text-[10px] font-bold text-[#786154] mb-2">
+                <span className="px-2 py-0.5 rounded-full bg-[#FAF6EE] text-[#8c532b] border border-[#E8DFC9]">
+                  {isSection ? `Bagian ${currentConfig.sectionNumber} dari ${currentConfig.totalSections}` : currentConfig.badge}
                 </span>
-                <span className="truncate max-w-[170px] text-right font-medium">
+                <span className="truncate max-w-[160px] text-right font-medium text-neutral-500">
                   {currentConfig.sectionName}
                 </span>
               </div>
 
-              {/* Headline & Message */}
-              <div className="space-y-1 mt-1">
-                <div className="flex items-center gap-1 text-xs font-extrabold text-[#2d180c] font-['Outfit']">
+              {/* Headline & Friendly Message */}
+              <div className="space-y-1 mb-2.5">
+                <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-extrabold text-[#2d180c] font-['Outfit']">
                   <Sparkles size={13} className="text-amber-500 shrink-0" />
                   <span className="leading-snug">{currentConfig.headline}</span>
                 </div>
-                <p className="text-[11px] sm:text-xs text-neutral-700 leading-relaxed m-0 font-normal">
+                <p className="text-[11px] sm:text-xs text-neutral-600 leading-relaxed m-0 font-normal">
                   {currentConfig.message}
                 </p>
               </div>
 
-              {/* Fun Fact */}
-              <div className="mt-2.5 p-2 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9]/80 text-[10px] sm:text-[11px] text-[#786154] flex items-start gap-1.5">
-                <span className="font-bold text-[#8c532b] shrink-0">💡 Info:</span>
-                <span className="line-clamp-2">{currentConfig.funFact}</span>
+              {/* Cultural Fun Fact Box */}
+              <div className="p-2.5 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9]/80 text-[10.5px] sm:text-[11px] text-[#786154] flex items-start gap-1.5">
+                <span className="font-bold text-[#8c532b] shrink-0">💡 Info Budaya:</span>
+                <span className="leading-relaxed text-neutral-700">{currentConfig.funFact}</span>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Footer (Previous ChevronUp & ChevronDown completely removed) */}
               <div className="mt-3 pt-2.5 border-t border-[#E8DFC9]/60 flex items-center justify-between gap-2">
-                {isSection ? (
-                  <div className="flex items-center gap-1 text-[10px]">
-                    <button
-                      type="button"
-                      onClick={() => handleActionClick(prevSectionId)}
-                      disabled={currentIndex === 0}
-                      className="p-1.5 rounded-lg bg-neutral-100 hover:bg-[#F5EEDC] disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-                      title="Ke Section Sebelumnya"
-                    >
-                      <ChevronUp size={12} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleActionClick(nextSectionId)}
-                      className="p-1.5 rounded-lg bg-neutral-100 hover:bg-[#F5EEDC] transition-colors cursor-pointer"
-                      title="Ke Section Berikutnya"
-                    >
-                      <ChevronDown size={12} />
-                    </button>
-                  </div>
-                ) : (
-                  <span className="text-[10px] text-[#8c532b] font-bold">
-                    Halaman Budaya Aktif
-                  </span>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setIsBubbleVisible(false)}
+                  className="text-[11px] text-neutral-500 hover:text-neutral-800 font-medium transition-colors cursor-pointer"
+                >
+                  Sembunyikan
+                </button>
 
                 <button
                   type="button"
                   onClick={() => handleActionClick(currentConfig.actionTarget)}
-                  className="px-3 py-1.5 rounded-xl bg-[#8c532b] hover:bg-[#704222] text-white text-[11px] font-bold flex items-center gap-1 transition-all shadow-xs active:scale-95 cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-xl bg-[#8c532b] hover:bg-[#704222] text-white text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-xs hover:shadow active:scale-95 cursor-pointer"
                 >
                   <span>{currentConfig.ctaText}</span>
-                  <ArrowRight size={11} />
+                  <ArrowRight size={12} />
                 </button>
               </div>
-
-              {/* Triangle Tail pointing down to mascot */}
-              <div className="absolute -bottom-2 right-10 sm:right-12 w-4 h-4 bg-white/95 border-r-2 border-b-2 border-[#E8DFC9] rotate-45" />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── MASCOT AVATAR HERO CONTAINER WITH SECTION MORPHING ── */}
+        {/* ── COMPACT, NON-OBSTRUCTIVE FLOATING TRIGGER DOCK (PILL) ── */}
         <div className="relative flex items-center gap-2">
-          {/* Quick Speech Trigger if Bubble Hidden */}
-          {!isBubbleVisible && (
-            <motion.button
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              type="button"
-              onClick={() => setIsBubbleVisible(true)}
-              className="px-2.5 py-1.5 rounded-full bg-white text-[#8c532b] border border-[#E8DFC9] text-xs font-bold shadow-md hover:bg-[#FAF6EE] flex items-center gap-1 cursor-pointer transition-transform hover:scale-105"
-            >
-              <MessageCircle size={13} />
-              <span className="text-[11px]">Halo, Lur!</span>
-            </motion.button>
-          )}
+          {/* Gentle Floating Hint Toast (auto disappears in 3.5s when section changes) */}
+          <AnimatePresence>
+            {showHintToast && !isBubbleVisible && (
+              <motion.button
+                type="button"
+                initial={{ opacity: 0, x: 12, scale: 0.92 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 8, scale: 0.92 }}
+                transition={{ duration: 0.25 }}
+                onClick={() => {
+                  setIsBubbleVisible(true);
+                  setShowHintToast(false);
+                }}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#8c532b] border border-[#E8DFC9] shadow-md hover:bg-[#FAF6EE] text-[11px] font-semibold cursor-pointer transition-transform hover:scale-105"
+                title="Klik untuk membuka pesan Jojo"
+              >
+                <Sparkles size={12} className="text-amber-500" />
+                <span className="truncate max-w-[170px]">{currentConfig.headline}</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
 
-          {/* 3D Mascot Character */}
-          <motion.div
-            animate={
-              interactiveBounce
-                ? { y: [-24, 0], rotate: [-8, 8, 0], scale: [1, 1.14, 1] }
-                : { y: [0, -6, 0] }
-            }
-            transition={
-              interactiveBounce
-                ? { duration: 0.6, ease: 'easeOut' }
-                : { duration: 3.5, repeat: Infinity, ease: 'easeInOut' }
-            }
-            onClick={handleMascotClick}
-            className="relative cursor-pointer group"
-            title="Klik Si Kromo untuk menyapa!"
+          {/* Floating Pill Trigger */}
+          <motion.button
+            type="button"
+            onClick={() => {
+              setIsBubbleVisible(!isBubbleVisible);
+              setShowHintToast(false);
+              if (!isBubbleVisible) playTransitionSound();
+            }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className={`group flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full transition-all duration-200 shadow-md border cursor-pointer ${
+              isBubbleVisible
+                ? 'bg-[#8c532b] text-white border-amber-600/60 shadow-[0_6px_20px_rgba(140,83,43,0.35)]'
+                : 'bg-white/95 backdrop-blur-md text-[#2d180c] border-[#E8DFC9] hover:bg-[#FAF6EE] hover:border-[#D5C2A5]'
+            }`}
+            title={isBubbleVisible ? 'Tutup Jojo' : 'Buka Jojo • Pemandu Budaya'}
+            aria-label="Jojo Pemandu Budaya"
           >
-            {/* Glowing Golden Cultural Halo Ring */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/30 via-[#8c532b]/20 to-amber-300/30 blur-md group-hover:blur-lg transition-all" />
-
-            {/* Mascot Framing Disc */}
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-br from-[#E8DFC9] via-white to-[#D6CAAF] shadow-[0_12px_36px_rgba(45,24,12,0.28)] border-2 border-white/90 overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 active:scale-95">
-              {/* Animated Pose Morphing */}
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`mascot-pose-${currentConfig.image}`}
-                  src={currentConfig.image}
-                  alt={`Si Kromo - ${currentConfig.sectionName}`}
-                  initial={{ opacity: 0, scale: 0.85, rotate: -6 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 1.12, rotate: 6 }}
-                  transition={{ duration: 0.35, ease: 'easeInOut' }}
-                  className="w-full h-full object-cover object-top select-none pointer-events-none"
-                  style={{ imageRendering: 'auto' }}
-                />
-              </AnimatePresence>
-
-              {/* Status Badge Ring */}
-              <div className="absolute bottom-0 inset-x-0 bg-[#2d180c]/85 backdrop-blur-xs py-0.5 text-center text-[9px] font-extrabold text-amber-200 tracking-tight border-t border-amber-400/30">
-                Si Kromo
-              </div>
+            {/* Mini Circular Disc */}
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-amber-500/50 bg-[#FAF6EE] shrink-0 shadow-2xs">
+              <img
+                src={currentConfig.image}
+                alt={`Jojo - ${currentConfig.sectionName}`}
+                className="w-full h-full object-cover object-top select-none"
+              />
+              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
             </div>
 
-            {/* Small Notification Indicator */}
-            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] font-bold text-white shadow-xs">
-              ✓
-            </span>
-          </motion.div>
+            {/* Compact Text Badge */}
+            <div className="flex flex-col text-left leading-tight">
+              <div className="flex items-center gap-1">
+                <span className={`text-[11px] font-bold font-['Outfit'] ${isBubbleVisible ? 'text-white' : 'text-[#2d180c]'}`}>
+                  Jojo
+                </span>
+                <span className={`text-[8px] font-extrabold uppercase px-1 py-0.2 rounded-full ${
+                  isBubbleVisible ? 'bg-white/20 text-white' : 'bg-[#F5EEDC] text-[#8c532b]'
+                }`}>
+                  Pemandu
+                </span>
+              </div>
+              <span className={`text-[9.5px] font-medium truncate max-w-[95px] sm:max-w-[130px] ${
+                isBubbleVisible ? 'text-amber-100' : 'text-neutral-500'
+              }`}>
+                {currentConfig.sectionName}
+              </span>
+            </div>
+
+            {/* Sparkle Icon */}
+            <Sparkles
+              size={13}
+              className={`shrink-0 transition-transform group-hover:rotate-12 ${
+                isBubbleVisible ? 'text-amber-200' : 'text-amber-500'
+              }`}
+            />
+          </motion.button>
         </div>
       </div>
     </aside>

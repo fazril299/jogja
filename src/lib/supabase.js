@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Kunci Publik & URL Produksi Supabase JogjaKrama (Aman untuk Client-Side Bundle)
+// Kunci Publik & URL Produksi Supabase Hamemayu (Aman untuk Client-Side Bundle)
 const PROD_SUPABASE_URL = 'https://jqoecxfqbdmqecerbjey.supabase.co';
 const PROD_SUPABASE_KEY = 'sb_publishable_V44TT0vxmbyKWbkK56O_6g_cCHePCae';
 
@@ -269,7 +269,7 @@ export async function syncProfileToSupabase({ id, email, fullName, avatarUrl, ro
 
   const targetRole =
     cleanEmail === 'fazriel@admin.com' ||
-    cleanEmail === 'admin@jogjakrama.id' ||
+    cleanEmail === 'admin@hamemayu.id' ||
     cleanEmail === 'fazrielmuliyael@gmail.com'
       ? 'admin'
       : (role || 'user');

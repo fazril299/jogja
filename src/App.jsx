@@ -113,7 +113,7 @@ function findNearestJogjaZone(lat, lng) {
 function NusantaraApp() {
   const [places, setPlaces] = useState(() => {
     try {
-      const saved = localStorage.getItem('jogjakrama_places_v1');
+      const saved = localStorage.getItem('hamemayu_places_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -141,7 +141,7 @@ function NusantaraApp() {
   // Sync places to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('jogjakrama_places_v1', JSON.stringify(places));
+      localStorage.setItem('hamemayu_places_v1', JSON.stringify(places));
     } catch (e) {
       console.error('Error saving places to cache:', e);
     }
@@ -623,7 +623,7 @@ function NusantaraApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-3 sm:bottom-6 left-3 sm:left-auto right-3 sm:right-6 w-auto sm:w-[410px] max-w-[calc(100vw-1.5rem)] z-[9990] bg-white text-[#09090b] rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl border-2 border-[#0066ff]"
+            className="fixed bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-auto w-auto sm:w-[410px] max-w-[calc(100vw-1.5rem)] z-[9990] bg-white text-[#09090b] rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl border-2 border-[#0066ff]"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif"
             }}
@@ -797,7 +797,7 @@ function NusantaraApp() {
         onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
       />
 
-      {/* 11. DYNAMIC CULTURAL MASCOT TOUR GUIDE (SI KROMO) - PRESENT ON ALL PAGES (EXCEPT HERO SECTION) */}
+      {/* 11. DYNAMIC CULTURAL MASCOT TOUR GUIDE (JOJO) - PRESENT ON ALL PAGES (EXCEPT HERO SECTION) */}
       {!isKalenderPopupOpen && (
         <MascotTourGuide
           currentView={
@@ -925,7 +925,7 @@ function NusantaraApp() {
           />
         )}
 
-        {/* HALAMAN DEDIKASI 3: TENTANG KAMI & PENGENALAN FITUR WEB JOGJAKRAMA */}
+        {/* HALAMAN DEDIKASI 3: TENTANG KAMI & PENGENALAN FITUR WEB HAMEMAYU */}
         {isAboutPageOpen && (
           <TentangKamiPage
             isOpen={isAboutPageOpen}

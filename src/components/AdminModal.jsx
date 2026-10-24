@@ -330,7 +330,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                 <div>
                   <h3 className="text-sm font-semibold text-white">Daftar Destinasi Pusaka Aktif</h3>
                   <p className="text-xs text-neutral-400">
-                    Total {places.length} destinasi terdaftar dalam katalog JogjaKrama.
+                    Total {places.length} destinasi terdaftar dalam katalog Hamemayu.
                   </p>
                 </div>
                 <button
@@ -617,7 +617,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                   const isUserAdmin =
                     usr.role === 'admin' ||
                     usr.email === 'fazriel@admin.com' ||
-                    usr.email === 'admin@jogjakrama.id' ||
+                    usr.email === 'admin@hamemayu.id' ||
                     usr.email === 'fazrielmuliyael@gmail.com';
 
                   return (
@@ -724,7 +724,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
         {/* Footer */}
         <div className="p-4 border-t border-white/10 bg-[#14171f] flex items-center justify-between text-xs text-neutral-400">
           <span>
-            {currentUser?.name ? `Administrator Aktif: ${currentUser.name}` : 'Akses Administrator JogjaKrama'}
+            {currentUser?.name ? `Administrator Aktif: ${currentUser.name}` : 'Akses Administrator Hamemayu'}
           </span>
           <button
             onClick={onClose}

@@ -76,7 +76,7 @@ function EastwardMandalaMedallion() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ display: 'block', flexShrink: 0 }}
-      aria-label="JogjaKrama Emblem"
+      aria-label="Hamemayu Emblem"
     >
       {/* Outer double border rings */}
       <circle cx="50" cy="50" r="47.5" stroke="#000000" strokeWidth="1.2" />
@@ -472,7 +472,7 @@ export default function Footer({
                   <WhatsAppIcon size={17} />
                 </a>
                 <a
-                  href="https://www.instagram.com/jogjakrama.official/"
+                  href="https://www.instagram.com/hamemayu.official/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-slate-100 hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] text-slate-800 hover:text-white border border-slate-300 hover:border-transparent hover:scale-105 transition-all flex items-center justify-center shadow-sm"

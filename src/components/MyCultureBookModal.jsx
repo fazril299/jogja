@@ -116,10 +116,10 @@ export default function MyCultureBookModal({
         : (currentUser?.name || 'Penjelajah Budaya'));
 
   const displayRole = isGuest
-    ? 'Tamu Penjelajah Budaya @ JogjaKrama'
-    : (currentUser && (currentUser.role === 'admin' || currentUser.email === 'fazriel@admin.com' || currentUser.email === 'admin@jogjakrama.id' || currentUser.email === 'fazrielmuliyael@gmail.com')
-        ? `${currentUser.email || 'Admin'} • Administrator Sistem @ JogjaKrama`
-        : `${currentUser?.email || 'Member'} • Penjelajah Budaya @ JogjaKrama`);
+    ? 'Tamu Penjelajah Budaya @ Hamemayu'
+    : (currentUser && (currentUser.role === 'admin' || currentUser.email === 'fazriel@admin.com' || currentUser.email === 'admin@hamemayu.id' || currentUser.email === 'fazrielmuliyael@gmail.com')
+        ? `${currentUser.email || 'Admin'} • Administrator Sistem @ Hamemayu`
+        : `${currentUser?.email || 'Member'} • Penjelajah Budaya @ Hamemayu`);
 
   const displayAvatar =
     currentUser?.avatar || (isGuest ? 'https://api.dicebear.com/7.x/initials/svg?seed=Guest' : '/assets/images/jogja_batik.jpg');
@@ -131,11 +131,11 @@ export default function MyCultureBookModal({
       currentUser.authenticated
     ) {
       try {
-        localStorage.setItem('jogjakrama_passport_user_name', currentUser.name);
+        localStorage.setItem('hamemayu_passport_user_name', currentUser.name);
       } catch (e) {}
     } else {
       try {
-        localStorage.removeItem('jogjakrama_passport_user_name');
+        localStorage.removeItem('hamemayu_passport_user_name');
       } catch (e) {}
     }
   }, [currentUser]);
@@ -1040,7 +1040,7 @@ export default function MyCultureBookModal({
                       onClick={() =>
                         openLogin({
                           benefitType: 'general',
-                          title: 'Masuk ke JogjaKrama',
+                          title: 'Masuk ke Hamemayu',
                           description: 'Simpan riwayat kunjungan dan koleksi badge Anda secara permanen.'
                         })
                       }

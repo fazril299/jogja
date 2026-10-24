@@ -13,8 +13,8 @@ import {
 
 const CommunityContext = createContext(null);
 
-const STORAGE_REVIEWS_KEY = 'jogjakrama_community_reviews_v2';
-const STORAGE_EXPERIENCES_KEY = 'jogjakrama_shared_experiences_v3';
+const STORAGE_REVIEWS_KEY = 'hamemayu_community_reviews_v2';
+const STORAGE_EXPERIENCES_KEY = 'hamemayu_shared_experiences_v3';
 
 // Helper mapper agar format data review seragam dan mendukung fallback format headline
 function mapSupabaseReview(r) {
@@ -115,7 +115,7 @@ export function CommunityProvider({ children }) {
     if (!isSupabaseConfigured || !supabase) return;
 
     const channel = supabase
-      .channel('jogjakrama_reviews_realtime')
+      .channel('hamemayu_reviews_realtime')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'reviews' },
@@ -265,7 +265,7 @@ export function CommunityProvider({ children }) {
       date: new Date().toISOString(),
       status: 'approved',
       likes: 0,
-      tags: tags.length ? tags : ['JogjaKrama', 'MomenBudaya']
+      tags: tags.length ? tags : ['Hamemayu', 'MomenBudaya']
     };
 
     setExperiences((prev) => [newExp, ...prev]);

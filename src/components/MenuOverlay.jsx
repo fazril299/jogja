@@ -70,9 +70,8 @@ export default function MenuOverlay({
                   else window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               >
-                <span
-                >
-                  JogjaKrama
+                <span>
+                  Hamemayu
                 </span>
               </div>
 
@@ -112,10 +111,10 @@ export default function MenuOverlay({
                     Hubungi Kami
                   </span>
                   <a 
-                    href="mailto:info@jogjakrama.id" 
+                    href="mailto:info@hamemayu.id" 
                     className="menu-overlay-email"
                   >
-                    info@jogjakrama.id
+                    info@hamemayu.id
                   </a>
                 </div>
 
@@ -173,7 +172,7 @@ export default function MenuOverlay({
                           onClose();
                           openLogin({
                             benefitType: 'general',
-                            title: 'Masuk ke JogjaKrama',
+                            title: 'Masuk ke Hamemayu',
                             description: 'Akses penuh ke fitur Wishlist, ulasan, dan galeri foto/video.'
                           });
                         }}
@@ -296,7 +295,7 @@ export default function MenuOverlay({
                   className="menu-overlay-socials"
                 >
                   <motion.a
-                    href="https://www.instagram.com/jogjakrama.official/"
+                    href="https://www.instagram.com/hamemayu.official/"
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ y: -2, color: '#c65a3a' }}

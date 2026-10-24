@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -188,7 +188,7 @@ export default function AuthModal() {
     }
     return (
       authModalReason?.description ||
-      'Masuk ke akun JogjaKrama Anda untuk mengakses paspor budaya, menyimpan wishlist destinasi, dan berinteraksi dengan komunitas.'
+      'Masuk ke akun Hamemayu Anda untuk mengakses paspor budaya, menyimpan wishlist destinasi, dan berinteraksi dengan komunitas.'
     );
   };
 
@@ -233,30 +233,131 @@ export default function AuthModal() {
           zIndex: 100020,
           width: '100vw',
           height: '100vh',
+          height: '100dvh',
           backgroundColor: '#f8f8f7',
           color: '#18181b',
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          overflow: 'hidden'
+          fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
       >
         <style>{`
+          .auth-standalone-page {
+            position: fixed;
+            inset: 0;
+            z-index: 100020;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background-color: #f8f8f7;
+            color: #18181b;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+          }
+          /* 1 Unified Page Scrollbar di sisi kanan layar */
+          .auth-standalone-page::-webkit-scrollbar {
+            width: 8px;
+          }
+          .auth-standalone-page::-webkit-scrollbar-track {
+            background: #f1f1ef;
+          }
+          .auth-standalone-page::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 999px;
+          }
+          .auth-standalone-page::-webkit-scrollbar-thumb:hover {
+            background: #c99b52;
+          }
+
           .auth-standalone-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            box-sizing: border-box;
           }
+
+          .auth-standalone-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            min-height: 100dvh;
+            box-sizing: border-box;
+            padding: 28px clamp(20px, 5vw, 64px);
+          }
+
+          .auth-standalone-right {
+            padding: 14px 14px 14px 0;
+            box-sizing: border-box;
+          }
+
+          .auth-artwork-wrapper {
+            position: sticky;
+            top: 14px;
+            width: 100%;
+            height: calc(100vh - 28px);
+            height: calc(100dvh - 28px);
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            background-color: #1f130b;
+          }
+
           .auth-standalone-input::placeholder {
             color: #d4d4d8;
             font-weight: 400;
           }
+
+          .auth-center-content {
+            width: 100%;
+            max-width: 460px;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding: 20px 0 28px 0;
+          }
+
+          @media (max-height: 820px) {
+            .auth-center-content {
+              margin-top: 12px !important;
+              margin-bottom: 20px !important;
+            }
+          }
+
           @media (max-width: 960px) {
             .auth-standalone-grid {
-              grid-template-columns: 1fr;
+              display: block !important;
+              min-height: 100% !important;
+            }
+            .auth-standalone-left {
+              display: flex !important;
+              min-height: 100vh !important;
+              min-height: 100dvh !important;
+              padding: 24px 20px 48px 20px !important;
+            }
+            .auth-center-content {
+              margin-top: 16px !important;
+              margin-bottom: 28px !important;
+              padding: 10px 0 24px 0 !important;
             }
             .auth-standalone-right {
               display: none !important;
             }
+          }
+
+          .auth-google-picker-card {
+            max-height: 88vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+          .auth-google-picker-card::-webkit-scrollbar {
+            width: 5px;
+          }
+          .auth-google-picker-card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
           }
         `}</style>
 
@@ -264,17 +365,7 @@ export default function AuthModal() {
           {/* =================================================================
               LEFT COLUMN — CLEAN EDITORIAL FORM PANEL (1:1 REFERENCE LAYOUT)
               ================================================================= */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100%',
-              padding: '28px clamp(24px, 5.5vw, 68px)',
-              overflowY: 'auto',
-              boxSizing: 'border-box'
-            }}
-          >
+          <div className="auth-standalone-left">
             {/* Top Bar inside Left Column: Brand Icon (Left) + Action Buttons (Right) */}
             <div
               style={{
@@ -302,7 +393,7 @@ export default function AuthModal() {
               >
                 <img
                   src="/images/icon_culture.svg"
-                  alt="JogjaKrama"
+                  alt="Hamemayu"
                   style={{
                     width: '28px',
                     height: '28px',
@@ -381,14 +472,7 @@ export default function AuthModal() {
             </div>
 
             {/* Center Editorial Content & Underline Form */}
-            <div
-              style={{
-                width: '100%',
-                maxWidth: '460px',
-                margin: 'auto 0',
-                padding: '28px 0'
-              }}
-            >
+            <div className="auth-center-content">
               {/* Small Section Number / Tag ("01 / Masuk Akun") */}
               <div
                 style={{
@@ -712,58 +796,28 @@ export default function AuthModal() {
             </div>
 
             {/* Bottom Subtle Spacer to balance vertical centering */}
-            <div style={{ height: '12px', flexShrink: 0 }} />
+            <div style={{ height: '32px', flexShrink: 0 }} />
           </div>
 
           {/* =================================================================
               RIGHT COLUMN — FULL-HEIGHT ROUNDED ARTWORK PANEL WITH PIXEL MATRIX
               ================================================================= */}
-          <div
-            className="auth-standalone-right"
-            style={{
-              height: '100%',
-              padding: '14px 14px 14px 0',
-              boxSizing: 'border-box'
-            }}
-          >
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '18px',
-                overflow: 'hidden',
-                position: 'relative',
-                backgroundColor: '#0c4a6e'
-              }}
-            >
-              {/* High-Resolution Yogyakarta Cultural Landscape */}
+          <div className="auth-standalone-right">
+            <div className="auth-artwork-wrapper">
+              {/* Mascot Jojo Inviting User to Login */}
               <img
-                src="/assets/images/jogja_hero_stupa_warm_uhd.jpg"
-                alt="Warisan Budaya Yogyakarta"
+                src="/assets/images/mascot_login.jpg"
+                alt="Jojo Mengajak Masuk ke Hamemayu"
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  objectPosition: 'center',
+                  objectPosition: 'center top',
                   display: 'block',
-                  filter: 'saturate(1.25) contrast(1.06)'
+                  filter: 'contrast(1.03) saturate(1.05)'
                 }}
               />
 
-              {/* Subtle Retro Pixel / Halftone Matrix Overlay */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px)
-                  `,
-                  backgroundSize: '4px 4px',
-                  pointerEvents: 'none',
-                  mixBlendMode: 'overlay'
-                }}
-              />
 
               {/* Subtle Gradient Vignette at Bottom for Caption Readability */}
               <div
@@ -771,7 +825,7 @@ export default function AuthModal() {
                   position: 'absolute',
                   inset: 0,
                   background:
-                    'linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(9,9,11,0.55) 100%)',
+                    'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(18,10,6,0.78) 100%)',
                   pointerEvents: 'none'
                 }}
               />
@@ -780,37 +834,39 @@ export default function AuthModal() {
               <div
                 style={{
                   position: 'absolute',
-                  bottom: '24px',
-                  left: '24px',
-                  right: '24px',
+                  bottom: '22px',
+                  left: '22px',
+                  right: '22px',
                   display: 'flex',
                   alignItems: 'flex-end',
                   justifyContent: 'space-between',
                   color: '#ffffff',
-                  pointerEvents: 'none'
+                  pointerEvents: 'none',
+                  zIndex: 2
                 }}
               >
                 <div>
                   <div
                     style={{
                       fontSize: '0.72rem',
-                      fontWeight: 600,
+                      fontWeight: 700,
                       letterSpacing: '0.08em',
                       textTransform: 'uppercase',
-                      color: 'rgba(255, 255, 255, 0.78)',
+                      color: '#f6d38e',
                       marginBottom: '4px'
                     }}
                   >
-                    Daerah Istimewa Yogyakarta
+                    Jojo • Pemandu Budaya
                   </div>
                   <div
                     style={{
                       fontSize: '1.15rem',
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em'
+                      fontWeight: 700,
+                      letterSpacing: '-0.02em',
+                      fontFamily: "'Outfit', sans-serif"
                     }}
                   >
-                    Eksplorasi Pusaka & Komunitas Budaya
+                    Sugeng Rawuh di Hamemayu
                   </div>
                 </div>
               </div>
@@ -845,6 +901,7 @@ export default function AuthModal() {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.94, opacity: 0, y: 16 }}
                 transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+                className="auth-google-picker-card"
                 style={{
                   width: '100%',
                   maxWidth: '440px',
@@ -905,7 +962,7 @@ export default function AuthModal() {
                     {isAddingNewGoogle ? 'Masuk dengan Akun Google' : 'Pilih akun'}
                   </h3>
                   <p style={{ fontSize: '0.84rem', color: '#6b7280', marginTop: '4px', marginBottom: 0 }}>
-                    untuk melanjutkan ke <strong style={{ color: '#8E5A3C' }}>JogjaKrama</strong>
+                    untuk melanjutkan ke <strong style={{ color: '#8E5A3C' }}>Hamemayu</strong>
                   </p>
                 </div>
 
@@ -1045,7 +1102,7 @@ export default function AuthModal() {
                     </div>
 
                     <div style={{ fontSize: '0.72rem', color: '#94a3b8', textAlign: 'center', lineHeight: 1.4 }}>
-                      Untuk melanjutkan, Google akan memverifikasi profil dan alamat email Anda secara aman dengan JogjaKrama.
+                      Untuk melanjutkan, Google akan memverifikasi profil dan alamat email Anda secara aman dengan Hamemayu.
                     </div>
                   </>
                 ) : (

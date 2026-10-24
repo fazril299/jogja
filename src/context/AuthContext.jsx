@@ -10,10 +10,10 @@ import {
 
 const AuthContext = createContext(null);
 
-const STORAGE_SESSION_KEY = 'jogjakrama_active_session_v1';
-const STORAGE_USERS_KEY = 'jogjakrama_registered_users_v1';
-const STORAGE_GOOGLE_CLIENT_ID_KEY = 'jogjakrama_google_client_id';
-const STORAGE_GOOGLE_ACCOUNTS_KEY = 'jogjakrama_google_accounts_v1';
+const STORAGE_SESSION_KEY = 'hamemayu_active_session_v1';
+const STORAGE_USERS_KEY = 'hamemayu_registered_users_v1';
+const STORAGE_GOOGLE_CLIENT_ID_KEY = 'hamemayu_google_client_id';
+const STORAGE_GOOGLE_ACCOUNTS_KEY = 'hamemayu_google_accounts_v1';
 
 // Ensure Google Identity Services script is loaded
 function ensureGoogleScriptLoaded() {
@@ -58,7 +58,7 @@ const DEFAULT_GOOGLE_ACCOUNTS = [
 export const GUEST_SESSION = {
   id: 'guest-user',
   name: 'Tamu Penjelajah (Guest)',
-  email: 'guest@jogjakrama.id',
+  email: 'guest@hamemayu.id',
   avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
   role: 'guest',
   isGuest: true,
@@ -101,7 +101,7 @@ export function AuthProvider({ children }) {
         if (Array.isArray(parsed) && parsed.length > 0) {
           const filtered = parsed.filter(
             (a) =>
-              a.email?.toLowerCase() !== 'admin@jogjakrama.id' &&
+              a.email?.toLowerCase() !== 'admin@hamemayu.id' &&
               a.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
               a.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
               a.email?.toLowerCase() !== 'zrealyael@gmail.com'
@@ -150,7 +150,7 @@ export function AuthProvider({ children }) {
           // Bersihkan akun demo dan lama yang tidak diinginkan
           const filtered = parsed.filter(
             (u) =>
-              u.email?.toLowerCase() !== 'admin@jogjakrama.id' &&
+              u.email?.toLowerCase() !== 'admin@hamemayu.id' &&
               u.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
               u.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
               u.email?.toLowerCase() !== 'zrealyael@gmail.com'
@@ -190,7 +190,7 @@ export function AuthProvider({ children }) {
           parsed.authenticated === true &&
           !parsed.isGuest &&
           parsed.email &&
-          parsed.email.toLowerCase() !== 'guest@jogjakrama.id' &&
+          parsed.email.toLowerCase() !== 'guest@hamemayu.id' &&
           parsed.email.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
           parsed.email.toLowerCase() !== 'fazrilkece258@gmail.com' &&
           parsed.email.toLowerCase() !== 'zrealyael@gmail.com' &&
@@ -219,7 +219,7 @@ export function AuthProvider({ children }) {
   const [authModalReason, setAuthModalReason] = useState({
     benefitType: 'general',
     title: 'Masuk ke Akun Anda',
-    description: 'Akses penuh ke seluruh fitur eksklusif penjelajah JogjaKrama.'
+    description: 'Akses penuh ke seluruh fitur eksklusif penjelajah Hamemayu.'
   });
 
   const [pendingBenefitAction, setPendingBenefitAction] = useState(null);
@@ -324,7 +324,7 @@ export function AuthProvider({ children }) {
       const userEmail = (authUser.email || '').toLowerCase();
       const isAdminEmail =
         userEmail === 'fazriel@admin.com' ||
-        userEmail === 'admin@jogjakrama.id' ||
+        userEmail === 'admin@hamemayu.id' ||
         userEmail === 'fazrielmuliyael@gmail.com';
 
       const determinedRole = profile?.role || (isAdminEmail ? 'admin' : 'user');
@@ -376,13 +376,13 @@ export function AuthProvider({ children }) {
       setAuthModalReason({
         benefitType: reasonObj.benefitType || 'general',
         title: reasonObj.title || 'Masuk ke Akun Anda',
-        description: reasonObj.description || 'Akses fitur benefit eksklusif penjelajah JogjaKrama.'
+        description: reasonObj.description || 'Akses fitur benefit eksklusif penjelajah Hamemayu.'
       });
     } else {
       setAuthModalReason({
         benefitType: 'general',
         title: 'Masuk ke Akun Anda',
-        description: 'Akses seluruh fitur penjelajah JogjaKrama secara lengkap.'
+        description: 'Akses seluruh fitur penjelajah Hamemayu secara lengkap.'
       });
     }
     if (actionCallback && typeof actionCallback === 'function') {
@@ -405,7 +405,7 @@ export function AuthProvider({ children }) {
       setAuthModalReason({
         benefitType: 'general',
         title: 'Daftar Akun Baru',
-        description: 'Buat akun dalam beberapa detik untuk pengalaman terbaik di JogjaKrama.'
+        description: 'Buat akun dalam beberapa detik untuk pengalaman terbaik di Hamemayu.'
       });
     }
     if (actionCallback && typeof actionCallback === 'function') {
@@ -447,9 +447,9 @@ export function AuthProvider({ children }) {
   // Mode Tamu (Guest)
   const loginAsGuest = useCallback(() => {
     try {
-      localStorage.removeItem('jogjakrama_culture_book_v4_guest-user');
-      localStorage.removeItem('jogjakrama_culture_book_v4_guest');
-      localStorage.removeItem('jogjakrama_culture_book_v3');
+      localStorage.removeItem('hamemayu_culture_book_v4_guest-user');
+      localStorage.removeItem('hamemayu_culture_book_v4_guest');
+      localStorage.removeItem('hamemayu_culture_book_v3');
       localStorage.removeItem(STORAGE_SESSION_KEY);
     } catch (err) {}
     setCurrentUser(GUEST_SESSION);
@@ -476,10 +476,10 @@ export function AuthProvider({ children }) {
       if (!trimmedEmail) throw new Error('Silakan masukkan alamat email Anda.');
       if (!trimmedPass) throw new Error('Silakan masukkan kata sandi Anda.');
 
-      // 0. Autentikasi Master Admin Utama (fazriel@admin.com atau admin@jogjakrama.id)
+      // 0. Autentikasi Master Admin Utama (fazriel@admin.com atau admin@hamemayu.id)
       const isMasterAdmin =
         trimmedEmail === 'fazriel@admin.com' ||
-        trimmedEmail === 'admin@jogjakrama.id';
+        trimmedEmail === 'admin@hamemayu.id';
 
       if (isMasterAdmin) {
         if (trimmedPass === 'admin123') {
@@ -597,7 +597,7 @@ export function AuthProvider({ children }) {
           `https://ui-avatars.com/api/?name=${encodeURIComponent(
             existing.name
           )}&background=2C221E&color=FAF8F5&size=200&bold=true`,
-        role: existing.role || (existing.email === 'admin@jogjakrama.id' ? 'admin' : 'user'),
+        role: existing.role || (existing.email === 'admin@hamemayu.id' ? 'admin' : 'user'),
         isGuest: false,
         authenticated: true,
         joinedAt: existing.joinedAt
@@ -661,8 +661,8 @@ export function AuthProvider({ children }) {
 
         if (data?.user) {
           try {
-            localStorage.removeItem(`jogjakrama_culture_book_v4_${data.user.id}`);
-            localStorage.removeItem('jogjakrama_culture_book_v3');
+            localStorage.removeItem(`hamemayu_culture_book_v4_${data.user.id}`);
+            localStorage.removeItem('hamemayu_culture_book_v3');
           } catch (err) {}
           await syncSupabaseProfile(data.user);
           setIsAuthModalOpen(false);
@@ -688,7 +688,7 @@ export function AuthProvider({ children }) {
 
       const assignedRole =
         trimmedEmail === 'fazriel@admin.com' ||
-        trimmedEmail === 'admin@jogjakrama.id' ||
+        trimmedEmail === 'admin@hamemayu.id' ||
         trimmedEmail === 'fazrielmuliyael@gmail.com'
           ? 'admin'
           : 'user';
@@ -707,8 +707,8 @@ export function AuthProvider({ children }) {
 
       // Reset semua badge untuk akun baru pengguna biasa agar mulai bersih dari 0
       try {
-        localStorage.removeItem(`jogjakrama_culture_book_v4_${newUser.id}`);
-        localStorage.removeItem('jogjakrama_culture_book_v3');
+        localStorage.removeItem(`hamemayu_culture_book_v4_${newUser.id}`);
+        localStorage.removeItem('hamemayu_culture_book_v3');
       } catch (err) {}
 
       setUsers((prev) => [...prev, newUser]);
@@ -757,7 +757,7 @@ export function AuthProvider({ children }) {
       const isGabrielAdmin =
         emailLower === 'fazriel@admin.com' ||
         emailLower === 'fazrielmuliyael@gmail.com' ||
-        emailLower === 'admin@jogjakrama.id';
+        emailLower === 'admin@hamemayu.id';
 
       const avatarUrl =
         accountInput?.avatar ||
@@ -805,8 +805,8 @@ export function AuthProvider({ children }) {
       // Reset semua badge untuk akun Google baru pengguna biasa
       if (!isGabrielAdmin && !existing) {
         try {
-          localStorage.removeItem(`jogjakrama_culture_book_v4_${googleAccountObj.id}`);
-          localStorage.removeItem('jogjakrama_culture_book_v3');
+          localStorage.removeItem(`hamemayu_culture_book_v4_${googleAccountObj.id}`);
+          localStorage.removeItem('hamemayu_culture_book_v3');
         } catch (err) {}
       }
 
@@ -892,7 +892,7 @@ export function AuthProvider({ children }) {
                 const isGabrielAdmin =
                   emailLower === 'fazriel@admin.com' ||
                   emailLower === 'fazrielmuliyael@gmail.com' ||
-                  emailLower === 'admin@jogjakrama.id';
+                  emailLower === 'admin@hamemayu.id';
 
                 const existing = users.find((u) => u.email.toLowerCase() === emailLower);
 
@@ -1014,7 +1014,7 @@ export function AuthProvider({ children }) {
     }
     try {
       localStorage.removeItem(STORAGE_SESSION_KEY);
-      localStorage.removeItem('jogjakrama_passport_user_name');
+      localStorage.removeItem('hamemayu_passport_user_name');
     } catch (e) {}
     setCurrentUser(GUEST_SESSION);
     setPendingBenefitAction(null);
@@ -1049,7 +1049,7 @@ export function AuthProvider({ children }) {
       (currentUser.role === 'admin' ||
         currentUser.role === 'Administrator' ||
         currentUser.email === 'fazriel@admin.com' ||
-        currentUser.email === 'admin@jogjakrama.id' ||
+        currentUser.email === 'admin@hamemayu.id' ||
         currentUser.email === 'fazrielmuliyael@gmail.com')
   );
 

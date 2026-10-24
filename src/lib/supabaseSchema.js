@@ -1,8 +1,8 @@
-// Skema SQL Lengkap untuk Supabase PostgreSQL (JogjaKrama Nusantara Cultural Platform)
+// Skema SQL Lengkap untuk Supabase PostgreSQL (Hamemayu Nusantara Cultural Platform)
 // Jalankan skema ini di menu "SQL Editor" pada Supabase Dashboard Anda.
 
 export const SUPABASE_SCHEMA_SQL = `-- ============================================================================
--- SKEMA BASIS DATA JOGJAKRAMA (SUPABASE POSTGRESQL)
+-- SKEMA BASIS DATA HAMEMAYU (SUPABASE POSTGRESQL)
 -- Versi: 2.0 (Role Admin, Profil Pengguna, Katalog Destinasi, Moderasi Ulasan)
 -- ============================================================================
 
@@ -236,8 +236,8 @@ RETURNS TRIGGER AS $$
 DECLARE
     assigned_role TEXT := 'user';
 BEGIN
-    -- Otomatis jadikan role 'admin' jika email adalah admin@jogjakrama.id atau fazrielmuliyael@gmail.com
-    IF NEW.email = 'admin@jogjakrama.id' OR NEW.email = 'fazrielmuliyael@gmail.com' THEN
+    -- Otomatis jadikan role 'admin' jika email adalah admin@hamemayu.id atau fazrielmuliyael@gmail.com
+    IF NEW.email = 'admin@hamemayu.id' OR NEW.email = 'fazrielmuliyael@gmail.com' THEN
         assigned_role := 'admin';
     END IF;
 
@@ -304,7 +304,7 @@ DECLARE
     v_profile RECORD;
     v_role TEXT := p_role;
 BEGIN
-    IF lower(p_email) IN ('admin@jogjakrama.id', 'fazrielmuliyael@gmail.com') THEN
+    IF lower(p_email) IN ('admin@hamemayu.id', 'fazrielmuliyael@gmail.com') THEN
         v_role := 'admin';
     END IF;
 
@@ -315,7 +315,7 @@ BEGIN
         SET 
             full_name = COALESCE(p_full_name, v_profile.full_name),
             avatar_url = COALESCE(p_avatar_url, v_profile.avatar_url),
-            role = CASE WHEN lower(p_email) IN ('admin@jogjakrama.id', 'fazrielmuliyael@gmail.com') THEN 'admin' ELSE v_profile.role END,
+            role = CASE WHEN lower(p_email) IN ('admin@hamemayu.id', 'fazrielmuliyael@gmail.com') THEN 'admin' ELSE v_profile.role END,
             updated_at = now()
         WHERE id = v_profile.id
         RETURNING * INTO v_profile;

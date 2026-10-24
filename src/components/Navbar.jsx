@@ -533,7 +533,7 @@ export default function Navbar({
                           closeAll();
                           openLogin({
                             benefitType: 'general',
-                            title: 'Selamat Datang di JogjaKrama',
+                            title: 'Selamat Datang di Hamemayu',
                             description:
                               'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
                           });
@@ -585,13 +585,13 @@ export default function Navbar({
                 }
               }}
               className="shrink-0 text-black flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-              aria-label="JogjaKrama Beranda"
+              aria-label="Hamemayu Beranda"
               style={{ width: 22, height: 22, background: 'none', border: 'none', padding: 0 }}
               transition={SPRING_TRANSITION}
             >
               <img
                 src="/images/icon_culture.svg"
-                alt="JogjaKrama"
+                alt="Hamemayu"
                 style={{ width: 22, height: 22, objectFit: 'contain', display: 'block' }}
               />
             </motion.button>
@@ -659,7 +659,7 @@ export default function Navbar({
                     closeAll();
                     openLogin({
                       benefitType: 'general',
-                      title: 'Selamat Datang di JogjaKrama',
+                      title: 'Selamat Datang di Hamemayu',
                       description: 'Masuk untuk mengakses seluruh fitur budaya.'
                     });
                   }}
@@ -1058,11 +1058,11 @@ export default function Navbar({
           >
             <img
               src="/images/icon_culture.svg"
-              alt="JogjaKrama"
+              alt="Hamemayu"
               className="w-5 h-5 object-contain"
             />
             <span className="font-extrabold text-[13px] tracking-tight text-neutral-900 font-['Outfit']">
-              JogjaKrama
+              Hamemayu
             </span>
           </button>
 
@@ -1109,7 +1109,7 @@ export default function Navbar({
                   closeAll();
                   openLogin({
                     benefitType: 'general',
-                    title: 'Selamat Datang di JogjaKrama',
+                    title: 'Selamat Datang di Hamemayu',
                     description: 'Akses penuh ke fitur Wishlist, ulasan, serta galeri momen budaya Yogyakarta.'
                   });
                 }}
