@@ -47,7 +47,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - CLEAN MONOCHROME)
           ========================================================================= */}
-      <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-white text-black flex flex-col justify-center relative">
+      <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]">
         <div className="max-w-[1240px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center my-auto">
           {/* Left Column */}
           <motion.div
@@ -58,7 +58,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
             className="flex flex-col justify-between"
           >
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 text-black text-xs font-semibold border border-neutral-200 mb-3 shadow-2xs">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF7F0] text-black text-xs font-semibold border border-[#D9CEBA] mb-3 shadow-2xs">
                 <img 
                   src="/images/icon_culture.svg" 
                   alt="" 
@@ -152,7 +152,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
       {/* =========================================================================
           SECTION 3: EMPAT DIMENSI KEISTIMEWAAN YOGYAKARTA (WARM BENTO GRID)
           ========================================================================= */}
-      <section className="py-20 sm:py-28 px-4 sm:px-8 bg-[#EDE6D8] text-[#1A1A1A] flex flex-col justify-center relative">
+      <section className="py-20 sm:py-28 px-4 sm:px-8 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8 sm:gap-10">
           
           {/* Header: Pill Badge, Title, & Subtitle */}

@@ -62,13 +62,13 @@ export default function TravelFAQ({ id }) {
         key={item.idx}
         onClick={() => toggleQuestion(item.idx)}
         style={{
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
+          background: '#FAF7F0',
+          border: '1px solid #D9CEBA',
           borderRadius: '20px',
           padding: 'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 3vw, 1.6rem)',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
-          boxShadow: isOpen ? '0 10px 30px rgba(0, 0, 0, 0.06)' : '0 2px 10px rgba(0, 0, 0, 0.02)'
+          boxShadow: isOpen ? '0 10px 30px rgba(0, 0, 0, 0.05)' : '0 2px 10px rgba(0, 0, 0, 0.02)'
         }}
       >
         <div style={{
@@ -122,7 +122,7 @@ export default function TravelFAQ({ id }) {
   };
 
   return (
-    <section id={id || "faq-section"} className="web-section-100vh w-full bg-white px-4 sm:px-8 pt-28 sm:pt-32 pb-8 relative flex flex-col">
+    <section id={id || "faq-section"} className="web-section-100vh w-full bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-20 pb-8 relative flex flex-col border-b border-[#D9CEBA]">
       <div style={{
         maxWidth: '1240px',
         margin: 'auto auto',

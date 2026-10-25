@@ -99,7 +99,7 @@ export default function MostLovedDestinations({
     <section
       id="destinations-section"
       ref={sectionRef}
-      className="web-section-100vh px-4 sm:px-8 pt-24 sm:pt-28 pb-10 sm:pb-12 bg-[#FAF6EE] relative flex flex-col justify-center"
+      className="web-section-100vh px-4 sm:px-8 pt-24 sm:pt-28 pb-10 sm:pb-12 bg-[#FAF6EE] relative flex flex-col justify-center border-b border-[#D9CEBA]"
     >
       <div className="max-w-[1240px] mx-auto w-full flex flex-col justify-center gap-3.5 sm:gap-4 my-auto">
         

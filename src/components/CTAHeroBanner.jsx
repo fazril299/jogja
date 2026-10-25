@@ -5,10 +5,11 @@ export default function CTAHeroBanner({ onOpenBooking }) {
   return (
     <section
       id="cta-section"
+      className="border-b border-[#D9CEBA]"
       style={{
         width: '100%',
         position: 'relative',
-        background: '#ffffff',
+        background: '#FAF6EE',
         overflow: 'hidden'
       }}
     >
@@ -40,13 +41,13 @@ export default function CTAHeroBanner({ onOpenBooking }) {
           }}
         />
 
-        {/* TOP PURE WHITE FADE OVERLAY */}
+        {/* TOP WARM LINEN FADE OVERLAY */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.85) 15%, rgba(255, 255, 255, 0) 40%)',
+              'linear-gradient(180deg, #FAF6EE 0%, rgba(250, 246, 238, 0.85) 15%, rgba(250, 246, 238, 0) 40%)',
             zIndex: 2,
             pointerEvents: 'none'
           }}

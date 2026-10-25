@@ -186,7 +186,7 @@ export default function Footer({
   return (
     <footer
       id="site-footer"
-      className="relative w-full overflow-hidden bg-white text-black border-t border-slate-200"
+      className="relative w-full overflow-hidden bg-[#FAF6EE] text-[#1A1A1A] border-t border-[#D9CEBA]/80"
       style={{
         fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
       }}
@@ -515,7 +515,7 @@ export default function Footer({
         {/* =========================================================================
             BOTTOM COPYRIGHT BAR
             ========================================================================= */}
-        <div className="mt-8 sm:mt-10 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
+        <div className="mt-8 sm:mt-10 pt-5 border-t border-[#D9CEBA]/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-600">
           <p className="m-0 font-medium text-black">
             © {new Date().getFullYear()} Hamemayu Hayuning Bawana. Seluruh Hak Cipta Dilindungi.
           </p>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Search, Navigation, X, Check, Map, List } from 'lucide-react';
+import { MapPin, Search, Navigation, X, Check, Map, List, ChevronDown } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
@@ -116,15 +116,12 @@ export default function NearMeModal({
     return matchesSearch && matchesRadius;
   });
 
-  // Pilih otomatis kartu pertama saat wilayah, radius, atau filter berubah
+  // Reset kartu yang terbuka jika tidak ada di hasil filter baru (tertutup secara default)
   useEffect(() => {
-    if (filteredItems.length > 0) {
-      const exists = filteredItems.some((i) => i.id === selectedCardId);
-      if (!exists) {
-        setSelectedCardId(filteredItems[0].id);
-      }
+    if (selectedCardId && !filteredItems.some((i) => i.id === selectedCardId)) {
+      setSelectedCardId(null);
     }
-  }, [selectedZoneId, searchQuery, radiusLimitKm]);
+  }, [selectedZoneId, searchQuery, radiusLimitKm, filteredItems, selectedCardId]);
 
   // Tutup dengan tombol ESC
   useEffect(() => {
@@ -137,9 +134,7 @@ export default function NearMeModal({
   }, [isOpen, onClose]);
 
   const activeItem =
-    filteredItems.find((i) => i.id === selectedCardId) ||
-    filteredItems[0] ||
-    activeZone.kulinerList[0];
+    filteredItems.find((i) => i.id === selectedCardId) || null;
 
   // Inisialisasi Peta Google Maps Road Tiles Terkunci 100% di Wilayah D.I. Yogyakarta
   useEffect(() => {
@@ -618,225 +613,281 @@ export default function NearMeModal({
                   return (
                     <div
                       key={item.id}
-                      onClick={() => setSelectedCardId(item.id)}
+                      onClick={() => setSelectedCardId((prev) => (prev === item.id ? null : item.id))}
                       style={{
-                        borderRadius: '22px',
-                        padding: '1.45rem 1.55rem',
+                        borderRadius: '20px',
+                        padding: isSelected ? '1.35rem 1.45rem' : '1.15rem 1.35rem',
                         backgroundColor: '#FFFFFF',
                         border: isSelected ? '1.5px solid #C99B52' : '1px solid #EAE3D6',
                         boxShadow: isSelected
                           ? '0 12px 32px rgba(44, 34, 30, 0.09)'
-                          : '0 4px 14px rgba(44, 34, 30, 0.03)',
+                          : '0 3px 10px rgba(44, 34, 30, 0.03)',
                         cursor: 'pointer',
                         transition: 'all 0.22s ease',
                         position: 'relative'
                       }}
                     >
+                      {/* Baris Ringkasan Kartu (Selalu Tampak) */}
                       <div
                         style={{
                           display: 'flex',
-                          alignItems: 'flex-start',
+                          alignItems: 'center',
                           justifyContent: 'space-between',
-                          gap: '0.75rem',
-                          marginBottom: '0.35rem'
+                          gap: '0.75rem'
                         }}
                       >
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.25rem' }}>
-                            {item.trackPointCode && (
-                              <span
-                                style={{
-                                  backgroundColor: '#F5EFE6',
-                                  color: '#8A5D26',
-                                  fontSize: '0.7rem',
-                                  fontWeight: 800,
-                                  padding: '0.2rem 0.5rem',
-                                  borderRadius: '6px'
-                                }}
-                              >
-                                {item.trackPointCode}
-                              </span>
-                            )}
-                            <h3
-                              style={{
-                                fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                                fontSize: '1.18rem',
-                                fontWeight: 700,
-                                color: '#2C221E',
-                                margin: 0,
-                                lineHeight: 1.25
-                              }}
-                            >
-                              {item.name}
-                            </h3>
-                          </div>
-                        </div>
-
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.25rem',
-                            backgroundColor: '#FDF2F7',
-                            color: '#9E1C64',
-                            border: '1px solid #F6D5E5',
-                            fontSize: '0.76rem',
-                            fontWeight: 700,
-                            padding: '0.28rem 0.65rem',
-                            borderRadius: '9999px',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          <MapPin size={11} />
-                          {realDistanceLabel}
-                        </span>
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: '0.84rem',
-                          color: '#786B5E',
-                          marginBottom: '0.4rem',
-                          lineHeight: 1.45
-                        }}
-                      >
-                        {item.spotName}
-                      </div>
-
-                      {/* Profil Rasa & Ulasan Otentik (Khas Jogja) */}
-                      {item.tasteProfile && (
-                        <div
-                          style={{
-                            marginTop: '0.65rem',
-                            padding: '0.65rem 0.85rem',
-                            borderRadius: '12px',
-                            backgroundColor: '#FAF6EE',
-                            border: '1px solid #EFE4D0',
-                            fontSize: '0.82rem',
-                            color: '#5C4E43',
-                            lineHeight: 1.45
-                          }}
-                        >
-                          <strong
+                        <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                          <h3
                             style={{
-                              color: '#8A5D26',
-                              display: 'block',
-                              fontSize: '0.72rem',
-                              letterSpacing: '0.04em',
-                              textTransform: 'uppercase',
-                              marginBottom: '0.2rem'
+                              fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
+                              fontSize: '1.12rem',
+                              fontWeight: 700,
+                              color: '#2C221E',
+                              margin: 0,
+                              lineHeight: 1.25
                             }}
                           >
-                            ꦕꦶꦠꦫꦱ • Cita Rasa Pusaka
-                          </strong>
-                          {item.tasteProfile}
+                            {item.name}
+                          </h3>
                         </div>
-                      )}
 
-                      {item.verdictLabel && (
-                        <div style={{ marginTop: '0.55rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
                           <span
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.25rem',
-                              fontSize: '0.72rem',
+                              backgroundColor: '#FDF2F7',
+                              color: '#9E1C64',
+                              border: '1px solid #F6D5E5',
+                              fontSize: '0.74rem',
                               fontWeight: 700,
-                              color: '#8A5D26',
-                              backgroundColor: '#F5EFE6',
-                              padding: '0.2rem 0.6rem',
-                              borderRadius: '999px'
+                              padding: '0.25rem 0.6rem',
+                              borderRadius: '9999px',
+                              whiteSpace: 'nowrap'
                             }}
                           >
-                            <Check size={11} />
-                            <span>{item.verdictLabel}</span>
+                            <MapPin size={11} />
+                            {realDistanceLabel}
                           </span>
+                          <div
+                            style={{
+                              width: '26px',
+                              height: '26px',
+                              borderRadius: '50%',
+                              backgroundColor: isSelected ? '#2C221E' : '#F5EFE6',
+                              color: isSelected ? '#FAF8F5' : '#8A5D26',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.25s ease'
+                            }}
+                          >
+                            <ChevronDown
+                              size={15}
+                              style={{
+                                transform: isSelected ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 0.25s ease'
+                              }}
+                            />
+                          </div>
                         </div>
-                      )}
+                      </div>
 
-                      <div
-                        style={{
-                          height: '1px',
-                          backgroundColor: '#EAE3D6',
-                          margin: '0.95rem 0'
-                        }}
-                      />
+                      {/* Detail Destinasi (Tertutup, Baru Terbuka Setelah Di-klik) */}
+                      <AnimatePresence>
+                        {isSelected && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <div style={{ paddingTop: '0.85rem' }}>
+                              {/* Detail Alamat / Spot */}
+                              <div
+                                style={{
+                                  fontSize: '0.84rem',
+                                  color: '#786B5E',
+                                  lineHeight: 1.45,
+                                  marginBottom: '0.65rem'
+                                }}
+                              >
+                                {item.spotName}
+                              </div>
 
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${item.coordinates?.lat},${item.coordinates?.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          color: '#8A5D26',
-                          fontSize: '0.82rem',
-                          fontWeight: 700,
-                          textDecoration: 'none'
-                        }}
-                      >
-                        <span>Lihat detail lokasi di Google Maps</span>
-                      </a>
+                              {/* Profil Rasa & Ulasan Otentik (Khas Jogja) */}
+                              {item.tasteProfile && (
+                                <div
+                                  style={{
+                                    padding: '0.65rem 0.85rem',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#FAF6EE',
+                                    border: '1px solid #EFE4D0',
+                                    fontSize: '0.82rem',
+                                    color: '#5C4E43',
+                                    lineHeight: 1.45,
+                                    marginBottom: '0.55rem'
+                                  }}
+                                >
+                                  <strong
+                                    style={{
+                                      color: '#8A5D26',
+                                      display: 'block',
+                                      fontSize: '0.72rem',
+                                      letterSpacing: '0.04em',
+                                      textTransform: 'uppercase',
+                                      marginBottom: '0.2rem'
+                                    }}
+                                  >
+                                    ꦕꦶꦠꦫꦱ • Cita Rasa Pusaka
+                                  </strong>
+                                  {item.tasteProfile}
+                                </div>
+                              )}
 
-                      {isSelected && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (userLiveCoords && item.coordinates) {
-                              window.open(
-                                `https://www.google.com/maps/dir/?api=1&origin=${userLiveCoords.lat},${userLiveCoords.lng}&destination=${item.coordinates.lat},${item.coordinates.lng}&travelmode=driving`,
-                                '_blank',
-                                'noopener,noreferrer'
-                              );
-                            } else {
-                              const query = item.coordinates
-                                ? `${item.coordinates.lat},${item.coordinates.lng}`
-                                : `${item.name} ${item.spotName}`;
-                              window.open(
-                                `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                  query
-                                )}`,
-                                '_blank',
-                                'noopener,noreferrer'
-                              );
-                            }
-                          }}
-                          style={{
-                            marginTop: '1rem',
-                            width: '100%',
-                            padding: '0.85rem 1.25rem',
-                            borderRadius: '9999px',
-                            backgroundColor: '#2C221E',
-                            color: '#FAF8F5',
-                            border: '1.5px solid #C99B52',
-                            fontSize: '0.9rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            boxShadow: '0 6px 18px rgba(44, 34, 30, 0.16)',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = '#C99B52';
-                            e.currentTarget.style.color = '#2C221E';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = '#2C221E';
-                            e.currentTarget.style.color = '#FAF8F5';
-                          }}
-                        >
-                          <Navigation size={15} />
-                          <span>
-                            {userLiveCoords
-                              ? `Buka Rute Menuju Lokasi (${formatDistanceLabel(metersFromUserGps)})`
-                              : 'Buka Petunjuk Arah di Google Maps'}
-                          </span>
-                        </button>
-                      )}
+                              {/* Catatan Ulasan Lokal / Honest Review */}
+                              {item.honestReview && (
+                                <div
+                                  style={{
+                                    padding: '0.65rem 0.85rem',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#F8F4EC',
+                                    border: '1px solid #EAE0CE',
+                                    fontSize: '0.8rem',
+                                    color: '#6B5E54',
+                                    lineHeight: 1.45,
+                                    marginBottom: '0.55rem'
+                                  }}
+                                >
+                                  <strong
+                                    style={{
+                                      color: '#2C221E',
+                                      display: 'block',
+                                      fontSize: '0.72rem',
+                                      letterSpacing: '0.04em',
+                                      textTransform: 'uppercase',
+                                      marginBottom: '0.2rem'
+                                    }}
+                                  >
+                                    Catatan Ulasan Lokal
+                                  </strong>
+                                  {item.honestReview}
+                                </div>
+                              )}
+
+                              {/* Verdict Label */}
+                              {item.verdictLabel && (
+                                <div style={{ marginTop: '0.45rem', marginBottom: '0.65rem' }}>
+                                  <span
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '0.25rem',
+                                      fontSize: '0.72rem',
+                                      fontWeight: 700,
+                                      color: '#8A5D26',
+                                      backgroundColor: '#F5EFE6',
+                                      padding: '0.2rem 0.6rem',
+                                      borderRadius: '999px',
+                                      border: '1px solid #E5DDD1'
+                                    }}
+                                  >
+                                    <Check size={11} />
+                                    <span>{item.verdictLabel}</span>
+                                  </span>
+                                </div>
+                              )}
+
+                              <div
+                                style={{
+                                  height: '1px',
+                                  backgroundColor: '#EAE3D6',
+                                  margin: '0.75rem 0'
+                                }}
+                              />
+
+                              {/* Link Google Maps */}
+                              <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${item.coordinates?.lat},${item.coordinates?.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  color: '#8A5D26',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 700,
+                                  textDecoration: 'none'
+                                }}
+                              >
+                                <span>Lihat detail lokasi di Google Maps ↗</span>
+                              </a>
+
+                              {/* Tombol Rute */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (userLiveCoords && item.coordinates) {
+                                    window.open(
+                                      `https://www.google.com/maps/dir/?api=1&origin=${userLiveCoords.lat},${userLiveCoords.lng}&destination=${item.coordinates.lat},${item.coordinates.lng}&travelmode=driving`,
+                                      '_blank',
+                                      'noopener,noreferrer'
+                                    );
+                                  } else {
+                                    const query = item.coordinates
+                                      ? `${item.coordinates.lat},${item.coordinates.lng}`
+                                      : `${item.name} ${item.spotName}`;
+                                    window.open(
+                                      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                        query
+                                      )}`,
+                                      '_blank',
+                                      'noopener,noreferrer'
+                                    );
+                                  }
+                                }}
+                                style={{
+                                  marginTop: '0.85rem',
+                                  width: '100%',
+                                  padding: '0.85rem 1.25rem',
+                                  borderRadius: '9999px',
+                                  backgroundColor: '#2C221E',
+                                  color: '#FAF8F5',
+                                  border: '1.5px solid #C99B52',
+                                  fontSize: '0.88rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '0.5rem',
+                                  boxShadow: '0 6px 18px rgba(44, 34, 30, 0.16)',
+                                  transition: 'all 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.backgroundColor = '#C99B52';
+                                  e.currentTarget.style.color = '#2C221E';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.backgroundColor = '#2C221E';
+                                  e.currentTarget.style.color = '#FAF8F5';
+                                }}
+                              >
+                                <Navigation size={15} />
+                                <span>
+                                  {userLiveCoords
+                                    ? `Buka Rute Menuju Lokasi (${formatDistanceLabel(metersFromUserGps)})`
+                                    : 'Buka Petunjuk Arah di Google Maps'}
+                                </span>
+                              </button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}

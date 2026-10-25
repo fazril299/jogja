@@ -30,7 +30,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
   ];
 
   return (
-    <section id={id || "packages"} className="handcrafted-section web-section-100vh">
+    <section id={id || "packages"} className="handcrafted-section web-section-100vh border-b border-[#D9CEBA]">
       <div className="handcrafted-container">
         {/* SECTION HEADER */}
         <div className="handcrafted-header">

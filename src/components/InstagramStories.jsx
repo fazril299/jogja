@@ -31,11 +31,11 @@ export default function InstagramStories() {
   return (
     <section
       id="stories-section"
-      className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 flex flex-col justify-between"
+      className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 flex flex-col justify-between border-b border-[#D9CEBA]"
       style={{
         width: '100%',
         maxWidth: '100vw',
-        background: '#ffffff',
+        background: '#FAF6EE',
         position: 'relative',
         overflow: 'hidden'
       }}

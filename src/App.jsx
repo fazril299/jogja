@@ -630,7 +630,7 @@ function NusantaraApp() {
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
               <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                ● GPS LIVE AKTIF (±{userLiveCoords.accuracy}m) • {recommendedFood?.trackPointCode || 'TP-01'}
+                ● GPS LIVE AKTIF (±{userLiveCoords.accuracy}m)
               </span>
               <button
                 onClick={() => setShowGpsNotification(false)}
@@ -749,7 +749,7 @@ function NusantaraApp() {
       />
 
       {/* CURTAIN OVERLAP CONTAINER FOR SECTIONS AFTER HERO */}
-      <div className="relative z-20 bg-white rounded-t-[48px] md:rounded-t-[80px] -mt-12 shadow-[0_-25px_60px_rgba(0,0,0,0.5)]">
+      <div className="relative z-20 bg-[#FAF6EE] rounded-t-[48px] md:rounded-t-[80px] shadow-[0_-25px_60px_rgba(0,0,0,0.5)]">
         {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
         <AboutSection
           onOpenBooking={handleScrollToDestinations}

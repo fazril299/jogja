@@ -1,46 +1,20 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
   const heroRef = useRef(null);
 
-  // 1. Mouse coordinates for 3D Tilt with perspective 1200px
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) {
-      mouseX.set((e.clientX - rect.left) / rect.width);
-      mouseY.set((e.clientY - rect.top) / rect.height);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  };
-
-  // 3D Tilt: rotateX [10, -10] from top to bottom, rotateY [-12, 12] from left to right
-  const rotateXRaw = useTransform(mouseY, [0, 1], [10, -10]);
-  const rotateYRaw = useTransform(mouseX, [0, 1], [-12, 12]);
-  const rotateX = useSpring(rotateXRaw, { stiffness: 120, damping: 20 });
-  const rotateY = useSpring(rotateYRaw, { stiffness: 120, damping: 20 });
-
-  // 2. Scroll Physics & Sticky Curtain Transitions
+  // Scroll Physics for Root Sticky Curtain Transition
   const { scrollY } = useScroll();
-
-  // Root Hero section fades and scales down as user scrolls
   const heroScale = useTransform(scrollY, [0, 500], [1, 0.92]);
   const heroOpacity = useTransform(scrollY, [0, 550], [1, 0]);
 
-  // Tugu scroll physics with useSpring (stiffness: 100, damping: 25)
-  // y: 0 -> -120, scale: [1, 1.12, 0.95], rotateZ: 0 -> -6
-  const tuguScrollYRaw = useTransform(scrollY, [0, 500], [0, -120]);
-  const tuguScrollScaleRaw = useTransform(scrollY, [0, 250, 500], [1, 1.12, 0.95]);
-  const tuguScrollRotateZRaw = useTransform(scrollY, [0, 500], [0, -6]);
+  // VitaBoost Scroll Physics on Tugu: meluncur turun ke bawah section saat di-scroll
+  const tuguScrollYRaw = useTransform(scrollY, [0, 500], [0, 220]);
+  const tuguScrollScaleRaw = useTransform(scrollY, [0, 500], [1, 0.92]);
+  const tuguScrollRotateZRaw = useTransform(scrollY, [0, 500], [0, 0]);
 
   const tuguY = useSpring(tuguScrollYRaw, { stiffness: 100, damping: 25 });
   const tuguScale = useSpring(tuguScrollScaleRaw, { stiffness: 100, damping: 25 });
@@ -50,20 +24,18 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
     <motion.div
       id="hero-section"
       ref={heroRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       style={{
         scale: heroScale,
         opacity: heroOpacity
       }}
-      className="sticky top-0 h-screen w-full z-10 overflow-hidden flex flex-col justify-center bg-[#0d0906]"
+      className="sticky top-0 w-full h-screen min-h-screen h-[100dvh] min-h-[100dvh] z-10 overflow-hidden flex flex-col justify-center bg-[#0d0906]"
     >
-      {/* Background Image: Senja Jogja with balanced thin dark overlay */}
+      {/* Background Image: Senja Jogja with Zoom-In (scale-125) and balanced thin dark overlay */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="absolute inset-0 z-0 overflow-hidden"
+        className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
         style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden' }}
       >
         <img
@@ -77,6 +49,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           alt="Senja Yogyakarta"
           fetchPriority="high"
           decoding="async"
+          className="scale-125 transition-transform duration-700 ease-out"
           style={{
             position: 'absolute',
             top: 0,
@@ -84,8 +57,10 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center center',
-            display: 'block'
+            objectPosition: 'center 45%',
+            display: 'block',
+            transform: 'scale(1.25)',
+            transformOrigin: 'center center'
           }}
         />
         {/* Balanced Thin Dark Overlay so text is readable while sunset stays vibrant */}
@@ -101,14 +76,14 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
       </motion.div>
 
       {/* Central Content Area: 3 Columns Desktop Grid */}
-      <main className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-4 my-auto pt-24 sm:pt-28 pb-8">
+      <main className="relative z-10 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-4 my-auto pt-24 sm:pt-28 pb-8">
         
-        {/* Kolom Kiri (lg:col-span-5): Headline & Filosofi */}
+        {/* Kolom Kiri (lg:col-span-4 xl:col-span-4): Headline & Filosofi */}
         <motion.div
           initial={{ opacity: 0, x: -35 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-5 flex flex-col items-start text-left z-10"
+          className="lg:col-span-4 xl:col-span-4 flex flex-col items-start text-left z-10"
         >
           {/* Tagline */}
           <span className="hero-tagline">
@@ -129,46 +104,31 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           </p>
         </motion.div>
 
-        {/* Kolom Tengah (lg:col-span-3): Tugu Jogja 3D Physics (VitaBoost style) */}
-        <div className="lg:col-span-3 flex items-center justify-center relative my-4 lg:my-0 z-20 pointer-events-none">
-          {/* Wrapper Luar: VitaBoost Entry Spring + Scroll physics + 3D Mouse Tilt */}
+        {/* Kolom Tengah (lg:col-span-4 xl:col-span-4): Tugu Jogja Animasi VitaBoost (+30% Ukuran) */}
+        <div className="lg:col-span-4 xl:col-span-4 flex items-center justify-center relative my-4 lg:my-0 z-20 pointer-events-none">
+          {/* Outer Layer: VitaBoost Entry Spring (scale: 0.6 -> 1, rotate: 20deg -> 0deg, stiffness: 200, damping: 60) + Scroll Physics */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.3, y: 180, rotateZ: -18, rotateX: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0, rotateZ: 0, rotateX: 0 }}
+            initial={{ opacity: 0.001, scale: 0.6, rotate: 20 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{
               type: "spring",
-              stiffness: 45,
-              damping: 11,
-              mass: 1.1,
-              delay: 0.35
+              stiffness: 200,
+              damping: 60,
+              mass: 1.2,
+              delay: 0.1
             }}
             style={{
-              perspective: 1200,
-              transformStyle: 'preserve-3d',
               y: tuguY,
               scale: tuguScale,
-              rotateZ: tuguRotateZ,
-              rotateX: rotateX,
-              rotateY: rotateY,
+              rotateZ: tuguRotateZ
             }}
             className="relative flex items-center justify-center"
           >
-            {/* Pulsing Warm Amber Glow behind Tugu */}
-            <motion.div
-              animate={{
-                scale: [1, 1.25, 1],
-                opacity: [0.35, 0.65, 0.35]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute w-56 h-72 sm:w-72 sm:h-96 rounded-full bg-amber-400/30 blur-3xl pointer-events-none -z-10"
-            />
+            {/* Ambient Warm Amber Glow behind Tugu (Statis Lembut) */}
+            <div className="absolute w-64 h-80 sm:w-80 sm:h-[480px] rounded-full bg-amber-400/25 blur-3xl pointer-events-none -z-10" />
 
-            {/* Wrapper Dalam: Idle Floating with Variants (activated after entry bounce) */}
-            <motion.img
+            {/* Objek Tugu (+30% Dominan) - Diam dan Statis Sepenuhnya Setelah Mendarat */}
+            <img
               src="/tugu_jogja.webp"
               onError={(e) => {
                 if (!e.currentTarget.dataset.fallback) {
@@ -177,32 +137,17 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
                 }
               }}
               alt="Tugu Pal Putih Yogyakarta"
-              variants={{
-                initial: { y: 0, rotate: 0 },
-                visible: {
-                  y: [0, -12, 0],
-                  rotate: [-1.2, 1.2, -1.2],
-                  transition: {
-                    y: { repeat: Infinity, duration: 5, ease: "easeInOut" },
-                    rotate: { repeat: Infinity, duration: 7, ease: "easeInOut" }
-                  }
-                }
-              }}
-              initial="initial"
-              animate="visible"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-auto h-[440px] sm:h-[490px] md:h-[570px] lg:h-[600px] max-h-[70vh] object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] pointer-events-auto select-none cursor-pointer"
+              className="w-auto h-[540px] sm:h-[620px] md:h-[700px] lg:h-[760px] xl:h-[820px] max-h-[85vh] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.85)] pointer-events-auto select-none"
             />
           </motion.div>
         </div>
 
-        {/* Kolom Kanan (lg:col-span-4): Destination Pills & Interactive Hint */}
+        {/* Kolom Kanan (lg:col-span-4 xl:col-span-4): Destination Pills & Interactive Hint */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-4 flex flex-col items-center lg:items-end w-full z-10"
+          className="lg:col-span-4 xl:col-span-4 flex flex-col items-center lg:items-end w-full z-10"
         >
           <div className="hero-pills-col w-full flex flex-col gap-3">
             {[
