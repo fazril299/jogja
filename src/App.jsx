@@ -779,7 +779,7 @@ function NusantaraApp() {
         <TravelFAQ id="faq-section" />
 
         {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
-        <InstagramStories />
+        <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
 
         {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
         <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
