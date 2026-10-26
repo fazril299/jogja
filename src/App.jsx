@@ -747,7 +747,7 @@ function NusantaraApp() {
       />
 
       {/* CURTAIN OVERLAP CONTAINER FOR SECTIONS AFTER HERO */}
-      <div className="relative z-20 bg-[#FAF6EE] rounded-t-[48px] md:rounded-t-[80px] shadow-[0_-25px_60px_rgba(0,0,0,0.5)]">
+      <div className="relative z-20 w-full bg-[#FAF6EE] shadow-[0_-20px_50px_rgba(0,0,0,0.4)]">
         {/* 3. ABOUT SECTION - YOGYAKARTA MANIFESTO & EXPLORE BY EXPERIENCE */}
         <AboutSection
           onOpenBooking={handleScrollToDestinations}
