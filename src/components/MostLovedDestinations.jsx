@@ -1,68 +1,122 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Crown, MapPin, Gem, Landmark, Mountain } from 'lucide-react';
 
 export default function MostLovedDestinations({
   onOpenBooking,
   onOpenJapanDetail,
   onOpenSwissDetail,
   onOpenParisDetail,
-  onOpenNYDetail
+  onOpenNYDetail,
+  onOpenPrambananDetail,
+  onSelectPlaceById
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef(null);
 
+  // Deteksi layar kecil agar sebaran kipas kartu (spread) otomatis presisi
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // 5 Destinasi Ikonik Yogyakarta (Arsitektur Fanned Deck dengan Kartu Coksu #E6D2C1 & Teks Hitam)
   const destinations = [
     {
       id: 'keraton-yogyakarta',
-      shortName: 'Keraton & Tamansari',
-      title: 'Keraton & Tamansari Yogyakarta',
+      shortName: 'Keraton',
+      title: 'Keraton & Tamansari',
+      fullTitle: 'Keraton & Tamansari Yogyakarta',
       category: 'Poros Sumbu Filosofis UNESCO',
       tagline: 'Pusat kosmologi Kasultanan Mataram Islam, istana air sakral Tamansari, dan keluhuran tradisi warisan dunia.',
+      cardDesc: 'Pusat kosmologi Kasultanan Mataram dan istana air sakral Tamansari.',
       bgImage: '/assets/images/jogja_keraton.jpg',
       imagePosition: 'center 45%',
+      cardBg: '#E6D2C1',
+      textColor: '#000000',
+      accentColor: '#000000',
+      symbolType: 'crown', // Sesuai foto Regol Danapratapa / Istana Kasultanan
       onClick: onOpenJapanDetail
     },
     {
       id: 'malioboro-tugu',
-      shortName: 'Malioboro & Tugu',
-      title: 'Malioboro & Tugu Pal Putih',
+      shortName: 'Malioboro',
+      title: 'Malioboro & Tugu',
+      fullTitle: 'Malioboro & Tugu Pal Putih',
       category: 'Denyut Kehidupan & Kota Pusaka',
       tagline: 'Simbol garis kosmologis utara, denyut malam legendaris Pasar Beringharjo, sentra batik, dan aroma arang Kopi Joss.',
+      cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
       bgImage: '/assets/images/jogja_malioboro.jpg',
       imagePosition: 'center 50%',
+      cardBg: '#E6D2C1',
+      textColor: '#000000',
+      accentColor: '#000000',
+      symbolType: 'map-pin', // Sesuai foto plang Jl. Malioboro & titik pusat kota
       onClick: onOpenSwissDetail
     },
     {
       id: 'kotagede',
-      shortName: 'Warisan Kotagede',
-      title: 'Warisan Pusaka Kotagede',
+      shortName: 'Kotagede',
+      title: 'Warisan Kotagede',
+      fullTitle: 'Warisan Pusaka Kotagede 1586',
       category: 'Ibu Kota Awal Mataram 1586',
       tagline: 'Lorong bersejarah arsitektur Rumah Kalang, makam pendiri Mataram Islam, serta kriya perak yang mendunia.',
+      cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       imagePosition: 'center 72%',
+      cardBg: '#E6D2C1',
+      textColor: '#000000',
+      accentColor: '#000000',
+      symbolType: 'gem', // Sesuai foto kriya perak Kotagede & warisan Mataram
       onClick: onOpenParisDetail
     },
     {
+      id: 'prambanan-ratuboko',
+      shortName: 'Prambanan',
+      title: 'Prambanan & Ratu Boko',
+      fullTitle: 'Candi Prambanan & Keraton Ratu Boko',
+      category: 'Warisan Dunia UNESCO Abad ke-9',
+      tagline: 'Candi Hindu tertinggi di Indonesia berpadu dengan pesona matahari terbenam di gerbang batu Keraton Ratu Boko.',
+      cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
+      bgImage: '/assets/images/jogja_prambanan.jpg',
+      imagePosition: 'center 40%',
+      cardBg: '#E6D2C1',
+      textColor: '#000000',
+      accentColor: '#000000',
+      symbolType: 'landmark', // Sesuai foto kemegahan Candi Prambanan abad ke-9
+      onClick: onOpenPrambananDetail || (() => onSelectPlaceById && onSelectPlaceById('prambanan-ratuboko'))
+    },
+    {
       id: 'merapi-kaliurang',
-      shortName: 'Merapi & Kaliurang',
-      title: 'Merapi, Kaliurang & Ullen Sentalu',
+      shortName: 'Merapi',
+      title: 'Merapi & Kaliurang',
+      fullTitle: 'Merapi, Kaliurang & Ullen Sentalu',
       category: 'Poros Kosmis Utara & Sejarah Keraton',
       tagline: 'Kemegahan gunung sakral Mataram, pesona koleksi seni budaya Museum Ullen Sentalu, dan kesejukan lereng utara.',
+      cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       imagePosition: 'center 38%',
+      cardBg: '#E6D2C1',
+      textColor: '#000000',
+      accentColor: '#000000',
+      symbolType: 'mountain', // Sesuai foto puncak vulkanik Gunung Merapi
       onClick: onOpenNYDetail
     }
   ];
 
   const total = destinations.length;
   const activeDest = destinations[activeIdx];
+  const targetIdx = hoveredIdx !== null ? hoveredIdx : activeIdx;
 
   // =========================================================================
   // NATIVE CSS STICKY SCROLL CONTROLLER
-  // 1. Outer section provides 350vh scroll track
-  // 2. Inner viewport is sticky top-0 h-screen (visually pins to screen 100%)
-  // 3. Smooth segment calculation with hysteresis to completely eliminate flickering
+  // Outer track 350vh -> scroll drives synchronized card progression 0 to 4
   // =========================================================================
   useEffect(() => {
     let rafId = null;
@@ -73,16 +127,8 @@ export default function MostLovedDestinations({
       const scrollableDist = sectionRef.current.offsetHeight - window.innerHeight;
       if (scrollableDist <= 0) return;
 
-      // Progress from 0.0 to 1.0 within the pinned section
       const progress = Math.min(1, Math.max(0, -rect.top / scrollableDist));
-
-      // Divide scroll track into equal segments with hysteresis dead-zones:
-      let newIdx = 0;
-      if (progress < 0.28) newIdx = 0;
-      else if (progress < 0.58) newIdx = 1;
-      else if (progress < 0.88) newIdx = 2;
-      else newIdx = 3;
-
+      const newIdx = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
       setActiveIdx((prev) => (prev !== newIdx ? newIdx : prev));
     };
 
@@ -91,9 +137,7 @@ export default function MostLovedDestinations({
       rafId = requestAnimationFrame(updateScroll);
     };
 
-    // Calculate immediately on mount
     updateScroll();
-
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
@@ -105,32 +149,34 @@ export default function MostLovedDestinations({
   }, [total]);
 
   // Smooth scroll to card's exact position on the scroll track
-  const goToDestination = useCallback((targetIdx) => {
+  const goToDestination = useCallback((targetIndex) => {
     if (!sectionRef.current) return;
     const rect = sectionRef.current.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const sectionTop = rect.top + scrollTop;
     const scrollableDist = sectionRef.current.offsetHeight - window.innerHeight;
 
-    // Target midpoint of the target card's segment
-    const targetProgress = (targetIdx + 0.5) / total;
+    const targetProgress = (targetIndex + 0.5) / total;
     const targetY = sectionTop + targetProgress * scrollableDist;
 
     window.scrollTo({
       top: targetY,
       behavior: 'smooth'
     });
+    setActiveIdx(targetIndex);
   }, [total]);
 
-  const handleOpenDetail = useCallback(() => {
-    if (activeDest.onClick) {
-      activeDest.onClick();
+  const handleOpenDetail = useCallback((destToOpen = activeDest) => {
+    if (destToOpen.onClick) {
+      destToOpen.onClick();
+    } else if (onSelectPlaceById) {
+      onSelectPlaceById(destToOpen.id);
     } else if (onOpenBooking) {
-      onOpenBooking(activeDest);
+      onOpenBooking(destToOpen);
     }
-  }, [activeDest, onOpenBooking]);
+  }, [activeDest, onOpenBooking, onSelectPlaceById]);
 
-  // Keyboard navigation when user is on this section
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
@@ -148,54 +194,70 @@ export default function MostLovedDestinations({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIdx, goToDestination, total]);
 
+  // Render Iconic Symbols disesuaikan dengan foto masing-masing destinasi
+  const renderSymbol = (type) => {
+    switch (type) {
+      case 'crown':
+        return <Crown size={18} strokeWidth={2.3} />;
+      case 'map-pin':
+        return <MapPin size={18} strokeWidth={2.3} />;
+      case 'gem':
+        return <Gem size={18} strokeWidth={2.3} />;
+      case 'landmark':
+        return <Landmark size={18} strokeWidth={2.3} />;
+      case 'mountain':
+        return <Mountain size={18} strokeWidth={2.3} />;
+      default:
+        return <Crown size={18} strokeWidth={2.3} />;
+    }
+  };
+
+  // Base Fan Angles & Offsets (Fanned Deck Structure)
+  const baseRotations = isMobile ? [-9, -4.5, 0, 4.5, 9] : [-14, -7, 0, 7, 14];
+  const baseYOffsets = [12, 3, 0, 3, 12];
+  const spacing = isMobile ? 54 : 112;
+
   return (
     <section
       id="destinations-section"
       ref={sectionRef}
-      className="relative w-full h-[350vh] bg-[#FAF6EE]"
+      className="relative w-full h-[350vh] bg-white"
     >
       {/* =========================================================================
-          NATIVE STICKY FULL-SCREEN VIEWPORT CONTAINER
-          Visually pins to the screen 100% stationary while scrolling through cards
+          NATIVE STICKY FULL-SCREEN VIEWPORT CONTAINER (100VH - 1 SECTION)
+          Visually pins to screen while native scroll smoothly advances the cards
           ========================================================================= */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center px-4 sm:px-8 bg-[#FAF6EE] border-b border-[#D9CEBA] overflow-hidden">
-        <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center my-auto py-3 sm:py-5">
-          
-          {/* =========================================================================
-              HEADER (Displays current active destination info with stable height)
-              ========================================================================= */}
-          <div className="relative z-30 text-center max-w-2xl mx-auto space-y-1.5 mb-6 sm:mb-8 pointer-events-none">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] shadow-2xs pointer-events-auto">
-              <Sparkles size={12} className="text-[#8c532b]" />
-              <span>Kawasan Ikonik Yogyakarta • Destinasi 0{activeIdx + 1} / 0{total}</span>
-            </div>
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center px-4 sm:px-8 bg-white border-b border-neutral-200 overflow-hidden">
+        <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center my-auto py-2">
 
-            {/* Stable height container so title transitions never shift the card stack */}
-            <div className="min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center">
+          {/* =========================================================================
+              SYNCED HEADER (Persis Pola Synced Deck dengan teks 'Research' di Gambar 2)
+              ========================================================================= */}
+          <div className="mb-4 sm:mb-6 max-w-[1040px] mx-auto w-full px-2">
+            <div className="space-y-1 max-w-xl">
+              {/* Big Synced Title (Sesuai teks besar 'Research' di Gambar 2) */}
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={`title-${activeDest.id}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
                   className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 leading-tight"
                 >
                   {activeDest.title}
                 </motion.h2>
               </AnimatePresence>
-            </div>
 
-            {/* Stable height container for tagline */}
-            <div className="min-h-[1.25rem] flex items-center justify-center">
+              {/* Synced Description */}
               <AnimatePresence mode="wait">
                 <motion.p
                   key={`tagline-${activeDest.id}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                  className="text-xs sm:text-sm text-neutral-600 m-0 line-clamp-1 max-w-xl mx-auto"
+                  transition={{ duration: 0.22 }}
+                  className="text-xs sm:text-[13px] text-neutral-600 m-0 line-clamp-1 max-w-lg"
                 >
                   {activeDest.tagline}
                 </motion.p>
@@ -204,92 +266,123 @@ export default function MostLovedDestinations({
           </div>
 
           {/* =========================================================================
-              TIME MACHINE 3D CARD STACK VIEWPORT (STRICTLY NO LOOPING)
-              Clean, minimal, vertically centered card deck with all 4 cards stacked
+              FRAMER SYNCED DECK — 3D OVERLAPPING FANNED CARDS (PERSIS GAMBAR 2)
+              Cards fan out with angles, point/hover/click straightens & brings to front
               ========================================================================= */}
-          <div className="relative w-full max-w-[960px] mx-auto h-[320px] sm:h-[380px] md:h-[430px] lg:h-[470px] xl:h-[500px] pt-10 sm:pt-12 flex items-center justify-center select-none group">
-            {/* Stacked Cards Deck (Strictly 4 cards, zero looping) */}
-            <div className="relative w-full h-[280px] sm:h-[340px] md:h-[390px] lg:h-[430px] xl:h-[460px] flex items-center justify-center">
+          <div className="relative w-full max-w-[1040px] mx-auto h-[360px] sm:h-[390px] md:h-[415px] pt-6 flex items-center justify-center select-none group">
+            <div className="relative w-full h-full flex items-center justify-center">
               {destinations.map((dest, idx) => {
-                const t = idx - activeIdx; // t < 0 past, t === 0 front, t > 0 behind
-                const isPast = t < 0;
-                const isFront = t === 0;
+                const isSelected = activeIdx === idx;
+                const isHovered = hoveredIdx === idx;
+                const isFront = targetIdx === idx;
 
-                // Balanced Framer Time Machine Spring Physics for 4 Stacked Cards
-                const scale = isPast ? 1.04 : Math.max(0.78, 1 - t * 0.055);
-                const yOffset = -14; // Controlled, elegant upward offset
-                const y = isPast ? 32 : t * yOffset;
-                const opacity = isPast ? 0 : 1;
-                const zIndex = 1000 - idx;
+                // Physics kalkulasi posisi fanned deck:
+                // Kartu di depan: rotate: 0, lift: -28px, scale: 1.05
+                // Kartu samping: merekah ke kiri/kanan dan tetap miring
+                let x = (idx - 2) * spacing;
+                let y = baseYOffsets[idx];
+                let rotate = baseRotations[idx];
+                let scale = 0.95;
+                let zIndex = 10;
+
+                if (isFront) {
+                  x = (idx - 2) * spacing;
+                  y = -26;
+                  rotate = 0;
+                  scale = isMobile ? 1.03 : 1.06;
+                  zIndex = 50;
+                } else if (idx < targetIdx) {
+                  x = (idx - 2) * spacing - (isMobile ? 10 : 22);
+                  rotate = baseRotations[idx] - 2;
+                  y = baseYOffsets[idx];
+                  scale = 0.94;
+                  zIndex = 10 + idx;
+                } else if (idx > targetIdx) {
+                  x = (idx - 2) * spacing + (isMobile ? 10 : 22);
+                  rotate = baseRotations[idx] + 2;
+                  y = baseYOffsets[idx];
+                  scale = 0.94;
+                  zIndex = 10 + (total - idx);
+                }
 
                 return (
                   <motion.div
                     key={dest.id}
-                    initial={false}
                     animate={{
+                      x,
                       y,
+                      rotate,
                       scale,
-                      opacity
+                      zIndex
                     }}
                     transition={{
                       type: 'spring',
-                      stiffness: 220,
-                      damping: 26,
-                      mass: 0.6
+                      stiffness: 240,
+                      damping: 23,
+                      mass: 0.75
                     }}
+                    onMouseEnter={() => {
+                      setActiveIdx(idx);
+                      setHoveredIdx(idx);
+                    }}
+                    onMouseLeave={() => setHoveredIdx(null)}
                     onClick={(e) => {
-                      if (isFront) {
-                        handleOpenDetail();
-                      } else if (t > 0) {
-                        e.stopPropagation();
-                        goToDestination(idx);
-                      }
+                      e.stopPropagation();
+                      setActiveIdx(idx);
+                      handleOpenDetail(dest);
                     }}
                     style={{
                       position: 'absolute',
-                      width: '100%',
-                      height: '100%',
-                      transformOrigin: 'top center',
-                      zIndex,
-                      pointerEvents: isPast ? 'none' : 'auto',
+                      backgroundColor: dest.cardBg,
+                      color: dest.textColor,
+                      transformOrigin: 'bottom center',
+                      boxShadow: isFront
+                        ? '0 24px 48px -10px rgba(45, 24, 12, 0.16), 0 8px 20px -4px rgba(45, 24, 12, 0.08)'
+                        : '0 12px 28px -8px rgba(45, 24, 12, 0.1), 0 4px 10px -2px rgba(45, 24, 12, 0.04)',
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       transform: 'translateZ(0)',
                       WebkitTransform: 'translateZ(0)'
                     }}
-                    className={`rounded-[24px] sm:rounded-[32px] overflow-hidden border-2 border-[#E8DFC9] bg-neutral-900 shadow-2xl select-none ${
-                      isFront
-                        ? 'cursor-pointer group/card'
-                        : 'cursor-pointer hover:border-amber-300/80 transition-colors'
-                    }`}
-                    title={isFront ? "Klik untuk melihat direktori destinasi lengkap" : `Buka ${dest.shortName}`}
+                    className={`w-[235px] sm:w-[255px] md:w-[270px] h-[335px] sm:h-[360px] md:h-[385px] rounded-[26px] sm:rounded-[30px] p-4 sm:p-5 flex flex-col justify-between select-none cursor-pointer border ${
+                      isFront ? 'border-[#C7AE98] ring-1 ring-[#C7AE98]/70' : 'border-[#D4BEA9]'
+                    } transition-shadow duration-300`}
+                    title={dest.title}
                   >
-                    {/* Image Canvas with Precise Framing */}
-                    <img
-                      src={cardImageSrc(dest)}
-                      alt={dest.title}
-                      style={{ objectPosition: dest.imagePosition || 'center center' }}
-                      draggable={false}
-                      loading="eager"
-                      decoding="async"
-                      className={`w-full h-full object-cover select-none pointer-events-none transition-transform duration-500 ${
-                        isFront ? 'group-hover/card:scale-[1.015]' : ''
-                      }`}
-                    />
+                    {/* TOP ROW: Icon Symbol on Left (sesuai foto masing-masing) */}
+                    <div>
+                      <div className="flex items-center mb-2.5">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-black/10 text-black">
+                          {renderSymbol(dest.symbolType)}
+                        </div>
+                      </div>
 
-                    {/* Depth dimmer overlay without heavy GPU blur flicker */}
-                    <div
-                      className="absolute inset-0 bg-black pointer-events-none transition-opacity duration-300"
-                      style={{
-                        opacity: isFront ? 0 : Math.min(0.35, t * 0.12)
-                      }}
-                    />
+                      {/* PHOTO THUMBNAIL (Memadukan keindahan foto Jogja dengan layout kartu Gambar 2) */}
+                      <div className="w-full h-[120px] sm:h-[135px] md:h-[145px] rounded-[18px] overflow-hidden bg-black/5 shadow-2xs mb-2.5">
+                        <img
+                          src={dest.bgImage}
+                          alt={dest.title}
+                          style={{ objectPosition: dest.imagePosition || 'center center' }}
+                          draggable={false}
+                          className="w-full h-full object-cover select-none pointer-events-none group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    </div>
 
-                    {/* Top Rim Light Reflection */}
-                    <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-white/25 via-white/5 to-transparent pointer-events-none" />
+                    {/* BOTTOM CONTENT: Bold Title & 2-Line Text & Link (Persis Gambar 2) */}
+                    <div className="space-y-1">
+                      <h3 className="text-sm sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0 text-black">
+                        {dest.title}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs leading-relaxed text-black/85 font-medium line-clamp-2 m-0">
+                        {dest.cardDesc}
+                      </p>
 
-                    {/* Deep Shadow on bottom edge */}
-                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                      <div className="pt-1.5 flex items-center justify-between text-[11px] font-bold text-black">
+                        <span>{isSelected ? "Buka Direktori Lengkap" : "Pilih Kartu"}</span>
+                        <span className="font-bold">→</span>
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })}
@@ -300,9 +393,4 @@ export default function MostLovedDestinations({
       </div>
     </section>
   );
-}
-
-// Helper to safely get image source
-function cardImageSrc(dest) {
-  return dest.bgImage || '/assets/images/jogja_keraton.jpg';
 }

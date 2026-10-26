@@ -93,7 +93,7 @@ export default function InstagramStories() {
   return (
     <section
       id="stories-section"
-      className="w-full relative bg-[#faf6ee] text-[#2b1e16] pt-24 pb-16 overflow-hidden border-none"
+      className="w-full relative bg-white text-black pt-24 pb-16 overflow-hidden border-none"
     >
       {/* SECTION HEADER */}
       <div className="text-center max-w-4xl mx-auto px-6 mb-10 relative z-20">
@@ -101,7 +101,7 @@ export default function InstagramStories() {
           initial={{ opacity: 0, y: -15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f0e8da] border border-[#e2d6c3] text-[#8b4f1e] text-xs font-semibold tracking-wider uppercase mb-4 shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-800 text-xs font-semibold tracking-wider uppercase mb-4 shadow-xs"
         >
           <svg
             width="16"

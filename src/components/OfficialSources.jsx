@@ -109,7 +109,7 @@ export default function OfficialSources() {
   return (
     <section
       id="official-sources"
-      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#2d180c] relative border-b border-[#D9CEBA]"
+      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-white text-black relative border-b border-neutral-200"
     >
       <div
         style={{
@@ -157,20 +157,20 @@ export default function OfficialSources() {
                 style={{
                   minWidth: 0,
                   padding: 'clamp(1.1rem, 3vw, 1.4rem)',
-                  border: '1px solid #D9CEBA',
-                  borderRadius: '16px',
-                  background: '#FAF7F0',
+                  border: '1px solid #C7AE98',
+                  borderRadius: '24px',
+                  background: '#E6D2C1',
                   boxShadow: isHovered
-                    ? '0 12px 32px rgba(45, 24, 12, 0.08)'
-                    : '0 8px 24px rgba(45, 24, 12, 0.06)'
+                    ? '0 12px 32px rgba(45, 24, 12, 0.12)'
+                    : '0 4px 18px rgba(45, 24, 12, 0.05)'
                 }}
               >
                 <div>
-                  <img src={iconSrc} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.82 }} />
-                  <h3 style={{ margin: '0.85rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', lineHeight: 1.3, color: '#3d2314' }}>
+                  <img src={iconSrc} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', opacity: 0.9 }} />
+                  <h3 style={{ margin: '0.85rem 0 0.55rem', fontFamily: 'Outfit, sans-serif', fontSize: '1.15rem', fontWeight: 700, lineHeight: 1.3, color: '#000000' }}>
                     {title}
                   </h3>
-                  <p style={{ margin: '0 0 1rem', color: '#52665d', fontSize: '0.88rem', lineHeight: 1.6 }}>
+                  <p style={{ margin: '0 0 1rem', color: 'rgba(0, 0, 0, 0.8)', fontSize: '0.88rem', lineHeight: 1.6 }}>
                     {detail}
                   </p>
                 </div>
@@ -182,7 +182,7 @@ export default function OfficialSources() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.4rem',
-                    color: '#8c532b',
+                    color: '#000000',
                     fontSize: '0.82rem',
                     fontWeight: 700,
                     textDecoration: 'none',

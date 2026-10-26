@@ -763,6 +763,8 @@ function NusantaraApp() {
           onOpenSwissDetail={() => handleSelectPlaceById('malioboro-tugu')}
           onOpenParisDetail={() => handleSelectPlaceById('kotagede')}
           onOpenNYDetail={() => handleSelectPlaceById('merapi-kaliurang')}
+          onOpenPrambananDetail={() => handleSelectPlaceById('prambanan-ratuboko')}
+          onSelectPlaceById={handleSelectPlaceById}
         />
 
         {/* 5. HANDCRAFTED YOGYAKARTA CULTURAL & CULINARY EXPEDITIONS */}

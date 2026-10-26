@@ -50,63 +50,70 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
           ========================================================================= */}
       <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-white text-[#1A1A1A] flex flex-col justify-center relative border-b border-stone-200">
         <div className="max-w-[1240px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center my-auto">
-          {/* Left Column */}
+          
+          {/* Left Column: Clean Editorial Manifesto with Interactive Navigation */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col justify-between"
+            className="flex flex-col justify-center"
           >
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF7F0] text-black text-xs font-semibold border border-[#D9CEBA] mb-3 shadow-2xs">
-                <img 
-                  src="/images/icon_culture.svg" 
-                  alt="" 
-                  className="h-4 w-4 object-contain opacity-85" 
-                />
-                <span>Eksplorasi Khusus D.I. Yogyakarta</span>
-              </div>
+            {/* Elegant Serif Title */}
+            <h2
+              style={{ fontFamily: "'DM Serif Display', 'Playfair Display', Georgia, serif" }}
+              className="text-4xl sm:text-5xl lg:text-[54px] font-normal tracking-tight text-[#1A1A1A] leading-[1.08] mb-5"
+            >
+              Hamemayu Hayuning Bawana
+            </h2>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black font-['Outfit'] tracking-tight leading-[1.15] mb-3">
-                Menyingkap Falsafah, Tata Krama &amp; Cita Rasa Asli Yogyakarta
-              </h2>
+            {/* Filosofi Subtitle */}
+            <p className="text-sm sm:text-base font-medium text-[#7A6B58] tracking-wide mb-6">
+              Falsafah Luhur Kasultanan Ngayogyakarta Hadiningrat
+            </p>
 
-              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed mb-4 max-w-lg font-normal">
-                Dari Sumbu Filosofis Keraton Ngayogyakarta hingga lereng Gunung Merapi, setiap kawasan menyimpan kisah yang berharga. Temukan kuliner khas melalui panduan berbasis lokasi, lengkap dengan informasi yang membantu Anda memilih tempat makan secara bijak.
+            {/* Editorial Body Text */}
+            <div className="space-y-4 text-xs sm:text-[14px] leading-relaxed text-[#554E46] font-normal">
+              <p>
+                Yogyakarta bukan sekadar titik destinasi wisata, melainkan ruang hidup kebudayaan yang mengakar sejak era Mataram Kuno hingga Kesultanan Mataram Islam. Keindahan kota ini tertata dalam{' '}
+                <strong className="text-[#1A1A1A] font-semibold">Sumbu Filosofis</strong>—garis lurus imajiner pusaka dunia UNESCO yang menghubungkan Gunung Merapi di utara, Tugu Golong Gilig, Keraton Ngayogyakarta, hingga Pantai Parangtritis di Samudra Selatan.
               </p>
-
-              {onOpenAboutUs && (
-                <div className="mb-4">
-                  <button
-                    type="button"
-                    onClick={onOpenAboutUs}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white border border-black text-xs font-semibold transition-all cursor-pointer active:scale-95 shadow-sm"
-                  >
-                    <span>Pelajari Selengkapnya Tentang Nilai &amp; Sumbu Filosofis</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-              )}
+              <p>
+                Platform ini didedikasikan untuk merawat serta memperkenalkan keluhuran warisan adiluhung: mulai dari megahnya arsitektur candi abad ke-9, kesakralan istana air Tamansari, kehangatan denyut malam Malioboro, hingga sentra kriya perak Kotagede.
+              </p>
             </div>
 
-            {/* Bottom Landscape Card (Keraton Ratu Boko) */}
-            <div className="mt-2 w-full h-44 sm:h-52 rounded-2xl overflow-hidden shadow-md border border-neutral-200 group bg-neutral-900">
-              <img 
-                src="/assets/images/jogja_ratuboko.jpg" 
-                alt="Keraton Ratu Boko & Sumbu Filosofis Yogyakarta" 
-                className="w-full h-full object-cover object-[center_35%] group-hover:scale-105 transition-transform duration-700 select-none"
-              />
+            {/* Minimalist Action Buttons */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <motion.button
+                onClick={onOpenAboutUs}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1A1A1A] text-white text-xs sm:text-sm font-medium tracking-wide hover:bg-neutral-800 transition-colors shadow-sm cursor-pointer"
+              >
+                <span>Pelajari Warisan Budaya</span>
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+
+              <motion.button
+                onClick={onOpenBooking}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-stone-300 bg-white text-[#1A1A1A] text-xs sm:text-sm font-medium tracking-wide hover:bg-stone-50 transition-colors cursor-pointer"
+              >
+                <span>Jelajahi Direktori</span>
+                <ArrowUpRight className="w-4 h-4 text-stone-500" />
+              </motion.button>
             </div>
           </motion.div>
 
-          {/* Right Column: Pure Photo Showcase Card */}
+          {/* Right Column: Clean Photographic Dissolve Canvas */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full h-[400px] sm:h-[480px] lg:h-[560px] rounded-[28px] overflow-hidden shadow-2xl border border-neutral-200 bg-neutral-950"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full aspect-[4/3] sm:aspect-[16/11] rounded-3xl overflow-hidden shadow-2xl relative bg-stone-900 border border-stone-200"
           >
             {/* Base Layer: Previous photo */}
             <img
