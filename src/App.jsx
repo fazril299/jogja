@@ -606,10 +606,8 @@ function NusantaraApp() {
       style={{
         position: 'relative',
         width: '100%',
-        height: '100vh',
-        overflowY: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
+        minHeight: '100vh',
+        overflowX: 'hidden',
         background: '#FAF6EE'
       }}
     >

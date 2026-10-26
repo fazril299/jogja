@@ -1,44 +1,70 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
   const heroRef = useRef(null);
 
-  // Scroll tracking untuk Sticky Curtain Hero
+  // 1. SCROLL PHYSICS (Mendengarkan native window scroll)
   const { scrollY } = useScroll();
 
-  // Root hero parallax & fade saat tertutup section di bawahnya
-  const heroScale = useTransform(scrollY, [0, 500], [1, 0.94]);
-  const heroOpacity = useTransform(scrollY, [0, 550], [1, 0.15]);
+  // Root hero sticky curtain cover physics
+  const heroScale = useTransform(scrollY, [0, 600], [1, 0.95]);
+  const heroOpacity = useTransform(scrollY, [0, 700], [1, 0.2]);
 
-  // VitaBoost Scroll Physics - Tugu Meluncur Turun ke Bawah (Downwards Translation)
-  // Kurva kecepatan diekstrak langsung dari Framer VitaBoost
-  const tuguScrollYRaw = useTransform(
-    scrollY,
-    [0, 100, 200, 300, 400, 500, 700],
-    [0, 74.7, 143.8, 186.0, 208.4, 216.6, 220.5]
-  );
-  const tuguScaleRaw = useTransform(scrollY, [0, 600], [1, 0.93]);
+  // Pergerakan Tugu Meluncur Turun ke Bawah (Downwards Translation seperti botol VitaBoost)
+  // Responsif instan terhadap scroll
+  const tuguScrollY = useTransform(scrollY, [0, 150, 300, 500, 750], [0, 85, 175, 275, 360]);
+  const tuguScrollScale = useTransform(scrollY, [0, 750], [1, 0.92]);
+  const tuguScrollRotateX = useTransform(scrollY, [0, 750], [0, 6]); // subtle 3D lean back saat turun
 
-  // Spring smoothing untuk pergerakan Tugu yang ultra-smooth seperti Framer
-  const tuguY = useSpring(tuguScrollYRaw, { stiffness: 120, damping: 28, mass: 0.8 });
-  const tuguScale = useSpring(tuguScaleRaw, { stiffness: 120, damping: 28, mass: 0.8 });
+  // Spring interpolator yang responsif namun luwes
+  const tuguY = useSpring(tuguScrollY, { stiffness: 220, damping: 30, mass: 0.6 });
+  const tuguScale = useSpring(tuguScrollScale, { stiffness: 220, damping: 30, mass: 0.6 });
+  const tuguRotateX = useSpring(tuguScrollRotateX, { stiffness: 220, damping: 30, mass: 0.6 });
 
-  // Teks Raksasa "Yogyakarta": parallax ke bawah lebih lambat dan perlahan memudar
-  const textYRaw = useTransform(scrollY, [0, 500], [0, 85]);
-  const textOpacity = useTransform(scrollY, [0, 280, 520], [1, 0.65, 0.15]);
-  const textY = useSpring(textYRaw, { stiffness: 100, damping: 26 });
+  // Teks Raksasa "Yogyakarta": Parallax ke bawah & memudar
+  const textScrollY = useTransform(scrollY, [0, 600], [0, 120]);
+  const textOpacity = useTransform(scrollY, [0, 240, 520], [1, 0.55, 0.1]);
+  const textY = useSpring(textScrollY, { stiffness: 180, damping: 28 });
 
   // Elemen UI Bawah (Glass Card Kiri & Editorial Copy Kanan): fade out & slide down saat scroll
-  const bottomUiYRaw = useTransform(scrollY, [0, 260], [0, 35]);
-  const bottomUiOpacity = useTransform(scrollY, [0, 180, 300], [1, 0.45, 0]);
-  const bottomUiY = useSpring(bottomUiYRaw, { stiffness: 120, damping: 26 });
+  const bottomUiScrollY = useTransform(scrollY, [0, 260], [0, 45]);
+  const bottomUiOpacity = useTransform(scrollY, [0, 160, 280], [1, 0.4, 0]);
+  const bottomUiY = useSpring(bottomUiScrollY, { stiffness: 200, damping: 28 });
 
   // Background Parallax
-  const bgScaleRaw = useTransform(scrollY, [0, 600], [1.18, 1.28]);
-  const bgScale = useSpring(bgScaleRaw, { stiffness: 80, damping: 25 });
+  const bgScale = useTransform(scrollY, [0, 700], [1.15, 1.25]);
+
+  // 2. INTERACTIVE 3D MOUSE PARALLAX TILT (Efek Kedalaman 3D seperti Framer)
+  const mouseTiltX = useMotionValue(0);
+  const mouseTiltY = useMotionValue(0);
+  const mouseGlowX = useMotionValue(50);
+  const mouseGlowY = useMotionValue(50);
+
+  const springTiltX = useSpring(mouseTiltX, { stiffness: 140, damping: 22 });
+  const springTiltY = useSpring(mouseTiltY, { stiffness: 140, damping: 22 });
+
+  const handleMouseMove = (e) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 sampai 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 sampai 0.5
+
+    // Rotasi 3D halus (maksimal 4.5 derajat agar tetap tegak berwibawa)
+    mouseTiltY.set(x * 9); // rotateY
+    mouseTiltX.set(-y * 6); // rotateX
+    mouseGlowX.set(50 + x * 30);
+    mouseGlowY.set(50 + y * 30);
+  };
+
+  const handleMouseLeave = () => {
+    mouseTiltX.set(0);
+    mouseTiltY.set(0);
+    mouseGlowX.set(50);
+    mouseGlowY.set(50);
+  };
 
   const keratonLandmark = LANDMARKS.find((l) => l.id === 'keraton-yogyakarta') || LANDMARKS[0];
 
@@ -46,6 +72,8 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
     <motion.section
       id="hero-section"
       ref={heroRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
         scale: heroScale,
         opacity: heroOpacity
@@ -76,23 +104,23 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           className="absolute inset-0 w-full h-full object-cover object-[center_45%]"
         />
 
-        {/* Ambient Gradient Overlay: Menjaga warna sunset tetap hangat & kontras teks optimal */}
+        {/* Ambient Gradient Overlay: Mempertahankan warna sunset Jogja & kontras teks */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(14, 9, 6, 0.45) 0%, rgba(14, 9, 6, 0.15) 45%, rgba(10, 6, 4, 0.65) 100%)'
+              'linear-gradient(180deg, rgba(14, 9, 6, 0.45) 0%, rgba(14, 9, 6, 0.12) 42%, rgba(10, 6, 4, 0.7) 100%)'
           }}
         />
 
-        {/* Radial Warm Glow di belakang Tugu */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
+        {/* Dynamic Warm Radial Glow di balik Tugu */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/18 blur-3xl pointer-events-none" />
       </motion.div>
 
       {/* 2. GIANT TYPOGRAPHY: "Yogyakarta" di Belakang Tugu (Tepat di Tengah Layar) */}
       <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none overflow-hidden px-4">
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.96 }}
+          initial={{ opacity: 0, y: 35, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{
@@ -101,24 +129,24 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           }}
           className="relative flex items-center justify-center text-center"
         >
-          {/* Subtle Heritage Leaf/Motif Accents di Samping Teks (seperti motif VitaBoost) */}
+          {/* Subtle Golden Heritage Sparkle Accent di Samping Teks */}
           <motion.div
             animate={{
               y: [0, -6, 0],
               rotate: [0, 4, 0]
             }}
             transition={{
-              duration: 6,
+              duration: 5,
               repeat: Infinity,
               ease: 'easeInOut'
             }}
-            className="absolute -top-6 sm:-top-10 -left-4 sm:-left-10 text-amber-200/40 pointer-events-none select-none hidden sm:block"
+            className="absolute -top-6 sm:-top-10 -left-4 sm:-left-10 text-amber-300/50 pointer-events-none select-none hidden sm:block"
           >
             <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 drop-shadow-md" />
           </motion.div>
 
           <h1
-            className="text-[14.5vw] sm:text-[13.5vw] md:text-[12.8vw] lg:text-[12.2vw] xl:text-[11.8vw] font-serif font-medium tracking-[-0.04em] leading-none text-[#FBF7EE] drop-shadow-[0_20px_40px_rgba(0,0,0,0.45)] whitespace-nowrap select-none"
+            className="text-[14.5vw] sm:text-[13.5vw] md:text-[12.8vw] lg:text-[12.2vw] xl:text-[11.8vw] font-serif font-medium tracking-[-0.04em] leading-none text-[#FBF7EE] drop-shadow-[0_20px_45px_rgba(0,0,0,0.5)] whitespace-nowrap select-none"
             style={{
               fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif"
             }}
@@ -128,8 +156,11 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         </motion.div>
       </div>
 
-      {/* 3. CENTERPIECE: Tugu Jogja - Berdiri TEGAK (0deg) di Tengah & Meluncur Turun Saat Scroll */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none overflow-hidden">
+      {/* 3. CENTERPIECE: TUGU JOGJA 3D (TEGAK, 3D LIGHTING & MOUSE TILT, MELUNCUR TURUN SAAT SCROLL) */}
+      <div
+        className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none overflow-hidden"
+        style={{ perspective: 1200 }}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.88, y: 35 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -141,14 +172,20 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           style={{
             y: tuguY,
             scale: tuguScale,
-            rotate: 0 // 100% TEGAK LURUS sesuai instruksi Fazriell
+            rotateX: tuguRotateX,
+            rotateY: springTiltY,
+            transformStyle: 'preserve-3d'
           }}
-          className="relative flex items-center justify-center"
+          className="relative flex items-center justify-center pointer-events-auto"
         >
-          {/* Soft Shadow di Belakang Tugu */}
-          <div className="absolute -bottom-8 w-44 sm:w-60 h-10 bg-black/60 blur-2xl rounded-full pointer-events-none" />
+          {/* Double Layer 3D Contact Shadow di Bawah Alas Tugu */}
+          <div className="absolute -bottom-6 w-36 sm:w-52 h-8 bg-black/80 blur-md rounded-full pointer-events-none" />
+          <div className="absolute -bottom-10 w-64 sm:w-96 h-14 bg-black/50 blur-2xl rounded-full pointer-events-none" />
 
-          {/* Asset Tugu Jogja: Tegak, Dominan & Terpusat */}
+          {/* 3D Golden Dusk Rim-Light Ambient Aura di sekitar Tugu */}
+          <div className="absolute inset-0 -m-4 rounded-3xl bg-amber-400/10 blur-2xl pointer-events-none" />
+
+          {/* Objek Tugu Jogja dengan Multi-Layer 3D Depth Shadow & Lighting Filter */}
           <img
             src="/tugu_jogja.webp"
             onError={(e) => {
@@ -158,7 +195,20 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
               }
             }}
             alt="Tugu Pal Putih Yogyakarta"
-            className="h-[58vh] sm:h-[66vh] md:h-[72vh] lg:h-[78vh] xl:h-[82vh] max-h-[820px] w-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] pointer-events-auto select-none transition-transform"
+            style={{
+              filter:
+                'drop-shadow(0 20px 45px rgba(0,0,0,0.85)) drop-shadow(0 0 35px rgba(245, 180, 80, 0.28))'
+            }}
+            className="h-[58vh] sm:h-[66vh] md:h-[72vh] lg:h-[78vh] xl:h-[82vh] max-h-[820px] w-auto object-contain select-none transition-transform duration-100 ease-out will-change-transform"
+          />
+
+          {/* 3D Specular Highlight Sheen (Kilau Cahaya Dinamis Mengikuti Mouse/Tilt) */}
+          <motion.div
+            style={{
+              background:
+                'radial-gradient(ellipse at 45% 35%, rgba(255,235,180,0.18) 0%, rgba(255,255,255,0) 65%)'
+            }}
+            className="absolute inset-0 pointer-events-none mix-blend-overlay"
           />
         </motion.div>
       </div>
@@ -167,7 +217,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
       <div className="w-full h-20 sm:h-24 pointer-events-none" />
 
       {/* 5. FLOATING BOTTOM UI (VitaBoost Exact Layout):
-             - Kiri Bawah: Frosted Glass Card Keraton & Tamansari dengan thumbnail & arrow
+             - Kiri Bawah: Frosted Glass Card Keraton & Tamansari
              - Kanan Bawah: Editorial Description + White Luxury Pill CTA Button
       */}
       <motion.div
@@ -187,7 +237,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           }}
           whileHover={{ scale: 1.03, y: -3 }}
           whileTap={{ scale: 0.98 }}
-          className="group pointer-events-auto cursor-pointer flex items-center gap-3.5 sm:gap-4 p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl bg-black/35 backdrop-blur-xl border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.45)] transition-all duration-300 hover:bg-black/50 hover:border-white/35 max-w-[340px] sm:max-w-[370px] w-full sm:w-auto"
+          className="group pointer-events-auto cursor-pointer flex items-center gap-3.5 sm:gap-4 p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/20 shadow-[0_20px_45px_rgba(0,0,0,0.5)] transition-all duration-300 hover:bg-black/55 hover:border-white/35 max-w-[340px] sm:max-w-[370px] w-full sm:w-auto"
           role="button"
           tabIndex={0}
           aria-label="Eksplorasi Keraton dan Tamansari"
