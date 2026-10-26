@@ -97,30 +97,7 @@ export default function InstagramStories() {
     >
       {/* SECTION HEADER */}
       <div className="text-center max-w-4xl mx-auto px-6 mb-10 relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-800 text-xs font-semibold tracking-wider uppercase mb-4 shadow-xs"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-          </svg>
-          Galeri Visual Faktual Hamemayu · 3D Gallery
-        </motion.div>
-
-        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#2b1e16] leading-tight tracking-tight mb-3">
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#2b1e16] leading-tight tracking-tight mb-3">
           Potret Keindahan Budaya, Alam &<br className="hidden sm:block" /> Kuliner Asli Yogyakarta
         </h2>
 
