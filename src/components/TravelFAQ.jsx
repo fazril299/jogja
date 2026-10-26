@@ -62,13 +62,13 @@ export default function TravelFAQ({ id }) {
         key={item.idx}
         onClick={() => toggleQuestion(item.idx)}
         style={{
-          background: '#FFFFFF',
-          border: '1px solid #E5E7EB',
-          borderRadius: '20px',
+          background: '#E6D2C1',
+          border: '1px solid #C7AE98',
+          borderRadius: '24px',
           padding: 'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 3vw, 1.6rem)',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
-          boxShadow: isOpen ? '0 10px 30px rgba(0, 0, 0, 0.05)' : '0 2px 10px rgba(0, 0, 0, 0.02)'
+          boxShadow: isOpen ? '0 12px 32px rgba(45, 24, 12, 0.12)' : '0 4px 18px rgba(45, 24, 12, 0.05)'
         }}
       >
         <div style={{
@@ -81,19 +81,19 @@ export default function TravelFAQ({ id }) {
             fontFamily: 'Outfit, sans-serif',
             fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
             fontWeight: 700,
-            color: '#3d2314',
+            color: '#000000',
             lineHeight: 1.35
           }}>
             {item.q}
           </h3>
           <div style={{
-            color: '#64748b',
+            color: '#000000',
             flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            {isOpen ? <Minus size={18} strokeWidth={2} /> : <Plus size={18} strokeWidth={2} />}
+            {isOpen ? <Minus size={18} strokeWidth={2.5} /> : <Plus size={18} strokeWidth={2.5} />}
           </div>
         </div>
 
@@ -108,9 +108,9 @@ export default function TravelFAQ({ id }) {
             >
               <p style={{
                 fontSize: '0.9rem',
-                color: '#64748b',
+                color: 'rgba(0, 0, 0, 0.82)',
                 lineHeight: 1.55,
-                fontWeight: 400
+                fontWeight: 500
               }}>
                 {item.a}
               </p>

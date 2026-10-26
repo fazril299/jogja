@@ -38,7 +38,7 @@ export default function MostLovedDestinations({
       cardDesc: 'Pusat kosmologi Kasultanan Mataram dan istana air sakral Tamansari.',
       bgImage: '/assets/images/jogja_keraton.jpg',
       imagePosition: 'center 45%',
-      cardBg: '#FAF6EE',
+      cardBg: '#E6D2C1',
       textColor: '#000000',
       accentColor: '#000000',
       symbolType: 'crown', // Sesuai foto Regol Danapratapa / Istana Kasultanan
@@ -54,7 +54,7 @@ export default function MostLovedDestinations({
       cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
       bgImage: '/assets/images/jogja_malioboro.jpg',
       imagePosition: 'center 50%',
-      cardBg: '#FAF6EE',
+      cardBg: '#E6D2C1',
       textColor: '#000000',
       accentColor: '#000000',
       symbolType: 'map-pin', // Sesuai foto plang Jl. Malioboro & titik pusat kota
@@ -70,7 +70,7 @@ export default function MostLovedDestinations({
       cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       imagePosition: 'center 72%',
-      cardBg: '#FAF6EE',
+      cardBg: '#E6D2C1',
       textColor: '#000000',
       accentColor: '#000000',
       symbolType: 'gem', // Sesuai foto kriya perak Kotagede & warisan Mataram
@@ -86,7 +86,7 @@ export default function MostLovedDestinations({
       cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
       bgImage: '/assets/images/jogja_prambanan.jpg',
       imagePosition: 'center 40%',
-      cardBg: '#FAF6EE',
+      cardBg: '#E6D2C1',
       textColor: '#000000',
       accentColor: '#000000',
       symbolType: 'landmark', // Sesuai foto kemegahan Candi Prambanan abad ke-9
@@ -102,7 +102,7 @@ export default function MostLovedDestinations({
       cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       imagePosition: 'center 38%',
-      cardBg: '#FAF6EE',
+      cardBg: '#E6D2C1',
       textColor: '#000000',
       accentColor: '#000000',
       symbolType: 'mountain', // Sesuai foto puncak vulkanik Gunung Merapi
@@ -341,14 +341,14 @@ export default function MostLovedDestinations({
                         : '0 12px 28px -8px rgba(45, 24, 12, 0.1), 0 4px 10px -2px rgba(45, 24, 12, 0.04)'
                     }}
                     className={`w-[235px] sm:w-[255px] md:w-[270px] h-[335px] sm:h-[360px] md:h-[385px] rounded-[26px] sm:rounded-[30px] p-4 sm:p-5 flex flex-col justify-between select-none cursor-pointer border ${
-                      isFront ? 'border-[#D9CEBA] ring-1 ring-[#D9CEBA]/60' : 'border-[#E8DFC9]'
+                      isFront ? 'border-[#C7AE98] ring-1 ring-[#C7AE98]/70' : 'border-[#D4BEA9]'
                     } transition-shadow duration-300`}
                     title={dest.title}
                   >
                     {/* TOP ROW: Icon Symbol on Left (sesuai foto masing-masing) */}
                     <div>
                       <div className="flex items-center mb-2.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-black/5 text-black">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-black/10 text-black">
                           {renderSymbol(dest.symbolType)}
                         </div>
                       </div>
@@ -370,7 +370,7 @@ export default function MostLovedDestinations({
                       <h3 className="text-sm sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0 text-black">
                         {dest.title}
                       </h3>
-                      <p className="text-[11px] sm:text-xs leading-relaxed text-black/75 line-clamp-2 m-0">
+                      <p className="text-[11px] sm:text-xs leading-relaxed text-black/85 font-medium line-clamp-2 m-0">
                         {dest.cardDesc}
                       </p>
 

@@ -178,7 +178,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
             
             {/* PILLAR 1: Tall Vertical Monolith (Budaya & Sejarah Mataram) */}
-            <div className="lg:col-span-5 bg-white border border-neutral-200 rounded-[28px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+            <div className="lg:col-span-5 bg-[#E6D2C1] border border-[#C7AE98] rounded-[28px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(45,24,12,0.06)] hover:shadow-lg transition-all group">
               <div>
                 <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-200">
                   <img
@@ -191,21 +191,21 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                 <div className="mt-5">
                   <h3
                     style={{ fontFamily: "'DM Serif Display', 'Playfair Display', Georgia, serif" }}
-                    className="text-2xl sm:text-[26px] font-normal text-[#1A1A1A] leading-tight"
+                    className="text-2xl sm:text-[26px] font-bold text-black leading-tight"
                   >
                     Budaya &amp; Sejarah Mataram
                   </h3>
-                  <p className="text-xs sm:text-[13.5px] text-[#554E46] mt-2.5 leading-relaxed font-normal">
+                  <p className="text-xs sm:text-[13.5px] text-black/80 mt-2.5 leading-relaxed font-normal">
                     Keraton Ngayogyakarta, Istana Air Tamansari, Candi Prambanan, dan Sumbu Filosofis warisan leluhur.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-2 flex items-center justify-between text-xs sm:text-sm font-medium text-[#1A1A1A]">
+              <div className="mt-6 pt-2 flex items-center justify-between text-xs sm:text-sm font-semibold text-black">
                 <button
                   type="button"
                   onClick={() => onSelectPlaceById ? onSelectPlaceById('keraton-yogyakarta') : (onOpenBooking && onOpenBooking())}
-                  className="inline-flex items-center gap-1.5 hover:text-[#9B6B28] transition-colors cursor-pointer group/btn"
+                  className="inline-flex items-center gap-1.5 hover:text-[#5C3620] transition-colors cursor-pointer group/btn"
                 >
                   <span>Jelajahi Sejarah</span>
                   <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
@@ -213,7 +213,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                 <button
                   type="button"
                   onClick={() => onSelectPlaceById ? onSelectPlaceById('merapi-kaliurang') : (onOpenBooking && onOpenBooking())}
-                  className="inline-flex items-center gap-1.5 hover:text-[#9B6B28] transition-colors cursor-pointer group/btn"
+                  className="inline-flex items-center gap-1.5 hover:text-[#5C3620] transition-colors cursor-pointer group/btn"
                 >
                   <span>Lihat Alam</span>
                   <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
@@ -225,7 +225,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
             <div className="lg:col-span-7 flex flex-col gap-5 justify-between">
               
               {/* PILLAR 2: Panoramic Horizontal Ribbon (Wisata Alam & Hiburan) */}
-              <div className="bg-[#153023] rounded-[28px] p-5 sm:p-6 text-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all flex flex-col sm:flex-row items-center gap-5 sm:gap-6 flex-1 group">
+              <div className="bg-[#E6D2C1] border border-[#C7AE98] rounded-[28px] p-5 sm:p-6 text-black shadow-[0_4px_20px_rgba(45,24,12,0.06)] hover:shadow-lg transition-all flex flex-col sm:flex-row items-center gap-5 sm:gap-6 flex-1 group">
                 <div className="w-full sm:w-[46%] aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-800 shrink-0">
                   <img
                     src="/assets/images/jogja_merapi.jpg"
@@ -238,25 +238,25 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                   <div>
                     <h3
                       style={{ fontFamily: "'DM Serif Display', 'Playfair Display', Georgia, serif" }}
-                      className="text-xl sm:text-[22px] font-normal text-white leading-tight"
+                      className="text-xl sm:text-[22px] font-bold text-black leading-tight"
                     >
                       Wisata Alam &amp; Hiburan
                     </h3>
-                    <p className="text-xs sm:text-[13px] text-[#D1E0D7] mt-2 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-[13px] text-black/80 mt-2 leading-relaxed font-normal">
                       Udara sejuk Kaliurang lereng Merapi, Gumuk Pasir Parangtritis, hingga tebing karst eksotis Gunungkidul.
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] sm:text-xs text-[#9BB6A4] mt-3 font-normal">
+                    <div className="flex items-center gap-2 text-[11px] sm:text-xs text-black/75 mt-3 font-medium">
                       <span>• Lereng Merapi</span>
                       <span>• Gumuk Pasir</span>
                       <span>• Tebing Karst</span>
                     </div>
                   </div>
 
-                  <div className="mt-5 flex items-center justify-between text-xs sm:text-sm font-medium text-white">
+                  <div className="mt-5 flex items-center justify-between text-xs sm:text-sm font-semibold text-black">
                     <button
                       type="button"
                       onClick={() => onSelectPlaceById ? onSelectPlaceById('merapi-kaliurang') : (onOpenBooking && onOpenBooking())}
-                      className="inline-flex items-center gap-1.5 hover:text-[#A7D8B8] transition-colors cursor-pointer group/btn"
+                      className="inline-flex items-center gap-1.5 hover:text-[#5C3620] transition-colors cursor-pointer group/btn"
                     >
                       <span>Lihat Alam</span>
                       <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
@@ -264,7 +264,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                     <button
                       type="button"
                       onClick={() => onSelectPlaceById ? onSelectPlaceById('merapi-kaliurang') : (onOpenBooking && onOpenBooking())}
-                      className="hover:translate-x-1 transition-transform text-white/80 hover:text-white cursor-pointer"
+                      className="hover:translate-x-1 transition-transform text-black/80 hover:text-black cursor-pointer font-bold"
                       aria-label="Lihat Alam"
                     >
                       →
@@ -277,7 +277,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 
                 {/* PILLAR 3: Kuliner Legendaris */}
-                <div className="bg-white border border-neutral-200 rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+                <div className="bg-[#E6D2C1] border border-[#C7AE98] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(45,24,12,0.06)] hover:shadow-lg transition-all group">
                   <div className="flex items-center gap-3.5">
                     <div className="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-2xl overflow-hidden bg-neutral-200 shrink-0">
                       <img
@@ -289,11 +289,11 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                     <div className="min-w-0 flex-1">
                       <h4
                         style={{ fontFamily: "'DM Serif Display', 'Playfair Display', Georgia, serif" }}
-                        className="text-base sm:text-[18px] font-normal text-[#1A1A1A] leading-snug"
+                        className="text-base sm:text-[18px] font-bold text-black leading-snug"
                       >
                         Kuliner Legendaris
                       </h4>
-                      <p className="text-xs text-[#554E46] mt-1 line-clamp-2 leading-relaxed font-normal">
+                      <p className="text-xs text-black/80 mt-1 line-clamp-2 leading-relaxed font-normal">
                         Gudeg kayu bakar Wijilan, Sate Klathak Jejeran, Brongkos &amp; Kopi
                       </p>
                     </div>
@@ -303,7 +303,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                     <button
                       type="button"
                       onClick={onOpenNearMe}
-                      className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-medium text-[#1A1A1A] hover:text-[#9B6B28] transition-colors cursor-pointer group/btn"
+                      className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-semibold text-black hover:text-[#5C3620] transition-colors cursor-pointer group/btn"
                     >
                       <span>Eksplorasi Rasa</span>
                       <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
@@ -312,7 +312,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                 </div>
 
                 {/* PILLAR 4: Kampung Wisata & ... */}
-                <div className="bg-white border border-neutral-200 rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+                <div className="bg-[#E6D2C1] border border-[#C7AE98] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(45,24,12,0.06)] hover:shadow-lg transition-all group">
                   <div className="flex items-center gap-3.5">
                     <div className="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-2xl overflow-hidden bg-neutral-200 shrink-0">
                       <img
@@ -324,11 +324,11 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                     <div className="min-w-0 flex-1">
                       <h4
                         style={{ fontFamily: "'DM Serif Display', 'Playfair Display', Georgia, serif" }}
-                        className="text-base sm:text-[18px] font-normal text-[#1A1A1A] leading-snug"
+                        className="text-base sm:text-[18px] font-bold text-black leading-snug"
                       >
-                        Kampung Wisata &amp; ...
+                        Kampung Wisata &amp; Kriya
                       </h4>
-                      <p className="text-xs text-[#554E46] mt-1 line-clamp-2 leading-relaxed font-normal">
+                      <p className="text-xs text-black/80 mt-1 line-clamp-2 leading-relaxed font-normal">
                         Lorong perak Kotagede, gerabah Kasongan, dan keluhuran tata krama...
                       </p>
                     </div>
@@ -338,7 +338,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                     <button
                       type="button"
                       onClick={() => onSelectPlaceById ? onSelectPlaceById('kotagede') : (onOpenBooking && onOpenBooking())}
-                      className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-medium text-[#1A1A1A] hover:text-[#9B6B28] transition-colors cursor-pointer group/btn"
+                      className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-semibold text-black hover:text-[#5C3620] transition-colors cursor-pointer group/btn"
                     >
                       <span>Kunjungi Kampung</span>
                       <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
