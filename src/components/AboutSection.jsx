@@ -152,12 +152,12 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
       {/* =========================================================================
           SECTION 3: EMPAT DIMENSI KEISTIMEWAAN YOGYAKARTA (WARM BENTO GRID)
           ========================================================================= */}
-      <section className="py-20 sm:py-28 px-4 sm:px-8 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]">
+      <section className="py-20 sm:py-28 px-4 sm:px-8 bg-white text-[#1A1A1A] flex flex-col justify-center relative border-b border-neutral-200">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8 sm:gap-10">
           
           {/* Header: Pill Badge, Title, & Subtitle */}
           <div className="text-center flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-[#D9CEBA] text-[#333] text-xs font-medium shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-[#333] text-xs font-medium shadow-2xs">
               <LayoutGrid className="w-3.5 h-3.5 text-neutral-600" />
               <span>Jelajahi Berdasarkan Minat</span>
             </div>
@@ -178,7 +178,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
             
             {/* PILLAR 1: Tall Vertical Monolith (Budaya & Sejarah Mataram) */}
-            <div className="lg:col-span-5 bg-[#FAF7F0] border border-[#D9CEBA] rounded-[28px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+            <div className="lg:col-span-5 bg-white border border-neutral-200 rounded-[28px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
               <div>
                 <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-200">
                   <img
@@ -277,7 +277,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 
                 {/* PILLAR 3: Kuliner Legendaris */}
-                <div className="bg-[#FAF7F0] border border-[#D9CEBA] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+                <div className="bg-white border border-neutral-200 rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
                   <div className="flex items-center gap-3.5">
                     <div className="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-2xl overflow-hidden bg-neutral-200 shrink-0">
                       <img
@@ -312,7 +312,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
                 </div>
 
                 {/* PILLAR 4: Kampung Wisata & ... */}
-                <div className="bg-[#FAF7F0] border border-[#D9CEBA] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
+                <div className="bg-white border border-neutral-200 rounded-[28px] p-4 sm:p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all group">
                   <div className="flex items-center gap-3.5">
                     <div className="w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-2xl overflow-hidden bg-neutral-200 shrink-0">
                       <img

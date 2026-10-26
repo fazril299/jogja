@@ -109,7 +109,7 @@ export default function OfficialSources() {
   return (
     <section
       id="official-sources"
-      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#2d180c] relative border-b border-[#D9CEBA]"
+      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-white text-black relative border-b border-neutral-200"
     >
       <div
         style={{
@@ -157,12 +157,12 @@ export default function OfficialSources() {
                 style={{
                   minWidth: 0,
                   padding: 'clamp(1.1rem, 3vw, 1.4rem)',
-                  border: '1px solid #D9CEBA',
+                  border: '1px solid #E5E7EB',
                   borderRadius: '16px',
-                  background: '#FAF7F0',
+                  background: '#FFFFFF',
                   boxShadow: isHovered
-                    ? '0 12px 32px rgba(45, 24, 12, 0.08)'
-                    : '0 8px 24px rgba(45, 24, 12, 0.06)'
+                    ? '0 12px 32px rgba(0, 0, 0, 0.06)'
+                    : '0 4px 16px rgba(0, 0, 0, 0.03)'
                 }}
               >
                 <div>
