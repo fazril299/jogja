@@ -23,10 +23,10 @@ const CASCADING_CARDS = [
     description:
       'Kesejukan lereng Merapi Kaliurang, Gumuk Pasir Parangtritis, hingga panorama tebing karst eksotis Gunungkidul.',
     buttonLabel: 'Lihat Alam',
-    background: '#587D5C', // Vibrant Emerald Sage (Alam Hutan Merapi & Tamansari)
+    background: '#4A2B18', // Cokelat Tua Lurik & Gagang Keris Si Jojo (Bukan Hijau)
     textColor: '#FFFFFF',
     buttonBackground: '#FFFFFF',
-    buttonText: '#1C311E',
+    buttonText: '#2D180C',
     tilt: -0.6,
     yOffset: 3,
     targetPlace: 'merapi-kaliurang'

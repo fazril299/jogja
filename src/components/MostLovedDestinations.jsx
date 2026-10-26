@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, MapPin, Gem, Landmark, Mountain } from 'lucide-react';
 
 export default function MostLovedDestinations({
   onOpenBooking,
@@ -26,7 +25,7 @@ export default function MostLovedDestinations({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // 5 Destinasi Ikonik Yogyakarta (Arsitektur Fanned Deck dengan Warna Variatif Spektrum Si Jojo)
+  // 5 Destinasi Ikonik Yogyakarta (Warna Spektrum Otentik Si Jojo Tanpa Hijau + Ikon Asli Jogja)
   const destinations = [
     {
       id: 'keraton-yogyakarta',
@@ -38,10 +37,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Pusat kosmologi Kasultanan Mataram dan istana air sakral Tamansari.',
       bgImage: '/assets/images/jogja_keraton.jpg',
       imagePosition: 'center 45%',
-      cardBg: '#E8CAAC', // Coksu Lurik Hangat
+      cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
       textColor: '#2D180C',
       accentColor: '#2D180C',
-      symbolType: 'crown', // Sesuai foto Regol Danapratapa / Istana Kasultanan
+      iconSrc: '/images/icon_all.svg', // Ikon Batik Keraton / Sumbu Filosofis Asli Pengguna
       onClick: onOpenJapanDetail
     },
     {
@@ -54,10 +53,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
       bgImage: '/assets/images/jogja_malioboro.jpg',
       imagePosition: 'center 50%',
-      cardBg: '#F0C254', // Emas Terang Malioboro & Bros Si Jojo
+      cardBg: '#F0C254', // Emas Bros Keraton & Pin Tugu Si Jojo
       textColor: '#2D180C',
       accentColor: '#2D180C',
-      symbolType: 'map-pin', // Sesuai foto plang Jl. Malioboro & titik pusat kota
+      iconSrc: '/images/icon_soul.svg', // Ikon Sayap Denyut Jiwa Jogja Asli Pengguna
       onClick: onOpenSwissDetail
     },
     {
@@ -70,10 +69,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       imagePosition: 'center 72%',
-      cardBg: '#D1BEA8', // Perak Mataram & Kamera Vintage Jojo
+      cardBg: '#D5C4B4', // Perak Antik Kotagede & Kamera Vintage Jojo
       textColor: '#22150A',
       accentColor: '#22150A',
-      symbolType: 'gem', // Sesuai foto kriya perak Kotagede & warisan Mataram
+      iconSrc: '/images/icon_culture.svg', // Ikon Pusaka Budaya Asli Pengguna
       onClick: onOpenParisDetail
     },
     {
@@ -86,10 +85,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
       bgImage: '/assets/images/jogja_prambanan.jpg',
       imagePosition: 'center 40%',
-      cardBg: '#DE7445', // Oranye Senja Ratu Boko & Paruh Si Jojo
+      cardBg: '#DE7445', // Oranye Paruh Ramah Si Jojo & Senja Ratu Boko
       textColor: '#FFFFFF',
       accentColor: '#FFFFFF',
-      symbolType: 'landmark', // Sesuai foto kemegahan Candi Prambanan abad ke-9
+      iconSrc: '/images/icon_culture.svg', // Ikon Cagar Budaya Asli Pengguna
       onClick: onOpenPrambananDetail || (() => onSelectPlaceById && onSelectPlaceById('prambanan-ratuboko'))
     },
     {
@@ -102,10 +101,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       imagePosition: 'center 38%',
-      cardBg: '#5B7E5F', // Hijau Lereng Gunung Merapi & Kebun Tamansari
+      cardBg: '#4A2B18', // Cokelat Tua Lurik & Gagang Keris Si Jojo (Bukan Hijau)
       textColor: '#FFFFFF',
       accentColor: '#FFFFFF',
-      symbolType: 'mountain', // Sesuai foto puncak vulkanik Gunung Merapi
+      iconSrc: '/images/icon_nature.svg', // Ikon Bentang Alam Asli Pengguna
       onClick: onOpenNYDetail
     }
   ];
@@ -194,24 +193,6 @@ export default function MostLovedDestinations({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIdx, goToDestination, total]);
 
-  // Render Iconic Symbols disesuaikan dengan foto masing-masing destinasi
-  const renderSymbol = (type) => {
-    switch (type) {
-      case 'crown':
-        return <Crown size={18} strokeWidth={2.3} />;
-      case 'map-pin':
-        return <MapPin size={18} strokeWidth={2.3} />;
-      case 'gem':
-        return <Gem size={18} strokeWidth={2.3} />;
-      case 'landmark':
-        return <Landmark size={18} strokeWidth={2.3} />;
-      case 'mountain':
-        return <Mountain size={18} strokeWidth={2.3} />;
-      default:
-        return <Crown size={18} strokeWidth={2.3} />;
-    }
-  };
-
   // Base Fan Angles & Offsets (Fanned Deck Structure)
   const baseRotations = isMobile ? [-9, -4.5, 0, 4.5, 9] : [-14, -7, 0, 7, 14];
   const baseYOffsets = [12, 3, 0, 3, 12];
@@ -235,7 +216,7 @@ export default function MostLovedDestinations({
               ========================================================================= */}
           <div className="mb-4 sm:mb-6 max-w-[1040px] mx-auto w-full px-2">
             <div className="space-y-1 max-w-xl">
-              {/* Big Synced Title (Sesuai teks besar 'Research' di Gambar 2) */}
+              {/* Big Synced Title */}
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={`title-${activeDest.id}`}
@@ -277,8 +258,6 @@ export default function MostLovedDestinations({
                 const isFront = targetIdx === idx;
 
                 // Physics kalkulasi posisi fanned deck:
-                // Kartu di depan: rotate: 0, lift: -28px, scale: 1.05
-                // Kartu samping: merekah ke kiri/kanan dan tetap miring
                 let x = (idx - 2) * spacing;
                 let y = baseYOffsets[idx];
                 let rotate = baseRotations[idx];
@@ -351,17 +330,29 @@ export default function MostLovedDestinations({
                     } transition-shadow duration-300`}
                     title={dest.title}
                   >
-                    {/* TOP ROW: Icon Symbol on Left (sesuai foto masing-masing) */}
+                    {/* TOP ROW: Ikon Budaya Asli Milik Pengguna (Custom SVG) */}
                     <div>
                       <div className="flex items-center mb-2.5">
                         <div
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center p-1.5 transition-colors"
                           style={{
-                            backgroundColor: isLightText ? 'rgba(255, 255, 255, 0.22)' : 'rgba(45, 24, 12, 0.08)',
-                            color: dest.textColor
+                            backgroundColor: isLightText ? 'rgba(255, 255, 255, 0.22)' : 'rgba(45, 24, 12, 0.08)'
                           }}
                         >
-                          {renderSymbol(dest.symbolType)}
+                          <div
+                            className="w-4 h-4 sm:w-[17px] sm:h-[17px]"
+                            style={{
+                              backgroundColor: dest.textColor,
+                              maskImage: `url(${dest.iconSrc})`,
+                              WebkitMaskImage: `url(${dest.iconSrc})`,
+                              maskSize: 'contain',
+                              WebkitMaskSize: 'contain',
+                              maskRepeat: 'no-repeat',
+                              WebkitMaskRepeat: 'no-repeat',
+                              maskPosition: 'center',
+                              WebkitMaskPosition: 'center'
+                            }}
+                          />
                         </div>
                       </div>
 
