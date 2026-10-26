@@ -9,8 +9,10 @@ const CASCADING_CARDS = [
     description:
       'Keraton Ngayogyakarta, Istana Air Tamansari, Candi Prambanan, dan Sumbu Filosofis warisan adiluhung Mataram.',
     buttonLabel: 'Jelajahi Sejarah',
-    background: '#E6D2C1', // Signature Coksu Si Jojo (Surjan & Blangkon)
+    background: '#E2BF99', // Rich Golden Coksu (Surjan Lurik Si Jojo)
     textColor: '#2D180C',
+    buttonBackground: '#2D180C',
+    buttonText: '#FAF6EE',
     tilt: -2.2,
     yOffset: 0,
     targetPlace: 'keraton-yogyakarta'
@@ -21,8 +23,10 @@ const CASCADING_CARDS = [
     description:
       'Kesejukan lereng Merapi Kaliurang, Gumuk Pasir Parangtritis, hingga panorama tebing karst eksotis Gunungkidul.',
     buttonLabel: 'Lihat Alam',
-    background: '#9EAC8D', // Earthy Sage Olive (Daun Sirih & Alam Merapi)
-    textColor: '#1A2416',
+    background: '#587D5C', // Vibrant Emerald Sage (Alam Hutan Merapi & Tamansari)
+    textColor: '#FFFFFF',
+    buttonBackground: '#FFFFFF',
+    buttonText: '#1C311E',
     tilt: -0.6,
     yOffset: 3,
     targetPlace: 'merapi-kaliurang'
@@ -33,8 +37,10 @@ const CASCADING_CARDS = [
     description:
       'Gudeg kayu bakar Wijilan, aroma Sate Klathak Jejeran, kehangatan Brongkos pusaka, hingga racikan kopi arang legendaris.',
     buttonLabel: 'Eksplorasi Rasa',
-    background: '#C8795E', // Warm Terracotta (Dapur Rempah & Gerabah Kasongan)
-    textColor: '#241008',
+    background: '#DC6A38', // Vibrant Warm Sunset Orange (Paruh Ramah Si Jojo & Rempah)
+    textColor: '#FFFFFF',
+    buttonBackground: '#2B1204',
+    buttonText: '#FFFFFF',
     tilt: 0.6,
     yOffset: 6,
     isNearMe: true
@@ -45,8 +51,10 @@ const CASCADING_CARDS = [
     description:
       'Lorong perak Kotagede, sentra gerabah tanah liat Kasongan, tradisi batik tulis Giriloyo, dan keramahan kampung budaya.',
     buttonLabel: 'Kunjungi Kampung',
-    background: '#D8BB88', // Heritage Ochre (Bros Emas Keraton Si Jojo)
-    textColor: '#261C08',
+    background: '#EBB438', // Rich Royal Amber Gold (Bros Emas Keraton & Bohlam Jojo)
+    textColor: '#2B1802',
+    buttonBackground: '#2B1802',
+    buttonText: '#FFFBF0',
     tilt: 2.2,
     yOffset: 8,
     targetPlace: 'kotagede'
@@ -191,8 +199,8 @@ function CascadeCardItem({
             minHeight: `${42 * scaleFactor}px`,
             padding: `0 ${16 * scaleFactor}px`,
             borderRadius: '999px',
-            background: buttonBackground,
-            color: buttonText,
+            background: card.buttonBackground || buttonBackground,
+            color: card.buttonText || buttonText,
             border: 'none',
             fontSize: `${12 * scaleFactor}px`,
             fontWeight: 600,
@@ -286,7 +294,7 @@ export default function CardsCascade({ onOpenBooking, onSelectPlaceById, onOpenN
       className="relative w-full"
       style={{
         height: '380vh',
-        background: 'rgb(245, 241, 232)' // Exact Framer warm canvas background
+        background: '#FAF6EE' // Unified single alabaster canvas background
       }}
     >
       <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">

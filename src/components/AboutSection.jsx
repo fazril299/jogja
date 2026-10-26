@@ -48,7 +48,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
       {/* =========================================================================
           SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - CLEAN MONOCHROME)
           ========================================================================= */}
-      <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-white text-[#1A1A1A] flex flex-col justify-center relative border-b border-stone-200">
+      <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]/60">
         <div className="max-w-[1240px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center my-auto">
           
           {/* Left Column: Clean Editorial Manifesto with Interactive Navigation */}

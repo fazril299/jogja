@@ -26,7 +26,7 @@ export default function MostLovedDestinations({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // 5 Destinasi Ikonik Yogyakarta (Arsitektur Fanned Deck dengan Kartu Coksu #E6D2C1 & Teks Hitam)
+  // 5 Destinasi Ikonik Yogyakarta (Arsitektur Fanned Deck dengan Warna Variatif Spektrum Si Jojo)
   const destinations = [
     {
       id: 'keraton-yogyakarta',
@@ -38,9 +38,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Pusat kosmologi Kasultanan Mataram dan istana air sakral Tamansari.',
       bgImage: '/assets/images/jogja_keraton.jpg',
       imagePosition: 'center 45%',
-      cardBg: '#E6D2C1',
-      textColor: '#000000',
-      accentColor: '#000000',
+      cardBg: '#E8CAAC', // Coksu Lurik Hangat
+      textColor: '#2D180C',
+      accentColor: '#2D180C',
       symbolType: 'crown', // Sesuai foto Regol Danapratapa / Istana Kasultanan
       onClick: onOpenJapanDetail
     },
@@ -54,9 +54,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
       bgImage: '/assets/images/jogja_malioboro.jpg',
       imagePosition: 'center 50%',
-      cardBg: '#E6D2C1',
-      textColor: '#000000',
-      accentColor: '#000000',
+      cardBg: '#F0C254', // Emas Terang Malioboro & Bros Si Jojo
+      textColor: '#2D180C',
+      accentColor: '#2D180C',
       symbolType: 'map-pin', // Sesuai foto plang Jl. Malioboro & titik pusat kota
       onClick: onOpenSwissDetail
     },
@@ -70,9 +70,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       imagePosition: 'center 72%',
-      cardBg: '#E6D2C1',
-      textColor: '#000000',
-      accentColor: '#000000',
+      cardBg: '#D1BEA8', // Perak Mataram & Kamera Vintage Jojo
+      textColor: '#22150A',
+      accentColor: '#22150A',
       symbolType: 'gem', // Sesuai foto kriya perak Kotagede & warisan Mataram
       onClick: onOpenParisDetail
     },
@@ -86,9 +86,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
       bgImage: '/assets/images/jogja_prambanan.jpg',
       imagePosition: 'center 40%',
-      cardBg: '#E6D2C1',
-      textColor: '#000000',
-      accentColor: '#000000',
+      cardBg: '#DE7445', // Oranye Senja Ratu Boko & Paruh Si Jojo
+      textColor: '#FFFFFF',
+      accentColor: '#FFFFFF',
       symbolType: 'landmark', // Sesuai foto kemegahan Candi Prambanan abad ke-9
       onClick: onOpenPrambananDetail || (() => onSelectPlaceById && onSelectPlaceById('prambanan-ratuboko'))
     },
@@ -102,9 +102,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       imagePosition: 'center 38%',
-      cardBg: '#E6D2C1',
-      textColor: '#000000',
-      accentColor: '#000000',
+      cardBg: '#5B7E5F', // Hijau Lereng Gunung Merapi & Kebun Tamansari
+      textColor: '#FFFFFF',
+      accentColor: '#FFFFFF',
       symbolType: 'mountain', // Sesuai foto puncak vulkanik Gunung Merapi
       onClick: onOpenNYDetail
     }
@@ -221,13 +221,13 @@ export default function MostLovedDestinations({
     <section
       id="destinations-section"
       ref={sectionRef}
-      className="relative w-full h-[350vh] bg-white"
+      className="relative w-full h-[350vh] bg-[#FAF6EE]"
     >
       {/* =========================================================================
           NATIVE STICKY FULL-SCREEN VIEWPORT CONTAINER (100VH - 1 SECTION)
           Visually pins to screen while native scroll smoothly advances the cards
           ========================================================================= */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center px-4 sm:px-8 bg-white border-b border-neutral-200 overflow-hidden">
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center px-4 sm:px-8 bg-[#FAF6EE] border-b border-[#D9CEBA]/60 overflow-hidden">
         <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center my-auto py-2">
 
           {/* =========================================================================
@@ -257,7 +257,7 @@ export default function MostLovedDestinations({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.22 }}
-                  className="text-xs sm:text-[13px] text-neutral-600 m-0 line-clamp-1 max-w-lg"
+                  className="text-xs sm:text-[13px] text-[#554E46] m-0 line-clamp-1 max-w-lg"
                 >
                   {activeDest.tagline}
                 </motion.p>
@@ -305,6 +305,8 @@ export default function MostLovedDestinations({
                   zIndex = 10 + (total - idx);
                 }
 
+                const isLightText = dest.textColor === '#FFFFFF';
+
                 return (
                   <motion.div
                     key={dest.id}
@@ -337,7 +339,7 @@ export default function MostLovedDestinations({
                       color: dest.textColor,
                       transformOrigin: 'bottom center',
                       boxShadow: isFront
-                        ? '0 24px 48px -10px rgba(45, 24, 12, 0.16), 0 8px 20px -4px rgba(45, 24, 12, 0.08)'
+                        ? '0 24px 48px -10px rgba(45, 24, 12, 0.18), 0 8px 20px -4px rgba(45, 24, 12, 0.08)'
                         : '0 12px 28px -8px rgba(45, 24, 12, 0.1), 0 4px 10px -2px rgba(45, 24, 12, 0.04)',
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
@@ -345,20 +347,26 @@ export default function MostLovedDestinations({
                       WebkitTransform: 'translateZ(0)'
                     }}
                     className={`w-[235px] sm:w-[255px] md:w-[270px] h-[335px] sm:h-[360px] md:h-[385px] rounded-[26px] sm:rounded-[30px] p-4 sm:p-5 flex flex-col justify-between select-none cursor-pointer border ${
-                      isFront ? 'border-[#C7AE98] ring-1 ring-[#C7AE98]/70' : 'border-[#D4BEA9]'
+                      isFront ? 'border-white/40 ring-2 ring-black/10' : 'border-black/10'
                     } transition-shadow duration-300`}
                     title={dest.title}
                   >
                     {/* TOP ROW: Icon Symbol on Left (sesuai foto masing-masing) */}
                     <div>
                       <div className="flex items-center mb-2.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-black/10 text-black">
+                        <div
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors"
+                          style={{
+                            backgroundColor: isLightText ? 'rgba(255, 255, 255, 0.22)' : 'rgba(45, 24, 12, 0.08)',
+                            color: dest.textColor
+                          }}
+                        >
                           {renderSymbol(dest.symbolType)}
                         </div>
                       </div>
 
-                      {/* PHOTO THUMBNAIL (Memadukan keindahan foto Jogja dengan layout kartu Gambar 2) */}
-                      <div className="w-full h-[120px] sm:h-[135px] md:h-[145px] rounded-[18px] overflow-hidden bg-black/5 shadow-2xs mb-2.5">
+                      {/* PHOTO THUMBNAIL (Memadukan keindahan foto Jogja dengan layout kartu) */}
+                      <div className="w-full h-[120px] sm:h-[135px] md:h-[145px] rounded-[18px] overflow-hidden bg-black/10 shadow-2xs mb-2.5">
                         <img
                           src={dest.bgImage}
                           alt={dest.title}
@@ -369,16 +377,28 @@ export default function MostLovedDestinations({
                       </div>
                     </div>
 
-                    {/* BOTTOM CONTENT: Bold Title & 2-Line Text & Link (Persis Gambar 2) */}
+                    {/* BOTTOM CONTENT: Bold Title & 2-Line Text & Link */}
                     <div className="space-y-1">
-                      <h3 className="text-sm sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0 text-black">
+                      <h3
+                        className="text-sm sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0"
+                        style={{ color: dest.textColor }}
+                      >
                         {dest.title}
                       </h3>
-                      <p className="text-[11px] sm:text-xs leading-relaxed text-black/85 font-medium line-clamp-2 m-0">
+                      <p
+                        className="text-[11px] sm:text-xs leading-relaxed font-medium line-clamp-2 m-0"
+                        style={{
+                          color: dest.textColor,
+                          opacity: isLightText ? 0.92 : 0.82
+                        }}
+                      >
                         {dest.cardDesc}
                       </p>
 
-                      <div className="pt-1.5 flex items-center justify-between text-[11px] font-bold text-black">
+                      <div
+                        className="pt-1.5 flex items-center justify-between text-[11px] font-bold"
+                        style={{ color: dest.textColor }}
+                      >
                         <span>{isSelected ? "Buka Direktori Lengkap" : "Pilih Kartu"}</span>
                         <span className="font-bold">→</span>
                       </div>

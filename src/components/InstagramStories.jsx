@@ -93,7 +93,7 @@ export default function InstagramStories() {
   return (
     <section
       id="stories-section"
-      className="w-full relative bg-white text-black pt-24 pb-16 overflow-hidden border-none"
+      className="w-full relative bg-[#FAF6EE] text-[#1A1A1A] pt-24 pb-16 overflow-hidden border-none"
     >
       {/* SECTION HEADER */}
       <div className="text-center max-w-4xl mx-auto px-6 mb-10 relative z-20">

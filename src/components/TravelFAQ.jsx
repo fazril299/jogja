@@ -122,7 +122,7 @@ export default function TravelFAQ({ id }) {
   };
 
   return (
-    <section id={id || "faq-section"} className="web-section-100vh w-full bg-white px-4 sm:px-8 pt-16 sm:pt-20 pb-8 relative flex flex-col border-b border-neutral-200">
+    <section id={id || "faq-section"} className="web-section-100vh w-full bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-20 pb-8 relative flex flex-col border-b border-neutral-200">
       <div style={{
         maxWidth: '1240px',
         margin: 'auto auto',
