@@ -3064,7 +3064,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           Jika tempat yang Anda cari belum ada di daftar destinasi atau peta Hamemayu, silakan tambahkan ulasan atau bagikan foto pengalaman Anda langsung melalui panduan budaya ini.{' '}
                           <span
                             onClick={() => setExpandedBio(false)}
-                            style={{ color: '#00838f', fontWeight: 500, cursor: 'pointer' }}
+                            style={{ color: '#8C5E3C', fontWeight: 500, cursor: 'pointer' }}
                           >
                             Sembunyikan
                           </span>
@@ -3074,7 +3074,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           Jika tempat yang Anda cari belum ada di ...{' '}
                           <span
                             onClick={() => setExpandedBio(true)}
-                            style={{ color: '#00838f', fontWeight: 500, cursor: 'pointer' }}
+                            style={{ color: '#8C5E3C', fontWeight: 500, cursor: 'pointer' }}
                           >
                             Lainnya
                           </span>
@@ -3167,7 +3167,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                               padding: 0,
                               fontSize: '12px',
                               fontWeight: 600,
-                              color: '#00838f',
+                              color: '#8C5E3C',
                               cursor: 'pointer'
                             }}
                           >
@@ -3318,7 +3318,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       border: 'none',
                       fontSize: '13.5px',
                       fontWeight: profileTab === 'ulasan' ? 600 : 500,
-                      color: profileTab === 'ulasan' ? '#00838f' : '#5f6368',
+                      color: profileTab === 'ulasan' ? '#8C5E3C' : '#5f6368',
                       cursor: 'pointer',
                       position: 'relative'
                     }}
@@ -3332,7 +3332,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           left: '15%',
                           right: '15%',
                           height: '3px',
-                          backgroundColor: '#00838f',
+                          backgroundColor: '#8C5E3C',
                           borderRadius: '3px 3px 0 0'
                         }}
                       />
@@ -3349,7 +3349,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       border: 'none',
                       fontSize: '13.5px',
                       fontWeight: profileTab === 'foto' ? 600 : 500,
-                      color: profileTab === 'foto' ? '#00838f' : '#5f6368',
+                      color: profileTab === 'foto' ? '#8C5E3C' : '#5f6368',
                       cursor: 'pointer',
                       position: 'relative'
                     }}
@@ -3363,7 +3363,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           left: '15%',
                           right: '15%',
                           height: '3px',
-                          backgroundColor: '#00838f',
+                          backgroundColor: '#8C5E3C',
                           borderRadius: '3px 3px 0 0'
                         }}
                       />
@@ -3380,7 +3380,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       border: 'none',
                       fontSize: '13.5px',
                       fontWeight: profileTab === 'badge' ? 600 : 500,
-                      color: profileTab === 'badge' ? '#00838f' : '#5f6368',
+                      color: profileTab === 'badge' ? '#8C5E3C' : '#5f6368',
                       cursor: 'pointer',
                       position: 'relative'
                     }}
@@ -3394,7 +3394,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           left: '15%',
                           right: '15%',
                           height: '3px',
-                          backgroundColor: '#00838f',
+                          backgroundColor: '#8C5E3C',
                           borderRadius: '3px 3px 0 0'
                         }}
                       />
@@ -3476,7 +3476,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                     onClick={() =>
                                       setExpandedReviewIds((prev) => ({ ...prev, [revItem.id || idx]: false }))
                                     }
-                                    style={{ color: '#00838f', fontWeight: 500, cursor: 'pointer' }}
+                                    style={{ color: '#8C5E3C', fontWeight: 500, cursor: 'pointer' }}
                                   >
                                     Sembunyikan
                                   </span>
@@ -3491,7 +3491,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                       onClick={() =>
                                         setExpandedReviewIds((prev) => ({ ...prev, [revItem.id || idx]: true }))
                                       }
-                                      style={{ color: '#00838f', fontWeight: 500, cursor: 'pointer' }}
+                                      style={{ color: '#8C5E3C', fontWeight: 500, cursor: 'pointer' }}
                                     >
                                       Lainnya
                                     </span>
@@ -3631,7 +3631,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           style={{
                             padding: '6px 12px',
                             borderRadius: '16px',
-                            backgroundColor: '#00838f',
+                            backgroundColor: '#8C5E3C',
                             color: '#ffffff',
                             border: 'none',
                             fontSize: '11.5px',
@@ -3664,7 +3664,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                             key={b.id}
                             style={{
                               backgroundColor: '#ffffff',
-                              border: isShowcased ? '1.5px solid #00838f' : '1px solid #dadce0',
+                              border: isShowcased ? '1.5px solid #8C5E3C' : '1px solid #dadce0',
                               borderRadius: '12px',
                               padding: '12px 14px',
                               display: 'flex',
@@ -3720,7 +3720,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                       style={{
                                         fontSize: '10px',
                                         fontWeight: 700,
-                                        color: '#00838f',
+                                        color: '#8C5E3C',
                                         backgroundColor: '#E0F7FA',
                                         padding: '1px 6px',
                                         borderRadius: '6px'
@@ -3750,8 +3750,8 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                 fontSize: '11.5px',
                                 fontWeight: 600,
                                 backgroundColor: isShowcased ? '#E0F7FA' : '#f8f9fa',
-                                border: isShowcased ? '1px solid #00838f' : '1px solid #dadce0',
-                                color: isShowcased ? '#00838f' : '#3c4043',
+                                border: isShowcased ? '1px solid #8C5E3C' : '1px solid #dadce0',
+                                color: isShowcased ? '#8C5E3C' : '#3c4043',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -3759,7 +3759,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                               }}
                               title={isShowcased ? 'Hapus dari pameran profil' : 'Pamerkan badge ini di profil'}
                             >
-                              <Sparkles size={11} color={isShowcased ? '#00838f' : '#5f6368'} />
+                              <Sparkles size={11} color={isShowcased ? '#8C5E3C' : '#5f6368'} />
                               <span>{isShowcased ? 'Terpajang' : 'Pamerkan'}</span>
                             </button>
                           </div>

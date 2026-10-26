@@ -44,7 +44,7 @@ export default function InteractiveMapModal({
             <div>
               <h2 className="font-serif text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
                 <span>Peta Budaya & Kuliner D.I. Yogyakarta</span>
-                <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30">
+                <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-amber-950/80 text-amber-200 border border-amber-500/40">
                   {places.length} Titik Wilayah DIY
                 </span>
               </h2>
@@ -126,7 +126,7 @@ export default function InteractiveMapModal({
                 {/* Visual Archipelago Grid Graphic */}
                 <div className="absolute inset-0 opacity-10 bg-batik-pattern"></div>
                 <div className="absolute top-4 left-4 text-xs font-mono text-neutral-400 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
                   <span>KOORDINAT D.I. YOGYAKARTA: 7°31'LS - 8°13'LS / 110°00'BT - 110°50'BT</span>
                 </div>
 

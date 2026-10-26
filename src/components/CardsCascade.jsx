@@ -9,8 +9,8 @@ const CASCADING_CARDS = [
     description:
       'Keraton Ngayogyakarta, Istana Air Tamansari, Candi Prambanan, dan Sumbu Filosofis warisan adiluhung Mataram.',
     buttonLabel: 'Jelajahi Sejarah',
-    background: 'rgb(169, 182, 154)', // Framer exact Sage Green
-    textColor: 'rgb(21, 21, 21)',
+    background: '#E6D2C1', // Signature Coksu Si Jojo (Surjan & Blangkon)
+    textColor: '#2D180C',
     tilt: -2.2,
     yOffset: 0,
     targetPlace: 'keraton-yogyakarta'
@@ -21,8 +21,8 @@ const CASCADING_CARDS = [
     description:
       'Kesejukan lereng Merapi Kaliurang, Gumuk Pasir Parangtritis, hingga panorama tebing karst eksotis Gunungkidul.',
     buttonLabel: 'Lihat Alam',
-    background: 'rgb(170, 195, 208)', // Framer exact Slate Blue
-    textColor: 'rgb(21, 21, 21)',
+    background: '#9EAC8D', // Earthy Sage Olive (Daun Sirih & Alam Merapi)
+    textColor: '#1A2416',
     tilt: -0.6,
     yOffset: 3,
     targetPlace: 'merapi-kaliurang'
@@ -33,8 +33,8 @@ const CASCADING_CARDS = [
     description:
       'Gudeg kayu bakar Wijilan, aroma Sate Klathak Jejeran, kehangatan Brongkos pusaka, hingga racikan kopi arang legendaris.',
     buttonLabel: 'Eksplorasi Rasa',
-    background: 'rgb(200, 121, 94)', // Framer exact Terracotta
-    textColor: 'rgb(17, 17, 17)',
+    background: '#C8795E', // Warm Terracotta (Dapur Rempah & Gerabah Kasongan)
+    textColor: '#241008',
     tilt: 0.6,
     yOffset: 6,
     isNearMe: true
@@ -45,8 +45,8 @@ const CASCADING_CARDS = [
     description:
       'Lorong perak Kotagede, sentra gerabah tanah liat Kasongan, tradisi batik tulis Giriloyo, dan keramahan kampung budaya.',
     buttonLabel: 'Kunjungi Kampung',
-    background: 'rgb(216, 187, 136)', // Framer exact Ochre / Mustard
-    textColor: 'rgb(17, 17, 17)',
+    background: '#D8BB88', // Heritage Ochre (Bros Emas Keraton Si Jojo)
+    textColor: '#261C08',
     tilt: 2.2,
     yOffset: 8,
     targetPlace: 'kotagede'

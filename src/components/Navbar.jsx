@@ -1264,13 +1264,13 @@ export default function Navbar({
                     closeAll();
                     if (onOpenMap) onOpenMap();
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-cyan-950 bg-cyan-50/70 hover:bg-cyan-100/80 border border-cyan-200/60"
+                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-[#2D180C] bg-[#FAF6EE] hover:bg-[#E6D2C1]/60 border border-[#D9CEBA]"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                    <span className="w-2 h-2 rounded-full bg-[#C89B3C]" />
                     <span>Peta Budaya &amp; Cagar Wisata DIY</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-cyan-800" />
+                  <ChevronRight className="w-3.5 h-3.5 text-[#8C5E3C]" />
                 </button>
 
                 {/* Jurnal Budaya */}
