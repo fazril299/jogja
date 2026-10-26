@@ -607,7 +607,7 @@ function NusantaraApp() {
         position: 'relative',
         width: '100%',
         minHeight: '100vh',
-        overflowX: 'hidden',
+        overflow: "visible",
         background: '#FAF6EE'
       }}
     >
