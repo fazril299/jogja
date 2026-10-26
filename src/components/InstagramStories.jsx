@@ -1,185 +1,163 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { PassageGallery } from './PassageGallery';
 
 export default function InstagramStories() {
-  const stories = [
-    { id: 1, image: '/assets/images/jogja_tugu.jpg', title: 'Tugu Pal Putih', category: 'Sumbu Filosofis' },
-    { id: 2, image: '/assets/images/jogja_keraton.jpg', title: 'Keraton Ngayogyakarta', category: 'Warisan UNESCO' },
-    { id: 3, image: '/assets/images/jogja_tamansari.jpg', title: 'Istana Air Tamansari', category: 'Cagar Budaya' },
-    { id: 4, image: '/assets/images/real_gunungan_grebeg.jpg', title: 'Hajad Dalem Grebeg', category: 'Tradisi Keraton' },
-    { id: 5, image: '/assets/images/jogja_prambanan.jpg', title: 'Candi Prambanan', category: 'Mahakarya Abad ke-9' },
-    { id: 6, image: '/assets/images/real_ramayana_stage.jpg', title: 'Sendratari Ramayana', category: 'Seni Pertunjukan' },
-    { id: 7, image: '/assets/images/jogja_ratuboko.jpg', title: 'Senja Ratu Boko', category: 'Arkeologi Mataram' },
-    { id: 8, image: '/assets/images/jogja_merapi.jpg', title: 'Gunung Merapi', category: 'Poros Kosmis Utara' },
-    { id: 9, image: '/assets/images/real_tari_srimanganti.jpg', title: 'Tari Klasik Srimanganti', category: 'Kesenian Keraton' },
-    { id: 10, image: '/assets/images/jogja_kotagede.jpg', title: 'Warisan Kotagede', category: 'Ibu Kota Mataram' },
-    { id: 11, image: '/assets/images/real_bregada_keraton.jpg', title: 'Bregada Prajurit', category: 'Kawal Pusaka' },
-    { id: 12, image: '/assets/images/real_batik_keraton.jpg', title: 'Batik Tulis Pusaka', category: 'Kriya Warisan' },
-    { id: 13, image: '/assets/images/jogja_batik.jpg', title: 'Kampung Batik Giriloyo', category: 'Sentra Batik Tulis' },
-    { id: 14, image: '/assets/images/jogja_malioboro.jpg', title: 'Malam Malioboro', category: 'Denyut Kota' },
-    { id: 15, image: '/assets/images/jogja_gudeg.jpg', title: 'Gudeg Kering Wijilan', category: 'Kuliner Legendaris' },
-    { id: 16, image: '/assets/images/real_artjog.jpg', title: 'ARTJOG Contemporary Art', category: 'Pameran Seni' },
-    { id: 17, image: '/assets/images/real_bekakak_gamping.jpg', title: 'Upacara Saparan Bekakak', category: 'Adat Istiadat' },
-    { id: 18, image: '/assets/images/jogja_kasongan.jpg', title: 'Gerabah Kasongan', category: 'Kriya Tanah Liat' },
-    { id: 19, image: '/assets/images/jogja_upacara_adat.jpg', title: 'Prosesi Adat Kasultanan', category: 'Paugeran Budaya' },
-    { id: 20, image: '/assets/images/jogja_parangtritis.jpg', title: 'Pantai Parangtritis', category: 'Poros Segara Kidul' }
+  const jogjaSlides = [
+    {
+      id: 1,
+      src: '/assets/images/jogja_merapi.jpg',
+      alt: 'Gunung Merapi - Poros Kosmis Utara',
+      title: 'Gunung Merapi',
+      category: 'Poros Kosmis Utara'
+    },
+    {
+      id: 2,
+      src: '/assets/images/jogja_keraton.jpg',
+      alt: 'Keraton Ngayogyakarta - Warisan UNESCO',
+      title: 'Keraton Ngayogyakarta',
+      category: 'Warisan UNESCO'
+    },
+    {
+      id: 3,
+      src: '/assets/images/jogja_tamansari.jpg',
+      alt: 'Istana Air Tamansari - Cagar Budaya',
+      title: 'Istana Air Tamansari',
+      category: 'Cagar Budaya'
+    },
+    {
+      id: 4,
+      src: '/assets/images/jogja_prambanan.jpg',
+      alt: 'Candi Prambanan - Mahakarya Abad ke-9',
+      title: 'Candi Prambanan',
+      category: 'Mahakarya Abad ke-9'
+    },
+    {
+      id: 5,
+      src: '/assets/images/jogja_ratuboko.jpg',
+      alt: 'Senja Ratu Boko - Arkeologi Mataram',
+      title: 'Senja Ratu Boko',
+      category: 'Arkeologi Mataram'
+    },
+    {
+      id: 6,
+      src: '/assets/images/jogja_kotagede.jpg',
+      alt: 'Warisan Kotagede - Ibu Kota Mataram',
+      title: 'Warisan Kotagede',
+      category: 'Ibu Kota Mataram'
+    },
+    {
+      id: 7,
+      src: '/assets/images/jogja_batik.jpg',
+      alt: 'Kampung Batik Giriloyo - Sentra Batik Tulis',
+      title: 'Kampung Batik Giriloyo',
+      category: 'Sentra Batik Tulis'
+    },
+    {
+      id: 8,
+      src: '/assets/images/jogja_malioboro.jpg',
+      alt: 'Malam Malioboro - Denyut Kota',
+      title: 'Malam Malioboro',
+      category: 'Denyut Kota'
+    },
+    {
+      id: 9,
+      src: '/assets/images/jogja_gudeg.jpg',
+      alt: 'Gudeg Kering Wijilan - Kuliner Legendaris',
+      title: 'Gudeg Kering Wijilan',
+      category: 'Kuliner Legendaris'
+    },
+    {
+      id: 10,
+      src: '/assets/images/jogja_kasongan.jpg',
+      alt: 'Gerabah Kasongan - Kriya Tanah Liat',
+      title: 'Gerabah Kasongan',
+      category: 'Kriya Tanah Liat'
+    },
+    {
+      id: 11,
+      src: '/assets/images/jogja_parangtritis.jpg',
+      alt: 'Pantai Parangtritis - Poros Segara Kidul',
+      title: 'Pantai Parangtritis',
+      category: 'Poros Segara Kidul'
+    },
+    {
+      id: 12,
+      src: '/assets/images/jogja_tugu.jpg',
+      alt: 'Tugu Pal Putih - Sumbu Filosofis',
+      title: 'Tugu Pal Putih',
+      category: 'Sumbu Filosofis'
+    }
   ];
-
-  // Duplicate for seamless infinite loop
-  const marqueeItems = [...stories, ...stories];
 
   return (
     <section
       id="stories-section"
-      className="web-section-100vh px-4 sm:px-8 pt-28 sm:pt-32 pb-8 flex flex-col justify-between border-b border-[#D9CEBA]"
-      style={{
-        width: '100%',
-        maxWidth: '100vw',
-        background: '#FAF6EE',
-        position: 'relative',
-        overflow: 'hidden'
-      }}
+      className="w-full relative bg-[#faf6ee] text-[#2b1e16] pt-24 pb-16 overflow-hidden border-none"
     >
       {/* SECTION HEADER */}
-      <div style={{
-        textAlign: 'center',
-        maxWidth: '750px',
-        margin: '0 auto 1.5rem auto',
-        padding: '0 2rem'
-      }}>
-        <motion.div 
+      <div className="text-center max-w-4xl mx-auto px-6 mb-10 relative z-20">
+        <motion.div
           initial={{ opacity: 0, y: -15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: '#8c532b',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            marginBottom: '0.8rem'
-          }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f0e8da] border border-[#e2d6c3] text-[#8b4f1e] text-xs font-semibold tracking-wider uppercase mb-4 shadow-sm"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
           </svg>
-          Galeri Visual Faktual Hamemayu
+          Galeri Visual Faktual Hamemayu · 3D Gallery
         </motion.div>
 
-        <h2 style={{
-          fontFamily: 'Outfit, sans-serif',
-          fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)',
-          fontWeight: 800,
-          color: '#2d180c',
-          lineHeight: 1.15,
-          letterSpacing: '-0.02em'
-        }}>
-          Potret Keindahan Budaya, Alam &<br />Kuliner Asli Yogyakarta
+        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#2b1e16] leading-tight tracking-tight mb-3">
+          Potret Keindahan Budaya, Alam &<br className="hidden sm:block" /> Kuliner Asli Yogyakarta
         </h2>
+
+        <p className="text-xs sm:text-sm text-[#6e5849] font-sans max-w-xl mx-auto">
+          Jelajahi keagungan visual candi, keraton, kriya batik, dan alam Jogja dalam galeri 3D interaktif berbasis WebGL.
+        </p>
       </div>
 
-      {/* INFINITE SCROLLING MARQUEE GALLERY */}
-      <style>{`
-        @keyframes jogjaMarqueeScroll {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
-        }
-        .jogja-marquee-track {
-          display: flex;
-          gap: 1.25rem;
-          white-space: nowrap;
-          width: max-content;
-          will-change: transform;
-          animation: jogjaMarqueeScroll 45s linear infinite;
-        }
-        .jogja-marquee-track:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
-      <div style={{
-        display: 'flex',
-        width: '100%',
-        overflow: 'hidden',
-        position: 'relative'
-      }}>
-        <div className="jogja-marquee-track">
-          {marqueeItems.map((item, idx) => (
-            <div
-              key={`${item.id}-${idx}`}
-              style={{
-                width: '190px',
-                height: '290px',
-                borderRadius: '22px',
-                overflow: 'hidden',
-                flexShrink: 0,
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
-                cursor: 'pointer',
-                background: '#f1f5f9',
-                position: 'relative',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-              }}
-            >
-              <img 
-                src={item.image} 
-                alt={`${item.title} - ${item.category}`} 
-                loading="lazy"
-                decoding="async"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block'
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(to top, rgba(12, 10, 9, 0.85) 0%, rgba(12, 10, 9, 0.25) 45%, transparent 100%)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  padding: '1rem 0.85rem',
-                  pointerEvents: 'none'
-                }}
-              >
-                <span style={{
-                  color: '#fef08a',
-                  fontSize: '0.66rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  marginBottom: '0.2rem'
-                }}>
-                  {item.category}
-                </span>
-                <span style={{
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  lineHeight: 1.25,
-                  whiteSpace: 'normal'
-                }}>
-                  {item.title}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* 3D WEBGL CURVED RING GALLERY - SINGLE ROW PORTRAIT LIKE GAMBAR 2 */}
+      <div className="w-full h-[75vh] min-h-[520px] max-h-[780px] relative z-10 bg-[#faf6ee]">
+        <PassageGallery
+          slides={jogjaSlides}
+          layout="ring"
+          scrollLength={4}
+          imageSize={0.52}
+          spacing={0.05}
+          scatter={0}
+          radius={0.025}
+          cardAspect={0.68}
+          rows={1}
+          background="#faf6ee"
+          fog={0.42}
+          reflection={0.16}
+          vignette={0.02}
+          grain={0.005}
+          motion={0}
+          smoothing={0.6}
+          tilt={0.35}
+          intro={true}
+        />
       </div>
 
-      {/* SUBTEXT BELOW MARQUEE */}
-      <div style={{
-        textAlign: 'center',
-        marginTop: '2.5rem',
-        color: '#64748b',
-        fontSize: '0.88rem',
-        fontWeight: 500
-      }}>
-        Tandai <span style={{ color: '#051926', fontWeight: 700 }}>@hamemayu.official</span> agar foto dokumentasi budaya Anda berkesempatan dikurasi.
+      {/* SUBTEXT BELOW 3D GALLERY */}
+      <div className="text-center mt-8 text-xs sm:text-sm text-[#7d6756] font-sans relative z-20">
+        Tandai{' '}
+        <span className="text-[#8b4f1e] font-semibold">@hamemayu.official</span>{' '}
+        agar foto dokumentasi budaya Anda berkesempatan dikurasi.
       </div>
     </section>
   );
