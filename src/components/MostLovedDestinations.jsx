@@ -62,10 +62,7 @@ export default function MostLovedDestinations({
   // NATIVE CSS STICKY SCROLL CONTROLLER
   // 1. Outer section provides 350vh scroll track
   // 2. Inner viewport is sticky top-0 h-screen (visually pins to screen 100%)
-  // 3. Native scroll drives card progression strictly from card 0 to card 3
-  // 4. At card 3, scrolling down naturally continues to next section
-  // 5. Scrolling up from below pins at card 3, reverses 3->2->1->0, and unpins
-  // 6. Zero wheel-hijacking, zero thread conflicts, 100% glitch-free 60/120fps
+  // 3. Smooth segment calculation with hysteresis to completely eliminate flickering
   // =========================================================================
   useEffect(() => {
     let rafId = null;
@@ -76,15 +73,16 @@ export default function MostLovedDestinations({
       const scrollableDist = sectionRef.current.offsetHeight - window.innerHeight;
       if (scrollableDist <= 0) return;
 
-      // Calculate progress from 0.0 to 1.0 within the pinned section
+      // Progress from 0.0 to 1.0 within the pinned section
       const progress = Math.min(1, Math.max(0, -rect.top / scrollableDist));
 
-      // Divide scroll track into equal segments for the 4 cards:
-      // 0.00 - 0.25 -> Card 0 (Keraton & Tamansari)
-      // 0.25 - 0.50 -> Card 1 (Malioboro & Tugu)
-      // 0.50 - 0.75 -> Card 2 (Warisan Kotagede)
-      // 0.75 - 1.00 -> Card 3 (Merapi & Kaliurang)
-      const newIdx = Math.min(total - 1, Math.max(0, Math.floor(progress * total)));
+      // Divide scroll track into equal segments with hysteresis dead-zones:
+      let newIdx = 0;
+      if (progress < 0.28) newIdx = 0;
+      else if (progress < 0.58) newIdx = 1;
+      else if (progress < 0.88) newIdx = 2;
+      else newIdx = 3;
+
       setActiveIdx((prev) => (prev !== newIdx ? newIdx : prev));
     };
 
@@ -164,41 +162,45 @@ export default function MostLovedDestinations({
         <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center my-auto py-3 sm:py-5">
           
           {/* =========================================================================
-              HEADER (Displays current active destination info)
+              HEADER (Displays current active destination info with stable height)
               ========================================================================= */}
-          <div className="relative z-30 text-center max-w-2xl mx-auto space-y-1.5 mb-7 sm:mb-9 pointer-events-none">
+          <div className="relative z-30 text-center max-w-2xl mx-auto space-y-1.5 mb-6 sm:mb-8 pointer-events-none">
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] shadow-2xs pointer-events-auto">
               <Sparkles size={12} className="text-[#8c532b]" />
               <span>Kawasan Ikonik Yogyakarta • Destinasi 0{activeIdx + 1} / 0{total}</span>
             </div>
 
-            {/* Animated Destination Title on Card Change */}
-            <AnimatePresence>
-              <motion.h2
-                key={`title-${activeDest.id}`}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 leading-tight"
-              >
-                {activeDest.title}
-              </motion.h2>
-            </AnimatePresence>
+            {/* Stable height container so title transitions never shift the card stack */}
+            <div className="min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.h2
+                  key={`title-${activeDest.id}`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 leading-tight"
+                >
+                  {activeDest.title}
+                </motion.h2>
+              </AnimatePresence>
+            </div>
 
-            {/* Animated Tagline */}
-            <AnimatePresence>
-              <motion.p
-                key={`tagline-${activeDest.id}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="text-xs sm:text-sm text-neutral-600 m-0 line-clamp-1 max-w-xl mx-auto"
-              >
-                {activeDest.tagline}
-              </motion.p>
-            </AnimatePresence>
+            {/* Stable height container for tagline */}
+            <div className="min-h-[1.25rem] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={`tagline-${activeDest.id}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="text-xs sm:text-sm text-neutral-600 m-0 line-clamp-1 max-w-xl mx-auto"
+                >
+                  {activeDest.tagline}
+                </motion.p>
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* =========================================================================
@@ -214,12 +216,10 @@ export default function MostLovedDestinations({
                 const isFront = t === 0;
 
                 // Balanced Framer Time Machine Spring Physics for 4 Stacked Cards
-                const scale = isPast ? 1.04 : Math.max(0.76, 1 - t * 0.06);
-                const yOffset = -12; // Controlled, elegant upward offset
-                const y = isPast ? 36 : t * yOffset;
+                const scale = isPast ? 1.04 : Math.max(0.78, 1 - t * 0.055);
+                const yOffset = -14; // Controlled, elegant upward offset
+                const y = isPast ? 32 : t * yOffset;
                 const opacity = isPast ? 0 : 1;
-                const blur = isPast ? 8 : (isFront ? 0 : Math.min(t * 0.8, 2.4));
-                const brightness = isPast ? 1 : Math.max(0.76, 1 - t * 0.08);
                 const zIndex = 1000 - idx;
 
                 return (
@@ -228,13 +228,14 @@ export default function MostLovedDestinations({
                     initial={false}
                     animate={{
                       y,
-                      scale
+                      scale,
+                      opacity
                     }}
                     transition={{
                       type: 'spring',
-                      stiffness: 180,
-                      damping: 24,
-                      mass: 0.75
+                      stiffness: 220,
+                      damping: 26,
+                      mass: 0.6
                     }}
                     onClick={(e) => {
                       if (isFront) {
@@ -249,12 +250,12 @@ export default function MostLovedDestinations({
                       width: '100%',
                       height: '100%',
                       transformOrigin: 'top center',
-                      willChange: 'transform, opacity, filter',
-                      opacity,
-                      filter: `blur(${blur}px) brightness(${brightness})`,
-                      transition: 'opacity 350ms cubic-bezier(0.16, 1, 0.3, 1), filter 350ms cubic-bezier(0.16, 1, 0.3, 1)',
                       zIndex,
-                      pointerEvents: isPast ? 'none' : 'auto'
+                      pointerEvents: isPast ? 'none' : 'auto',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      transform: 'translateZ(0)',
+                      WebkitTransform: 'translateZ(0)'
                     }}
                     className={`rounded-[24px] sm:rounded-[32px] overflow-hidden border-2 border-[#E8DFC9] bg-neutral-900 shadow-2xl select-none ${
                       isFront
@@ -269,9 +270,19 @@ export default function MostLovedDestinations({
                       alt={dest.title}
                       style={{ objectPosition: dest.imagePosition || 'center center' }}
                       draggable={false}
-                      className={`w-full h-full object-cover select-none pointer-events-none transition-transform duration-700 ${
+                      loading="eager"
+                      decoding="async"
+                      className={`w-full h-full object-cover select-none pointer-events-none transition-transform duration-500 ${
                         isFront ? 'group-hover/card:scale-[1.015]' : ''
                       }`}
+                    />
+
+                    {/* Depth dimmer overlay without heavy GPU blur flicker */}
+                    <div
+                      className="absolute inset-0 bg-black pointer-events-none transition-opacity duration-300"
+                      style={{
+                        opacity: isFront ? 0 : Math.min(0.35, t * 0.12)
+                      }}
                     />
 
                     {/* Top Rim Light Reflection */}
