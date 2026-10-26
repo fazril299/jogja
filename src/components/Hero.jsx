@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { LANDMARKS } from '../data/landmarks';
 
 export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) {
@@ -40,8 +40,6 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
   // 2. INTERACTIVE 3D MOUSE PARALLAX TILT (Efek Kedalaman 3D seperti Framer)
   const mouseTiltX = useMotionValue(0);
   const mouseTiltY = useMotionValue(0);
-  const mouseGlowX = useMotionValue(50);
-  const mouseGlowY = useMotionValue(50);
 
   const springTiltX = useSpring(mouseTiltX, { stiffness: 140, damping: 22 });
   const springTiltY = useSpring(mouseTiltY, { stiffness: 140, damping: 22 });
@@ -55,15 +53,11 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
     // Rotasi 3D halus (maksimal 4.5 derajat agar tetap tegak berwibawa)
     mouseTiltY.set(x * 9); // rotateY
     mouseTiltX.set(-y * 6); // rotateX
-    mouseGlowX.set(50 + x * 30);
-    mouseGlowY.set(50 + y * 30);
   };
 
   const handleMouseLeave = () => {
     mouseTiltX.set(0);
     mouseTiltY.set(0);
-    mouseGlowX.set(50);
-    mouseGlowY.set(50);
   };
 
   const keratonLandmark = LANDMARKS.find((l) => l.id === 'keraton-yogyakarta') || LANDMARKS[0];
@@ -80,7 +74,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
       }}
       className="sticky top-0 z-0 w-full h-[100vh] min-h-[640px] max-h-screen overflow-hidden flex flex-col justify-between bg-[#0d0906] select-none"
     >
-      {/* 1. BACKGROUND: Senja Jogja Parallax + Subtle Dark Vignette Overlay */}
+      {/* 1. BACKGROUND: Senja Jogja Parallax + Dark Vignette Overlay Natural */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -112,9 +106,6 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
               'linear-gradient(180deg, rgba(14, 9, 6, 0.45) 0%, rgba(14, 9, 6, 0.12) 42%, rgba(10, 6, 4, 0.7) 100%)'
           }}
         />
-
-        {/* Dynamic Warm Radial Glow di balik Tugu */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-amber-500/18 blur-3xl pointer-events-none" />
       </motion.div>
 
       {/* 2. GIANT TYPOGRAPHY: "Yogyakarta" di Belakang Tugu (Tepat di Tengah Layar) */}
@@ -129,22 +120,6 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           }}
           className="relative flex items-center justify-center text-center"
         >
-          {/* Subtle Golden Heritage Sparkle Accent di Samping Teks */}
-          <motion.div
-            animate={{
-              y: [0, -6, 0],
-              rotate: [0, 4, 0]
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: 'easeInOut'
-            }}
-            className="absolute -top-6 sm:-top-10 -left-4 sm:-left-10 text-amber-300/50 pointer-events-none select-none hidden sm:block"
-          >
-            <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 drop-shadow-md" />
-          </motion.div>
-
           <h1
             className="text-[14.5vw] sm:text-[13.5vw] md:text-[12.8vw] lg:text-[12.2vw] xl:text-[11.8vw] font-serif font-medium tracking-[-0.04em] leading-none text-[#FBF7EE] drop-shadow-[0_20px_45px_rgba(0,0,0,0.5)] whitespace-nowrap select-none"
             style={{
@@ -156,7 +131,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         </motion.div>
       </div>
 
-      {/* 3. CENTERPIECE: TUGU JOGJA 3D (TEGAK, 3D LIGHTING & MOUSE TILT, MELUNCUR TURUN SAAT SCROLL) */}
+      {/* 3. CENTERPIECE: TUGU JOGJA 3D (TEGAK, CONTACT SHADOW NATURAL, MELUNCUR TURUN SAAT SCROLL) */}
       <div
         className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none overflow-hidden"
         style={{ perspective: 1200 }}
@@ -178,14 +153,11 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           }}
           className="relative flex items-center justify-center pointer-events-auto"
         >
-          {/* Double Layer 3D Contact Shadow di Bawah Alas Tugu */}
+          {/* Double Layer 3D Contact Shadow di Bawah Alas Tugu (Natural Tanpa Efek Terang) */}
           <div className="absolute -bottom-6 w-36 sm:w-52 h-8 bg-black/80 blur-md rounded-full pointer-events-none" />
           <div className="absolute -bottom-10 w-64 sm:w-96 h-14 bg-black/50 blur-2xl rounded-full pointer-events-none" />
 
-          {/* 3D Golden Dusk Rim-Light Ambient Aura di sekitar Tugu */}
-          <div className="absolute inset-0 -m-4 rounded-3xl bg-amber-400/10 blur-2xl pointer-events-none" />
-
-          {/* Objek Tugu Jogja dengan Multi-Layer 3D Depth Shadow & Lighting Filter */}
+          {/* Objek Tugu Jogja dengan Shadow Alami Bersih */}
           <img
             src="/tugu_jogja.webp"
             onError={(e) => {
@@ -196,19 +168,9 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
             }}
             alt="Tugu Pal Putih Yogyakarta"
             style={{
-              filter:
-                'drop-shadow(0 20px 45px rgba(0,0,0,0.85)) drop-shadow(0 0 35px rgba(245, 180, 80, 0.28))'
+              filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.75))'
             }}
             className="h-[58vh] sm:h-[66vh] md:h-[72vh] lg:h-[78vh] xl:h-[82vh] max-h-[820px] w-auto object-contain select-none transition-transform duration-100 ease-out will-change-transform"
-          />
-
-          {/* 3D Specular Highlight Sheen (Kilau Cahaya Dinamis Mengikuti Mouse/Tilt) */}
-          <motion.div
-            style={{
-              background:
-                'radial-gradient(ellipse at 45% 35%, rgba(255,235,180,0.18) 0%, rgba(255,255,255,0) 65%)'
-            }}
-            className="absolute inset-0 pointer-events-none mix-blend-overlay"
           />
         </motion.div>
       </div>
