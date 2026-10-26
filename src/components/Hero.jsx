@@ -10,29 +10,30 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
   const { scrollY } = useScroll();
 
   // Tugu Jogja meluncur turun ke bawah seiring scroll
-  // Saat section kedua naik, tugu bergerak turun ke bawah sehingga tampak "masuk/menyelam" ke balik section kedua
+  // Saat section kedua (putih) naik ke atas, Tugu bergerak turun sehingga section putih
+  // memotong dan menutupi badan Tugu secara horizontal presisi seperti di VitaBoost
   const tuguScrollY = useTransform(
     scrollY,
-    [0, 100, 200, 350, 500, 700],
-    [0, 75, 160, 280, 400, 520]
+    [0, 100, 250, 400, 600, 800],
+    [0, 60, 140, 240, 360, 480]
   );
-  const tuguScrollScale = useTransform(scrollY, [0, 700], [1, 0.94]);
+  const tuguScrollScale = useTransform(scrollY, [0, 800], [1, 0.95]);
 
   const tuguY = useSpring(tuguScrollY, { stiffness: 220, damping: 28, mass: 0.6 });
   const tuguScale = useSpring(tuguScrollScale, { stiffness: 220, damping: 28, mass: 0.6 });
 
-  // Teks Raksasa "Yogyakarta": parallax turun perlahan ke bawah & memudar
-  const textScrollY = useTransform(scrollY, [0, 600], [0, 160]);
-  const textOpacity = useTransform(scrollY, [0, 250, 550], [1, 0.65, 0.15]);
+  // Teks Raksasa "Yogyakarta": Parallax turun perlahan ke bawah & memudar
+  const textScrollY = useTransform(scrollY, [0, 600], [0, 140]);
+  const textOpacity = useTransform(scrollY, [0, 250, 600], [1, 0.7, 0.2]);
   const textY = useSpring(textScrollY, { stiffness: 180, damping: 28 });
 
   // Elemen UI Bawah (Glass Card Kiri & Editorial Copy Kanan): fade out & slide down saat scroll
-  const bottomUiScrollY = useTransform(scrollY, [0, 240], [0, 45]);
-  const bottomUiOpacity = useTransform(scrollY, [0, 120, 240], [1, 0.35, 0]);
+  const bottomUiScrollY = useTransform(scrollY, [0, 220], [0, 40]);
+  const bottomUiOpacity = useTransform(scrollY, [0, 100, 220], [1, 0.4, 0]);
   const bottomUiY = useSpring(bottomUiScrollY, { stiffness: 220, damping: 28 });
 
   // Background Parallax
-  const bgScale = useTransform(scrollY, [0, 700], [1.1, 1.2]);
+  const bgScale = useTransform(scrollY, [0, 700], [1.08, 1.18]);
 
   // 2. INTERACTIVE 3D MOUSE PARALLAX TILT
   const mouseTiltX = useMotionValue(0);
@@ -64,22 +65,18 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
       ref={heroRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="sticky top-0 z-10 w-full h-[95vh] min-h-[640px] overflow-hidden flex flex-col justify-between bg-[#0d0906] select-none"
+      className="sticky top-0 z-10 w-full h-[95vh] min-h-[640px] flex flex-col justify-between bg-[#0d0906] select-none"
       style={{
         position: 'sticky',
         top: 0,
         zIndex: 10,
         width: '100%',
-        height: '95vh'
+        height: '95vh',
+        overflow: 'visible' // Wajib overflow visible agar Tugu ditutupi secara fisik oleh section berikutnya
       }}
     >
       {/* 1. BACKGROUND IMAGE: Full-bleed Senja Jogja dengan Dark Vignette Natural */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
-      >
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.img
           src="/bg_senja_jogja.webp"
           onError={(e) => {
@@ -102,13 +99,13 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(14, 9, 6, 0.42) 0%, rgba(14, 9, 6, 0.12) 42%, rgba(10, 6, 4, 0.65) 100%)'
+              'linear-gradient(180deg, rgba(14, 9, 6, 0.4) 0%, rgba(14, 9, 6, 0.1) 40%, rgba(10, 6, 4, 0.65) 100%)'
           }}
         />
-      </motion.div>
+      </div>
 
       {/* 2. GIANT TYPOGRAPHY: "Yogyakarta" di Belakang Tugu (Tepat di Tengah Layar) */}
-      <div className="absolute inset-0 z-15 flex items-center justify-center pointer-events-none overflow-hidden px-4">
+      <div className="absolute inset-0 z-15 flex items-center justify-center pointer-events-none px-4" style={{ overflow: 'visible' }}>
         <motion.div
           initial={{ opacity: 0, y: 35, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -130,10 +127,10 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
         </motion.div>
       </div>
 
-      {/* 3. CENTERPIECE: TUGU JOGJA 3D (TEGAK 100%, MELUNCUR TURUN MASUK KE BALIK SECTION KEDUA) */}
+      {/* 3. CENTERPIECE: TUGU JOGJA 3D (TEGAK 100%, OVERFLOW VISIBLE, MELUNCUR TURUN & DITUTUPI SECTION BERIKUTNYA) */}
       <div
-        className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none overflow-hidden"
-        style={{ perspective: 1200 }}
+        className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
+        style={{ perspective: 1200, overflow: 'visible' }}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.88, y: 35 }}
@@ -156,7 +153,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe, onSelectLandmark }) 
           <div className="absolute -bottom-6 w-36 sm:w-52 h-8 bg-black/80 blur-md rounded-full pointer-events-none" />
           <div className="absolute -bottom-10 w-64 sm:w-96 h-14 bg-black/50 blur-2xl rounded-full pointer-events-none" />
 
-          {/* Objek Tugu Jogja dengan Shadow Alami Bersih */}
+          {/* Objek Tugu Jogja Bersih & Tegak 100% */}
           <img
             src="/tugu_jogja.webp"
             onError={(e) => {
