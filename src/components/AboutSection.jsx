@@ -13,6 +13,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
       position: "center center"
     },
     {
+
       src: "/assets/images/jogja_keraton.jpg",
       alt: "Regol Danapratapa Keraton Yogyakarta",
       position: "center 45%"

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen } from 'lucide-react';
+import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen, Utensils } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const SPRING_TRANSITION = {
@@ -140,13 +140,7 @@ const KULINER_FEATURES = [
     id: 'nearMe',
     name: 'Radar GPS Kuliner Jogja',
     hours: 'Radius 5–10 KM • Pelacakan Real-Time',
-    image: '/assets/images/jogja_gudeg.jpg'
-  },
-  {
-    id: 'map',
-    name: 'Peta Budaya & Cagar Wisata DIY',
-    hours: 'Peta Interaktif • 5 Wilayah Kabupaten/Kota',
-    image: '/assets/images/jogja_keraton.jpg'
+    image: '/images/icon_radar_kuliner.svg'
   }
 ];
 
@@ -900,21 +894,12 @@ export default function Navbar({
                               setActiveTab('kuliner');
                               closeAll();
                               if (feature.id === 'nearMe' && onOpenNearMe) onOpenNearMe();
-                              if (feature.id === 'map' && onOpenMap) onOpenMap();
-                              if (feature.id === 'cultureBook' && onOpenCultureBook)
-                                onOpenCultureBook();
                             }}
                             className="w-full flex items-center gap-3.5 p-2 rounded-2xl hover:bg-[#f5f5f5] transition-colors text-left group cursor-pointer"
                             style={{ background: 'transparent', border: 'none' }}
                           >
-                            <div className="w-[50px] h-[50px] rounded-[14px] overflow-hidden shrink-0 bg-[#f0f0f0] border border-black/5 shadow-2xs">
-                              <img
-                                src={feature.image}
-                                alt={feature.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                loading="eager"
-                                decoding="async"
-                              />
+                            <div className="w-[50px] h-[50px] rounded-[14px] overflow-hidden shrink-0 bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center text-[#2C221E] group-hover:bg-[#F3EAD9] transition-colors">
+                              <Utensils size={24} className="text-[#2C221E]" strokeWidth={2.2} />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p
@@ -1251,7 +1236,7 @@ export default function Navbar({
                   className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-amber-950 bg-amber-50/70 hover:bg-amber-100/80 border border-amber-200/60"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <Utensils className="w-3.5 h-3.5 text-amber-800" strokeWidth={2.2} />
                     <span>Radar GPS Kuliner (Radius 5–10 KM)</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5 text-amber-800" />

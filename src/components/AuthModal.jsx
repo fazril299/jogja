@@ -804,15 +804,15 @@ export default function AuthModal() {
               ================================================================= */}
           <div className="auth-standalone-right">
             <div className="auth-artwork-wrapper">
-              {/* Mascot Jojo Inviting User to Login */}
+              {/* Artwork Budaya Kasultanan Yogyakarta */}
               <img
-                src="/assets/images/mascot_login.jpg"
-                alt="Jojo Mengajak Masuk ke Hamemayu"
+                src="/assets/images/jogja_keraton.jpg"
+                alt="Keagungan Budaya Yogyakarta"
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  objectPosition: 'center top',
+                  objectPosition: 'center 40%',
                   display: 'block',
                   filter: 'contrast(1.03) saturate(1.05)'
                 }}
@@ -856,7 +856,7 @@ export default function AuthModal() {
                       marginBottom: '4px'
                     }}
                   >
-                    Jojo • Pemandu Budaya
+                    Panduan Budaya Yogyakarta
                   </div>
                   <div
                     style={{

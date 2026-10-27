@@ -57,7 +57,6 @@ import TentangKamiPage from './components/TentangKamiPage';
 import AdminModal from './components/AdminModal';
 import ShareExperienceModal from './components/ShareExperienceModal';
 import InteractiveMapModal from './components/InteractiveMapModal';
-import MascotTourGuide from './components/MascotTourGuide';
 
 // Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
 export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
@@ -802,30 +801,6 @@ function NusantaraApp() {
         />
       </div>
 
-      {/* 11. DYNAMIC CULTURAL MASCOT TOUR GUIDE (JOJO) - PRESENT ON ALL PAGES (EXCEPT HERO SECTION) */}
-      {!isKalenderPopupOpen && (
-        <MascotTourGuide
-          currentView={
-            selectedPlace
-              ? 'storybook'
-              : isKalenderAcaraOpen
-              ? 'kalender'
-              : isJurnalBudayaOpen
-              ? 'jurnal'
-              : isAboutPageOpen
-              ? 'tentang'
-              : isNearMeOpen
-              ? 'kuliner'
-              : isCultureBookOpen
-              ? 'paspor'
-              : isMapOpen
-              ? 'peta'
-              : 'home'
-          }
-          selectedPlace={selectedPlace}
-          onNavigateSection={(secId) => smoothScrollToSection(secId, 85)}
-        />
-      )}
 
       {/* =========================================================================
           MODALS & DEDICATED FULL-SCREEN PAGES
