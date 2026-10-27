@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ArrowRight, LayoutGrid } from 'lucide-react';
-import CardsCascade from './CardsCascade';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
-export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPlaceById, onOpenNearMe }) {
+
+export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
 
   // Pure photographic images of iconic Yogyakarta landmarks with custom focus positions
   const slideshowImages = [
@@ -44,11 +44,7 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
   }, [slideshowImages.length]);
 
   return (
-    <>
-      {/* =========================================================================
-          SECTION 1: ABOUT US (FILOSOFI YOGYAKARTA - CLEAN MONOCHROME)
-          ========================================================================= */}
-      <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]/60">
+    <section id="about-section" className="min-h-screen px-4 sm:px-8 py-20 sm:py-24 bg-[#FAF6EE] text-[#1A1A1A] flex flex-col justify-center relative border-b border-[#D9CEBA]/60">
         <div className="max-w-[1240px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center my-auto">
           
           {/* Left Column: Clean Editorial Manifesto with Interactive Navigation */}
@@ -156,15 +152,5 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onSelectPla
 
         </div>
       </section>
-
-      {/* =========================================================================
-          SECTION 3: EMPAT DIMENSI KEISTIMEWAAN YOGYAKARTA (CARDS CASCADE FRAMER)
-          ========================================================================= */}
-      <CardsCascade
-        onOpenBooking={onOpenBooking}
-        onSelectPlaceById={onSelectPlaceById}
-        onOpenNearMe={onOpenNearMe}
-      />
-    </>
-  );
-}
+    );
+  }

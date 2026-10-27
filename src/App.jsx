@@ -729,8 +729,6 @@ function NusantaraApp() {
         <AboutSection
           onOpenBooking={handleScrollToDestinations}
           onOpenAboutUs={handleScrollToAbout}
-          onSelectPlaceById={handleSelectPlaceById}
-          onOpenNearMe={handleOpenNearMe}
         />
 
         {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}
