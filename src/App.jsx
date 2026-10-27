@@ -758,7 +758,17 @@ function NusantaraApp() {
         <TravelFAQ id="faq-section" />
 
         {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
-        <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
+      </div>
+
+      {/* 8. INSTAGRAM STORIES PHOTO MARQUEE - STICKY TRACK (EFEK MENUTUP SEPERTI HERO) */}
+      <div className="relative w-full bg-[#FAF6EE]" style={{ height: '175vh' }}>
+        <div className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] overflow-hidden flex flex-col justify-center bg-[#FAF6EE]">
+          <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
+        </div>
+      </div>
+
+      {/* CURTAIN OVERLAP CONTAINER 2: CTA HERO BANNER & FOOTER (MENUTUP GALERI 3D PERSIS HERO) */}
+      <div className="relative z-20 w-full bg-[#FAF6EE] text-[#1a1a1a] shadow-[0_-25px_60px_rgba(0,0,0,0.22)]">
 
         {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
         <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
