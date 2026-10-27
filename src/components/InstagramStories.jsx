@@ -93,7 +93,7 @@ export default function InstagramStories() {
   return (
     <section
       id="stories-section"
-      className="w-full h-full relative bg-[#FAF6EE] text-[#1A1A1A] py-2 sm:py-4 overflow-hidden border-none flex flex-col justify-center"
+      className="w-full relative bg-[#FAF6EE] text-[#1A1A1A] pt-20 sm:pt-28 pb-16 overflow-hidden border-none"
     >
       {/* SECTION HEADER */}
       <div className="text-center max-w-4xl mx-auto px-6 mb-2 sm:mb-3 relative z-20 pointer-events-none">
@@ -107,7 +107,7 @@ export default function InstagramStories() {
       </div>
 
       {/* 3D WEBGL CURVED RING GALLERY - SINGLE ROW PORTRAIT LIKE GAMBAR 2 */}
-      <div className="w-full h-[60vh] min-h-[460px] max-h-[660px] relative z-10 bg-[#faf6ee] -mt-6 sm:-mt-10 md:-mt-14">
+      <div className="w-full h-[62vh] min-h-[460px] max-h-[660px] relative z-10 bg-[#faf6ee] -mt-3 sm:-mt-6">
         <PassageGallery
           slides={jogjaSlides}
           layout="ring"

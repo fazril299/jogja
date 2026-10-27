@@ -122,11 +122,11 @@ export default function TravelFAQ({ id }) {
   };
 
   return (
-    <section id={id || "faq-section"} className="web-section-100vh w-full bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-20 pb-8 relative flex flex-col border-b border-neutral-200">
+    <section id={id || "faq-section"} className="w-full min-h-screen bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-24 pb-20 sm:pb-28 relative flex flex-col justify-center border-b border-[#D9CEBA]/60">
       <div style={{
         maxWidth: '1240px',
         margin: 'auto auto',
-        maxHeight: '78vh',
+
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
