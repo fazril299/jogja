@@ -138,11 +138,6 @@ export default function KatalogQuestBadgePage({
 
           {/* PAGE HERO HEADER */}
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#8A5D26]/10 border border-[#8A5D26]/20 text-[#8A5D26] text-xs font-bold uppercase tracking-wide mb-3">
-              <Sparkles size={14} />
-              <span>Sistem Gamifikasi Warisan Budaya DIY</span>
-            </div>
-
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-[#2C221E] leading-tight tracking-tight">
               Katalog Misi & Lencana Budaya
             </h1>
