@@ -4,6 +4,7 @@ import { ChevronDown, HelpCircle } from 'lucide-react';
 
 export default function TravelFAQ({ id }) {
   const [openIdx, setOpenIdx] = useState(null);
+  const [showAllMobile, setShowAllMobile] = useState(false);
 
   const toggleQuestion = (idx) => {
     setOpenIdx(openIdx === idx ? null : idx);
@@ -135,20 +136,59 @@ export default function TravelFAQ({ id }) {
           </p>
         </div>
 
-        {/* 2-COLUMN ACCORDION GRID (DESKTOP) / SEAMLESS DIVIDER LIST (MOBILE) */}
+        {/* DESKTOP: 2-COLUMN ACCORDION GRID / MOBILE: FIRST 4 QUESTIONS */}
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-12 items-start">
-          {/* Left Column */}
+          {/* Left Column (Items 0-3: Always visible on both Mobile & Desktop) */}
           <div className="flex flex-col">
             {leftQuestions.map((item, idx) =>
               renderFaqRow(item, idx === 0 ? 'border-t border-[#D9CEBA]/80' : '')
             )}
           </div>
 
-          {/* Right Column */}
-          <div className="flex flex-col">
+          {/* Right Column (Items 4-7: Always visible on Desktop) */}
+          <div className="hidden md:flex flex-col">
             {rightQuestions.map((item, idx) =>
               renderFaqRow(item, idx === 0 ? 'md:border-t border-[#D9CEBA]/80' : '')
             )}
+          </div>
+        </div>
+
+        {/* MOBILE ONLY: Smooth Expandable Sisa Pertanyaan (Items 4-7) */}
+        <div className="md:hidden">
+          <AnimatePresence initial={false}>
+            {showAllMobile && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col overflow-hidden"
+              >
+                {rightQuestions.map((item) => renderFaqRow(item, ''))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Apple-style Pill Expand Button */}
+          <div className="pt-6 sm:pt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold text-[#8C532B] bg-[#8C532B]/8 hover:bg-[#8C532B]/15 active:scale-95 transition-all duration-200 border border-[#8C532B]/20 shadow-xs"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Tampilkan Lebih Sedikit'
+                  : `Lihat ${rightQuestions.length} Pertanyaan Lainnya`}
+              </span>
+              <motion.div
+                animate={{ rotate: showAllMobile ? 180 : 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center justify-center"
+              >
+                <ChevronDown size={15} strokeWidth={2.4} />
+              </motion.div>
+            </button>
           </div>
         </div>
       </div>
