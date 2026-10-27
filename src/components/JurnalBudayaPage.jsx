@@ -18,7 +18,7 @@ import {
   CULTURAL_JOURNALS
 } from '../data/culturalEventsData';
 
-export default function JurnalBudayaPage({ isOpen, _onClose }) {
+export default function JurnalBudayaPage({ isOpen, onClose }) {
   const [activeMainTab, setActiveMainTab] = useState('panduan'); // 'panduan' | 'artikel'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEtiquetteCategory, setSelectedEtiquetteCategory] = useState('Semua');
@@ -71,6 +71,16 @@ export default function JurnalBudayaPage({ isOpen, _onClose }) {
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }}
       >
+        {/* FLOATING CLOSE BUTTON */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="fixed top-4 right-4 sm:top-6 sm:right-8 z-50 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-neutral-300 text-black flex items-center justify-center hover:bg-white transition-all shadow-sm cursor-pointer active:scale-95"
+          aria-label="Tutup dan Kembali ke Beranda"
+        >
+          <X size={18} />
+        </button>
+
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-8 border-b border-neutral-800">
           <div className="absolute inset-0 opacity-25 pointer-events-none">

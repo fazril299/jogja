@@ -10,7 +10,6 @@ import {
   Lock,
   CheckCircle2,
   RefreshCw,
-  Search,
   ArrowLeft,
   Filter,
   ShieldCheck,
@@ -32,7 +31,6 @@ export default function KatalogQuestBadgePage({
 }) {
   const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'quests' | 'badges'
   const [selectedTier, setSelectedTier] = useState('all'); // 'all' | 'umum' | 'langka' | 'epic' | 'legendaris'
-  const [searchQuery, setSearchQuery] = useState('');
 
   const {
     cultureBook,
@@ -64,31 +62,16 @@ export default function KatalogQuestBadgePage({
   // Filtered Quests
   const filteredQuests = useMemo(() => {
     return CULTURAL_QUESTS.filter((quest) => {
-      const matchTier = selectedTier === 'all' || quest.tier === selectedTier;
-      const q = searchQuery.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        quest.title.toLowerCase().includes(q) ||
-        quest.description.toLowerCase().includes(q) ||
-        quest.caraMendapatkan.toLowerCase().includes(q);
-      return matchTier && matchSearch;
+      return selectedTier === 'all' || quest.tier === selectedTier;
     });
-  }, [selectedTier, searchQuery]);
+  }, [selectedTier]);
 
   // Filtered Badges
   const filteredBadges = useMemo(() => {
     return CULTURAL_BADGES.filter((badge) => {
-      const matchTier = selectedTier === 'all' || badge.tier === selectedTier;
-      const q = searchQuery.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        badge.name.toLowerCase().includes(q) ||
-        (badge.subtitle && badge.subtitle.toLowerCase().includes(q)) ||
-        (badge.lore && badge.lore.toLowerCase().includes(q)) ||
-        badge.caraMendapatkan.toLowerCase().includes(q);
-      return matchTier && matchSearch;
+      return selectedTier === 'all' || badge.tier === selectedTier;
     });
-  }, [selectedTier, searchQuery]);
+  }, [selectedTier]);
 
   if (!isOpen) return null;
 
@@ -102,40 +85,17 @@ export default function KatalogQuestBadgePage({
         className="fixed inset-0 z-[99996] bg-[#FAF6EE] text-[#2C221E] overflow-y-auto pt-20 sm:pt-24 pb-20"
         style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}
       >
+        {/* FLOATING CLOSE BUTTON */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="fixed top-4 right-4 sm:top-6 sm:right-8 z-50 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-[#D9CEBA] text-[#2C221E] flex items-center justify-center hover:bg-white transition-all shadow-sm cursor-pointer active:scale-95"
+          aria-label="Tutup"
+        >
+          <X size={18} />
+        </button>
+
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* TOP BAR / BACK NAVIGATION */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#D9CEBA]/60">
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#D9CEBA] text-[#2C221E] hover:bg-[#FAF8F5] transition-all text-xs sm:text-sm font-bold shadow-xs cursor-pointer active:scale-95"
-            >
-              <ArrowLeft size={15} />
-              <span>Kembali</span>
-            </button>
-
-            <div className="inline-flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onRefreshGps}
-                disabled={isGpsLoading}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#2C221E] text-[#FAF8F5] text-xs font-bold hover:bg-[#4A3B32] transition-colors cursor-pointer"
-              >
-                <RefreshCw size={12} className={isGpsLoading ? 'animate-spin' : ''} />
-                <span>{isGpsLoading ? 'Mendeteksi...' : 'Radar GPS'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-8 h-8 rounded-full bg-white border border-[#D9CEBA] text-[#2C221E] flex items-center justify-center hover:bg-[#FAF8F5] transition-all shadow-xs cursor-pointer"
-                aria-label="Tutup"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-
           {/* PAGE HERO HEADER */}
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-black text-[#2C221E] leading-tight tracking-tight">
@@ -165,73 +125,60 @@ export default function KatalogQuestBadgePage({
                 </span>
                 <span className="text-[11px] font-semibold text-[#786B5E]">Situs Dikunjungi</span>
               </div>
-              <div className="p-2 text-center flex flex-col items-center justify-center">
+              <div
+                onClick={onRefreshGps}
+                className="p-2 text-center flex flex-col items-center justify-center cursor-pointer hover:bg-[#FAF8F5] rounded-xl transition-colors"
+                title="Klik untuk menyegarkan deteksi GPS"
+              >
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                  <CheckCircle2 size={13} />
-                  <span>{userLiveCoords ? 'GPS Terhubung' : 'GPS Siap'}</span>
+                  <RefreshCw size={11} className={isGpsLoading ? 'animate-spin' : ''} />
+                  <span>{userLiveCoords ? 'GPS Terhubung' : 'Radar GPS'}</span>
                 </div>
-                <span className="text-[10px] text-[#786B5E] mt-1">D.I. Yogyakarta</span>
+                <span className="text-[10px] text-[#786B5E] mt-1">
+                  {isGpsLoading ? 'Mendeteksi...' : 'D.I. Yogyakarta'}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* SEARCH & FILTERS BAR */}
-          <div className="bg-white rounded-2xl border border-[#EAE4DC] p-4 sm:p-5 mb-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari misi, lencana, candi, malioboro, kuliner..."
-                className="w-full bg-[#FAF8F5] text-xs sm:text-sm text-[#2C221E] placeholder:text-[#9C8E82] pl-3.5 pr-10 py-2.5 rounded-xl border border-[#D9CEBA] focus:outline-none focus:border-[#8A5D26] transition-colors"
-              />
-              <Search
-                size={16}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#786B5E]"
-              />
-            </div>
+          {/* CATEGORY FILTERS BAR */}
+          <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3 sm:p-4 mb-8 shadow-xs flex items-center justify-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setActiveFilter('all')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                activeFilter === 'all'
+                  ? 'bg-[#2C221E] text-white shadow-xs'
+                  : 'bg-[#FAF8F5] text-[#6E5D52] hover:text-[#2C221E] border border-[#EAE0D0]'
+              }`}
+            >
+              Semua ({CULTURAL_QUESTS.length + CULTURAL_BADGES.length})
+            </button>
 
-            {/* Main Category Filter Switcher */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <button
-                type="button"
-                onClick={() => setActiveFilter('all')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeFilter === 'all'
-                    ? 'bg-[#2C221E] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] text-[#6E5D52] hover:text-[#2C221E] border border-[#EAE0D0]'
-                }`}
-              >
-                Semua ({CULTURAL_QUESTS.length + CULTURAL_BADGES.length})
-              </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('quests')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                activeFilter === 'quests'
+                  ? 'bg-[#8A5D26] text-white shadow-xs'
+                  : 'bg-[#FAF8F5] text-[#8A5D26] hover:bg-[#FAF6EE] border border-[#E5D7BE]'
+              }`}
+            >
+              Misi & Quest ({CULTURAL_QUESTS.length})
+            </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveFilter('quests')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeFilter === 'quests'
-                    ? 'bg-[#8A5D26] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] text-[#8A5D26] hover:bg-[#FAF6EE] border border-[#E5D7BE]'
-                }`}
-              >
-                <Sparkles size={13} />
-                <span>Misi & Quest ({CULTURAL_QUESTS.length})</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveFilter('badges')}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeFilter === 'badges'
-                    ? 'bg-[#2C221E] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] text-[#6E5D52] hover:text-[#2C221E] border border-[#EAE0D0]'
-                }`}
-              >
-                <Award size={13} />
-                <span>9 Lencana Warisan</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('badges')}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                activeFilter === 'badges'
+                  ? 'bg-[#2C221E] text-white shadow-xs'
+                  : 'bg-[#FAF8F5] text-[#6E5D52] hover:text-[#2C221E] border border-[#EAE0D0]'
+              }`}
+            >
+              <Award size={14} />
+              <span>9 Lencana Warisan</span>
+            </button>
           </div>
 
           {/* =================================================================
@@ -241,9 +188,8 @@ export default function KatalogQuestBadgePage({
             <section className="mb-12">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2C221E] flex items-center gap-2">
-                    <Sparkles size={20} className="text-[#8A5D26]" />
-                    <span>Misi & Quest Budaya ({filteredQuests.length})</span>
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2C221E]">
+                    Misi & Quest Budaya ({filteredQuests.length})
                   </h2>
                   <p className="text-xs text-[#786B5E] mt-0.5">
                     Rangkaian napak tilas multi-lokasi untuk membuka lencana tingkat tinggi

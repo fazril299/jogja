@@ -17,7 +17,8 @@ import {
   Calendar,
   Search,
   Award,
-  Lock
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { CULTURAL_PLACES } from '../data/culturalData';
 import { CULTURAL_BADGES } from '../data/badgeQuestData';
@@ -431,6 +432,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
 export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack, onSelectPlace, onOpenCultureBook }) {
   const [activeTheme, setActiveTheme] = useState('all');
   const [activeMapPlace, setActiveMapPlace] = useState(place || CULTURAL_PLACES[0]);
+  const [isReviewBtnHovered, setIsReviewBtnHovered] = useState(false);
   const [isInquireOpen, setIsInquireOpen] = useState(false);
   const [inquireSuccess, setInquireSuccess] = useState(false);
   const [inquireForm, setInquireForm] = useState({ name: '', email: '', message: '' });
@@ -719,21 +721,20 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.45rem',
-                  padding: '0.35rem 0.95rem',
-                  borderRadius: '999px',
-                  backgroundColor: 'rgba(197, 144, 78, 0.92)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#ffffff',
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.08em',
+                  padding: '0.32rem 0.75rem',
+                  borderRadius: '4px',
+                  backgroundColor: 'rgba(18, 12, 8, 0.55)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.22)',
+                  color: '#F4F1EA',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: '0.7rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  marginBottom: '1rem',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)'
+                  marginBottom: '1rem'
                 }}
               >
-                <Sparkles size={13} />
                 <span>{activeMapPlace.badges?.[0] || 'WARISAN BUDAYA D.I. YOGYAKARTA'}</span>
               </div>
 
@@ -774,302 +775,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           </motion.div>
         </div>
       </section>
-
-      {/* =========================================================================
-          SECTION 2B: HARMONI MASYARAKAT, SENI BUDAYA & GASTRONOMI PUSAKA
-          ========================================================================= */}
-      {activeMapPlace.chapter03?.cultureElements && (
-        <section
-          style={{
-            backgroundColor: '#FAF8F5',
-            borderTop: '1px solid #EFEAE2',
-            borderBottom: '1px solid #EFEAE2',
-            padding: '5rem clamp(1.5rem, 5vw, 4rem)'
-          }}
-        >
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 3.5rem auto' }}>
-              <span
-                style={{
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  color: '#c5904e',
-                  display: 'block',
-                  marginBottom: '0.65rem'
-                }}
-              >
-                Bab 02 & 03 • Ragam Pusaka Budaya
-              </span>
-
-              <h2
-                style={{
-                  fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                  fontSize: 'clamp(1.6rem, 2.8vw, 2.4rem)',
-                  fontWeight: 800,
-                  color: '#131021',
-                  margin: '0 0 1rem 0'
-                }}
-              >
-                {activeMapPlace.chapter03?.tagline || 'Seni Sakral, Adat Tradisi, & Gastronomi Pusaka'}
-              </h2>
-
-              {activeMapPlace.chapter02?.philosophy && (
-                <p
-                  style={{
-                    fontSize: '0.94rem',
-                    color: '#6b7280',
-                    fontStyle: 'italic',
-                    margin: 0
-                  }}
-                >
-                  Falsafah Luhur: &ldquo;{activeMapPlace.chapter02.philosophy}&rdquo;
-                </p>
-              )}
-            </div>
-
-            {/* Konsep Foto Gantung Tali Jemuran & Jepitan Kayu */}
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '100%',
-                overflow: 'hidden',
-                paddingTop: '20px',
-                paddingBottom: '50px'
-              }}
-            >
-              {/* CSS Scoped untuk Efek Hover & Typography Persis Framer */}
-              <style>{`
-                .rope-card-item {
-                  position: relative;
-                  transform-origin: top center;
-                  cursor: pointer;
-                  user-select: none;
-                }
-                .rope-card-face {
-                  position: relative;
-                  width: 100%;
-                  aspect-ratio: 0.8;
-                  border-radius: 18px;
-                  overflow: hidden;
-                  background-color: #ECE7E0;
-                  box-shadow: 0 1px 2px rgba(24, 18, 12, 0.07), 0 12px 24px -14px rgba(24, 18, 12, 0.26), 0 34px 64px -34px rgba(24, 18, 12, 0.3);
-                  border: 1px solid rgba(24, 18, 12, 0.05);
-                  transition: box-shadow 0.5s ease;
-                }
-                .rope-card-face:hover {
-                  box-shadow: 0 2px 4px rgba(24, 18, 12, 0.08), 0 18px 32px -12px rgba(24, 18, 12, 0.32), 0 40px 70px -30px rgba(24, 18, 12, 0.38);
-                }
-                .rope-card-face img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  display: block;
-                  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-                }
-                .rope-card-face:hover img {
-                  transform: scale(1.045);
-                }
-                .rope-card-shade {
-                  position: absolute;
-                  inset: 0;
-                  pointer-events: none;
-                  background: linear-gradient(to top, rgba(14, 12, 10, 0.75) 0%, rgba(14, 12, 10, 0.22) 42%, rgba(14, 12, 10, 0) 70%);
-                  opacity: 0;
-                  transition: opacity 0.45s ease;
-                }
-                .rope-card-face:hover .rope-card-shade {
-                  opacity: 1;
-                }
-                .rope-card-cap {
-                  position: absolute;
-                  left: 20px;
-                  right: 20px;
-                  bottom: 20px;
-                  pointer-events: none;
-                  opacity: 0;
-                  transform: translateY(10px);
-                  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
-                }
-                .rope-card-face:hover .rope-card-cap {
-                  opacity: 1;
-                  transform: translateY(0);
-                  transition-delay: 0.05s;
-                }
-                @media (hover: none) {
-                  .rope-card-shade { opacity: 1; }
-                  .rope-card-cap { opacity: 1; transform: translateY(0); }
-                }
-              `}</style>
-
-              {/* Tali Jemuran Melengkung Penuh Ujung ke Ujung Layar (Full Edge-to-Edge Rope) */}
-              <svg
-                viewBox="-80 0 1360 170"
-                preserveAspectRatio="none"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '-4vw',
-                  width: '108vw',
-                  height: '170px',
-                  pointerEvents: 'none',
-                  zIndex: 2,
-                  overflow: 'visible'
-                }}
-              >
-                {/* Bayangan Tali Halus */}
-                <path d="M -80 18 Q 600 162 1280 18" stroke="rgba(24, 18, 12, 0.09)" strokeWidth="3.5" fill="none" />
-                {/* Garis Dasar Tali */}
-                <path d="M -80 16 Q 600 160 1280 16" stroke="#A89E92" strokeWidth="2.4" fill="none" strokeLinecap="round" />
-                {/* Tekstur Serat Anyaman Tali (Braid) */}
-                <path d="M -80 16 Q 600 160 1280 16" stroke="#7A6E62" strokeWidth="1.8" fill="none" strokeDasharray="5,4" />
-              </svg>
-
-              {/* Kontainer Kartu yang Menempel & Terjepit Rapi di Tali */}
-              <div
-                style={{
-                  position: 'relative',
-                  zIndex: 4,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                  gap: 'clamp(1.5rem, 3.5vw, 3rem)',
-                  flexWrap: 'wrap',
-                  maxWidth: '1240px',
-                  margin: '0 auto',
-                  padding: '0 1.5rem'
-                }}
-              >
-                {activeMapPlace.chapter03.cultureElements.map((elem, eIdx) => {
-                  // Perhitungan Geometris Posisi Tali & Sudut Kemiringan (Sesuai Kurva Framer)
-                  // Card 0 (Kiri): Rope Y = 64px, Tilt = -4.5deg
-                  // Card 1 (Tengah): Rope Y = 88px, Tilt = 0deg (Menurun mengikuti lengkungan tali)
-                  // Card 2 (Kanan): Rope Y = 64px, Tilt = 4.5deg
-                  const ropeYPoints = [64, 88, 64];
-                  const tilts = [-4.5, 0, 4.5];
-                  const ropeY = ropeYPoints[eIdx % ropeYPoints.length];
-                  const naturalTilt = tilts[eIdx % tilts.length];
-                  
-                  // Agar jepitan pas menempel di tali (notch di 13px) dan menjepit foto (grip di 34px):
-                  // Jarak dari titik tali ke tepi atas kartu foto = 34 - 13 = 21px
-                  const cardMarginTop = ropeY + 21;
-
-                  return (
-                    <div
-                      key={eIdx}
-                      className="rope-card-item"
-                      style={{
-                        marginTop: `${cardMarginTop}px`,
-                        width: 'clamp(280px, 28vw, 340px)',
-                        transform: `rotate(${naturalTilt}deg)`
-                      }}
-                    >
-                      {/* Jepitan Kayu Asli Framer (Menempel Pas di Tali & Menjepit Kartu) */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          zIndex: 10,
-                          left: 'calc(50% - 10px)',
-                          top: '-34px',
-                          width: '20px',
-                          height: '54px',
-                          pointerEvents: 'none',
-                          filter: 'drop-shadow(0 4px 6px rgba(24, 18, 12, 0.28))'
-                        }}
-                      >
-                        <svg viewBox="0 0 18 50" width="100%" height="100%" style={{ display: 'block', overflow: 'visible' }}>
-                          {/* Badan Kayu Terracotta */}
-                          <path d="M4 0 H14 A2 2 0 0 1 16 2 V47 A3 3 0 0 1 13 50 H5 A3 3 0 0 1 2 47 V2 A2 2 0 0 1 4 0 Z" fill="#D0724F" />
-                          {/* Highlight Kilau Kiri */}
-                          <path d="M4 0 H6 V50 H5 A3 3 0 0 1 2 47 V2 A2 2 0 0 1 4 0 Z" fill="#fff" opacity="0.22" />
-                          {/* Bayangan Sisi Kanan */}
-                          <path d="M13 0 H14 A2 2 0 0 1 16 2 V47 A3 3 0 0 1 13 50 Z" fill="#000" opacity="0.12" />
-                          {/* Celah Jepitan Bawah */}
-                          <path d="M9 30 V49.5" stroke="#000" strokeOpacity="0.22" strokeWidth="0.9" />
-                          {/* Cincin Pegas Metal Emas */}
-                          <rect x="0.5" y="19" width="17" height="6" rx="2" fill="#E4CFA6" />
-                          {/* Garis Kawat Pegas */}
-                          <path d="M4 19.6 V24.4 M7 19.6 V24.4 M10 19.6 V24.4 M13 19.6 V24.4" stroke="#000" strokeOpacity="0.2" strokeWidth="0.7" />
-                          {/* Kilau Pegas */}
-                          <rect x="1" y="19.3" width="16" height="1.3" rx="0.65" fill="#fff" opacity="0.55" />
-                        </svg>
-                      </div>
-
-                      {/* Bayangan Kontak Jepitan di Atas Permukaan Foto */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          zIndex: 6,
-                          left: 'calc(50% - 15px)',
-                          top: 0,
-                          width: '30px',
-                          height: '14px',
-                          pointerEvents: 'none',
-                          background: 'radial-gradient(ellipse at 50% 0%, rgba(24, 18, 12, 0.32), rgba(24, 18, 12, 0) 70%)'
-                        }}
-                      />
-
-                      {/* Kartu Foto Persis Framer (Clean Foto, Reveal Scrim & Text Saat Kursor Sentuh) */}
-                      <div className="rope-card-face">
-                        {/* Foto Full-Bleed */}
-                        <img
-                          src={elem.image || activeMapPlace.coverImage}
-                          alt={elem.name}
-                          loading="lazy"
-                        />
-
-                        {/* Scrim Gradien Hitam Halus yang Muncul Saat Hover */}
-                        <div className="rope-card-shade" />
-
-                        {/* Teks Judul & Keterangan Muncul Halus Meluncur Naik Saat Hover */}
-                        <div className="rope-card-cap">
-                          <div
-                            style={{
-                              fontFamily: '"Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                              fontSize: '21px',
-                              fontWeight: 600,
-                              color: '#FFFFFF',
-                              letterSpacing: '-0.01em',
-                              lineHeight: 1.2,
-                              margin: 0,
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
-                            {elem.name}
-                          </div>
-                          {(elem.detail || elem.description) && (
-                            <div
-                              style={{
-                                fontFamily: '"Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                                fontSize: '13px',
-                                fontWeight: 400,
-                                color: 'rgba(255, 255, 255, 0.84)',
-                                letterSpacing: '0em',
-                                lineHeight: 1.4,
-                                marginTop: '4px',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden'
-                              }}
-                            >
-                              {elem.detail || elem.description}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* =========================================================================
           SECTION 3: JELAJAHI DESTINASI JOGJA LAINNYA (INTERACTIVE SWITCHER)
@@ -2126,7 +1831,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       </p>
                     </div>
                   </div>
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() =>
                       openLogin({
@@ -2135,10 +1840,27 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                         description: 'Masuk atau daftarkan akun Anda untuk memberikan ulasan dan terhubung dengan komunitas penjelajah Hamemayu.'
                       })
                     }
+                    onMouseEnter={() => setIsReviewBtnHovered(true)}
+                    onMouseLeave={() => setIsReviewBtnHovered(false)}
+                    onTouchStart={() => setIsReviewBtnHovered(true)}
+                    onTouchEnd={() => setIsReviewBtnHovered(false)}
+                    whileTap={{ scale: 0.96 }}
+                    animate={{
+                      backgroundColor: isReviewBtnHovered ? '#9E1C64' : '#2C221E',
+                      borderColor: isReviewBtnHovered ? '#9E1C64' : '#C99B52',
+                      boxShadow: isReviewBtnHovered
+                        ? '0 8px 24px rgba(158, 28, 100, 0.42)'
+                        : '0 4px 14px rgba(44, 34, 30, 0.16)',
+                      y: isReviewBtnHovered ? -2 : 0
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 25
+                    }}
                     style={{
                       padding: '0.75rem 1.6rem',
                       borderRadius: '999px',
-                      backgroundColor: '#2C221E',
                       color: '#FAF8F5',
                       border: '1.5px solid #C99B52',
                       fontSize: '0.82rem',
@@ -2146,14 +1868,34 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.5rem',
-                      boxShadow: '0 4px 14px rgba(44, 34, 30, 0.16)',
-                      whiteSpace: 'nowrap'
+                      justifyContent: 'center',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden'
                     }}
                   >
-                    <Sparkles size={14} color="#C99B52" />
                     <span>Masuk / Buat Akun untuk Mengulas</span>
-                  </button>
+                    <motion.span
+                      initial={false}
+                      animate={{
+                        width: isReviewBtnHovered ? 'auto' : 0,
+                        opacity: isReviewBtnHovered ? 1 : 0,
+                        x: isReviewBtnHovered ? 0 : -10,
+                        marginLeft: isReviewBtnHovered ? 8 : 0
+                      }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 450,
+                        damping: 26
+                      }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <ArrowRight size={15} strokeWidth={2.5} />
+                    </motion.span>
+                  </motion.button>
                 </div>
               ) : (
                 <div

@@ -11,7 +11,7 @@ import {
   Share2,
   Globe,
   ChevronRight,
-  Sparkles
+  Info
 } from 'lucide-react';
 
 function InstagramIcon({ size = 18, className = "" }) {
@@ -329,7 +329,7 @@ export default function Footer({
                   onClick={() => onOpenAboutUs && onOpenAboutUs()}
                   className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black cursor-pointer bg-transparent border-none p-0"
                 >
-                  <Sparkles size={14} className="text-amber-800 flex-shrink-0" />
+                  <Info size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Tentang Hamemayu</span>
                 </button>
               </li>

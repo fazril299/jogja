@@ -349,6 +349,16 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         className="fixed inset-0 z-40 bg-[#FAF6EE] text-[#2d180c] overflow-y-auto pt-24 sm:pt-28 pb-16"
         style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}
       >
+        {/* FLOATING CLOSE BUTTON */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="fixed top-4 right-4 sm:top-6 sm:right-8 z-50 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-[#D9CEBA] text-[#2C221E] flex items-center justify-center hover:bg-white transition-all shadow-sm cursor-pointer active:scale-95"
+          aria-label="Tutup dan Kembali ke Beranda"
+        >
+          <X size={18} />
+        </button>
+
         {/* =========================================================================
             PAGE TITLE AREA (Harmonious Homepage Typography & Palette)
             ========================================================================= */}

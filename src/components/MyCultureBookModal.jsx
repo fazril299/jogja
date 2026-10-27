@@ -68,6 +68,7 @@ export default function MyCultureBookModal({
   // Filter & Search untuk Event & Jurnal Budaya
   const [eventCategoryFilter, setEventCategoryFilter] = useState('Semua');
   const [eventSearchQuery, setEventSearchQuery] = useState('');
+  const [expandedEventId, setExpandedEventId] = useState(null);
   const [journalSearchQuery, setJournalSearchQuery] = useState('');
 
   // Verifikasi GPS State
@@ -351,9 +352,6 @@ export default function MyCultureBookModal({
                   <h2 className="text-xl font-extrabold text-[#2C221E] font-['Outfit'] m-0 tracking-tight">
                     {displayName}
                   </h2>
-                  <span className="px-2 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E5DEC9] text-[#8A5D26] text-[10px] font-bold">
-                    {isGuest ? 'Mode Tamu' : 'Penjelajah Terdaftar'}
-                  </span>
                 </div>
 
                 <p className="text-xs text-neutral-500 font-medium truncate mb-1">
@@ -440,31 +438,6 @@ export default function MyCultureBookModal({
             {/* TAB CONTENT 1: BADGES */}
             {mobileSectionTab === 'badges' && (
               <div className="space-y-3">
-                {/* HERO GOLD BUTTON KE HALAMAN PENUH */}
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-[#2C221E] to-[#4A3B32] text-white shadow-sm flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-[#C99B52]/20 border border-[#C99B52]/40 flex items-center justify-center text-[#C99B52] shrink-0">
-                      <Sparkles size={18} />
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-white truncate">
-                        Katalog Misi & Lencana
-                      </h4>
-                      <p className="text-[10px] text-white/70 truncate">
-                        Halaman penuh 4 misi & 9 lencana
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => onOpenQuestCatalog && onOpenQuestCatalog()}
-                    className="px-3.5 py-2 rounded-xl bg-[#C99B52] text-[#2C221E] text-xs font-black shrink-0 shadow-xs cursor-pointer active:scale-95"
-                  >
-                    Buka »
-                  </button>
-                </div>
-
                 {/* Card Ringkasan & 4 Kategori */}
                 <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm">
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#F2EDE4]">
@@ -512,9 +485,8 @@ export default function MyCultureBookModal({
                 {/* 2 Preview Misi Mobile */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-xs font-extrabold text-[#2C221E] flex items-center gap-1">
-                      <Sparkles size={12} className="text-[#8A5D26]" />
-                      <span>Misi Quest Terdekat</span>
+                    <span className="text-xs font-extrabold text-[#2C221E]">
+                      Misi Quest Terdekat
                     </span>
                     <button
                       type="button"
@@ -780,59 +752,79 @@ export default function MyCultureBookModal({
 
                 {/* Events List */}
                 <div className="space-y-2.5">
-                  {filteredEvents.map((ev) => (
-                    <div
-                      key={ev.id}
-                      className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-xs space-y-2"
-                    >
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-neutral-100 border border-neutral-200 text-black text-[10px] font-extrabold">
-                          <Calendar size={10} />
-                          <span>{ev.dateDisplay}</span>
-                        </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700">
-                          {ev.category}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-extrabold text-black m-0 leading-snug">
-                          {ev.name}
-                        </h4>
-                        <div className="flex items-center gap-1 text-[11px] font-bold text-black mt-0.5">
-                          <Sparkles size={11} className="text-black shrink-0" />
-                          <span>{ev.highlight}</span>
+                  {filteredEvents.map((ev) => {
+                    const isExpanded = expandedEventId === ev.id;
+                    return (
+                      <div
+                        key={ev.id}
+                        className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-xs space-y-2 transition-all"
+                      >
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FAF6EE] border border-[#E5DEC9] text-[#8A5D26] text-[10px] font-bold">
+                            <Calendar size={10} />
+                            <span>{ev.dateDisplay}</span>
+                          </span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+                            {ev.category}
+                          </span>
                         </div>
-                      </div>
 
-                      <div className="flex items-start gap-1.5 text-[11px] text-neutral-700">
-                        <MapPin size={12} className="text-black shrink-0 mt-0.5" />
-                        <span>{ev.location} ({ev.district})</span>
-                      </div>
-
-                      <p className="text-xs text-neutral-800 leading-relaxed m-0">
-                        {ev.description}
-                      </p>
-
-                      <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-2.5">
-                        <div className="flex items-center gap-1 text-[10px] font-bold text-black mb-0.5">
-                          <AlertCircle size={12} className="text-black shrink-0" />
-                          <span>Tata Krama &amp; Ketentuan Kunjungan:</span>
+                        <div>
+                          <h4 className="text-sm font-extrabold text-[#2C221E] m-0 leading-snug">
+                            {ev.name}
+                          </h4>
+                          <p className="text-[11px] font-semibold text-[#8A5D26] mt-0.5 m-0">
+                            {ev.highlight}
+                          </p>
                         </div>
-                        <p className="text-[11px] text-neutral-700 m-0 leading-relaxed">
-                          {ev.tips}
-                        </p>
-                      </div>
 
-                      <div className="text-[10px] text-neutral-500 pt-1 border-t border-neutral-100 flex items-center justify-between">
-                        <span>Sumber: {ev.source}</span>
-                        <span className="font-bold text-black inline-flex items-center gap-1">
-                          <Check size={11} className="text-black" />
-                          <span>Data Resmi</span>
-                        </span>
+                        <div className="flex items-start gap-1.5 text-[11px] text-[#6E5D52]">
+                          <MapPin size={12} className="text-[#8A5D26] shrink-0 mt-0.5" />
+                          <span className="truncate">{ev.location} ({ev.district})</span>
+                        </div>
+
+                        {/* Collapsed/Expanded Section */}
+                        {isExpanded && (
+                          <div className="pt-2 border-t border-[#F2EDE4] space-y-2.5">
+                            <p className="text-xs text-neutral-700 leading-relaxed m-0">
+                              {ev.description}
+                            </p>
+
+                            <div className="bg-[#FAF6EE] border border-[#E5DEC9] rounded-xl p-2.5">
+                              <div className="flex items-center gap-1 text-[10px] font-bold text-[#8A5D26] mb-0.5">
+                                <AlertCircle size={12} className="text-[#8A5D26] shrink-0" />
+                                <span>Tata Krama &amp; Ketentuan Kunjungan:</span>
+                              </div>
+                              <p className="text-[11px] text-[#6E5D52] m-0 leading-relaxed">
+                                {ev.tips}
+                              </p>
+                            </div>
+
+                            <div className="text-[10px] text-neutral-500 pt-1 border-t border-neutral-100 flex items-center justify-between">
+                              <span>Sumber: {ev.source}</span>
+                              <span className="font-bold text-neutral-700 inline-flex items-center gap-1">
+                                <Check size={11} className="text-emerald-600" />
+                                <span>Data Resmi</span>
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Accordion Toggle Button */}
+                        <button
+                          type="button"
+                          onClick={() => setExpandedEventId(isExpanded ? null : ev.id)}
+                          className="w-full py-1.5 px-2 rounded-xl bg-[#FAF8F5] hover:bg-[#FAF6EE] border border-[#EAE0D0] text-[#6E5D52] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-[0.99]"
+                        >
+                          <span>{isExpanded ? 'Tutup Detail' : 'Lihat Detail & Tata Krama'}</span>
+                          <ChevronDown
+                            size={13}
+                            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                          />
+                        </button>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {filteredEvents.length === 0 && (
                     <div className="text-center py-8 text-xs text-neutral-500 bg-white rounded-2xl border border-dashed border-neutral-200">
@@ -1133,19 +1125,6 @@ export default function MyCultureBookModal({
                 >
                   {displayName}
                 </h2>
-                <span
-                  style={{
-                    padding: '0.15rem 0.55rem',
-                    borderRadius: '999px',
-                    backgroundColor: '#FAF6EE',
-                    border: '1px solid #E5DEC9',
-                    color: '#8A5D26',
-                    fontSize: '0.68rem',
-                    fontWeight: 700
-                  }}
-                >
-                  {isGuest ? 'Mode Tamu' : 'Penjelajah Terdaftar'}
-                </span>
               </div>
 
               <div
@@ -1685,101 +1664,11 @@ export default function MyCultureBookModal({
                   =============================================================== */}
               {activeTab === 'badges-quests' && (
                 <div>
-                  {/* HERO BANNER EMAS: LINK LANGSUNG KE HALAMAN DEDIKASI KATALOG MISI & BADGE */}
-                  <div
-                    style={{
-                      padding: '1.25rem 1.5rem',
-                      borderRadius: '16px',
-                      background: 'linear-gradient(135deg, #2C221E 0%, #4A3B32 100%)',
-                      color: '#FAF8F5',
-                      marginBottom: '1.5rem',
-                      boxShadow: '0 8px 24px rgba(44, 34, 30, 0.12)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '1rem',
-                      border: '1px solid rgba(201, 155, 82, 0.3)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: '240px' }}>
-                      <div
-                        style={{
-                          width: '46px',
-                          height: '46px',
-                          borderRadius: '12px',
-                          backgroundColor: 'rgba(201, 155, 82, 0.2)',
-                          border: '1.5px solid rgba(201, 155, 82, 0.5)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#C99B52',
-                          flexShrink: 0
-                        }}
-                      >
-                        <Sparkles size={22} />
-                      </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                          <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
-                            Katalog Misi & Lencana Budaya
-                          </h3>
-                          <span
-                            style={{
-                              fontSize: '0.68rem',
-                              fontWeight: 800,
-                              backgroundColor: '#C99B52',
-                              color: '#2C221E',
-                              padding: '0.15rem 0.5rem',
-                              borderRadius: '999px',
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            Halaman Penuh
-                          </span>
-                        </div>
-                        <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.78rem', color: 'rgba(250, 248, 245, 0.75)', lineHeight: 1.45 }}>
-                          Jelajahi 4 misi napak tilas sejarah & 9 lencana warisan budaya di halaman khusus bebas scroll panjang.
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (onOpenQuestCatalog) {
-                          onOpenQuestCatalog();
-                        }
-                      }}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.45rem',
-                        padding: '0.65rem 1.25rem',
-                        borderRadius: '12px',
-                        backgroundColor: '#C99B52',
-                        color: '#2C221E',
-                        border: 'none',
-                        fontSize: '0.82rem',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 14px rgba(201, 155, 82, 0.35)',
-                        transition: 'all 0.2s ease',
-                        flexShrink: 0
-                      }}
-                    >
-                      <Award size={15} />
-                      <span>Buka Halaman Misi Penuh</span>
-                      <ChevronRight size={15} />
-                    </button>
-                  </div>
-
                   {/* MINI PREVIEW 1: MISI QUEST AKTIF (2 KARTU BERDAMPINGAN) */}
                   <div style={{ marginBottom: '1.75rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-                      <h4 style={{ fontSize: '0.94rem', fontWeight: 800, color: '#2C221E', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Sparkles size={15} color="#8A5D26" />
-                        <span>Misi Quest Aktif ({CULTURAL_QUESTS.length})</span>
+                      <h4 style={{ fontSize: '0.94rem', fontWeight: 800, color: '#2C221E', margin: 0 }}>
+                        Misi Quest Aktif ({CULTURAL_QUESTS.length})
                       </h4>
 
                       <button
@@ -2377,8 +2266,7 @@ export default function MyCultureBookModal({
                             >
                               {ev.name}
                             </h4>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 700, color: '#000000', marginTop: '0.2rem' }}>
-                              <Sparkles size={11} color="#000000" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 700, color: '#8A5D26', marginTop: '0.2rem' }}>
                               <span>{ev.highlight}</span>
                             </div>
                           </div>

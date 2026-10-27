@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
 import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
@@ -88,6 +88,7 @@ function findNearestJogjaZone(lat, lng) {
 }
 
 function NusantaraApp() {
+  const { isAuthModalOpen, openLogin, openRegister, closeAuthModal, setAuthModalMode } = useAuth();
   const [places, setPlaces] = useState(() => {
     try {
       const saved = localStorage.getItem('hamemayu_places_v1');
@@ -155,64 +156,204 @@ function NusantaraApp() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
 
+  // Deep-linking & Browser Back/Forward URL Routing Sync
+  useEffect(() => {
+    const handleUrlRoute = () => {
+      const rawHash = window.location.hash.replace(/^#\/?/, '').trim();
+
+      if (!rawHash || rawHash === 'home') {
+        if (!rawHash) {
+          window.history.replaceState(null, '', '#/home');
+        }
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsAdminOpen(false);
+        setIsGlobalShareOpen(false);
+        closeAuthModal();
+        document.title = 'Hamemayu - Jelajah Budaya & Warisan Luhur D.I. Yogyakarta';
+        return;
+      }
+
+      const parts = rawHash.split('/');
+      const route = parts[0];
+      const param = parts[1];
+
+      if (route === 'katalog-quest' || route === 'quest') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsMapOpen(false);
+        setIsQuestBadgePageOpen(true);
+        document.title = 'Katalog Misi & Lencana Budaya - Hamemayu';
+      } else if (route === 'kalender-acara' || route === 'kalender' || route === 'events') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsMapOpen(false);
+        setIsKalenderAcaraOpen(true);
+        document.title = 'Kalender Acara Budaya DIY - Hamemayu';
+      } else if (route === 'jurnal-budaya' || route === 'jurnal') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsJurnalBudayaOpen(true);
+        document.title = 'Jurnal Budaya & Folklor Jogja - Hamemayu';
+      } else if (route === 'tentang-kami' || route === 'tentang' || route === 'about') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsAboutPageOpen(true);
+        document.title = 'Tentang Hamemayu - Filosofi & Pelestarian';
+      } else if (route === 'buku-budaya' || route === 'profil' || route === 'profile') {
+        setIsNearMeOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        if (param) setCultureBookInitialTab(param);
+        setIsCultureBookOpen(true);
+        document.title = 'Buku Budaya & Paspor Budaya - Hamemayu';
+      } else if (route === 'peta' || route === 'map') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(true);
+        document.title = 'Peta Budaya & Cagar Wisata DIY - Hamemayu';
+      } else if (route === 'radar' || route === 'near-me') {
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsNearMeOpen(true);
+        document.title = 'Radar GPS Situs Budaya - Hamemayu';
+      } else if (route === 'masuk' || route === 'login') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsAdminOpen(false);
+        setAuthModalMode('login');
+        openLogin({ title: 'Selamat Datang di Hamemayu' });
+        document.title = 'Masuk Akun - Hamemayu';
+      } else if (route === 'daftar' || route === 'register') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsAdminOpen(false);
+        setAuthModalMode('register');
+        openRegister({ title: 'Daftar Akun Baru' });
+        document.title = 'Daftar Akun - Hamemayu';
+      } else if (route === 'admin') {
+        setIsNearMeOpen(false);
+        setIsCultureBookOpen(false);
+        setSelectedPlace(null);
+        setIsKalenderAcaraOpen(false);
+        setIsKalenderPopupOpen(false);
+        setIsJurnalBudayaOpen(false);
+        setIsAboutPageOpen(false);
+        setIsQuestBadgePageOpen(false);
+        setIsMapOpen(false);
+        setIsAdminOpen(true);
+        document.title = 'Panel Kelola Budaya - Hamemayu';
+      } else if (route === 'destinasi' && param) {
+        const found = places.find((p) => p.id === param);
+        if (found) {
+          setIsNearMeOpen(false);
+          setIsCultureBookOpen(false);
+          setIsKalenderAcaraOpen(false);
+          setIsKalenderPopupOpen(false);
+          setIsJurnalBudayaOpen(false);
+          setIsAboutPageOpen(false);
+          setIsQuestBadgePageOpen(false);
+          setIsMapOpen(false);
+          setSelectedPlace(found);
+          document.title = `${found.name} - Hamemayu`;
+        }
+      }
+    };
+
+    handleUrlRoute();
+    window.addEventListener('hashchange', handleUrlRoute);
+    window.addEventListener('popstate', handleUrlRoute);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlRoute);
+      window.removeEventListener('popstate', handleUrlRoute);
+    };
+  }, [places]);
+
+
+  // Close all modal/pages and sync URL back to home
+  const handleCloseToHome = () => {
+    window.location.hash = '#/home';
+  };
+
+  // URL Hash-based lightweight navigation handlers
   const handleOpenCultureBookWithTab = (tab = 'badges-quests') => {
-    setIsNearMeOpen(false);
-    setSelectedPlace(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setCultureBookInitialTab(tab);
-    setIsCultureBookOpen(true);
+    window.location.hash = `#/buku-budaya/${tab}`;
   };
 
   const handleOpenKalenderAcara = () => {
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setSelectedPlace(null);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsKalenderAcaraOpen(true);
+    window.location.hash = '#/kalender-acara';
   };
 
   const handleOpenQuestCatalog = () => {
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setSelectedPlace(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsQuestBadgePageOpen(true);
+    window.location.hash = '#/katalog-quest';
   };
 
   const handleOpenJurnalBudaya = () => {
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setSelectedPlace(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsJurnalBudayaOpen(true);
+    window.location.hash = '#/jurnal-budaya';
   };
 
   const handleOpenAboutUs = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
-    setIsAboutPageOpen(true);
+    window.location.hash = '#/tentang-kami';
   };
 
   // REAL Hardware GPS Tracking States (Khusus Menyala di Wilayah D.I. Yogyakarta)
@@ -422,7 +563,8 @@ function NusantaraApp() {
     isAdminOpen ||
     isGlobalShareOpen ||
     quickViewLandmark ||
-    isMapOpen
+    isMapOpen ||
+    isAuthModalOpen
   );
 
   useEffect(() => {
@@ -442,16 +584,9 @@ function NusantaraApp() {
 
   // Progressive smooth scroll helper to guarantee viewport moves to section even after unmounting full-screen modals
   const smoothScrollToSection = (sectionId, offset = 85) => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
+    if (window.location.hash !== '#/home') {
+      window.location.hash = '#/home';
+    }
 
     const performScroll = () => {
       const el = document.getElementById(sectionId);
@@ -471,18 +606,7 @@ function NusantaraApp() {
 
   // Navigation handlers
   const handleGoHome = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsKalenderPopupOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
+    window.location.hash = '#/home';
     const container = document.querySelector('.app-container');
     if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
@@ -492,17 +616,7 @@ function NusantaraApp() {
   };
 
   const handleScrollToDestinations = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsNearMeOpen(false);
-    setIsCultureBookOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
+    window.location.hash = '#/home';
     smoothScrollToSection('destinations-section', 85);
   };
 
@@ -511,45 +625,15 @@ function NusantaraApp() {
   };
 
   const handleOpenNearMe = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsCultureBookOpen(false);
-    setIsMapOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
-    setIsNearMeOpen(true);
+    window.location.hash = '#/radar';
   };
 
   const handleOpenMap = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
-    setIsMapOpen(true);
+    window.location.hash = '#/peta';
   };
 
   const handleOpenAdmin = () => {
-    setSelectedPlace(null);
-    setQuickViewLandmark(null);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
-    setIsMapOpen(false);
-    setIsGlobalShareOpen(false);
-    setIsAdminOpen(true);
+    window.location.hash = '#/admin';
   };
 
   const handleOpenShareModal = () => {
@@ -557,19 +641,8 @@ function NusantaraApp() {
   };
 
   const handleSelectPlaceById = (id) => {
-    setQuickViewLandmark(null);
-    setIsCultureBookOpen(false);
-    setIsNearMeOpen(false);
-    setIsMapOpen(false);
-    setIsKalenderAcaraOpen(false);
-    setIsJurnalBudayaOpen(false);
-    setIsAboutPageOpen(false);
-    setIsQuestBadgePageOpen(false);
-    setIsAdminOpen(false);
-    setIsGlobalShareOpen(false);
-    const found = places.find((p) => p.id === id) || places[0];
-    if (found) {
-      setSelectedPlace(found);
+    if (id) {
+      window.location.hash = `#/destinasi/${id}`;
     }
   };
 
@@ -781,23 +854,11 @@ function NusantaraApp() {
 
 
 
-        {/* 8. INSTAGRAM STORIES PHOTO MARQUEE - STICKY PINNED AT VIEWPORT */}
-        <div
-          className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] overflow-hidden flex flex-col justify-center bg-[#FAF6EE]"
-          style={{ position: 'sticky', top: 0, zIndex: 10 }}
-        >
-          <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
-        </div>
-
-        {/* 9. CTA HERO BANNER & CONTINUOUS TICKER - SLIDES UP OVER 3D GALLERY */}
-        <div
-          className="relative z-20 w-full bg-[#FAF6EE] text-[#1a1a1a] shadow-[0_-35px_80px_rgba(0,0,0,0.38)]"
-          style={{ position: 'relative', zIndex: 20 }}
-        >
+        {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
+        <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
 
         {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
-          <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
-        </div>
+        <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
 
         {/* 10. MODERN DARK FOOTER */}
         <Footer
@@ -823,12 +884,12 @@ function NusantaraApp() {
         {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
         <AnimatePresence>
           {selectedPlace && (
-            <ErrorBoundary onReset={() => setSelectedPlace(null)}>
+            <ErrorBoundary onReset={handleCloseToHome}>
               <PlaceStorybook
                 place={selectedPlace}
                 places={places}
-                onSelectPlace={(p) => setSelectedPlace(p)}
-                onBack={() => setSelectedPlace(null)}
+                onSelectPlace={(p) => { window.location.hash = `#/destinasi/${p.id}`; }}
+                onBack={handleCloseToHome}
                 onOpenMapWithPlace={handleOpenMapWithPlace}
                 onOpenCultureBook={() => setIsCultureBookOpen(true)}
               />
@@ -861,9 +922,9 @@ function NusantaraApp() {
         {isNearMeOpen && (
           <NearMeModal
             isOpen={isNearMeOpen}
-            onClose={() => setIsNearMeOpen(false)}
+            onClose={handleCloseToHome}
             places={places}
-            onSelectPlace={(place) => setSelectedPlace(place)}
+            onSelectPlace={(place) => { window.location.hash = `#/destinasi/${place.id}`; }}
             autoDetectedZoneId={autoDetectedZoneId}
             userLiveCoords={userLiveCoords}
             isOutsideJogja={isOutsideJogja}
@@ -881,15 +942,14 @@ function NusantaraApp() {
             isOpen={isCultureBookOpen}
             initialTab={cultureBookInitialTab}
             onOpenQuestCatalog={handleOpenQuestCatalog}
-            onClose={() => setIsCultureBookOpen(false)}
+            onClose={handleCloseToHome}
             places={places}
             userLiveCoords={userLiveCoords}
             userLiveAddress={userLiveAddress}
             onRefreshGps={() => triggerDeviceGpsDetection(false)}
             isGpsLoading={isGpsLoading}
             onSelectPlace={(place) => {
-              setIsCultureBookOpen(false);
-              setSelectedPlace(place);
+              window.location.hash = `#/destinasi/${place.id}`;
             }}
           />
         )}
@@ -899,14 +959,13 @@ function NusantaraApp() {
           <KalenderAcaraPage
             isOpen={isKalenderAcaraOpen}
             onClose={() => {
-              setIsKalenderAcaraOpen(false);
               setIsKalenderPopupOpen(false);
+              handleCloseToHome();
             }}
             onPopupChange={setIsKalenderPopupOpen}
             onSelectPlace={(place) => {
-              setIsKalenderAcaraOpen(false);
               setIsKalenderPopupOpen(false);
-              setSelectedPlace(place);
+              window.location.hash = `#/destinasi/${place.id}`;
             }}
           />
         )}
@@ -915,7 +974,7 @@ function NusantaraApp() {
         {isJurnalBudayaOpen && (
           <JurnalBudayaPage
             isOpen={isJurnalBudayaOpen}
-            onClose={() => setIsJurnalBudayaOpen(false)}
+            onClose={handleCloseToHome}
           />
         )}
 
@@ -923,7 +982,7 @@ function NusantaraApp() {
         {isAboutPageOpen && (
           <TentangKamiPage
             isOpen={isAboutPageOpen}
-            onClose={() => setIsAboutPageOpen(false)}
+            onClose={handleCloseToHome}
             onOpenKalender={handleOpenKalenderAcara}
             onOpenMap={handleOpenMap}
             onOpenNearMe={handleOpenNearMe}
@@ -936,14 +995,13 @@ function NusantaraApp() {
         {isQuestBadgePageOpen && (
           <KatalogQuestBadgePage
             isOpen={isQuestBadgePageOpen}
-            onClose={() => setIsQuestBadgePageOpen(false)}
+            onClose={handleCloseToHome}
             places={places}
             userLiveCoords={userLiveCoords}
             onRefreshGps={() => triggerDeviceGpsDetection(false)}
             isGpsLoading={isGpsLoading}
             onSelectPlace={(place) => {
-              setIsQuestBadgePageOpen(false);
-              setSelectedPlace(place);
+              window.location.hash = `#/destinasi/${place.id}`;
             }}
           />
         )}
@@ -952,7 +1010,7 @@ function NusantaraApp() {
         {isAdminOpen && (
           <AdminModal
             isOpen={isAdminOpen}
-            onClose={() => setIsAdminOpen(false)}
+            onClose={handleCloseToHome}
             places={places}
             onAddNewPlace={handleAddNewPlace}
             onDeletePlace={handleDeletePlace}
@@ -975,12 +1033,11 @@ function NusantaraApp() {
         {isMapOpen && (
           <InteractiveMapModal
             isOpen={isMapOpen}
-            onClose={() => setIsMapOpen(false)}
+            onClose={handleCloseToHome}
             places={places}
             selectedPlace={selectedPlace}
             onSelectPlace={(place) => {
-              setIsMapOpen(false);
-              setSelectedPlace(place);
+              window.location.hash = `#/destinasi/${place.id}`;
             }}
           />
         )}
