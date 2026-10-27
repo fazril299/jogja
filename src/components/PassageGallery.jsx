@@ -119,10 +119,10 @@ export function PassageGallery({
     <div
       ref={containerRef}
       data-fx-pin="true"
-      className={`relative w-full ${className}`}
+      className={`relative w-full h-full ${className}`}
       style={{
         width: '100%',
-        height: '100vh',
+        height: '100%',
         backgroundColor: background,
         overflow: 'hidden',
         ...style

@@ -5,11 +5,11 @@ export default function CTAHeroBanner({ onOpenBooking }) {
   return (
     <section
       id="cta-section"
-      className="border-b border-neutral-200"
+      className="border-b border-[#D9CEBA]/60"
       style={{
         width: '100%',
         position: 'relative',
-        background: '#FFFFFF',
+        background: '#FAF6EE',
         overflow: 'hidden'
       }}
     >

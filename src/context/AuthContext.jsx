@@ -391,6 +391,9 @@ export function AuthProvider({ children }) {
       setPendingBenefitAction(null);
     }
     setIsAuthModalOpen(true);
+    if (window.location.hash !== '#/masuk') {
+      window.location.hash = '#/masuk';
+    }
   }, []);
 
   const openRegister = useCallback((reasonObj, actionCallback = null) => {
@@ -414,12 +417,29 @@ export function AuthProvider({ children }) {
       setPendingBenefitAction(null);
     }
     setIsAuthModalOpen(true);
+    if (window.location.hash !== '#/daftar') {
+      window.location.hash = '#/daftar';
+    }
   }, []);
 
   const closeAuthModal = useCallback(() => {
     setIsAuthModalOpen(false);
     setPendingBenefitAction(null);
+    const rawHash = window.location.hash.replace(/^#\/?/, '').trim();
+    if (rawHash === 'masuk' || rawHash === 'login' || rawHash === 'daftar' || rawHash === 'register') {
+      window.location.hash = '#/home';
+    }
   }, []);
+
+  // Sync hash when modal is closed externally or on auth complete
+  useEffect(() => {
+    if (!isAuthModalOpen) {
+      const rawHash = window.location.hash.replace(/^#\/?/, '').trim();
+      if (rawHash === 'masuk' || rawHash === 'login' || rawHash === 'daftar' || rawHash === 'register') {
+        window.location.hash = '#/home';
+      }
+    }
+  }, [isAuthModalOpen]);
 
   // Strict Auth Guard: Melindungi aksi khusus member/admin
   const requireAuth = useCallback(

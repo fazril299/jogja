@@ -8,21 +8,21 @@ const officialSources = [
     detail: 'Terdaftar sebagai Warisan Dunia UNESCO pada 2023. Poros utara–selatannya membentang sekitar 6 km, menghubungkan Gunung Merapi, Keraton, dan Samudra Hindia.',
     source: 'UNESCO',
     href: 'https://whc.unesco.org/en/list/1671/',
-    iconSrc: '/images/icon_culture.svg'
+    iconSrc: '/assets/icons/icon_culture.svg'
   },
   {
     title: 'Keraton Yogyakarta',
     detail: 'Sebagian kawasan Keraton terbuka untuk kunjungan publik dan dikelola oleh Kawedanan Radya Kartiyasa.',
     source: 'Situs resmi wisata Keraton',
     href: 'https://tourism.kratonjogja.id/id-ID/destination',
-    iconSrc: '/images/icon_soul.svg'
+    iconSrc: '/assets/icons/icon_soul.svg'
   },
   {
     title: 'Museum Ullen Sentalu',
     detail: 'Buka Selasa–Minggu, pukul 08.30–16.30 WIB. Tur terakhir dimulai pukul 15.15 WIB; museum tutup pada hari Senin.',
     source: 'Situs resmi Museum Ullen Sentalu',
     href: 'https://www.ullensentalu.com/berkunjung.html',
-    iconSrc: '/images/icon_nature.svg'
+    iconSrc: '/assets/icons/icon_nature.svg'
   }
 ];
 
@@ -109,7 +109,7 @@ export default function OfficialSources() {
   return (
     <section
       id="official-sources"
-      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-neutral-200"
+      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-[#D9CEBA]/60"
     >
       <div
         style={{

@@ -93,10 +93,10 @@ export default function InstagramStories() {
   return (
     <section
       id="stories-section"
-      className="w-full relative bg-[#FAF6EE] text-[#1A1A1A] pt-24 pb-16 overflow-hidden border-none"
+      className="w-full relative bg-[#FAF6EE] text-[#1A1A1A] pt-20 sm:pt-28 pb-16 overflow-hidden border-none"
     >
       {/* SECTION HEADER */}
-      <div className="text-center max-w-4xl mx-auto px-6 mb-10 relative z-20">
+      <div className="text-center max-w-4xl mx-auto px-6 mb-2 sm:mb-3 relative z-20 pointer-events-none">
                 <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#2b1e16] leading-tight tracking-tight mb-3">
           Potret Keindahan Budaya, Alam &<br className="hidden sm:block" /> Kuliner Asli Yogyakarta
         </h2>
@@ -107,12 +107,12 @@ export default function InstagramStories() {
       </div>
 
       {/* 3D WEBGL CURVED RING GALLERY - SINGLE ROW PORTRAIT LIKE GAMBAR 2 */}
-      <div className="w-full h-[75vh] min-h-[520px] max-h-[780px] relative z-10 bg-[#faf6ee]">
+      <div className="w-full h-[62vh] min-h-[460px] max-h-[660px] relative z-10 bg-[#faf6ee] -mt-3 sm:-mt-6">
         <PassageGallery
           slides={jogjaSlides}
           layout="ring"
           scrollLength={4}
-          imageSize={0.52}
+          imageSize={0.54}
           spacing={0.05}
           scatter={0}
           radius={0.025}
@@ -131,7 +131,7 @@ export default function InstagramStories() {
       </div>
 
       {/* SUBTEXT BELOW 3D GALLERY */}
-      <div className="text-center mt-8 text-xs sm:text-sm text-[#7d6756] font-sans relative z-20">
+      <div className="text-center mt-3 sm:mt-4 text-xs sm:text-sm text-[#7d6756] font-sans relative z-20">
         Tandai{' '}
         <span className="text-[#8b4f1e] font-semibold">@hamemayu.official</span>{' '}
         agar foto dokumentasi budaya Anda berkesempatan dikurasi.

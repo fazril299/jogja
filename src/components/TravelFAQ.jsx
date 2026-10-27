@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+import { ChevronDown, HelpCircle } from 'lucide-react';
 
 export default function TravelFAQ({ id }) {
   const [openIdx, setOpenIdx] = useState(null);
+  const [showAllMobile, setShowAllMobile] = useState(false);
 
   const toggleQuestion = (idx) => {
     setOpenIdx(openIdx === idx ? null : idx);
@@ -55,63 +56,51 @@ export default function TravelFAQ({ id }) {
     }
   ];
 
-  const renderFaqCard = (item) => {
+  const renderFaqRow = (item, topBorderClass = '') => {
     const isOpen = openIdx === item.idx;
     return (
       <div
         key={item.idx}
-        onClick={() => toggleQuestion(item.idx)}
-        style={{
-          background: '#E6D2C1',
-          border: '1px solid #C7AE98',
-          borderRadius: '24px',
-          padding: 'clamp(1rem, 3vw, 1.25rem) clamp(1rem, 3vw, 1.6rem)',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          boxShadow: isOpen ? '0 12px 32px rgba(45, 24, 12, 0.12)' : '0 4px 18px rgba(45, 24, 12, 0.05)'
-        }}
+        className={`border-b border-[#D9CEBA]/80 transition-colors duration-200 ${topBorderClass}`}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem'
-        }}>
-          <h3 style={{
-            fontFamily: 'Outfit, sans-serif',
-            fontSize: 'clamp(0.95rem, 2vw, 1.05rem)',
-            fontWeight: 700,
-            color: '#000000',
-            lineHeight: 1.35
-          }}>
+        <button
+          type="button"
+          onClick={() => toggleQuestion(item.idx)}
+          className="w-full text-left py-4 sm:py-5 px-1 sm:px-2 flex items-center justify-between gap-4 group focus:outline-none transition-all active:opacity-60"
+          aria-expanded={isOpen}
+        >
+          <span
+            className={`font-sans text-[0.98rem] sm:text-[1.08rem] font-medium leading-snug transition-colors duration-200 ${
+              isOpen ? 'text-[#8C532B] font-semibold' : 'text-[#2D180C] group-hover:text-[#8C532B]'
+            }`}
+          >
             {item.q}
-          </h3>
-          <div style={{
-            color: '#000000',
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            {isOpen ? <Minus size={18} strokeWidth={2.5} /> : <Plus size={18} strokeWidth={2.5} />}
+          </span>
+          <div
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+              isOpen ? 'bg-[#8C532B]/10 text-[#8C532B]' : 'bg-[#2D180C]/5 text-[#2D180C]/70 group-hover:bg-[#2D180C]/10'
+            }`}
+          >
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="flex items-center justify-center"
+            >
+              <ChevronDown size={17} strokeWidth={2.2} />
+            </motion.div>
           </div>
-        </div>
+        </button>
 
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {isOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0, marginTop: 0 }}
-              animate={{ height: 'auto', opacity: 1, marginTop: 12 }}
-              exit={{ height: 0, opacity: 0, marginTop: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{ overflow: 'hidden' }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
             >
-              <p style={{
-                fontSize: '0.9rem',
-                color: 'rgba(0, 0, 0, 0.82)',
-                lineHeight: 1.55,
-                fontWeight: 500
-              }}>
+              <p className="pb-5 pt-1 px-1 sm:px-2 text-[0.9rem] sm:text-[0.95rem] text-[#2D180C]/80 leading-relaxed font-normal">
                 {item.a}
               </p>
             </motion.div>
@@ -122,69 +111,86 @@ export default function TravelFAQ({ id }) {
   };
 
   return (
-    <section id={id || "faq-section"} className="web-section-100vh w-full bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-20 pb-8 relative flex flex-col border-b border-neutral-200">
-      <div style={{
-        maxWidth: '1240px',
-        margin: 'auto auto',
-        maxHeight: '78vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        width: '100%'
-      }}>
-        {/* SECTION HEADER */}
-        <div style={{
-          textAlign: 'center',
-          maxWidth: '750px',
-          margin: '0 auto clamp(1.2rem, 3vw, 2rem) auto'
-        }}>
-          <motion.div 
-            initial={{ opacity: 0, y: -15 }}
+    <section
+      id={id || "faq-section"}
+      className="w-full min-h-screen bg-[#FAF6EE] px-4 sm:px-8 pt-16 sm:pt-24 pb-20 sm:pb-28 relative flex flex-col justify-center border-b border-[#D9CEBA]/60"
+    >
+      <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center">
+        {/* SECTION HEADER - Clean Apple Luxury Style */}
+        <div className="text-center max-w-[720px] mx-auto mb-8 sm:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#8c532b',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              marginBottom: '0.8rem'
-            }}
+            className="inline-flex items-center gap-2 text-[#8C532B] text-xs sm:text-sm font-semibold tracking-wide uppercase mb-3 px-3.5 py-1 rounded-full bg-[#8C532B]/8 border border-[#8C532B]/15"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            Tanya Jawab Wisata & Kuliner DIY
+            <HelpCircle size={15} strokeWidth={2} />
+            <span>Tanya Jawab Wisata & Kuliner</span>
           </motion.div>
 
-          <h2 style={{
-            fontFamily: 'Outfit, sans-serif',
-            fontSize: 'clamp(1.8rem, 3.8vw, 3.2rem)',
-            fontWeight: 800,
-            color: '#2d180c',
-            lineHeight: 1.15,
-            letterSpacing: '-0.02em'
-          }}>
-            Hal Penting Sebelum Anda<br />Menjelajahi Yogyakarta
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight">
+            Hal Penting Sebelum Anda<br className="hidden sm:inline" /> Menjelajahi Yogyakarta
           </h2>
+          <p className="text-sm sm:text-base text-[#2D180C]/70 mt-3 max-w-xl mx-auto leading-relaxed">
+            Panduan esensial seputar tata krama budaya, kuliner autentik, dan tips praktis menjelajah Jogja.
+          </p>
         </div>
 
-        {/* 2-COLUMN ACCORDION GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-          {/* Left Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            {leftQuestions.map((item) => renderFaqCard(item))}
+        {/* DESKTOP: 2-COLUMN ACCORDION GRID / MOBILE: FIRST 4 QUESTIONS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-12 items-start">
+          {/* Left Column (Items 0-3: Always visible on both Mobile & Desktop) */}
+          <div className="flex flex-col">
+            {leftQuestions.map((item, idx) =>
+              renderFaqRow(item, idx === 0 ? 'border-t border-[#D9CEBA]/80' : '')
+            )}
           </div>
 
-          {/* Right Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            {rightQuestions.map((item) => renderFaqCard(item))}
+          {/* Right Column (Items 4-7: Always visible on Desktop) */}
+          <div className="hidden md:flex flex-col">
+            {rightQuestions.map((item, idx) =>
+              renderFaqRow(item, idx === 0 ? 'md:border-t border-[#D9CEBA]/80' : '')
+            )}
           </div>
         </div>
 
+        {/* MOBILE ONLY: Smooth Expandable Sisa Pertanyaan (Items 4-7) */}
+        <div className="md:hidden">
+          <AnimatePresence initial={false}>
+            {showAllMobile && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col overflow-hidden"
+              >
+                {rightQuestions.map((item) => renderFaqRow(item, ''))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Apple-style Pill Expand Button */}
+          <div className="pt-6 sm:pt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold text-[#8C532B] bg-[#8C532B]/8 hover:bg-[#8C532B]/15 active:scale-95 transition-all duration-200 border border-[#8C532B]/20 shadow-xs"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Tampilkan Lebih Sedikit'
+                  : `Lihat ${rightQuestions.length} Pertanyaan Lainnya`}
+              </span>
+              <motion.div
+                animate={{ rotate: showAllMobile ? 180 : 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center justify-center"
+              >
+                <ChevronDown size={15} strokeWidth={2.4} />
+              </motion.div>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
