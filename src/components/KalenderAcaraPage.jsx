@@ -14,7 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Filter,
   Bookmark,
   CalendarPlus,
   Compass,
@@ -43,6 +42,56 @@ const MONTH_NAMES = [
 
 // Weekday abbreviations
 const DAY_HEADERS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+// Pasaran Jawa (5-Day Cycle of Weton: Wage, Kliwon, Legi, Pahing, Pon)
+const PASARAN_NAMES = ['Wage', 'Kliwon', 'Legi', 'Pahing', 'Pon'];
+
+function getPasaranJawa(year, month, day) {
+  const targetDate = Date.UTC(year, month, day);
+  const epoch = Date.UTC(1970, 0, 1); // 1 Jan 1970 is Kamis Wage (offset 0)
+  const diffDays = Math.floor((targetDate - epoch) / 86400000);
+  const pIndex = ((diffDays % 5) + 5) % 5;
+  return PASARAN_NAMES[pIndex];
+}
+
+// Quick Vibe Filters above Calendar Matrix
+const VIBE_FILTERS = [
+  { id: 'semua', label: 'Semua Agenda' },
+  { id: 'sakral', label: '🔥 Paling Sakral' },
+  { id: 'weekend', label: '🎭 Weekend & Pentas' },
+  { id: 'kliwon', label: '🌙 Malam Kliwon' },
+  { id: 'terbuka', label: '🆓 Terbuka Umum' }
+];
+
+// Jojo Cultural Guidance & Adab Tips
+const JOJO_CULTURAL_TIPS = [
+  {
+    tag: 'Adab Berbusana Keraton',
+    title: 'Busana Rapi & Tertutup',
+    desc: 'Di area sakral Pagelaran Keraton, kenakan pakaian sopan dan hindari celana pendek.'
+  },
+  {
+    tag: 'Tata Krama Kirab Sakral',
+    title: 'Hormati Bregada Prajurit',
+    desc: 'Dilarang memotong barisan kirab bregada atau melangkah di atas instrumen pusaka.'
+  },
+  {
+    tag: 'Penanggalan Jawa',
+    title: 'Dwi-Penanggalan Masehi & Weton',
+    desc: 'Upacara adat berpatokan pada weton Jawa sakral seperti Selasa Kliwon & Jumat Kliwon.'
+  },
+  {
+    tag: 'Etika Dokumentasi Foto',
+    title: 'Tanpa Lampu Kilat (No Flash)',
+    desc: 'Hindari flash kamera ke arah Ngarsa Dalem Sri Sultan, abdi dalem, dan pusaka ageng.'
+  },
+  {
+    tag: 'Sumbu Filosofis UNESCO',
+    title: 'Poros Kosmis Kasultanan',
+    desc: 'Garis imaginer Panggung Krapyak – Keraton – Tugu – Merapi sarat makna luhur spiritual.'
+  }
+];
+
 
 // Master categories matching Jogja cultural palette
 const CATEGORY_CONFIG = {
@@ -95,10 +144,40 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   // Active view toggle: 'Bulan' | 'Minggu' | 'Hari' | 'Daftar'
   const [viewTab, setViewTab] = useState('Bulan');
 
+  // Quick Vibe filter above calendar
+  const [activeVibe, setActiveVibe] = useState('semua');
+
+  // Interactive Quick-Peek Hover Preview State
+  const [hoveredEvent, setHoveredEvent] = useState(null);
+  const [hoverPosition, setHoverPosition] = useState(null);
+
+  // Interactive Jojo tip cycle state
+  const [jojoTipIndex, setJojoTipIndex] = useState(-1);
+  const handleJojoTipCycle = () => {
+    setJojoTipIndex((prev) => (prev + 1) % JOJO_CULTURAL_TIPS.length);
+  };
+
   // Filter state in left sidebar
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState(CATEGORIES_LIST);
   const [selectedLocation, setSelectedLocation] = useState('Semua');
+
+  // Quick Vibe counts
+  const vibeCounts = useMemo(() => {
+    return {
+      semua: CULTURAL_EVENTS.length,
+      sakral: CULTURAL_EVENTS.filter((e) => e.category === 'Upacara Keraton').length,
+      weekend: CULTURAL_EVENTS.filter((e) => {
+        const d = new Date(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10)).getDay();
+        return d === 0 || d === 6 || e.category === 'Pertunjukan Seni';
+      }).length,
+      kliwon: CULTURAL_EVENTS.filter((e) => {
+        const p = getPasaranJawa(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10));
+        return p === 'Kliwon' || e.jawaCalendar?.toLowerCase().includes('kliwon') || e.name?.toLowerCase().includes('tapa bisu');
+      }).length,
+      terbuka: CULTURAL_EVENTS.filter((e) => e.category !== 'Upacara Keraton' || !e.name?.toLowerCase().includes('jamasan')).length
+    };
+  }, []);
 
   // Real event counts per category
   const categoryCounts = useMemo(() => {
@@ -196,7 +275,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     });
   };
 
-  // Master filtered events based on left sidebar filters
+  // Master filtered events based on left sidebar filters and quick vibe
   const filteredEvents = useMemo(() => {
     return CULTURAL_EVENTS.filter((ev) => {
       const matchCategory = selectedCategories.includes(ev.category);
@@ -218,9 +297,23 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         ev.shortDesc.toLowerCase().includes(q) ||
         (ev.district && ev.district.toLowerCase().includes(q));
 
-      return matchCategory && matchLocation && matchQuery;
+      // Quick Vibe Filter
+      let matchVibe = true;
+      if (activeVibe === 'sakral') {
+        matchVibe = ev.category === 'Upacara Keraton';
+      } else if (activeVibe === 'weekend') {
+        const d = new Date(ev.year || activeYear, ev.monthIndex !== undefined ? ev.monthIndex : 2, parseInt(ev.dayDate, 10)).getDay();
+        matchVibe = d === 0 || d === 6 || ev.category === 'Pertunjukan Seni';
+      } else if (activeVibe === 'kliwon') {
+        const p = getPasaranJawa(ev.year || activeYear, ev.monthIndex !== undefined ? ev.monthIndex : 2, parseInt(ev.dayDate, 10));
+        matchVibe = p === 'Kliwon' || ev.jawaCalendar?.toLowerCase().includes('kliwon') || ev.name?.toLowerCase().includes('tapa bisu');
+      } else if (activeVibe === 'terbuka') {
+        matchVibe = ev.category !== 'Upacara Keraton' || !ev.name?.toLowerCase().includes('jamasan');
+      }
+
+      return matchCategory && matchLocation && matchQuery && matchVibe;
     });
-  }, [selectedCategories, selectedLocation, searchQuery]);
+  }, [selectedCategories, selectedLocation, searchQuery, activeVibe, activeYear]);
 
   // Calendar cells matrix calculation (7 columns x N rows)
   const calendarCells = useMemo(() => {
@@ -232,12 +325,16 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
     // Prev month padding
     for (let i = firstDay - 1; i >= 0; i--) {
+      const d = daysInPrevMonth - i;
+      const m = activeMonth === 0 ? 11 : activeMonth - 1;
+      const y = activeMonth === 0 ? activeYear - 1 : activeYear;
       cells.push({
-        day: daysInPrevMonth - i,
-        month: activeMonth === 0 ? 11 : activeMonth - 1,
-        year: activeMonth === 0 ? activeYear - 1 : activeYear,
+        day: d,
+        month: m,
+        year: y,
         isCurrentMonth: false,
-        isPrevMonth: true
+        isPrevMonth: true,
+        pasaran: getPasaranJawa(y, m, d)
       });
     }
 
@@ -247,19 +344,23 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         day: d,
         month: activeMonth,
         year: activeYear,
-        isCurrentMonth: true
+        isCurrentMonth: true,
+        pasaran: getPasaranJawa(activeYear, activeMonth, d)
       });
     }
 
     // Next month padding to complete 7-day row
     const remainingCells = (7 - (cells.length % 7)) % 7;
     for (let i = 1; i <= remainingCells; i++) {
+      const m = activeMonth === 11 ? 0 : activeMonth + 1;
+      const y = activeMonth === 11 ? activeYear + 1 : activeYear;
       cells.push({
         day: i,
-        month: activeMonth === 11 ? 0 : activeMonth + 1,
-        year: activeMonth === 11 ? activeYear + 1 : activeYear,
+        month: m,
+        year: y,
         isCurrentMonth: false,
-        isNextMonth: true
+        isNextMonth: true,
+        pasaran: getPasaranJawa(y, m, i)
       });
     }
 
@@ -338,6 +439,55 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     return CULTURAL_PLACES[0];
   };
 
+  // Jojo Mascot Speech Content (Kurator Agenda Keraton dengan Mode Tips Interaktif)
+  const jojoBubbleContent = useMemo(() => {
+    if (jojoTipIndex >= 0) {
+      return JOJO_CULTURAL_TIPS[jojoTipIndex];
+    }
+    if (searchQuery.trim()) {
+      return {
+        tag: 'Pencarian Acara',
+        title: `Cari: "${searchQuery.trim()}"`,
+        desc: `${filteredEvents.length} agenda budaya ditemukan`
+      };
+    }
+    if (activeVibe !== 'semua') {
+      const activeVibeObj = VIBE_FILTERS.find((v) => v.id === activeVibe);
+      return {
+        tag: 'Filter Cepat Aktif',
+        title: `${activeVibeObj?.label || activeVibe}`,
+        desc: `${filteredEvents.length} agenda sesuai tema ini`
+      };
+    }
+    if (selectedDayEvents && selectedDayEvents.length > 0) {
+      const ev = selectedDayEvents[0];
+      return {
+        tag: 'Agenda Terpilih',
+        title: `${selectedDay} ${MONTH_NAMES[activeMonth]}: ${ev.name}`,
+        desc: `${ev.category} • ${ev.time.split('–')[0]}`
+      };
+    }
+    if (selectedLocation !== 'Semua') {
+      return {
+        tag: 'Wilayah Budaya',
+        title: `${selectedLocation}`,
+        desc: `${filteredEvents.length} agenda di kawasan ini`
+      };
+    }
+    if (selectedCategories.length === 1) {
+      return {
+        tag: 'Kategori Khusus',
+        title: `${selectedCategories[0]}`,
+        desc: `${filteredEvents.length} agenda terdaftar`
+      };
+    }
+    return {
+      tag: 'Kurator Keraton',
+      title: 'Pilih Kategori & Wilayah!',
+      desc: 'Jojo pandu jadwal upacaranya (Klik aku untuk tips!)'
+    };
+  }, [jojoTipIndex, searchQuery, activeVibe, filteredEvents.length, selectedDayEvents, selectedDay, activeMonth, selectedLocation, selectedCategories]);
+
   if (!isOpen) return null;
 
   return (
@@ -377,9 +527,58 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 pb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             {/* ─────────────────────────────────────────────────────────────────
-                COLUMN 1 (LEFT SIDEBAR): FILTERS & POPULAR EVENTS
+                COLUMN 1 (LEFT SIDEBAR): JOJO COMPANION, FILTERS & POPULAR EVENTS
                 ───────────────────────────────────────────────────────────────── */}
-            <div className="lg:col-span-3 space-y-4">
+            <div className="lg:col-span-3 space-y-4 lg:-mt-[126px]">
+              {/* MASKOT JOJO: KURATOR AGENDA KERATON (Interaktif: Klik Jojo atau Bubble untuk Berbagi Tips Adat) */}
+              <div className="select-none relative z-20 mb-[-14px]">
+                <div className="flex items-end justify-between gap-2">
+                  {/* Bubble Chat Panduan Interaktif */}
+                  <motion.div
+                    key={`${jojoBubbleContent.tag}-${jojoBubbleContent.title}`}
+                    initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={handleJojoTipCycle}
+                    className="bg-white/95 backdrop-blur-md border border-[#D9CEBA] rounded-2xl p-2.5 shadow-[0_8px_20px_rgba(45,24,12,0.12)] relative flex-1 min-w-0 mb-4 -ml-1 cursor-pointer hover:border-[#8c532b]/60 transition-colors group"
+                    title="Klik untuk melihat tips tata krama & budaya Yogyakarta"
+                  >
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <div className="flex items-center gap-1.5 text-[9px] font-extrabold text-[#8c532b] uppercase tracking-wider">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#8c532b] shrink-0" />
+                        <span className="truncate">{jojoBubbleContent.tag}</span>
+                      </div>
+                      <span className="text-[8px] text-[#8c532b] font-bold opacity-70 group-hover:opacity-100 transition-opacity">
+                        Klik Tips 💬
+                      </span>
+                    </div>
+                    <p className="text-xs font-bold text-[#2d180c] leading-snug m-0 line-clamp-1">
+                      {jojoBubbleContent.title}
+                    </p>
+                    <p className="text-[10px] text-[#786154] leading-tight m-0 mt-0.5 font-normal truncate">
+                      {jojoBubbleContent.desc}
+                    </p>
+                    {/* Pointer segitiga bubble ke arah Jojo */}
+                    <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-white/95 border-t border-r border-[#D9CEBA] rotate-45" />
+                  </motion.div>
+
+                  {/* Maskot Jojo Memegang Titah Dalem (Bisa Diklik & Animated Bounce) */}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.93 }}
+                    onClick={handleJojoTipCycle}
+                    className="shrink-0 relative -mr-2 cursor-pointer"
+                    title="Klik Jojo untuk tips adab & fakta budaya keraton!"
+                  >
+                    <img
+                      src="/assets/images/mascot_kalender.webp"
+                      alt="Jojo si Kurator Agenda Keraton Yogyakarta"
+                      className="w-32 sm:w-36 h-auto object-contain drop-shadow-[0_14px_22px_rgba(45,24,12,0.22)] select-none pointer-events-none"
+                    />
+                  </motion.div>
+                </div>
+              </div>
+
               {/* TOP CARD: FILTERS (Warm Cream Container matching homepage) */}
               <div className="bg-[#F5EEDC] border border-[#E8DFC9] rounded-2xl p-4 sm:p-5 space-y-5 shadow-xs">
                 {/* Search Bar with Heritage Brown Button */}
@@ -595,40 +794,59 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   </h2>
                 </div>
 
-                {/* Right Mode Toggle Pills ([Bulan] [Minggu] [Hari] [Daftar]) + Filter Icon */}
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center bg-[#FAF6EE] p-0.5 rounded-lg border border-[#E8DFC9] text-xs">
-                    {['Bulan', 'Minggu', 'Hari', 'Daftar'].map((tab) => {
-                      const isActive = viewTab === tab;
-                      return (
-                        <button
-                          key={tab}
-                          type="button"
-                          onClick={() => setViewTab(tab)}
-                          className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${isActive
-                              ? 'bg-[#2d180c] text-white shadow-2xs font-bold'
-                              : 'text-[#786154] hover:text-[#2d180c]'
-                            }`}
-                        >
-                          {tab}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedCategories(CATEGORIES_LIST);
-                      setSelectedLocation('Semua');
-                    }}
-                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#786154] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer"
-                    title="Reset Filter"
-                  >
-                    <Filter size={14} />
-                  </button>
+                {/* Right Mode Toggle Pills ([Bulan] [Minggu] [Hari] [Daftar]) */}
+                <div className="flex items-center bg-[#FAF6EE] p-0.5 rounded-lg border border-[#E8DFC9] text-xs">
+                  {['Bulan', 'Minggu', 'Hari', 'Daftar'].map((tab) => {
+                    const isActive = viewTab === tab;
+                    return (
+                      <button
+                        key={tab}
+                        type="button"
+                        onClick={() => setViewTab(tab)}
+                        className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${isActive
+                            ? 'bg-[#2d180c] text-white shadow-2xs font-bold'
+                            : 'text-[#786154] hover:text-[#2d180c]'
+                          }`}
+                      >
+                        {tab}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
+
+              {/* Quick Vibe Pills Bar (Filter Cepat Acara) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 select-none text-xs [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <span className="text-[10px] font-bold text-[#8c532b] uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8c532b]" /> Filter Cepat:
+                </span>
+                {VIBE_FILTERS.map((vibe) => {
+                  const isActive = activeVibe === vibe.id;
+                  const count = vibeCounts[vibe.id];
+                  return (
+                    <button
+                      key={vibe.id}
+                      type="button"
+                      onClick={() => setActiveVibe(isActive && vibe.id !== 'semua' ? 'semua' : vibe.id)}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                        isActive
+                          ? 'bg-[#8c532b] text-white shadow-xs font-bold'
+                          : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] border border-[#E8DFC9]'
+                      }`}
+                    >
+                      <span>{vibe.label}</span>
+                      {count !== undefined && count > 0 && (
+                        <span
+                          className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-black/5 text-[#786154]'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* ── SUB-VIEW: BULAN (Default Monthly Matrix Grid) ── */}
@@ -654,6 +872,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       const cellEvents = eventsByDateKey[cellKey] || [];
                       const isSelected =
                         cell.isCurrentMonth && cell.day === selectedDay;
+                      const hasEvents = cellEvents.length > 0;
+                      const hasKeratonEvent = cellEvents.some(e => e.category === 'Upacara Keraton');
 
                       return (
                         <div
@@ -661,32 +881,59 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           onClick={() => {
                             if (cell.isCurrentMonth) setSelectedDay(cell.day);
                           }}
-                          className={`min-h-[82px] sm:min-h-[96px] p-1.5 flex flex-col justify-between transition-colors cursor-pointer ${!cell.isCurrentMonth
+                          className={`min-h-[86px] sm:min-h-[100px] p-1.5 flex flex-col justify-between transition-all cursor-pointer relative group ${
+                            !cell.isCurrentMonth
                               ? 'bg-[#FBF9F5] text-neutral-300'
                               : isSelected
-                                ? 'bg-[#FAF6EE]/80'
-                                : 'bg-white hover:bg-[#FAF6EE]/40'
-                            }`}
+                              ? 'bg-[#FAF6EE] shadow-[inset_0_0_0_2px_#8c532b]'
+                              : hasKeratonEvent
+                              ? 'bg-gradient-to-b from-white to-[#FDFBF7] hover:bg-[#FAF6EE]/80'
+                              : hasEvents
+                              ? 'bg-white hover:bg-[#FAF6EE]/60'
+                              : 'bg-white hover:bg-[#FAF6EE]/30'
+                          }`}
                         >
-                          {/* Top Row: Date Number */}
-                          <div className="flex items-center justify-end">
+                          {/* Top Row: Pasaran Jawa (Left) & Date Number (Right) */}
+                          <div className="flex items-center justify-between w-full select-none">
+                            <span
+                              className={`text-[9px] tracking-tight truncate pr-0.5 transition-colors ${
+                                !cell.isCurrentMonth
+                                  ? 'opacity-30'
+                                  : cell.pasaran === 'Kliwon'
+                                  ? 'text-[#8c532b] font-bold'
+                                  : cell.pasaran === 'Wage'
+                                  ? 'text-[#b45309] font-bold'
+                                  : 'text-[#9c8b7d] font-medium'
+                              }`}
+                              title={cell.isCurrentMonth ? `Weton: ${cell.pasaran}` : ''}
+                            >
+                              {cell.isCurrentMonth
+                                ? cell.pasaran === 'Kliwon' || cell.pasaran === 'Wage'
+                                  ? `★ ${cell.pasaran}`
+                                  : cell.pasaran
+                                : ''}
+                            </span>
+
                             {isSelected && cell.isCurrentMonth ? (
-                              <span className="w-5 h-5 rounded-full bg-[#8c532b] text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
+                              <span className="w-5 h-5 rounded-full bg-[#8c532b] text-white text-[11px] font-bold flex items-center justify-center shadow-xs shrink-0">
                                 {cell.day}
                               </span>
                             ) : (
                               <span
-                                className={`text-xs font-semibold ${!cell.isCurrentMonth
+                                className={`text-xs font-semibold shrink-0 ${
+                                  !cell.isCurrentMonth
                                     ? 'text-neutral-300'
+                                    : hasEvents
+                                    ? 'text-[#2d180c] font-bold'
                                     : 'text-[#2d180c]'
-                                  }`}
+                                }`}
                               >
                                 {cell.day}
                               </span>
                             )}
                           </div>
 
-                          {/* Event Colored Badges inside cell matching layout */}
+                          {/* Event Colored Badges inside cell */}
                           <div className="mt-1 space-y-1 overflow-hidden">
                             {cellEvents.map((ev) => {
                               const conf =
@@ -700,6 +947,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                                     e.stopPropagation();
                                     setSelectedDay(cell.day);
                                     handleOpenModal(ev);
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setHoverPosition(rect);
+                                    setHoveredEvent(ev);
+                                  }}
+                                  onMouseLeave={() => {
+                                    setHoveredEvent(null);
                                   }}
                                   className={`w-full text-left px-1.5 py-1 rounded-md ${conf.colorBg} ${conf.colorText} text-[10px] font-medium leading-tight truncate block transition-transform hover:scale-[1.02] shadow-2xs cursor-pointer`}
                                   title={`${ev.name} • Kategori: ${ev.category} (${ev.time})`}
@@ -858,6 +1113,79 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
             </div>
           </div>
         </main>
+
+        
+        {/* =========================================================================
+            FLOATING QUICK-PEEK CARD (Instant Hover Preview without Full Modal)
+            ========================================================================= */}
+        <AnimatePresence>
+          {hoveredEvent && hoverPosition && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.94 }}
+              transition={{ duration: 0.16 }}
+              style={{
+                position: 'fixed',
+                left: Math.max(16, Math.min(window.innerWidth - 275, hoverPosition.left + hoverPosition.width / 2 - 130)),
+                top: Math.max(75, hoverPosition.top - 220),
+                width: 260,
+                zIndex: 100050
+              }}
+              className="pointer-events-auto select-none"
+              onMouseEnter={() => {}}
+              onMouseLeave={() => setHoveredEvent(null)}
+            >
+              <div className="bg-white/98 backdrop-blur-xl border-2 border-[#8c532b] rounded-2xl p-2.5 shadow-[0_20px_40px_rgba(45,24,12,0.28)] relative text-left">
+                {/* Event Miniature Banner */}
+                <div className="relative h-22 w-full rounded-xl overflow-hidden mb-2 bg-neutral-900">
+                  <img
+                    src={hoveredEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                    alt={hoveredEvent.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                  <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-[#8c532b] text-white text-[8px] font-bold uppercase tracking-wider shadow-xs">
+                    {hoveredEvent.category}
+                  </span>
+                  <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-semibold">
+                    {hoveredEvent.time.split('–')[0]}
+                  </span>
+                </div>
+
+                {/* Event Title & Info */}
+                <h5 className="text-xs font-bold text-[#2d180c] leading-tight m-0 font-['Outfit'] line-clamp-1">
+                  {hoveredEvent.name}
+                </h5>
+                <p className="text-[10px] text-[#786154] leading-tight mt-1 mb-2.5 line-clamp-2">
+                  📍 {hoveredEvent.location} • {hoveredEvent.shortDesc || hoveredEvent.district}
+                </p>
+
+                {/* Quick Action Footer */}
+                <div className="flex items-center justify-between pt-1.5 border-t border-[#E8DFC9]">
+                  <span className="text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    {hoveredEvent.dayDate} {hoveredEvent.monthName.slice(0, 3)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const ev = hoveredEvent;
+                      setHoveredEvent(null);
+                      handleOpenModal(ev);
+                    }}
+                    className="text-[10px] font-bold text-white bg-[#2d180c] hover:bg-[#432311] px-2.5 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shadow-xs"
+                  >
+                    <span>Detail &amp; Adab</span>
+                    <ArrowRight size={10} />
+                  </button>
+                </div>
+
+                {/* Downward Pointer Arrow */}
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white border-r-2 border-b-2 border-[#8c532b] rotate-45" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* =========================================================================
             4. EVENT DETAIL & ADAB MODAL (Harmonized, Clean & Elevated)
