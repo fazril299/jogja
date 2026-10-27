@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 
 export default function Hero({ onOpenBooking, onOpenNearMe }) {
@@ -8,53 +8,37 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
   // 1. SCROLL PHYSICS
   const { scrollY } = useScroll();
 
-  // Parallax turun halus & memudar seiring scroll
-  const contentScrollY = useTransform(scrollY, [0, 600], [0, 110]);
-  const contentOpacity = useTransform(scrollY, [0, 300, 650], [1, 0.75, 0.15]);
-  const contentY = useSpring(contentScrollY, { stiffness: 180, damping: 28 });
+  // Parallax turun halus & memudar seiring scroll (untuk teks)
+  const contentScrollY = useTransform(scrollY, [0, 600], [0, 90]);
+  const contentOpacity = useTransform(scrollY, [0, 350, 700], [1, 0.75, 0.2]);
+  const contentY = useSpring(contentScrollY, { stiffness: 120, damping: 24 });
 
-  // Background Parallax - Dimulai dari scale 1.0 presisi tanpa pembesaran awal agar tetap tajam (tidak burem)
-  const bgScale = useTransform(scrollY, [0, 700], [1.0, 1.07]);
+  // Jojo Scroll Physics (Slowmo & Silky Smooth, turun hanya sampai sebatas setengah badan / pinggang saja)
+  // Ditransformasi perlahan ke 235px di rentang scroll [0, 750] sehingga Jojo turun slowmo sebatas pinggang
+  const mascotScrollY = useTransform(scrollY, [0, 750], [0, 235]);
+  // Opacity tetap solid (1.0) selama scroll exit agar setengah badan atas Jojo tetap tampil jelas
+  const mascotOpacity = useTransform(scrollY, [0, 650, 950], [1, 1, 0.5]);
+  // Spring Slowmo: stiffness 48, damping 22, mass 1.2 memberikan efek glide slow-motion yang sangat halus dan berbobot
+  const mascotY = useSpring(mascotScrollY, { stiffness: 48, damping: 22, mass: 1.2 });
 
-  // 2. INTERACTIVE 3D MOUSE PARALLAX TILT
-  const mouseTiltX = useMotionValue(0);
-  const mouseTiltY = useMotionValue(0);
-
-  const springTiltX = useSpring(mouseTiltX, { stiffness: 140, damping: 22 });
-  const springTiltY = useSpring(mouseTiltY, { stiffness: 140, damping: 22 });
-
-  const handleMouseMove = (e) => {
-    if (!heroRef.current) return;
-    const rect = heroRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-    mouseTiltY.set(x * 6); // rotateY
-    mouseTiltX.set(-y * 4); // rotateX
-  };
-
-  const handleMouseLeave = () => {
-    mouseTiltX.set(0);
-    mouseTiltY.set(0);
-  };
+  // Background Parallax
+  const bgScale = useTransform(scrollY, [0, 700], [1.0, 1.06]);
 
   return (
     <header
       id="hero-section"
       ref={heroRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] flex flex-col justify-between bg-[#060a10] select-none"
+      className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] relative flex items-center justify-center bg-[#060a10] select-none overflow-hidden"
       style={{
         position: 'sticky',
         top: 0,
         zIndex: 10,
         width: '100%',
         height: '100vh',
-        overflow: 'visible'
+        overflow: 'hidden'
       }}
     >
-      {/* 1. BACKGROUND IMAGE: Panorama Candi Warisan Mataram (Ultra-HD WebP Tajam) */}
+      {/* 1. BACKGROUND IMAGE: Panorama Candi Warisan Mataram */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.img
           src="/assets/images/bg_candi_hero.webp"
@@ -73,57 +57,69 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
           className="absolute inset-0 w-full h-full object-cover object-[center_50%] will-change-transform"
         />
 
-        {/* Ambient Gradient Overlay: Mempertahankan kontras teks dan ketajaman arsitektur candi */}
+        {/* Ambient Gradient Overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(180deg, rgba(6, 10, 16, 0.48) 0%, rgba(6, 10, 16, 0.12) 32%, rgba(6, 10, 16, 0.72) 100%)'
+              'linear-gradient(180deg, rgba(6, 10, 16, 0.45) 0%, rgba(6, 10, 16, 0.12) 35%, rgba(6, 10, 16, 0.7) 100%)'
           }}
         />
       </div>
 
-      {/* 2. TOP SPACING (Untuk menjaga jarak navbar aman di mobile & desktop) */}
-      <div className="w-full h-20 sm:h-24 md:h-28 pointer-events-none" />
-
-      {/* 3. HERO CONTENT STAGE (Jarak proporsional antara Judul, Subjudul, Deskripsi, dan Tombol CTA) */}
-      <div
-        className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 my-auto flex flex-col items-center text-center pointer-events-none"
-        style={{ perspective: 1200 }}
+      {/* 2. LAYER BELAKANG: GRAND TITLE "Yogyakarta" (z-10 di belakang Jojo) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          y: contentY,
+          opacity: contentOpacity
+        }}
+        className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-4 select-none"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 25, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+        <h1
+          className="text-[17vw] sm:text-[14vw] md:text-[12vw] lg:text-[9.5rem] xl:text-[11rem] font-serif font-normal tracking-[-0.035em] leading-none text-[#FBF7EE] drop-shadow-[0_18px_45px_rgba(0,0,0,0.7)] select-none m-0 text-center"
           style={{
-            y: contentY,
-            opacity: contentOpacity,
-            rotateX: springTiltX,
-            rotateY: springTiltY,
-            transformStyle: 'preserve-3d'
+            fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif"
           }}
-          className="flex flex-col items-center text-center w-full"
         >
-          {/* Grand Title: "Yogyakarta" */}
-          <h1
-            className="text-[13vw] sm:text-[10vw] md:text-[8vw] lg:text-[7.2rem] font-serif font-normal tracking-[-0.035em] leading-[0.94] text-[#FBF7EE] drop-shadow-[0_18px_40px_rgba(0,0,0,0.65)] select-none m-0"
+          Yogyakarta
+        </h1>
+      </motion.div>
+
+      {/* 3. LAYER DEPAN: MASCOT JOJO FULL BODY (z-20 di depan teks Yogyakarta, turun slowmo & smooth sampai sebatas pinggang) */}
+      <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none flex items-end justify-center overflow-visible">
+        {/* Entrance motion container: Masuk meluncur halus saat web dibuka */}
+        <motion.div
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            type: 'spring',
+            stiffness: 85,
+            damping: 20,
+            mass: 0.85,
+            delay: 0.25
+          }}
+          className="relative flex flex-col items-center justify-end"
+        >
+          {/* Scroll exit motion container: Turun slowmo & super smooth sebatas pinggang (setengah badan) */}
+          <motion.div
             style={{
-              fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif"
+              y: mascotY,
+              opacity: mascotOpacity
             }}
+            className="relative flex items-end justify-center pb-2 sm:pb-3 md:pb-4"
           >
-            Yogyakarta
-          </h1>
-
-          {/* Subtitle Tagline */}
-          <p className="text-amber-100/95 text-sm sm:text-base md:text-lg font-medium tracking-wide mt-3 sm:mt-4 max-w-xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] font-sans">
-            Harmoni Cagar Budaya Candi, Keagungan Keraton &amp; Jiwa Tradisi Jawa
-          </p>
-
-          {/* Editorial Description (Jarak seimbang & tidak terlalu jauh) */}
-          <p className="text-neutral-200/90 text-xs sm:text-sm md:text-[14.5px] leading-relaxed max-w-lg sm:max-w-xl md:max-w-2xl mt-2.5 sm:mt-3 font-normal drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)] font-sans">
-            Jelajahi keagungan Keraton, megahnya candi bersejarah, dan kekayaan tradisi Jogja dengan panduan{' '}
-            <span className="text-amber-300 font-semibold">Radar GPS</span> terintegrasi.
-          </p>
+            <img
+              src="/assets/images/mascot_welcome.webp"
+              alt="Jojo si Pemandu Budaya Yogyakarta"
+              fetchPriority="high"
+              decoding="async"
+              draggable={false}
+              className="h-[67vh] sm:h-[69vh] md:h-[71vh] lg:h-[72vh] max-h-[760px] w-auto object-contain select-none filter drop-shadow-[0_24px_45px_rgba(0,0,0,0.8)]"
+            />
+          </motion.div>
         </motion.div>
       </div>
 
@@ -131,12 +127,12 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
         style={{
           y: contentY,
           opacity: contentOpacity
         }}
-        className="relative z-20 w-full px-6 sm:px-10 md:px-14 pb-8 sm:pb-10 flex justify-end items-center pointer-events-none"
+        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-10 md:bottom-10 md:right-14 z-30 pointer-events-none"
       >
         <motion.button
           onClick={onOpenBooking}
