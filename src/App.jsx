@@ -31,6 +31,7 @@ import MyCultureBookModal from './components/MyCultureBookModal';
 import KalenderAcaraPage from './components/KalenderAcaraPage';
 import JurnalBudayaPage from './components/JurnalBudayaPage';
 import TentangKamiPage from './components/TentangKamiPage';
+import KatalogQuestBadgePage from './components/KatalogQuestBadgePage';
 import AdminModal from './components/AdminModal';
 import ShareExperienceModal from './components/ShareExperienceModal';
 import InteractiveMapModal from './components/InteractiveMapModal';
@@ -151,6 +152,7 @@ function NusantaraApp() {
   const [isKalenderPopupOpen, setIsKalenderPopupOpen] = useState(false);
   const [isJurnalBudayaOpen, setIsJurnalBudayaOpen] = useState(false);
   const [isAboutPageOpen, setIsAboutPageOpen] = useState(false);
+  const [isQuestBadgePageOpen, setIsQuestBadgePageOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
 
@@ -161,6 +163,7 @@ function NusantaraApp() {
     setIsKalenderPopupOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setCultureBookInitialTab(tab);
     setIsCultureBookOpen(true);
   };
@@ -171,8 +174,21 @@ function NusantaraApp() {
     setSelectedPlace(null);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsKalenderPopupOpen(false);
     setIsKalenderAcaraOpen(true);
+  };
+
+  const handleOpenQuestCatalog = () => {
+    setIsNearMeOpen(false);
+    setIsCultureBookOpen(false);
+    setSelectedPlace(null);
+    setIsKalenderAcaraOpen(false);
+    setIsKalenderPopupOpen(false);
+    setIsJurnalBudayaOpen(false);
+    setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
+    setIsQuestBadgePageOpen(true);
   };
 
   const handleOpenJurnalBudaya = () => {
@@ -182,6 +198,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsKalenderPopupOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsJurnalBudayaOpen(true);
   };
 
@@ -461,6 +478,7 @@ function NusantaraApp() {
     setIsKalenderPopupOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsNearMeOpen(false);
     setIsCultureBookOpen(false);
     setIsMapOpen(false);
@@ -480,6 +498,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsNearMeOpen(false);
     setIsCultureBookOpen(false);
     setIsMapOpen(false);
@@ -498,6 +517,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsCultureBookOpen(false);
     setIsMapOpen(false);
     setIsAdminOpen(false);
@@ -511,6 +531,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsAdminOpen(false);
@@ -524,6 +545,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsCultureBookOpen(false);
     setIsNearMeOpen(false);
     setIsMapOpen(false);
@@ -543,6 +565,7 @@ function NusantaraApp() {
     setIsKalenderAcaraOpen(false);
     setIsJurnalBudayaOpen(false);
     setIsAboutPageOpen(false);
+    setIsQuestBadgePageOpen(false);
     setIsAdminOpen(false);
     setIsGlobalShareOpen(false);
     const found = places.find((p) => p.id === id) || places[0];
@@ -704,6 +727,7 @@ function NusantaraApp() {
           onOpenCultureJournals={handleOpenJurnalBudaya}
           onOpenKalenderAcara={handleOpenKalenderAcara}
           onOpenJurnalBudaya={handleOpenJurnalBudaya}
+          onOpenQuestCatalog={handleOpenQuestCatalog}
           onOpenAdmin={handleOpenAdmin}
           onOpenShareModal={handleOpenShareModal}
         />
@@ -881,6 +905,7 @@ function NusantaraApp() {
           <MyCultureBookModal
             isOpen={isCultureBookOpen}
             initialTab={cultureBookInitialTab}
+            onOpenQuestCatalog={handleOpenQuestCatalog}
             onClose={() => setIsCultureBookOpen(false)}
             places={places}
             userLiveCoords={userLiveCoords}
@@ -929,6 +954,22 @@ function NusantaraApp() {
             onOpenNearMe={handleOpenNearMe}
             onOpenJurnal={handleOpenJurnalBudaya}
             onOpenCultureBook={() => handleOpenCultureBookWithTab('badges-quests')}
+          />
+        )}
+
+        {/* HALAMAN DEDIKASI 4: KATALOG MISI QUEST & LENCANA WARISAN BUDAYA DIY */}
+        {isQuestBadgePageOpen && (
+          <KatalogQuestBadgePage
+            isOpen={isQuestBadgePageOpen}
+            onClose={() => setIsQuestBadgePageOpen(false)}
+            places={places}
+            userLiveCoords={userLiveCoords}
+            onRefreshGps={() => triggerDeviceGpsDetection(false)}
+            isGpsLoading={isGpsLoading}
+            onSelectPlace={(place) => {
+              setIsQuestBadgePageOpen(false);
+              setSelectedPlace(place);
+            }}
           />
         )}
 
