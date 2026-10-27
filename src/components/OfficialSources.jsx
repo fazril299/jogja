@@ -109,7 +109,7 @@ export default function OfficialSources() {
   return (
     <section
       id="official-sources"
-      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-neutral-200"
+      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-[#D9CEBA]/60"
     >
       <div
         style={{
