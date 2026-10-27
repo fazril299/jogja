@@ -316,18 +316,25 @@ export default function AuthModal() {
           .auth-standalone-right {
             height: 100vh;
             height: 100dvh;
-            padding: 14px 14px 14px 0;
+            padding: 0;
             box-sizing: border-box;
             overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+            background-color: transparent;
           }
 
           .auth-artwork-wrapper {
             width: 100%;
             height: 100%;
-            border-radius: 18px;
-            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
             position: relative;
-            background-color: #1f130b;
+            background-color: transparent;
+            overflow: hidden;
           }
 
           .auth-standalone-input::placeholder {
@@ -834,72 +841,23 @@ export default function AuthModal() {
               ================================================================= */}
           <div className="auth-standalone-right">
             <div className="auth-artwork-wrapper">
-              {/* Artwork Budaya Kasultanan Yogyakarta */}
+              {/* Maskot Jojo Melambai Setengah Badan (Seamless Background) */}
               <img
-                src="/assets/images/jogja_keraton.jpg"
-                alt="Keagungan Budaya Yogyakarta"
+                src="/assets/images/mascot_login_waving.webp"
+                alt="Jojo Maskot Yogyakarta"
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center 40%',
+                  maxHeight: '88vh',
+                  height: 'auto',
+                  width: 'auto',
+                  maxWidth: '94%',
+                  objectFit: 'contain',
+                  objectPosition: 'bottom center',
                   display: 'block',
-                  filter: 'contrast(1.03) saturate(1.05)'
-                }}
-              />
-
-
-              {/* Subtle Gradient Vignette at Bottom for Caption Readability */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background:
-                    'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(18,10,6,0.78) 100%)',
+                  filter: 'drop-shadow(0 20px 35px rgba(45, 30, 20, 0.08))',
+                  userSelect: 'none',
                   pointerEvents: 'none'
                 }}
               />
-
-              {/* Minimal Editorial Badge at Bottom-Left of Artwork */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '22px',
-                  left: '22px',
-                  right: '22px',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'space-between',
-                  color: '#ffffff',
-                  pointerEvents: 'none',
-                  zIndex: 2
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      color: '#f6d38e',
-                      marginBottom: '4px'
-                    }}
-                  >
-                    Panduan Budaya Yogyakarta
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '1.15rem',
-                      fontWeight: 700,
-                      letterSpacing: '-0.02em',
-                      fontFamily: "'Outfit', sans-serif"
-                    }}
-                  >
-                    Sugeng Rawuh di Hamemayu
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

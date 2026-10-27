@@ -65,6 +65,42 @@ function formatDistanceLabel(meters, suffix = '') {
   return suffix ? `${distStr} ${suffix}` : distStr;
 }
 
+// Rekomendasi Menu Khas Otentik Yogyakarta untuk Maskot Jojo di Radar Kuliner
+function getSignatureFood(item) {
+  if (!item) return 'Gudeg nangka legit & aneka kuliner legendaris Jogja!';
+
+  const mapping = {
+    'kopi-joss-lik-man': 'Kopi Joss arang & Sego Kucing',
+    'lumpia-samijaya': 'Lumpia Basah / Goreng Samijaya',
+    'gudeg-mbok-lindu': 'Gudeg Basah Mbok Lindu Sosrowijayan',
+    'oseng-mercon-bu-narti': 'Oseng-Oseng Mercon Pedas Gurih',
+    'gudeg-yu-djum': 'Gudeg Kering Sentra Wijilan 167',
+    'bale-raos': 'Bebek Suwar-Suwir & Masakan Sultan',
+    'brongkos-handayani': 'Brongkos Daging Sapi Kuah Kluwek',
+    'bakmi-pak-pele': 'Bakmi Jawa Godhog / Goreng Pak Pele',
+    'bakmi-mbah-gito': 'Bakmi Jawa Anglo Tradisional Mbah Gito',
+    'kipo-bu-djito': 'Kue Kipo Pusaka Asli Kotagede',
+    'tempo-gelato': 'Gelato Artisan Rempah & Buah Tropis',
+    'sate-karang': 'Sate Sapi & Lontong Sayur Lodeh',
+    'jadah-tempe': 'Jadah Tempe Gurih Mbah Carik Kaliurang',
+    'kopi-klotok': 'Kopi Klotok & Pisang Goreng Crispy',
+    'jejamuran': 'Sate Jamur & Tongseng Jamur Spesial',
+    'saoto-bathok': 'Saoto Bathok Daging Batok Kelapa',
+    'sate-klathak-pak-pong': 'Sate Klathak Jeruji Besi Pleret',
+    'mangut-lele': 'Mangut Lele Asap Dapur Mbok Marto',
+    'mie-lethek': 'Bakmi Lethek Singkong Tradisional',
+    'ingkung-kuali': 'Ingkung Ayam Kampung Kuali Tanah Liat',
+    'ikan-bakar-depok': 'Ikan Bakar Segar Tangkapan Pantai Depok',
+    'seafood-bu-narti': 'Seafood Cumi & Kepiting Saus Padang',
+    'bukit-paralayang': 'Wedang Jahe Rempah & Mendoan Hangat',
+    'bakmi-soto-mbok-nem': 'Soto Ayam Kampung & Bakmi Jawa'
+  };
+
+  if (mapping[item.id]) return mapping[item.id];
+  if (item.category) return item.category;
+  return item.name.split('(')[0].trim();
+}
+
 // Konfigurasi Tile Basemap Super Cepat (Google Maps HD Edge CDN, Instant Render, Tajam Hingga Zoom 20)
 function getTileLayerConfig(layer) {
   if (layer === 'satellite') {
@@ -1176,6 +1212,46 @@ export default function NearMeModal({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* =========================================================================
+            FLOATING MASKOT JOJO (PANDUAN KULINER GUDEG) DI KANAN BAWAH GPS
+            Karakter Statis (Diam Saja Anti-Slop) dengan Bubble Chat Dinamis
+            ========================================================================= */}
+        <div className="absolute bottom-3 sm:bottom-6 right-3 sm:right-7 z-[996] pointer-events-none flex flex-col items-end select-none">
+          {/* Bubble Chat Panduan Kuliner */}
+          <motion.div
+            key={activeItem ? activeItem.id : 'default-kuliner'}
+            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="pointer-events-auto bg-white/95 backdrop-blur-md border border-[#D9CBB7] shadow-[0_12px_28px_rgba(44,34,30,0.18)] rounded-2xl p-3 sm:p-3.5 max-w-[240px] sm:max-w-[280px] mb-1 relative mr-3 sm:mr-6"
+          >
+            {/* Header: "Panduan Kuliner" */}
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase text-[#8A5D26] mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52]" />
+              <span>Panduan Kuliner</span>
+            </div>
+
+            {/* Subtext: "Cobain (makanan sesuai lokasi yang di klik)" */}
+            <p className="text-xs sm:text-[13px] font-bold text-[#2C221E] leading-snug m-0">
+              Cobain {getSignatureFood(activeItem)}
+            </p>
+
+            {/* Pointer segitiga bubble ke arah Jojo */}
+            <div
+              className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white/95 border-r border-b border-[#D9CBB7] rotate-45"
+            />
+          </motion.div>
+
+          {/* Maskot Jojo Memegang Mangkuk Gudeg - Diam Saja (Statis Anti-Slop) */}
+          <div className="relative">
+            <img
+              src="/assets/images/mascot_gudeg.webp"
+              alt="Jojo Panduan Kuliner Jogja"
+              className="w-28 sm:w-36 md:w-44 h-auto object-contain pointer-events-none drop-shadow-[0_15px_25px_rgba(35,20,10,0.25)]"
+            />
+          </div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
