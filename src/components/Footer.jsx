@@ -186,7 +186,7 @@ export default function Footer({
   return (
     <footer
       id="site-footer"
-      className="relative w-full overflow-hidden bg-[#FAF6EE] text-[#1A1A1A] border-t border-[#D9CEBA]/80"
+      className="relative z-20 w-full overflow-hidden bg-[#FAF6EE] text-[#1A1A1A] border-t border-[#D9CEBA]/80"
       style={{
         fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
       }}

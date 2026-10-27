@@ -757,21 +757,26 @@ function NusantaraApp() {
         {/* 7. TRAVEL FAQ */}
         <TravelFAQ id="faq-section" />
 
-        {/* 8. INSTAGRAM STORIES PHOTO MARQUEE */}
-      </div>
 
-      {/* 8. INSTAGRAM STORIES PHOTO MARQUEE - STICKY TRACK (EFEK MENUTUP SEPERTI HERO) */}
-      <div className="relative w-full bg-[#FAF6EE]" style={{ height: '175vh' }}>
-        <div className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] overflow-hidden flex flex-col justify-center bg-[#FAF6EE]">
+
+
+        {/* 8. INSTAGRAM STORIES PHOTO MARQUEE - STICKY PINNED AT VIEWPORT */}
+        <div
+          className="sticky top-0 z-10 w-full h-screen min-h-[100dvh] overflow-hidden flex flex-col justify-center bg-[#FAF6EE]"
+          style={{ position: 'sticky', top: 0, zIndex: 10 }}
+        >
           <InstagramStories onSelectPlaceById={handleSelectPlaceById} />
         </div>
-      </div>
 
-      {/* CURTAIN OVERLAP CONTAINER 2: CTA HERO BANNER & FOOTER (MENUTUP GALERI 3D PERSIS HERO) */}
-      <div className="relative z-20 w-full bg-[#FAF6EE] text-[#1a1a1a] shadow-[0_-25px_60px_rgba(0,0,0,0.22)]">
+        {/* 9. CTA HERO BANNER & CONTINUOUS TICKER - SLIDES UP OVER 3D GALLERY */}
+        <div
+          className="relative z-20 w-full bg-[#FAF6EE] text-[#1a1a1a] shadow-[0_-35px_80px_rgba(0,0,0,0.38)]"
+          style={{ position: 'relative', zIndex: 20 }}
+        >
 
         {/* 9. CTA HERO BANNER & CONTINUOUS TICKER */}
-        <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
+          <CTAHeroBanner onOpenBooking={handleScrollToDestinations} />
+        </div>
 
         {/* 10. MODERN DARK FOOTER */}
         <Footer
