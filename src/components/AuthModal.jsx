@@ -12,6 +12,7 @@ import {
   Check
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import AuthModalMobile from './mobile/AuthModalMobile';
 
 const PAGE_TRANSITION = {
   type: 'spring',
@@ -51,11 +52,29 @@ export default function AuthModal() {
   const [customGoogleName, setCustomGoogleName] = useState('');
   const [isAddingNewGoogle, setIsAddingNewGoogle] = useState(false);
 
-  // Lock body scroll & listen for Escape when standalone Login Page is active
+  // Responsive Device Separation Hook (Mobile vs Desktop)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 960;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 960);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Lock body & html scroll & listen for Escape when standalone Login Page is active
   useEffect(() => {
     if (!isAuthModalOpen) return;
-    const prevOverflow = document.body.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -69,7 +88,8 @@ export default function AuthModal() {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isAuthModalOpen, closeAuthModal, showGooglePicker]);
@@ -77,6 +97,25 @@ export default function AuthModal() {
   if (!isAuthModalOpen) return null;
 
   const isRegister = authModalMode === 'register';
+
+  // Dedicated Mobile UI/UX Render
+  if (isMobile) {
+    return (
+      <AnimatePresence>
+        <AuthModalMobile
+          isRegister={isRegister}
+          setAuthModalMode={setAuthModalMode}
+          authModalReason={authModalReason}
+          closeAuthModal={closeAuthModal}
+          login={login}
+          register={register}
+          loginWithGoogle={loginWithGoogle}
+          loginWithGoogleAccount={loginWithGoogleAccount}
+          googleAccounts={googleAccounts}
+        />
+      </AnimatePresence>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -184,11 +223,11 @@ export default function AuthModal() {
 
   const getSubtitleText = () => {
     if (isRegister) {
-      return 'Daftarkan diri Anda untuk menyimpan destinasi favorit, menulis ulasan pengalaman, dan berbagi dokumentasi perjalanan di Yogyakarta.';
+      return 'Daftarkan akun Anda untuk menyimpan destinasi favorit dan paspor budaya.';
     }
     return (
       authModalReason?.description ||
-      'Masuk ke akun Hamemayu Anda untuk mengakses paspor budaya, menyimpan wishlist destinasi, dan berinteraksi dengan komunitas.'
+      'Akses penuh ke fitur Wishlist destinasi, ulasan pengunjung, serta galeri momen budaya Yogyakarta.'
     );
   };
 
@@ -197,8 +236,8 @@ export default function AuthModal() {
     background: 'transparent',
     border: 'none',
     borderBottom: `1.5px solid ${focusedField === fieldName ? '#c99b52' : '#e4e4e7'}`,
-    padding: '10px 0',
-    fontSize: '0.92rem',
+    padding: '7px 0',
+    fontSize: '0.88rem',
     fontWeight: 400,
     color: '#18181b',
     outline: 'none',
@@ -209,10 +248,10 @@ export default function AuthModal() {
 
   const labelStyle = {
     display: 'block',
-    fontSize: '0.76rem',
+    fontSize: '0.73rem',
     fontWeight: 500,
     color: '#52525b',
-    marginBottom: '4px',
+    marginBottom: '2px',
     letterSpacing: '-0.01em'
   };
 
@@ -250,56 +289,41 @@ export default function AuthModal() {
             background-color: #f8f8f7;
             color: #18181b;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-          }
-          /* 1 Unified Page Scrollbar di sisi kanan layar */
-          .auth-standalone-page::-webkit-scrollbar {
-            width: 8px;
-          }
-          .auth-standalone-page::-webkit-scrollbar-track {
-            background: #f1f1ef;
-          }
-          .auth-standalone-page::-webkit-scrollbar-thumb {
-            background: #d4d4d8;
-            border-radius: 999px;
-          }
-          .auth-standalone-page::-webkit-scrollbar-thumb:hover {
-            background: #c99b52;
+            overflow: hidden !important;
           }
 
           .auth-standalone-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             box-sizing: border-box;
+            overflow: hidden;
           }
 
           .auth-standalone-left {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             box-sizing: border-box;
-            padding: 28px clamp(20px, 5vw, 64px);
+            padding: clamp(10px, 1.8vh, 18px) clamp(24px, 4.5vw, 64px);
+            overflow: hidden !important;
           }
 
           .auth-standalone-right {
+            height: 100vh;
+            height: 100dvh;
             padding: 14px 14px 14px 0;
             box-sizing: border-box;
+            overflow: hidden;
           }
 
           .auth-artwork-wrapper {
-            position: sticky;
-            top: 14px;
             width: 100%;
-            height: calc(100vh - 28px);
-            height: calc(100dvh - 28px);
+            height: 100%;
             border-radius: 18px;
             overflow: hidden;
             position: relative;
@@ -313,29 +337,29 @@ export default function AuthModal() {
 
           .auth-center-content {
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
             margin-top: auto;
             margin-bottom: auto;
-            padding: 20px 0 28px 0;
-          }
-
-          @media (max-height: 820px) {
-            .auth-center-content {
-              margin-top: 12px !important;
-              margin-bottom: 20px !important;
-            }
+            padding: clamp(4px, 1vh, 12px) 0;
           }
 
           @media (max-width: 960px) {
+            .auth-standalone-page {
+              overflow-y: auto !important;
+              overflow-x: hidden !important;
+            }
             .auth-standalone-grid {
               display: block !important;
+              height: auto !important;
               min-height: 100% !important;
             }
             .auth-standalone-left {
               display: flex !important;
+              height: auto !important;
               min-height: 100vh !important;
               min-height: 100dvh !important;
               padding: 24px 20px 48px 20px !important;
+              overflow-y: visible !important;
             }
             .auth-center-content {
               margin-top: 16px !important;
@@ -346,6 +370,8 @@ export default function AuthModal() {
               display: none !important;
             }
           }
+
+
 
           .auth-google-picker-card {
             max-height: 88vh;
@@ -440,7 +466,9 @@ export default function AuthModal() {
                 <button
                   type="button"
                   onClick={() => {
-                    setAuthModalMode(isRegister ? 'login' : 'register');
+                    const nextMode = isRegister ? 'login' : 'register';
+                    setAuthModalMode(nextMode);
+                    window.location.hash = nextMode === 'register' ? '#/daftar' : '#/masuk';
                     setErrorMessage('');
                   }}
                   style={{
@@ -491,12 +519,12 @@ export default function AuthModal() {
                 id="auth-page-heading"
                 style={{
                   fontFamily: "'Plus Jakarta Sans', 'Outfit', sans-serif",
-                  fontSize: 'clamp(2.25rem, 3.8vw, 3.15rem)',
-                  fontWeight: 500,
-                  letterSpacing: '-0.035em',
-                  lineHeight: 1.08,
+                  fontSize: 'clamp(1.75rem, 2.6vw, 2.35rem)',
+                  fontWeight: 600,
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1.1,
                   color: '#18181b',
-                  margin: '0 0 14px 0'
+                  margin: '0 0 8px 0'
                 }}
               >
                 {getHeadingTitle()}
@@ -505,10 +533,10 @@ export default function AuthModal() {
               {/* Subtitle Description */}
               <p
                 style={{
-                  fontSize: '0.9rem',
-                  lineHeight: 1.58,
+                  fontSize: '0.86rem',
+                  lineHeight: 1.5,
                   color: '#52525b',
-                  margin: '0 0 36px 0',
+                  margin: '0 0 14px 0',
                   maxWidth: '430px',
                   fontWeight: 400
                 }}
@@ -564,7 +592,7 @@ export default function AuthModal() {
                   fontWeight: 600,
                   cursor: isSubmitting ? 'wait' : 'pointer',
                   transition: 'all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                  marginBottom: '22px',
+                  marginBottom: '12px',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
                 }}
                 onMouseEnter={(e) => {
@@ -607,7 +635,7 @@ export default function AuthModal() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '14px',
-                  marginBottom: '26px'
+                  marginBottom: '12px'
                 }}
               >
                 <div style={{ flex: 1, height: '1px', backgroundColor: '#e4e4e7' }} />
@@ -624,8 +652,8 @@ export default function AuthModal() {
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr',
-                      gap: '24px',
-                      marginBottom: '26px'
+                      gap: '16px',
+                      marginBottom: '12px'
                     }}
                   >
                     <div>
@@ -665,7 +693,7 @@ export default function AuthModal() {
                   </div>
                 )}
 
-                <div style={{ marginBottom: '26px' }}>
+                <div style={{ marginBottom: '12px' }}>
                   <label htmlFor="auth-email" style={labelStyle}>
                     Email
                   </label>
@@ -684,7 +712,7 @@ export default function AuthModal() {
                   />
                 </div>
 
-                <div style={{ marginBottom: '32px', position: 'relative' }}>
+                <div style={{ marginBottom: '16px', position: 'relative' }}>
                   <label htmlFor="auth-password" style={labelStyle}>
                     Kata sandi
                   </label>
@@ -715,7 +743,7 @@ export default function AuthModal() {
                     style={{
                       position: 'absolute',
                       right: 0,
-                      bottom: '9px',
+                      bottom: '6px',
                       background: 'none',
                       border: 'none',
                       color: '#a1a1aa',
@@ -735,7 +763,7 @@ export default function AuthModal() {
                     type="submit"
                     disabled={isSubmitting}
                     style={{
-                      padding: '13px 26px',
+                      padding: '10px 22px',
                       borderRadius: '10px',
                       backgroundColor: '#18181b',
                       color: '#ffffff',
@@ -766,7 +794,9 @@ export default function AuthModal() {
                   <button
                     type="button"
                     onClick={() => {
-                      setAuthModalMode(isRegister ? 'login' : 'register');
+                      const nextMode = isRegister ? 'login' : 'register';
+                      setAuthModalMode(nextMode);
+                      window.location.hash = nextMode === 'register' ? '#/daftar' : '#/masuk';
                       setErrorMessage('');
                     }}
                     style={{
@@ -796,7 +826,7 @@ export default function AuthModal() {
             </div>
 
             {/* Bottom Subtle Spacer to balance vertical centering */}
-            <div style={{ height: '32px', flexShrink: 0 }} />
+            
           </div>
 
           {/* =================================================================
