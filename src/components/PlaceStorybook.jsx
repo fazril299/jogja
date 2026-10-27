@@ -32,31 +32,31 @@ const THEME_CATEGORIES = [
     id: 'all',
     label: 'Semua Destinasi',
     subLabel: 'Semua Wilayah DIY',
-    iconSrc: '/images/icon_all.svg'
+    iconSrc: '/assets/icons/icon_all.svg'
   },
   {
     id: 'culture',
     label: 'Warisan Budaya',
     subLabel: 'Budaya & Sejarah',
-    iconSrc: '/images/icon_culture.svg'
+    iconSrc: '/assets/icons/icon_culture.svg'
   },
   {
     id: 'nature',
     label: 'Wisata Alam',
     subLabel: 'Wisata Hiburan & Alam',
-    iconSrc: '/images/icon_nature.svg'
+    iconSrc: '/assets/icons/icon_nature.svg'
   },
   {
     id: 'culinary',
     label: 'Wisata Kuliner',
     subLabel: 'Rekomendasi Kuliner Yogyakarta',
-    iconSrc: '/images/icon_culinary.svg'
+    iconSrc: '/assets/icons/icon_culinary.svg'
   },
   {
     id: 'soul',
     label: 'Tradisi dan Kehidupan',
     subLabel: 'Kampung Wisata & Krama',
-    iconSrc: '/images/icon_soul.svg'
+    iconSrc: '/assets/icons/icon_soul.svg'
   }
 ];
 
@@ -3208,7 +3208,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                 }}
                               >
                                 <img
-                                  src={badge.iconSrc || '/images/icon_culture.svg'}
+                                  src={badge.iconSrc || '/assets/icons/icon_culture.svg'}
                                   alt={badge.name}
                                   style={{ width: '15px', height: '15px', filter: 'brightness(0) invert(1)' }}
                                 />
@@ -3690,7 +3690,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                                 }}
                               >
                                 <img
-                                  src={b.iconSrc || '/images/icon_culture.svg'}
+                                  src={b.iconSrc || '/assets/icons/icon_culture.svg'}
                                   alt={b.name}
                                   style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }}
                                 />

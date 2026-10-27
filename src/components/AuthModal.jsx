@@ -392,7 +392,7 @@ export default function AuthModal() {
                 }}
               >
                 <img
-                  src="/images/icon_culture.svg"
+                  src="/assets/icons/icon_culture.svg"
                   alt="Hamemayu"
                   style={{
                     width: '28px',

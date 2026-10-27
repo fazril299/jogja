@@ -495,7 +495,7 @@ export default function NearMeModal({
                 }}
               >
                 <img
-                  src="/images/icon_culinary.svg"
+                  src="/assets/icons/icon_culinary.svg"
                   alt="Kuliner Jogja"
                   style={{ width: '15px', height: '15px' }}
                 />

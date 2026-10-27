@@ -42,7 +42,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
             className="handcrafted-eyebrow"
           >
             <img 
-              src="/images/icon_culinary.svg" 
+              src="/assets/icons/icon_culinary.svg"
               alt="Ikon katalog destinasi dan kuliner" 
               style={{ height: '26px', width: '26px', objectFit: 'contain', opacity: 0.85 }}
             />

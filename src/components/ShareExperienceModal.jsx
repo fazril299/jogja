@@ -235,7 +235,7 @@ export default function ShareExperienceModal({
                 }}
               >
                 <img
-                  src="/images/icon_culture.svg"
+                  src="/assets/icons/icon_culture.svg"
                   alt=""
                   style={{ width: '24px', height: '24px', objectFit: 'contain' }}
                 />

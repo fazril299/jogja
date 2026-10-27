@@ -153,10 +153,10 @@ export default function MyCultureBookModal({
 
   // 4 Ikon Badge Bulat Asli Eastward Berwarna Khas Jogja
   const portfolioBadges = [
-    { id: 'b-cul', title: 'Warisan Budaya', bg: '#2C221E', iconSrc: '/images/icon_culture.svg' },
-    { id: 'b-kul', title: 'Kuliner Otentik', bg: '#9E1C64', iconSrc: '/images/icon_culinary.svg' },
-    { id: 'b-sou', title: 'Jiwa & Tradisi', bg: '#C99B52', iconSrc: '/images/icon_all.svg' },
-    { id: 'b-nat', title: 'Wisata Alam', bg: '#6E473B', iconSrc: '/images/icon_nature.svg' }
+    { id: 'b-cul', title: 'Warisan Budaya', bg: '#2C221E', iconSrc: '/assets/icons/icon_culture.svg' },
+    { id: 'b-kul', title: 'Kuliner Otentik', bg: '#9E1C64', iconSrc: '/assets/icons/icon_culinary.svg' },
+    { id: 'b-sou', title: 'Jiwa & Tradisi', bg: '#C99B52', iconSrc: '/assets/icons/icon_all.svg' },
+    { id: 'b-nat', title: 'Wisata Alam', bg: '#6E473B', iconSrc: '/assets/icons/icon_nature.svg' }
   ];
   const headerMiniBadges = portfolioBadges;
 

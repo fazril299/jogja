@@ -40,7 +40,7 @@ export default function MostLovedDestinations({
       cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
       textColor: '#2D180C',
       accentColor: '#2D180C',
-      iconSrc: '/images/icon_all.svg', // Ikon Batik Keraton / Sumbu Filosofis Asli Pengguna
+      iconSrc: '/assets/icons/icon_all.svg', // Ikon Batik Keraton / Sumbu Filosofis Asli Pengguna
       onClick: onOpenJapanDetail
     },
     {
@@ -56,7 +56,7 @@ export default function MostLovedDestinations({
       cardBg: '#F0C254', // Emas Bros Keraton & Pin Tugu Si Jojo
       textColor: '#2D180C',
       accentColor: '#2D180C',
-      iconSrc: '/images/icon_soul.svg', // Ikon Sayap Denyut Jiwa Jogja Asli Pengguna
+      iconSrc: '/assets/icons/icon_soul.svg', // Ikon Sayap Denyut Jiwa Jogja Asli Pengguna
       onClick: onOpenSwissDetail
     },
     {
@@ -72,7 +72,7 @@ export default function MostLovedDestinations({
       cardBg: '#D5C4B4', // Perak Antik Kotagede & Kamera Vintage Jojo
       textColor: '#22150A',
       accentColor: '#22150A',
-      iconSrc: '/images/icon_culture.svg', // Ikon Pusaka Budaya Asli Pengguna
+      iconSrc: '/assets/icons/icon_culture.svg', // Ikon Pusaka Budaya Asli Pengguna
       onClick: onOpenParisDetail
     },
     {
@@ -88,7 +88,7 @@ export default function MostLovedDestinations({
       cardBg: '#DE7445', // Oranye Paruh Ramah Si Jojo & Senja Ratu Boko
       textColor: '#FFFFFF',
       accentColor: '#FFFFFF',
-      iconSrc: '/images/icon_culture.svg', // Ikon Cagar Budaya Asli Pengguna
+      iconSrc: '/assets/icons/icon_culture.svg', // Ikon Cagar Budaya Asli Pengguna
       onClick: onOpenPrambananDetail || (() => onSelectPlaceById && onSelectPlaceById('prambanan-ratuboko'))
     },
     {
@@ -104,7 +104,7 @@ export default function MostLovedDestinations({
       cardBg: '#4A2B18', // Cokelat Tua Lurik & Gagang Keris Si Jojo (Bukan Hijau)
       textColor: '#FFFFFF',
       accentColor: '#FFFFFF',
-      iconSrc: '/images/icon_nature.svg', // Ikon Bentang Alam Asli Pengguna
+      iconSrc: '/assets/icons/icon_nature.svg', // Ikon Bentang Alam Asli Pengguna
       onClick: onOpenNYDetail
     }
   ];

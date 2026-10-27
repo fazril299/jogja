@@ -8,21 +8,21 @@ const officialSources = [
     detail: 'Terdaftar sebagai Warisan Dunia UNESCO pada 2023. Poros utara–selatannya membentang sekitar 6 km, menghubungkan Gunung Merapi, Keraton, dan Samudra Hindia.',
     source: 'UNESCO',
     href: 'https://whc.unesco.org/en/list/1671/',
-    iconSrc: '/images/icon_culture.svg'
+    iconSrc: '/assets/icons/icon_culture.svg'
   },
   {
     title: 'Keraton Yogyakarta',
     detail: 'Sebagian kawasan Keraton terbuka untuk kunjungan publik dan dikelola oleh Kawedanan Radya Kartiyasa.',
     source: 'Situs resmi wisata Keraton',
     href: 'https://tourism.kratonjogja.id/id-ID/destination',
-    iconSrc: '/images/icon_soul.svg'
+    iconSrc: '/assets/icons/icon_soul.svg'
   },
   {
     title: 'Museum Ullen Sentalu',
     detail: 'Buka Selasa–Minggu, pukul 08.30–16.30 WIB. Tur terakhir dimulai pukul 15.15 WIB; museum tutup pada hari Senin.',
     source: 'Situs resmi Museum Ullen Sentalu',
     href: 'https://www.ullensentalu.com/berkunjung.html',
-    iconSrc: '/images/icon_nature.svg'
+    iconSrc: '/assets/icons/icon_nature.svg'
   }
 ];
 

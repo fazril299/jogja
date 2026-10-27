@@ -1,26 +1,3 @@
-/**
- * ============================================================================
- * CATATAN HANDOFF PENGEMBANGAN TIM (DAFTAR FITUR YANG BISA DILANJUTKAN):
- * ============================================================================
- * 1. [Auth & Profil - src/context/AuthContext.jsx & src/components/AuthModal.jsx]
- *    - Halaman Login Split-Screen, Akun Demo, dan Mode Guest (tanpa paksa login) sudah selesai.
- *    - BELUM: Modal/Halaman "Edit Profil" (ubah nama, avatar, dan password user yang sedang login).
- *    - BELUM: Alur "Lupa Kata Sandi / Reset Password" pada halaman Login.
- *
- * 2. [Komunitas & Ulasan - src/context/CommunityContext.jsx & src/components/PlaceStorybook.jsx]
- *    - Tambah ulasan, rating bintang, like, dan upload momen (termasuk untuk Guest) sudah selesai.
- *    - BELUM: Fitur Hapus & Edit ulasan/postingan foto milik sendiri.
- *    - BELUM: Filter & Sortir ulasan destinasi (berdasarkan Bintang 1-5, Terbaru, Terpopuler).
- *
- * 3. [Paspor Budaya & Wishlist - src/context/CultureBookContext.jsx]
- *    - BELUM: Sinkronisasi data Wishlist & Stempel Paspor spesifik per `currentUser.id`
- *      (saat ini masih berbagi 1 key localStorage yang sama antara Guest dan akun berbeda).
- *
- * 4. [Admin CMS & Inquiry - src/components/AdminModal.jsx & src/components/PlaceStorybook.jsx]
- *    - BELUM: Persistensi data destinasi baru dari AdminModal ke localStorage/Database
- *      (saat ini state `places` di App.jsx kembali ke default saat halaman di-refresh).
- * ============================================================================
- */
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';

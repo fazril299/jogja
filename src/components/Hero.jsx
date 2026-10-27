@@ -57,7 +57,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
       {/* 1. BACKGROUND IMAGE: Panorama Candi Warisan Mataram (Ultra-HD WebP Tajam) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.img
-          src="/bg_candi_hero.webp"
+          src="/assets/images/bg_candi_hero.webp"
           onError={(e) => {
             if (!e.currentTarget.dataset.fallback) {
               e.currentTarget.dataset.fallback = 'true';

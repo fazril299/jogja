@@ -590,7 +590,7 @@ export default function Navbar({
               transition={SPRING_TRANSITION}
             >
               <img
-                src="/images/icon_culture.svg"
+                src="/assets/icons/icon_culture.svg"
                 alt="Hamemayu"
                 style={{ width: 22, height: 22, objectFit: 'contain', display: 'block' }}
               />
@@ -845,7 +845,7 @@ export default function Navbar({
                         }}
                       >
                         <img
-                          src="/images/icon_culture.svg"
+                          src="/assets/icons/icon_culture.svg"
                           alt="Hamemayu"
                           style={{ width: 38, height: 38, objectFit: 'contain', display: 'block' }}
                         />
@@ -1057,7 +1057,7 @@ export default function Navbar({
             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none p-0 text-left"
           >
             <img
-              src="/images/icon_culture.svg"
+              src="/assets/icons/icon_culture.svg"
               alt="Hamemayu"
               className="w-5 h-5 object-contain"
             />
