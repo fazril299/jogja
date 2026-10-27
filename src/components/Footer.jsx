@@ -9,7 +9,6 @@ import {
   BookMarked,
   Scroll,
   Share2,
-  ShieldCheck,
   Globe,
   ChevronRight,
   Sparkles
@@ -156,7 +155,6 @@ export default function Footer({
   onOpenCultureJournals,
   onOpenKalenderAcara,
   onOpenJurnalBudaya,
-  onOpenAdmin,
   onOpenShareModal,
   onSelectPlaceById
 }) {
@@ -396,16 +394,6 @@ export default function Footer({
                 >
                   <Share2 size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Bagikan Momen</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenAdmin && onOpenAdmin()}
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left text-[11px] text-black font-semibold pt-1 underline"
-                >
-                  <ShieldCheck size={14} className="text-amber-800 flex-shrink-0" />
-                  <span>Portal Kurator &amp; CMS</span>
                 </button>
               </li>
             </ul>

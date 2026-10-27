@@ -786,7 +786,6 @@ function NusantaraApp() {
           onOpenCultureJournals={handleOpenJurnalBudaya}
           onOpenKalenderAcara={handleOpenKalenderAcara}
           onOpenJurnalBudaya={handleOpenJurnalBudaya}
-          onOpenAdmin={handleOpenAdmin}
           onOpenShareModal={handleOpenShareModal}
           onSelectPlaceById={(placeId) => handleSelectPlaceById(placeId)}
         />
