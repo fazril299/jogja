@@ -17,6 +17,7 @@ import {
   AlertCircle,
   AlertTriangle,
   ChevronRight,
+  ChevronDown,
   RefreshCw,
   LogIn,
   Calendar,
@@ -71,6 +72,7 @@ export default function MyCultureBookModal({
   // Verifikasi GPS State
   const [verificationFeedback, setVerificationFeedback] = useState(null);
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
+  const [showGuideDetail, setShowGuideDetail] = useState(false);
 
   // Sync tab saat initialTab berubah atau modal dibuka
   useEffect(() => {
@@ -296,8 +298,8 @@ export default function MyCultureBookModal({
             maxWidth: '1180px',
             width: '100%',
             margin: '0 auto',
-            paddingTop: '5rem',
-            paddingBottom: '5rem',
+            paddingTop: 'clamp(1.25rem, 2.5vw, 2.25rem)',
+            paddingBottom: '3.5rem',
             boxSizing: 'border-box'
           }}
         >
@@ -934,11 +936,11 @@ export default function MyCultureBookModal({
               width: '100%'
             }}
           >
-            {/* Banner Keraton */}
+            {/* Banner Keraton - Compact Luxury */}
             <div
               style={{
                 position: 'relative',
-                height: 'clamp(120px, 22vw, 160px)',
+                height: 'clamp(85px, 13vw, 115px)',
                 backgroundColor: '#2C221E',
                 overflow: 'hidden'
               }}
@@ -959,7 +961,7 @@ export default function MyCultureBookModal({
                   position: 'absolute',
                   inset: 0,
                   background:
-                    'linear-gradient(90deg, rgba(44, 34, 30, 0.6) 0%, rgba(44, 34, 30, 0.25) 55%, rgba(44, 34, 30, 0.55) 100%)'
+                    'linear-gradient(90deg, rgba(44, 34, 30, 0.65) 0%, rgba(44, 34, 30, 0.25) 55%, rgba(44, 34, 30, 0.55) 100%)'
                 }}
               />
 
@@ -981,12 +983,12 @@ export default function MyCultureBookModal({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.35rem',
-                    padding: '0.4rem 0.85rem',
+                    padding: '0.35rem 0.8rem',
                     borderRadius: '999px',
                     backgroundColor: 'rgba(250, 248, 245, 0.95)',
                     border: '1px solid #E5DEC9',
                     color: '#2C221E',
-                    fontSize: '0.74rem',
+                    fontSize: '0.72rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(44, 34, 30, 0.12)',
@@ -1001,29 +1003,30 @@ export default function MyCultureBookModal({
               </div>
             </div>
 
-            {/* Profile Info */}
-            <div style={{ padding: '0 clamp(0.85rem, 2.5vw, 2.5rem) 1.5rem', position: 'relative' }}>
+            {/* Profile Info - Streamlined Compact Layout */}
+            <div style={{ padding: '0 clamp(0.85rem, 2vw, 1.75rem) 0.9rem', position: 'relative' }}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'flex-end',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '1rem',
-                  marginTop: '-44px',
-                  marginBottom: '1rem'
+                  gap: '0.75rem',
+                  marginTop: '-36px',
+                  marginBottom: '0.65rem'
                 }}
               >
                 <div
                   style={{
                     position: 'relative',
-                    width: '88px',
-                    height: '88px',
+                    width: '72px',
+                    height: '72px',
                     borderRadius: '50%',
                     backgroundColor: '#FFFFFF',
-                    border: '3.5px solid #FFFFFF',
-                    boxShadow: '0 6px 18px rgba(44, 34, 30, 0.14)',
-                    overflow: 'hidden'
+                    border: '3px solid #FFFFFF',
+                    boxShadow: '0 4px 14px rgba(44, 34, 30, 0.12)',
+                    overflow: 'hidden',
+                    flexShrink: 0
                   }}
                 >
                   <img
@@ -1034,6 +1037,40 @@ export default function MyCultureBookModal({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {/* Mini Ikon Warisan Preview */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', backgroundColor: '#FAF8F5', padding: '0.2rem 0.45rem', borderRadius: '999px', border: '1px solid #ECE4D8' }}>
+                    <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#8A5D26', paddingRight: '0.2rem' }}>
+                      Ikon:
+                    </span>
+                    {portfolioBadges.map((b) => (
+                      <div
+                        key={b.id}
+                        title={b.title}
+                        style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '50%',
+                          backgroundColor: b.bg,
+                          border: '1px solid rgba(44, 34, 30, 0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <img
+                          src={b.iconSrc}
+                          alt={b.title}
+                          style={{
+                            width: '11px',
+                            height: '11px',
+                            objectFit: 'contain',
+                            filter: 'brightness(0) invert(1)'
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
                   {isGuest && (
                     <button
                       type="button"
@@ -1048,19 +1085,19 @@ export default function MyCultureBookModal({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.35rem',
-                        padding: '0.4rem 0.85rem',
+                        padding: '0.35rem 0.75rem',
                         borderRadius: '999px',
                         backgroundColor: '#2C221E',
                         border: '1px solid #2C221E',
                         color: '#FAF8F5',
-                        fontSize: '0.72rem',
+                        fontSize: '0.7rem',
                         fontWeight: 700,
                         cursor: 'pointer',
                         transition: 'all 0.15s ease'
                       }}
                       title="Masuk atau Buat Akun"
                     >
-                      <LogIn size={13} />
+                      <LogIn size={12} />
                       <span>Masuk Akun</span>
                     </button>
                   )}
@@ -1071,7 +1108,7 @@ export default function MyCultureBookModal({
                 <h2
                   style={{
                     fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                    fontSize: 'clamp(1.4rem, 2.5vw, 1.85rem)',
+                    fontSize: 'clamp(1.2rem, 2vw, 1.55rem)',
                     fontWeight: 800,
                     color: '#2C221E',
                     margin: 0,
@@ -1082,12 +1119,12 @@ export default function MyCultureBookModal({
                 </h2>
                 <span
                   style={{
-                    padding: '0.2rem 0.65rem',
+                    padding: '0.15rem 0.55rem',
                     borderRadius: '999px',
                     backgroundColor: '#FAF6EE',
                     border: '1px solid #E5DEC9',
                     color: '#8A5D26',
-                    fontSize: '0.7rem',
+                    fontSize: '0.68rem',
                     fontWeight: 700
                   }}
                 >
@@ -1095,70 +1132,27 @@ export default function MyCultureBookModal({
                 </span>
               </div>
 
-              <div style={{ fontSize: '0.84rem', color: '#6E5D52', marginTop: '0.25rem', fontWeight: 500 }}>
-                {displayRole}
-              </div>
-
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.45rem',
-                  fontSize: '0.8rem',
-                  color: '#786B5E',
-                  marginTop: '0.45rem'
-                }}
-              >
-                <MapPin size={13} color="#9E1C64" />
-                <span>
-                  {userLiveAddress
-                    ? `Lokasi: ${userLiveAddress}`
-                    : 'Daerah Istimewa Yogyakarta, Indonesia'}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.65rem',
-                  marginTop: '1.1rem',
-                  paddingTop: '0.9rem',
-                  borderTop: '1px solid #F2EDE4',
+                  gap: '0.85rem',
+                  fontSize: '0.78rem',
+                  color: '#6E5D52',
+                  marginTop: '0.2rem',
                   flexWrap: 'wrap'
                 }}
               >
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#8A5D26', marginRight: '0.25rem' }}>
-                  Ikon Warisan:
-                </span>
-                {portfolioBadges.map((b) => (
-                  <div
-                    key={b.id}
-                    title={b.title}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      backgroundColor: b.bg,
-                      border: '1.5px solid rgba(44, 34, 30, 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 2px 6px rgba(44, 34, 30, 0.12)'
-                    }}
-                  >
-                    <img
-                      src={b.iconSrc}
-                      alt={b.title}
-                      style={{
-                        width: '16px',
-                        height: '16px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) invert(1)'
-                      }}
-                    />
-                  </div>
-                ))}
+                <span style={{ fontWeight: 500 }}>{displayRole}</span>
+                <span style={{ color: '#D9CEBA' }}>•</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#786B5E' }}>
+                  <MapPin size={12} color="#9E1C64" />
+                  <span>
+                    {userLiveAddress
+                      ? `Lokasi: ${userLiveAddress}`
+                      : 'Daerah Istimewa Yogyakarta, Indonesia'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -1675,142 +1669,140 @@ export default function MyCultureBookModal({
                   =============================================================== */}
               {activeTab === 'badges-quests' && (
                 <div>
-                  {/* HERO BANNER: 3 LANGKAH CARA MENDAPATKAN BADGE */}
+                  {/* COMPACT PANDUAN KLAIM STRIP (MEMUDAHKAN MELIHAT DAFTAR QUEST) */}
                   <div
                     style={{
-                      padding: '1.35rem 1.5rem',
-                      borderRadius: '16px',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '14px',
                       backgroundColor: '#FAF8F5',
-                      border: '1.5px solid #EAE0D0',
-                      marginBottom: '2rem'
+                      border: '1px solid #EAE0D0',
+                      marginBottom: '1.15rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.65rem'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                      <Compass size={18} color="#8A5D26" />
-                      <h3
-                        style={{
-                          fontSize: '1.05rem',
-                          fontWeight: 800,
-                          color: '#2C221E',
-                          margin: 0
-                        }}
-                      >
-                        Cara Mendapatkan Badge Budaya
-                      </h3>
-                    </div>
-                    <p style={{ fontSize: '0.82rem', color: '#6E5D52', margin: '0 0 1rem 0', lineHeight: 1.5 }}>
-                      Badge warisan budaya Yogyakarta terbuka secara otomatis saat Anda berkunjung langsung ke situs bersejarah:
-                    </p>
-
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-                        gap: '0.75rem'
-                      }}
-                    >
-                      <div
-                        style={{
-                          padding: '0.85rem 1rem',
-                          borderRadius: '12px',
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #ECE4D8'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                          <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
-                            Langkah 1
-                          </span>
-                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Kunjungi Lokasi</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.65rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', backgroundColor: 'rgba(138, 93, 38, 0.1)', color: '#8A5D26', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Compass size={16} />
                         </div>
-                        <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Datang langsung ke situs cagar budaya (Keraton, Malioboro, Kotagede, Prambanan, dll).
-                        </p>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#2C221E' }}>
+                              Panduan Klaim Badge
+                            </span>
+                            <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#8A5D26', backgroundColor: '#FAF6EE', border: '1px solid #E5DEC9', padding: '0.1rem 0.45rem', borderRadius: '4px' }}>
+                              1. Kunjungi Situs → 2. Deteksi GPS → 3. Klaim
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.73rem', color: '#786B5E', marginTop: '0.15rem' }}>
+                            <MapPin size={11} color="#9E1C64" />
+                            <span>
+                              {userLiveCoords
+                                ? 'GPS Aktif: Terhubung ke Wilayah D.I. Yogyakarta'
+                                : 'Kunjungi cagar budaya untuk mengaktifkan tombol klaim.'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
-                      <div
-                        style={{
-                          padding: '0.85rem 1rem',
-                          borderRadius: '12px',
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #ECE4D8'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                          <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
-                            Langkah 2
-                          </span>
-                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Buka Paspor Budaya</strong>
-                        </div>
-                        <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Buka aplikasi saat Anda berada di lokasi. Sistem otomatis mendeteksi kehadiran Anda di kawasan wisata.
-                        </p>
-                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        <button
+                          type="button"
+                          onClick={onRefreshGps}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem',
+                            padding: '0.3rem 0.7rem',
+                            borderRadius: '999px',
+                            backgroundColor: '#2C221E',
+                            color: '#FAF8F5',
+                            border: 'none',
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <RefreshCw size={11} />
+                          <span>Perbarui Lokasi</span>
+                        </button>
 
-                      <div
-                        style={{
-                          padding: '0.85rem 1rem',
-                          borderRadius: '12px',
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #ECE4D8'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                          <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
-                            Langkah 3
-                          </span>
-                          <strong style={{ fontSize: '0.8rem', color: '#2C221E' }}>Koleksi Badge</strong>
-                        </div>
-                        <p style={{ margin: 0, fontSize: '0.74rem', color: '#6E5D52', lineHeight: 1.45 }}>
-                          Tombol "Klaim Badge" otomatis aktif. Tekan untuk menyimpan lencana permanen di paspor budaya Anda.
-                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowGuideDetail(!showGuideDetail)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                            padding: '0.3rem 0.65rem',
+                            borderRadius: '999px',
+                            backgroundColor: 'transparent',
+                            color: '#8A5D26',
+                            border: '1px solid #E5D7BE',
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <span>{showGuideDetail ? 'Tutup Info' : 'Detail Langkah'}</span>
+                          <motion.div animate={{ rotate: showGuideDetail ? 180 : 0 }} transition={{ duration: 0.2 }} className="flex items-center">
+                            <ChevronDown size={12} />
+                          </motion.div>
+                        </button>
                       </div>
                     </div>
 
-                    {/* Sensor Live Bar */}
-                    <div
-                      style={{
-                        marginTop: '1rem',
-                        paddingTop: '0.85rem',
-                        borderTop: '1px solid #EAE0D0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: '0.5rem',
-                        fontSize: '0.76rem'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#5C4E43' }}>
-                        <MapPin size={14} color="#9E1C64" />
-                        <span>
-                          {userLiveCoords
-                            ? 'Lokasi Aktif: Terhubung ke Wilayah D.I. Yogyakarta'
-                            : 'Kunjungi cagar budaya di Yogyakarta untuk membuka koleksi lencana.'}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={onRefreshGps}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          padding: '0.3rem 0.75rem',
-                          borderRadius: '999px',
-                          backgroundColor: '#2C221E',
-                          color: '#FAF8F5',
-                          border: 'none',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <RefreshCw size={12} />
-                        <span>Perbarui Lokasi</span>
-                      </button>
-                    </div>
+                    <AnimatePresence>
+                      {showGuideDetail && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25 }}
+                          style={{ overflow: 'hidden' }}
+                        >
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                              gap: '0.65rem',
+                              paddingTop: '0.6rem',
+                              borderTop: '1px solid #EAE0D0'
+                            }}
+                          >
+                            <div style={{ padding: '0.75rem 0.85rem', borderRadius: '10px', backgroundColor: '#FFFFFF', border: '1px solid #ECE4D8' }}>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
+                                Langkah 1
+                              </span>
+                              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#2C221E', marginTop: '0.2rem' }}>Kunjungi Lokasi</div>
+                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.72rem', color: '#6E5D52', lineHeight: 1.4 }}>
+                                Datang langsung ke situs cagar budaya (Keraton, Malioboro, Kotagede, dll).
+                              </p>
+                            </div>
+                            <div style={{ padding: '0.75rem 0.85rem', borderRadius: '10px', backgroundColor: '#FFFFFF', border: '1px solid #ECE4D8' }}>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
+                                Langkah 2
+                              </span>
+                              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#2C221E', marginTop: '0.2rem' }}>Buka Paspor Budaya</div>
+                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.72rem', color: '#6E5D52', lineHeight: 1.4 }}>
+                                Buka aplikasi di lokasi. Sensor mendeteksi kehadiran Anda secara otomatis.
+                              </p>
+                            </div>
+                            <div style={{ padding: '0.75rem 0.85rem', borderRadius: '10px', backgroundColor: '#FFFFFF', border: '1px solid #ECE4D8' }}>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#8A5D26', backgroundColor: '#FAF6EE', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
+                                Langkah 3
+                              </span>
+                              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#2C221E', marginTop: '0.2rem' }}>Koleksi Badge</div>
+                              <p style={{ margin: '0.15rem 0 0', fontSize: '0.72rem', color: '#6E5D52', lineHeight: 1.4 }}>
+                                Tombol "Klaim Badge" aktif. Tekan untuk menyimpan lencana permanen.
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
 
