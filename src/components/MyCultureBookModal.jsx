@@ -483,65 +483,69 @@ export default function MyCultureBookModal({
                   </div>
                 </div>
 
-                {/* Misi & Quest Budaya Mobile */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between pb-1">
+                {/* Misi & Quest Budaya Mobile - Horizontal Swipe Carousel (Anti-Memanjang) */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between pb-1.5 px-0.5">
                     <span className="text-xs font-extrabold text-[#2C221E] flex items-center gap-1.5">
                       <Sparkles size={13} className="text-[#8A5D26]" />
                       <span>Misi & Quest Budaya ({CULTURAL_QUESTS.length})</span>
                     </span>
-                    <span className="text-[10px] font-semibold text-neutral-500">
-                      Selesaikan untuk XP
+                    <span className="text-[10px] font-semibold text-neutral-400">
+                      Geser kartu »
                     </span>
                   </div>
 
-                  {CULTURAL_QUESTS.map((quest) => {
-                    const completedCount = quest.requiredPlaceIds.filter((pId) =>
-                      cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
-                    ).length;
-                    const isDone = completedCount === quest.requiredPlaceIds.length;
-                    return (
-                      <div
-                        key={quest.id}
-                        className={`p-3 rounded-2xl border transition-all ${
-                          isDone ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-[#EAE4DC]'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#2C221E]">
-                            {quest.title}
-                          </span>
-                          <span
-                            className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                              isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-[#FAF6EE] text-[#8A5D26] border border-[#E5DEC9]'
-                            }`}
-                          >
-                            {isDone ? 'Selesai' : `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-neutral-500 leading-tight mb-2">
-                          {quest.description}
-                        </p>
-                        <div className="flex gap-1.5 flex-wrap">
-                          {quest.requiredPlaceIds.map((pId) => {
-                            const pl = places.find((p) => p.id === pId);
-                            const isGps = isGpsVerified(pId);
-                            return (
+                  <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory -mx-1 px-1">
+                    {CULTURAL_QUESTS.map((quest) => {
+                      const completedCount = quest.requiredPlaceIds.filter((pId) =>
+                        cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
+                      ).length;
+                      const isDone = completedCount === quest.requiredPlaceIds.length;
+                      return (
+                        <div
+                          key={quest.id}
+                          className={`min-w-[260px] max-w-[280px] p-3 rounded-2xl border transition-all shrink-0 snap-start flex flex-col justify-between ${
+                            isDone ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-[#EAE4DC]'
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-bold text-[#2C221E] truncate max-w-[180px]">
+                                {quest.title}
+                              </span>
                               <span
-                                key={pId}
-                                className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md ${
-                                  isGps ? 'bg-emerald-50 text-emerald-700 font-bold border border-emerald-200' : 'bg-[#FAF8F5] text-neutral-600 border border-neutral-200'
+                                className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full shrink-0 ${
+                                  isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-[#FAF6EE] text-[#8A5D26] border border-[#E5DEC9]'
                                 }`}
                               >
-                                {isGps ? <Check size={10} /> : <Lock size={9} />}
-                                <span>{pl?.name.split('&')[0] || pId}</span>
+                                {isDone ? 'Selesai' : `${completedCount}/${quest.requiredPlaceIds.length}`}
                               </span>
-                            );
-                          })}
+                            </div>
+                            <p className="text-[10.5px] text-neutral-500 leading-tight mb-2 line-clamp-2">
+                              {quest.description}
+                            </p>
+                          </div>
+                          <div className="flex gap-1 flex-wrap">
+                            {quest.requiredPlaceIds.map((pId) => {
+                              const pl = places.find((p) => p.id === pId);
+                              const isGps = isGpsVerified(pId);
+                              return (
+                                <span
+                                  key={pId}
+                                  className={`inline-flex items-center gap-1 text-[9.5px] px-1.5 py-0.5 rounded-md ${
+                                    isGps ? 'bg-emerald-50 text-emerald-700 font-bold border border-emerald-200' : 'bg-[#FAF8F5] text-neutral-600 border border-neutral-200'
+                                  }`}
+                                >
+                                  {isGps ? <Check size={9} /> : <Lock size={8} />}
+                                  <span>{pl?.name.split('&')[0] || pId}</span>
+                                </span>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Badge Quests Cards */}
@@ -1951,7 +1955,7 @@ export default function MyCultureBookModal({
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '0.85rem' }}>
                         {CULTURAL_QUESTS.map((quest) => {
                           const questStatus = (cultureBook.questsStatus || {})[quest.id] || { isCompleted: false };
                           const completedCount = quest.requiredPlaceIds.filter((pId) =>
@@ -1963,10 +1967,15 @@ export default function MyCultureBookModal({
                             <div
                               key={quest.id}
                               style={{
-                                padding: '1.15rem 1.25rem',
+                                padding: '0.95rem 1.1rem',
                                 borderRadius: '14px',
                                 backgroundColor: '#FFFFFF',
-                                border: isDone ? '1.5px solid #2C221E' : '1px solid #EAE3D6'
+                                border: isDone ? '1.5px solid #15803D' : '1px solid #EAE3D6',
+                                boxShadow: '0 2px 8px rgba(44, 34, 30, 0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                gap: '0.5rem'
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
@@ -2055,8 +2064,8 @@ export default function MyCultureBookModal({
                         </span>
                       </div>
 
-                      {/* Grid Kartu Badge */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {/* Grid Kartu Badge - 2 Kolom Kompak */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '0.85rem' }}>
                         {CULTURAL_BADGES.map((badge) => {
                           const isUnlocked = isBadgeUnlocked(badge.id);
                         const targetPlace = places.find((p) => p.id === badge.targetPlaceId);
