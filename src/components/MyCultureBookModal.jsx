@@ -73,6 +73,7 @@ export default function MyCultureBookModal({
   const [verificationFeedback, setVerificationFeedback] = useState(null);
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
   const [showGuideDetail, setShowGuideDetail] = useState(false);
+  const [badgeFilterType, setBadgeFilterType] = useState('all'); // 'all' | 'quests' | 'badges'
 
   // Sync tab saat initialTab berubah atau modal dibuka
   useEffect(() => {
@@ -482,8 +483,75 @@ export default function MyCultureBookModal({
                   </div>
                 </div>
 
+                {/* Misi & Quest Budaya Mobile */}
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center justify-between pb-1">
+                    <span className="text-xs font-extrabold text-[#2C221E] flex items-center gap-1.5">
+                      <Sparkles size={13} className="text-[#8A5D26]" />
+                      <span>Misi & Quest Budaya ({CULTURAL_QUESTS.length})</span>
+                    </span>
+                    <span className="text-[10px] font-semibold text-neutral-500">
+                      Selesaikan untuk XP
+                    </span>
+                  </div>
+
+                  {CULTURAL_QUESTS.map((quest) => {
+                    const completedCount = quest.requiredPlaceIds.filter((pId) =>
+                      cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
+                    ).length;
+                    const isDone = completedCount === quest.requiredPlaceIds.length;
+                    return (
+                      <div
+                        key={quest.id}
+                        className={`p-3 rounded-2xl border transition-all ${
+                          isDone ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-[#EAE4DC]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-bold text-[#2C221E]">
+                            {quest.title}
+                          </span>
+                          <span
+                            className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                              isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-[#FAF6EE] text-[#8A5D26] border border-[#E5DEC9]'
+                            }`}
+                          >
+                            {isDone ? 'Selesai' : `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 leading-tight mb-2">
+                          {quest.description}
+                        </p>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {quest.requiredPlaceIds.map((pId) => {
+                            const pl = places.find((p) => p.id === pId);
+                            const isGps = isGpsVerified(pId);
+                            return (
+                              <span
+                                key={pId}
+                                className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-md ${
+                                  isGps ? 'bg-emerald-50 text-emerald-700 font-bold border border-emerald-200' : 'bg-[#FAF8F5] text-neutral-600 border border-neutral-200'
+                                }`}
+                              >
+                                {isGps ? <Check size={10} /> : <Lock size={9} />}
+                                <span>{pl?.name.split('&')[0] || pId}</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 {/* Badge Quests Cards */}
                 <div className="space-y-2">
+                  <div className="flex items-center justify-between pb-1">
+                    <span className="text-xs font-extrabold text-[#2C221E] flex items-center gap-1.5">
+                      <Award size={13} className="text-[#8A5D26]" />
+                      <span>Daftar Semua Badge ({CULTURAL_BADGES.length})</span>
+                    </span>
+                  </div>
                   {CULTURAL_BADGES.map((badge) => {
                     const isUnlocked = isBadgeUnlocked(badge.id);
                     return (
@@ -1570,7 +1638,7 @@ export default function MyCultureBookModal({
                 {[
                   {
                     id: 'badges-quests',
-                    label: `Koleksi & Cara Klaim Badge (${(cultureBook.unlockedBadgeIds || []).length}/${CULTURAL_BADGES.length})`
+                    label: `Misi Quest & Badge (${(cultureBook.unlockedBadgeIds || []).length}/${CULTURAL_BADGES.length})`
                   },
                   { id: 'events', label: 'Kalender Acara Budaya' },
                   { id: 'jurnal', label: 'Jurnal & Panduan Budaya' },
@@ -1807,29 +1875,190 @@ export default function MyCultureBookModal({
 
 
 
-                  {/* KATALOG DAFTAR BADGE & CARA DAPATNYA */}
-                  <div style={{ marginBottom: '2.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <h3
-                        style={{
-                          fontSize: '1.05rem',
-                          fontWeight: 800,
-                          color: '#2C221E',
-                          margin: 0
-                        }}
-                      >
-                        Daftar Badge & Panduan Klaim
-                      </h3>
+                  
+                  {/* SUB-FILTER SWITCHER: SEMUA / QUEST / BADGE */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setBadgeFilterType('all')}
+                      style={{
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '999px',
+                        backgroundColor: badgeFilterType === 'all' ? '#2C221E' : '#FFFFFF',
+                        color: badgeFilterType === 'all' ? '#FAF8F5' : '#6E5D52',
+                        border: badgeFilterType === 'all' ? '1px solid #2C221E' : '1px solid #EAE0D0',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      Semua Koleksi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBadgeFilterType('quests')}
+                      style={{
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '999px',
+                        backgroundColor: badgeFilterType === 'quests' ? '#8A5D26' : '#FFFFFF',
+                        color: badgeFilterType === 'quests' ? '#FAF8F5' : '#8A5D26',
+                        border: badgeFilterType === 'quests' ? '1px solid #8A5D26' : '1px solid #E5D7BE',
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <Sparkles size={12} />
+                      <span>Misi & Quest Budaya ({CULTURAL_QUESTS.length})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBadgeFilterType('badges')}
+                      style={{
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '999px',
+                        backgroundColor: badgeFilterType === 'badges' ? '#2C221E' : '#FFFFFF',
+                        color: badgeFilterType === 'badges' ? '#FAF8F5' : '#6E5D52',
+                        border: badgeFilterType === 'badges' ? '1px solid #2C221E' : '1px solid #EAE0D0',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <Award size={12} />
+                      <span>Daftar 9 Badge Warisan</span>
+                    </button>
+                  </div>
 
-                      <span style={{ fontSize: '0.74rem', color: '#786B5E' }}>
-                        Buka badge dengan mengunjungi cagar budaya secara nyata
-                      </span>
+                  {/* 1. MISI & QUEST BUDAYA (SEKARANG TAMPIL DI PALING ATAS!) */}
+                  {(badgeFilterType === 'all' || badgeFilterType === 'quests') && (
+                    <div style={{ marginBottom: '2.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#2C221E', margin: 0 }}>
+                          Misi & Quest Budaya
+                        </h3>
+                        <span style={{ fontSize: '0.74rem', color: '#786B5E' }}>
+                          Selesaikan rangkaian kunjungan untuk membuka badge tingkat tinggi
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                        {CULTURAL_QUESTS.map((quest) => {
+                          const questStatus = (cultureBook.questsStatus || {})[quest.id] || { isCompleted: false };
+                          const completedCount = quest.requiredPlaceIds.filter((pId) =>
+                            cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
+                          ).length;
+                          const isDone = completedCount === quest.requiredPlaceIds.length;
+
+                          return (
+                            <div
+                              key={quest.id}
+                              style={{
+                                padding: '1.15rem 1.25rem',
+                                borderRadius: '14px',
+                                backgroundColor: '#FFFFFF',
+                                border: isDone ? '1.5px solid #2C221E' : '1px solid #EAE3D6'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                                <h4 style={{ fontSize: '0.94rem', fontWeight: 800, color: '#2C221E', margin: 0 }}>
+                                  {quest.title}
+                                </h4>
+                                <span
+                                  style={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    color: isDone ? '#15803D' : '#8A5D26',
+                                    backgroundColor: isDone ? '#DCFCE7' : '#FAF6EE',
+                                    padding: '0.2rem 0.6rem',
+                                    borderRadius: '999px'
+                                  }}
+                                >
+                                  {isDone ? (
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                                      <Check size={11} /> Selesai
+                                    </span>
+                                  ) : (
+                                    `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`
+                                  )}
+                                </span>
+                              </div>
+
+                              <p style={{ fontSize: '0.76rem', color: '#6E5D52', margin: '0 0 0.65rem 0', lineHeight: 1.45 }}>
+                                {quest.description}
+                              </p>
+
+                              <div style={{ fontSize: '0.72rem', color: '#8A5D26', fontWeight: 700, marginBottom: '0.55rem' }}>
+                                Cara Selesaikan: {quest.caraMendapatkan}
+                              </div>
+
+                              {/* Checklist titik */}
+                              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                {quest.requiredPlaceIds.map((pId) => {
+                                  const pl = places.find((p) => p.id === pId);
+                                  const isGps = isGpsVerified(pId);
+                                  return (
+                                    <div
+                                      key={pId}
+                                      style={{
+                                        padding: '0.35rem 0.65rem',
+                                        borderRadius: '8px',
+                                        backgroundColor: '#FAF8F5',
+                                        border: '1px solid #ECE4D8',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.35rem',
+                                        fontSize: '0.72rem',
+                                        color: isGps ? '#15803D' : '#3D312A',
+                                        fontWeight: isGps ? 800 : 600
+                                      }}
+                                    >
+                                      {isGps ? <CheckCircle2 size={13} color="#15803D" /> : <Lock size={12} color="#94A3B8" />}
+                                      <span>{pl?.name.split('&')[0] || pId}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
+                  )}
 
-                    {/* Grid Kartu Badge */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                      {CULTURAL_BADGES.map((badge) => {
-                        const isUnlocked = isBadgeUnlocked(badge.id);
+                  {/* 2. KATALOG DAFTAR BADGE */}
+                  {(badgeFilterType === 'all' || badgeFilterType === 'badges') && (
+                    <div style={{ marginBottom: '2.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <h3
+                          style={{
+                            fontSize: '1.05rem',
+                            fontWeight: 800,
+                            color: '#2C221E',
+                            margin: 0
+                          }}
+                        >
+                          Daftar Badge & Panduan Klaim
+                        </h3>
+
+                        <span style={{ fontSize: '0.74rem', color: '#786B5E' }}>
+                          Buka badge dengan mengunjungi cagar budaya secara nyata
+                        </span>
+                      </div>
+
+                      {/* Grid Kartu Badge */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {CULTURAL_BADGES.map((badge) => {
+                          const isUnlocked = isBadgeUnlocked(badge.id);
                         const targetPlace = places.find((p) => p.id === badge.targetPlaceId);
                         const maxRadius = badge.maxRadiusMeters || 1500;
 
@@ -2092,104 +2321,11 @@ export default function MyCultureBookModal({
                       })}
                     </div>
                   </div>
-
-                  {/* MISI & QUEST BUDAYA */}
-                  <div style={{ marginBottom: '2.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#2C221E', margin: 0 }}>
-                        Misi & Quest Budaya
-                      </h3>
-                      <span style={{ fontSize: '0.74rem', color: '#786B5E' }}>
-                        Selesaikan rangkaian kunjungan untuk membuka badge tingkat tinggi
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                      {CULTURAL_QUESTS.map((quest) => {
-                        const questStatus = (cultureBook.questsStatus || {})[quest.id] || { isCompleted: false };
-                        const completedCount = quest.requiredPlaceIds.filter((pId) =>
-                          cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
-                        ).length;
-                        const isDone = completedCount === quest.requiredPlaceIds.length;
-
-                        return (
-                          <div
-                            key={quest.id}
-                            style={{
-                              padding: '1.15rem 1.25rem',
-                              borderRadius: '14px',
-                              backgroundColor: '#FFFFFF',
-                              border: isDone ? '1.5px solid #2C221E' : '1px solid #EAE3D6'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                              <h4 style={{ fontSize: '0.94rem', fontWeight: 800, color: '#2C221E', margin: 0 }}>
-                                {quest.title}
-                              </h4>
-                              <span
-                                style={{
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  color: isDone ? '#15803D' : '#8A5D26',
-                                  backgroundColor: isDone ? '#DCFCE7' : '#FAF6EE',
-                                  padding: '0.2rem 0.6rem',
-                                  borderRadius: '999px'
-                                }}
-                              >
-                                {isDone ? (
-                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                                    <Check size={11} /> Selesai
-                                  </span>
-                                ) : (
-                                  `${completedCount}/${quest.requiredPlaceIds.length} Lokasi`
-                                )}
-                              </span>
-                            </div>
-
-                            <p style={{ fontSize: '0.76rem', color: '#6E5D52', margin: '0 0 0.65rem 0', lineHeight: 1.45 }}>
-                              {quest.description}
-                            </p>
-
-                            <div style={{ fontSize: '0.72rem', color: '#8A5D26', fontWeight: 700, marginBottom: '0.55rem' }}>
-                              Cara Selesaikan: {quest.caraMendapatkan}
-                            </div>
-
-                            {/* Checklist titik */}
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              {quest.requiredPlaceIds.map((pId) => {
-                                const pl = places.find((p) => p.id === pId);
-                                const isGps = isGpsVerified(pId);
-                                return (
-                                  <div
-                                    key={pId}
-                                    style={{
-                                      padding: '0.35rem 0.65rem',
-                                      borderRadius: '8px',
-                                      backgroundColor: '#FAF8F5',
-                                      border: '1px solid #ECE4D8',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '0.35rem',
-                                      fontSize: '0.72rem',
-                                      color: isGps ? '#15803D' : '#3D312A',
-                                      fontWeight: isGps ? 800 : 600
-                                    }}
-                                  >
-                                    {isGps ? <CheckCircle2 size={13} color="#15803D" /> : <Lock size={12} color="#94A3B8" />}
-                                    <span>{pl?.name.split('&')[0] || pId}</span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  )}
                 </div>
               )}
 
-              {/* TAB 2: RINGKASAN PROFIL */}
+                            {/* TAB 2: RINGKASAN PROFIL */}
               {activeTab === 'background' && (
                 <div>
                   <div style={{ paddingBottom: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #F2EDE4' }}>
