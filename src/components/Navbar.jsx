@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen, Utensils } from 'lucide-react';
+import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen, Utensils, Home, Compass, User, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const SPRING_TRANSITION = {
@@ -1053,26 +1053,6 @@ export default function Navbar({
 
           {/* Right Mobile Actions */}
           <div className="flex items-center gap-1.5">
-            {/* Quick Calendar Button */}
-            <button
-              type="button"
-              onClick={() => {
-                closeAll();
-                if (onOpenKalenderAcara) onOpenKalenderAcara();
-                else if (onOpenCultureEvents) onOpenCultureEvents();
-              }}
-              aria-label="Kalender Acara"
-              className={`h-7 px-2 rounded-full flex items-center gap-1 text-[11px] font-bold transition-all cursor-pointer border ${
-                currentView === 'kalender'
-                  ? 'bg-amber-100 text-amber-950 border-amber-300 shadow-2xs'
-                  : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-800 border-neutral-200/70'
-              }`}
-              title="Kalender Acara Tradisi"
-            >
-              <Calendar size={13} className="text-amber-800" />
-              <span>Acara</span>
-            </button>
-
             {/* Quick Profile / Login Trigger */}
             {currentUser && !currentUser.isGuest ? (
               <button
@@ -1336,6 +1316,127 @@ export default function Navbar({
           )}
         </AnimatePresence>
       </div>
+
+      {/* =========================================================================
+          THUMB-FRIENDLY MOBILE BOTTOM NAVIGATION DOCK (Viewport < 640px)
+          Native app feel: 1-tap switching between primary sections
+          ========================================================================= */}
+      <nav 
+        aria-label="Navigasi Bawah Mobile"
+        className="sm:hidden fixed bottom-0 inset-x-0 z-[100020] bg-[#FCFBF7] border-t border-[#E8DFC9] px-2 pt-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(45,24,12,0.12)] pointer-events-auto select-none"
+      >
+        <div className="flex items-center justify-around max-w-md mx-auto">
+          {/* 1. Beranda */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            type="button"
+            onClick={() => {
+              closeAll();
+              if (onGoHome) onGoHome();
+              else window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
+              currentView === 'home'
+                ? 'text-[#8c532b] font-bold'
+                : 'text-[#786154] hover:text-[#2d180c] font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${currentView === 'home' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+              <Home size={19} strokeWidth={currentView === 'home' ? 2.5 : 1.9} />
+            </div>
+            <span className="text-[10px] tracking-tight">Beranda</span>
+          </motion.button>
+
+          {/* 2. Destinasi */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            type="button"
+            onClick={() => {
+              closeAll();
+              if (onOpenDestinations) onOpenDestinations();
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
+              currentView === 'storybook' || currentView === 'destinasi'
+                ? 'text-[#8c532b] font-bold'
+                : 'text-[#786154] hover:text-[#2d180c] font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${currentView === 'storybook' || currentView === 'destinasi' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+              <Compass size={19} strokeWidth={currentView === 'storybook' || currentView === 'destinasi' ? 2.5 : 1.9} />
+            </div>
+            <span className="text-[10px] tracking-tight">Destinasi</span>
+          </motion.button>
+
+          {/* 3. Kalender Acara */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            type="button"
+            onClick={() => {
+              closeAll();
+              if (onOpenKalenderAcara) onOpenKalenderAcara();
+              else if (onOpenCultureEvents) onOpenCultureEvents();
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
+              currentView === 'kalender'
+                ? 'text-[#8c532b] font-bold'
+                : 'text-[#786154] hover:text-[#2d180c] font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${currentView === 'kalender' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+              <Calendar size={19} strokeWidth={currentView === 'kalender' ? 2.5 : 1.9} />
+            </div>
+            <span className="text-[10px] tracking-tight">Kalender</span>
+          </motion.button>
+
+          {/* 4. Kuliner GPS */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            type="button"
+            onClick={() => {
+              closeAll();
+              if (onOpenNearMe) onOpenNearMe();
+            }}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
+              currentView === 'kuliner'
+                ? 'text-[#8c532b] font-bold'
+                : 'text-[#786154] hover:text-[#2d180c] font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${currentView === 'kuliner' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+              <Utensils size={19} strokeWidth={currentView === 'kuliner' ? 2.5 : 1.9} />
+            </div>
+            <span className="text-[10px] tracking-tight">Kuliner</span>
+          </motion.button>
+
+          {/* 5. Menu / Akun */}
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
+              mobileMenuOpen
+                ? 'text-[#8c532b] font-bold'
+                : 'text-[#786154] hover:text-[#2d180c] font-medium'
+            }`}
+          >
+            <div className={`p-1 rounded-xl transition-all ${mobileMenuOpen ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+              {currentUser && !currentUser.isGuest ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-5 h-5 rounded-full object-cover border border-[#8c532b]"
+                />
+              ) : (
+                <User size={19} strokeWidth={mobileMenuOpen ? 2.5 : 1.9} />
+              )}
+            </div>
+            <span className="text-[10px] tracking-tight">
+              {currentUser && !currentUser.isGuest ? 'Profil' : 'Menu'}
+            </span>
+          </motion.button>
+        </div>
+      </nav>
+
     </>
   );
 }

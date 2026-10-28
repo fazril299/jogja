@@ -137,10 +137,28 @@ export default function MostLovedDestinations({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [total]);
 
+    // Touch swipe gesture for mobile
+  const touchStartX = useRef(null);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 35) {
+      // swipe left -> next card
+      setActiveIdx((prev) => (prev < total - 1 ? prev + 1 : 0));
+    } else if (diff < -35) {
+      // swipe right -> prev card
+      setActiveIdx((prev) => (prev > 0 ? prev - 1 : total - 1));
+    }
+    touchStartX.current = null;
+  };
+
   // Base Fan Angles & Offsets (Fanned Deck Structure)
-  const baseRotations = isMobile ? [-9, -4.5, 0, 4.5, 9] : [-14, -7, 0, 7, 14];
-  const baseYOffsets = [12, 3, 0, 3, 12];
-  const spacing = isMobile ? 54 : 112;
+  const baseRotations = isMobile ? [-7, -3.5, 0, 3.5, 7] : [-14, -7, 0, 7, 14];
+  const baseYOffsets = isMobile ? [8, 2, 0, 2, 8] : [12, 3, 0, 3, 12];
+  const spacing = isMobile ? 36 : 112;
 
   return (
     <section
@@ -187,7 +205,11 @@ export default function MostLovedDestinations({
         {/* =========================================================================
             FRAMER 3D OVERLAPPING FANNED CARDS (BEBAS SCROLL TRAPPING)
             ========================================================================= */}
-        <div className="relative w-full max-w-[1040px] mx-auto h-[380px] sm:h-[410px] md:h-[435px] pt-4 flex items-center justify-center select-none group">
+        <div 
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative w-full max-w-[1040px] mx-auto h-[290px] sm:h-[370px] md:h-[435px] pt-1 sm:pt-4 flex items-center justify-center select-none group"
+        >
           <div className="relative w-full h-full flex items-center justify-center">
             {destinations.map((dest, idx) => {
               const isSelected = activeIdx === idx;
@@ -203,18 +225,18 @@ export default function MostLovedDestinations({
 
               if (isFront) {
                 x = (idx - 2) * spacing;
-                y = -24;
+                y = isMobile ? -14 : -24;
                 rotate = 0;
-                scale = isMobile ? 1.03 : 1.06;
+                scale = isMobile ? 1.02 : 1.06;
                 zIndex = 50;
               } else if (idx < targetIdx) {
-                x = (idx - 2) * spacing - (isMobile ? 10 : 22);
+                x = (idx - 2) * spacing - (isMobile ? 6 : 22);
                 rotate = baseRotations[idx] - 2;
                 y = baseYOffsets[idx];
                 scale = 0.94;
                 zIndex = 10 + idx;
               } else if (idx > targetIdx) {
-                x = (idx - 2) * spacing + (isMobile ? 10 : 22);
+                x = (idx - 2) * spacing + (isMobile ? 6 : 22);
                 rotate = baseRotations[idx] + 2;
                 y = baseYOffsets[idx];
                 scale = 0.94;
@@ -265,7 +287,7 @@ export default function MostLovedDestinations({
                     transform: 'translateZ(0)',
                     WebkitTransform: 'translateZ(0)'
                   }}
-                  className={`w-[235px] sm:w-[255px] md:w-[270px] h-[335px] sm:h-[360px] md:h-[385px] rounded-[26px] sm:rounded-[30px] p-4 sm:p-5 flex flex-col justify-between select-none cursor-pointer border ${
+                  className={`w-[180px] sm:w-[235px] md:w-[270px] h-[260px] sm:h-[335px] md:h-[385px] rounded-[22px] sm:rounded-[26px] md:rounded-[30px] p-3 sm:p-4 md:p-5 flex flex-col justify-between select-none cursor-pointer border ${
                     isFront ? 'border-white/40 ring-2 ring-black/10' : 'border-black/10'
                   } transition-shadow duration-300`}
                   title={dest.title}
@@ -274,13 +296,13 @@ export default function MostLovedDestinations({
                   <div>
                     <div className="flex items-center mb-2.5">
                       <div
-                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center p-1.5 transition-colors"
+                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center p-1 sm:p-1.5 transition-colors"
                         style={{
                           backgroundColor: isLightText ? 'rgba(255, 255, 255, 0.22)' : 'rgba(45, 24, 12, 0.08)'
                         }}
                       >
                         <div
-                          className="w-4 h-4 sm:w-[17px] sm:h-[17px]"
+                          className="w-3.5 h-3.5 sm:w-[17px] sm:h-[17px]"
                           style={{
                             backgroundColor: dest.textColor,
                             maskImage: `url(${dest.iconSrc})`,
@@ -297,7 +319,7 @@ export default function MostLovedDestinations({
                     </div>
 
                     {/* PHOTO THUMBNAIL */}
-                    <div className="w-full h-[120px] sm:h-[135px] md:h-[145px] rounded-[18px] overflow-hidden bg-black/10 shadow-2xs mb-2.5">
+                    <div className="w-full h-[88px] sm:h-[120px] md:h-[145px] rounded-[14px] sm:rounded-[18px] overflow-hidden bg-black/10 shadow-2xs mb-1.5 sm:mb-2.5">
                       <img
                         src={dest.bgImage}
                         alt={dest.title}
@@ -311,13 +333,13 @@ export default function MostLovedDestinations({
                   {/* BOTTOM CONTENT: Bold Title & 2-Line Text & Link */}
                   <div className="space-y-1">
                     <h3
-                      className="text-sm sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0"
+                      className="text-xs sm:text-base md:text-[17px] font-bold font-['Outfit'] leading-tight m-0"
                       style={{ color: dest.textColor }}
                     >
                       {dest.title}
                     </h3>
                     <p
-                      className="text-[11px] sm:text-xs leading-relaxed font-medium line-clamp-2 m-0"
+                      className="text-[10px] sm:text-xs leading-snug font-medium line-clamp-2 m-0"
                       style={{
                         color: dest.textColor,
                         opacity: isLightText ? 0.92 : 0.82
@@ -327,7 +349,7 @@ export default function MostLovedDestinations({
                     </p>
 
                     <div
-                      className="pt-1.5 flex items-center justify-between text-[11px] font-bold"
+                      className="pt-1 flex items-center justify-between text-[10px] sm:text-[11px] font-bold"
                       style={{ color: dest.textColor }}
                     >
                       <span>{isSelected ? "Buka Direktori Lengkap" : "Pilih Kartu"}</span>
@@ -338,6 +360,21 @@ export default function MostLovedDestinations({
               );
             })}
           </div>
+        </div>
+
+        {/* Mobile Pagination Indicators (5 Dots) */}
+        <div className="flex sm:hidden items-center justify-center gap-1.5 mt-3 select-none">
+          {destinations.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveIdx(i)}
+              aria-label={`Lihat kartu ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all cursor-pointer border-none p-0 ${
+                activeIdx === i ? 'w-5 bg-[#8c532b]' : 'w-1.5 bg-[#D9CEBA]'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>

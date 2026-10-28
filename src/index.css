@@ -527,9 +527,14 @@ body {
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1023px) {
+  .handcrafted-container {
+    display: none !important;
+  }
   .handcrafted-section {
-    padding: 4.5rem 2rem 3.5rem;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 2.5rem 1rem 3.5rem !important;
   }
 
   .handcrafted-grid {
@@ -540,7 +545,9 @@ body {
 
 @media (max-width: 600px) {
   .handcrafted-section {
-    padding: 3.5rem 1.1rem 3rem;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 2rem 0.5rem 3rem !important;
   }
 
   .handcrafted-header {

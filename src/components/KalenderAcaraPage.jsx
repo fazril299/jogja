@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
+  SlidersHorizontal,
   Bookmark,
   CalendarPlus,
   Compass,
@@ -57,10 +58,10 @@ function getPasaranJawa(year, month, day) {
 // Quick Vibe Filters above Calendar Matrix
 const VIBE_FILTERS = [
   { id: 'semua', label: 'Semua Agenda' },
-  { id: 'sakral', label: '🔥 Paling Sakral' },
-  { id: 'weekend', label: '🎭 Weekend & Pentas' },
-  { id: 'kliwon', label: '🌙 Malam Kliwon' },
-  { id: 'terbuka', label: '🆓 Terbuka Umum' }
+  { id: 'sakral', label: 'Paling Sakral' },
+  { id: 'weekend', label: 'Weekend & Pentas' },
+  { id: 'kliwon', label: 'Malam Kliwon' },
+  { id: 'terbuka', label: 'Terbuka Umum' }
 ];
 
 // Jojo Cultural Guidance & Adab Tips
@@ -161,6 +162,25 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState(CATEGORIES_LIST);
   const [selectedLocation, setSelectedLocation] = useState('Semua');
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  // Cuplikan teks event ringkas untuk sel kalender mobile (maks 1 baris)
+  const getEventSnippet = (events) => {
+    if (!events || events.length === 0) return '';
+    const first = events[0];
+    const name = first.name || '';
+    if (name.toLowerCase().includes('grebeg')) return 'Grebeg';
+    if (name.toLowerCase().includes('uyon-uyon')) return 'Uyon-Uyon';
+    if (name.toLowerCase().includes('labuhan')) return 'Labuhan';
+    if (name.toLowerCase().includes('sekaten')) return 'Sekaten';
+    if (name.toLowerCase().includes('bedhaya')) return 'Bedhaya';
+    if (name.toLowerCase().includes('wayang')) return 'Wayang';
+    if (name.toLowerCase().includes('artjog')) return 'ArtJog';
+    if (name.toLowerCase().includes('jamasan')) return 'Jamasan';
+    if (name.toLowerCase().includes('tirakatan')) return 'Tirakatan';
+    if (name.toLowerCase().includes('prambanan')) return 'Prambanan';
+    return name.split(' ')[0].slice(0, 8);
+  };
 
   // Quick Vibe counts
   const vibeCounts = useMemo(() => {
@@ -496,14 +516,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-40 bg-[#FAF6EE] text-[#2d180c] overflow-y-auto pt-24 sm:pt-28 pb-16"
+        className="fixed inset-0 z-[100000] bg-[#FAF6EE] text-[#2d180c] overflow-y-auto pt-20 sm:pt-28 pb-28 sm:pb-16"
         style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif" }}
       >
         {/* FLOATING CLOSE BUTTON */}
         <button
           type="button"
           onClick={onClose}
-          className="fixed top-4 right-4 sm:top-6 sm:right-8 z-50 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-[#D9CEBA] text-[#2C221E] flex items-center justify-center hover:bg-white transition-all shadow-sm cursor-pointer active:scale-95"
+          className="fixed top-4 right-4 sm:top-6 sm:right-8 z-[100015] w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-[#D9CEBA] text-[#2C221E] flex items-center justify-center hover:bg-white transition-all shadow-sm cursor-pointer active:scale-95"
           aria-label="Tutup dan Kembali ke Beranda"
         >
           <X size={18} />
@@ -525,7 +545,10 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
             3. EXACT 3-COLUMN MAIN LAYOUT (Harmonized with Homepage)
             ========================================================================= */}
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 pb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* ─────────────────────────────────────────────────────────────────
+              DESKTOP VIEW (hidden lg:grid): 100% Layout Asli 3-Kolom Terjaga
+              ───────────────────────────────────────────────────────────────── */}
+          <div className="hidden lg:grid lg:grid-cols-12 gap-5 items-start">
             {/* ─────────────────────────────────────────────────────────────────
                 COLUMN 1 (LEFT SIDEBAR): JOJO COMPANION, FILTERS & POPULAR EVENTS
                 ───────────────────────────────────────────────────────────────── */}
@@ -549,7 +572,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                         <span className="truncate">{jojoBubbleContent.tag}</span>
                       </div>
                       <span className="text-[8px] text-[#8c532b] font-bold opacity-70 group-hover:opacity-100 transition-opacity">
-                        Klik Tips 💬
+                        Ganti Tips
                       </span>
                     </div>
                     <p className="text-xs font-bold text-[#2d180c] leading-snug m-0 line-clamp-1">
@@ -909,7 +932,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                             >
                               {cell.isCurrentMonth
                                 ? cell.pasaran === 'Kliwon' || cell.pasaran === 'Wage'
-                                  ? `★ ${cell.pasaran}`
+                                  ? cell.pasaran
                                   : cell.pasaran
                                 : ''}
                             </span>
@@ -947,14 +970,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                                     e.stopPropagation();
                                     setSelectedDay(cell.day);
                                     handleOpenModal(ev);
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    const rect = e.currentTarget.getBoundingClientRect();
-                                    setHoverPosition(rect);
-                                    setHoveredEvent(ev);
-                                  }}
-                                  onMouseLeave={() => {
-                                    setHoveredEvent(null);
                                   }}
                                   className={`w-full text-left px-1.5 py-1 rounded-md ${conf.colorBg} ${conf.colorText} text-[10px] font-medium leading-tight truncate block transition-transform hover:scale-[1.02] shadow-2xs cursor-pointer`}
                                   title={`${ev.name} • Kategori: ${ev.category} (${ev.time})`}
@@ -1112,80 +1127,390 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
               })}
             </div>
           </div>
-        </main>
 
-        
-        {/* =========================================================================
-            FLOATING QUICK-PEEK CARD (Instant Hover Preview without Full Modal)
-            ========================================================================= */}
-        <AnimatePresence>
-          {hoveredEvent && hoverPosition && (
-            <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.94 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 6, scale: 0.94 }}
-              transition={{ duration: 0.16 }}
-              style={{
-                position: 'fixed',
-                left: Math.max(16, Math.min(window.innerWidth - 275, hoverPosition.left + hoverPosition.width / 2 - 130)),
-                top: Math.max(75, hoverPosition.top - 220),
-                width: 260,
-                zIndex: 100050
-              }}
-              className="pointer-events-auto select-none"
-              onMouseEnter={() => {}}
-              onMouseLeave={() => setHoveredEvent(null)}
-            >
-              <div className="bg-white/98 backdrop-blur-xl border-2 border-[#8c532b] rounded-2xl p-2.5 shadow-[0_20px_40px_rgba(45,24,12,0.28)] relative text-left">
-                {/* Event Miniature Banner */}
-                <div className="relative h-22 w-full rounded-xl overflow-hidden mb-2 bg-neutral-900">
-                  <img
-                    src={hoveredEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
-                    alt={hoveredEvent.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-                  <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-[#8c532b] text-white text-[8px] font-bold uppercase tracking-wider shadow-xs">
-                    {hoveredEvent.category}
+          {/* ─────────────────────────────────────────────────────────────────
+              MOBILE VIEW (block lg:hidden): Native Calendar App Experience
+              - Ringkas, pas di layar HP, tanpa scroll panjang
+              - Tanggal berbentuk lingkaran bulat (rounded-full)
+              - Titik warna event sesuai kategori & cuplikan teks event mini
+              - Agenda hari terpilih & Jojo pendamping langsung di bawahnya
+              ───────────────────────────────────────────────────────────────── */}
+          <div className="block lg:hidden space-y-3.5 mt-2">
+            {/* 1. Mobile Controls Bar: Bulan Selector & Filter Button */}
+            <div className="flex items-center justify-between gap-2 bg-[#FCFBF7] p-2 sm:p-2.5 rounded-2xl border border-[#E8DFC9] shadow-xs">
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handlePrevMonth}
+                  className="w-8 h-8 rounded-xl bg-white border border-[#E8DFC9] text-[#2d180c] flex items-center justify-center hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95 transition-transform"
+                  aria-label="Bulan sebelumnya"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                <div className="text-center px-2">
+                  <span className="font-['Outfit'] text-sm font-bold text-[#2d180c] block leading-tight">
+                    {MONTH_NAMES[activeMonth]} {activeYear}
                   </span>
-                  <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-semibold">
-                    {hoveredEvent.time.split('–')[0]}
+                  <span className="text-[9px] text-[#786154] font-medium block">
+                    {filteredEvents.filter((e) => e.monthIndex === activeMonth).length} Acara Bulan Ini
                   </span>
                 </div>
 
-                {/* Event Title & Info */}
-                <h5 className="text-xs font-bold text-[#2d180c] leading-tight m-0 font-['Outfit'] line-clamp-1">
-                  {hoveredEvent.name}
-                </h5>
-                <p className="text-[10px] text-[#786154] leading-tight mt-1 mb-2.5 line-clamp-2">
-                  📍 {hoveredEvent.location} • {hoveredEvent.shortDesc || hoveredEvent.district}
-                </p>
+                <button
+                  type="button"
+                  onClick={handleNextMonth}
+                  className="w-8 h-8 rounded-xl bg-white border border-[#E8DFC9] text-[#2d180c] flex items-center justify-center hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95 transition-transform"
+                  aria-label="Bulan berikutnya"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
 
-                {/* Quick Action Footer */}
-                <div className="flex items-center justify-between pt-1.5 border-t border-[#E8DFC9]">
-                  <span className="text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    {hoveredEvent.dayDate} {hoveredEvent.monthName.slice(0, 3)}
+              {/* Filter Button */}
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="py-1.5 px-3 rounded-xl bg-white border border-[#E8DFC9] hover:border-[#8c532b] text-[#2d180c] text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95 transition-all"
+              >
+                <SlidersHorizontal size={13} className="text-[#8c532b]" />
+                <span>Filter</span>
+                {(selectedCategories.length < CATEGORIES_LIST.length || selectedLocation !== 'Semua' || searchQuery || activeVibe !== 'semua') && (
+                  <span className="w-2 h-2 rounded-full bg-[#8c532b]" />
+                )}
+              </button>
+            </div>
+
+            {/* 2. Quick Vibe Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 px-0.5">
+              {VIBE_FILTERS.map((vibe) => {
+                const isActive = activeVibe === vibe.id;
+                return (
+                  <button
+                    key={vibe.id}
+                    type="button"
+                    onClick={() => setActiveVibe(isActive && vibe.id !== 'semua' ? 'semua' : vibe.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all shrink-0 cursor-pointer ${
+                      isActive
+                        ? 'bg-[#8c532b] text-white shadow-xs font-bold'
+                        : 'bg-[#FCFBF7] text-[#2d180c] border border-[#E8DFC9]'
+                    }`}
+                  >
+                    <span>{vibe.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 3. Native Mobile Calendar Table Grid (Bulat, Titik Warna & Teks Mini) */}
+            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] overflow-hidden p-2.5 shadow-xs">
+              {/* Day Headers */}
+              <div className="grid grid-cols-7 text-center pb-2 border-b border-[#E8DFC9]/70 mb-1">
+                {DAY_HEADERS.map((day, idx) => (
+                  <span
+                    key={day}
+                    className={`text-[10px] font-bold uppercase tracking-wider ${
+                      idx === 0 ? 'text-rose-600 font-extrabold' : 'text-[#786154]'
+                    }`}
+                  >
+                    {day.slice(0, 3)}
                   </span>
+                ))}
+              </div>
+
+              {/* 7-Columns Date Grid */}
+              <div className="grid grid-cols-7 gap-y-1">
+                {calendarCells.map((cell, idx) => {
+                  const cellKey = `${cell.year}-${cell.month}-${cell.day}`;
+                  const cellEvents = eventsByDateKey[cellKey] || [];
+                  const isSelected = cell.isCurrentMonth && cell.day === selectedDay;
+                  const hasEvents = cellEvents.length > 0;
+                  const eventSnippet = getEventSnippet(cellEvents);
+
+                  return (
+                    <div
+                      key={`${cellKey}-${idx}`}
+                      onClick={() => {
+                        if (cell.isCurrentMonth) setSelectedDay(cell.day);
+                      }}
+                      className="h-[52px] sm:h-[58px] flex flex-col items-center justify-start py-0.5 cursor-pointer relative select-none"
+                    >
+                      {/* Tanggal Bulat (rounded-full) */}
+                      <div
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all ${
+                          !cell.isCurrentMonth
+                            ? 'text-neutral-300 font-normal'
+                            : isSelected
+                            ? 'bg-[#2d180c] text-white font-bold shadow-xs scale-105'
+                            : hasEvents
+                            ? 'text-[#2d180c] font-bold bg-amber-500/15 hover:bg-amber-500/25 ring-1 ring-amber-500/30'
+                            : 'text-[#2d180c] font-medium hover:bg-[#FAF6EE]'
+                        }`}
+                      >
+                        {cell.day}
+                      </div>
+
+                      {/* Indikator Titik Warna Event Sesuai Kategori */}
+                      {hasEvents && cell.isCurrentMonth && (
+                        <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                          {cellEvents.slice(0, 2).map((ev) => {
+                            const conf = CATEGORY_CONFIG[ev.category];
+                            return (
+                              <span
+                                key={ev.id}
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  conf ? conf.colorBg : 'bg-[#8c532b]'
+                                }`}
+                              />
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Sedikit Teks Event di Bawah Tanggal (Maks 1 Baris) */}
+                      {hasEvents && cell.isCurrentMonth && eventSnippet && (
+                        <span
+                          className={`text-[7.5px] sm:text-[8px] font-bold truncate max-w-[46px] block text-center leading-none mt-0.5 ${
+                            isSelected ? 'text-[#8c532b]' : 'text-[#786154]'
+                          }`}
+                        >
+                          {eventSnippet}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Agenda Acara Hari Terpilih Langsung di Bawah Kalender */}
+            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] p-3.5 shadow-xs space-y-3">
+              {/* Header Tanggal & Weton */}
+              <div className="flex items-center justify-between pb-2.5 border-b border-[#E8DFC9]/70">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c532b] block">
+                    Agenda Terpilih
+                  </span>
+                  <h3 className="font-['Outfit'] text-base font-bold text-[#2d180c] m-0">
+                    {selectedDay} {MONTH_NAMES[activeMonth]} {activeYear}
+                  </h3>
+                </div>
+                {/* Pasaran Jawa Pill */}
+                <span className="text-[10px] font-bold text-[#8c532b] bg-[#FAF6EE] border border-[#E8DFC9] px-2.5 py-1 rounded-full shadow-2xs">
+                  Weton: {getPasaranJawa(activeYear, activeMonth, selectedDay)}
+                </span>
+              </div>
+
+              {/* Event Cards for Selected Day */}
+              {selectedDayEvents.length > 0 ? (
+                <div className="space-y-2.5">
+                  {selectedDayEvents.map((ev) => {
+                    const conf = CATEGORY_CONFIG[ev.category] || CATEGORY_CONFIG['Upacara Keraton'];
+                    return (
+                      <div
+                        key={ev.id}
+                        onClick={() => handleOpenModal(ev)}
+                        className="bg-white rounded-xl border border-[#E8DFC9] p-3 flex gap-3 items-center hover:border-[#8c532b] transition-all cursor-pointer shadow-2xs group"
+                      >
+                        {/* Thumbnail */}
+                        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-neutral-100">
+                          <img
+                            src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                            alt={ev.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                        </div>
+                        {/* Info */}
+                        <div className="min-w-0 flex-1">
+                          <span className={`text-[8.5px] font-bold uppercase px-1.5 py-0.5 rounded ${conf.colorBg} ${conf.colorText} inline-block mb-1`}>
+                            {ev.category}
+                          </span>
+                          <h4 className="font-['Outfit'] text-xs font-bold text-[#2d180c] leading-snug truncate m-0 mb-0.5">
+                            {ev.name}
+                          </h4>
+                          <p className="text-[10px] text-[#786154] truncate m-0">
+                            {ev.location} • {ev.time.split('–')[0]}
+                          </p>
+                        </div>
+                        {/* Arrow */}
+                        <span className="text-[#8c532b] text-sm font-bold shrink-0">→</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-4 px-2">
+                  <p className="text-xs text-[#786154] m-0 mb-1">
+                    Tidak ada jadwal agenda khusus pada {selectedDay} {MONTH_NAMES[activeMonth]}.
+                  </p>
+                  <span className="text-[10px] font-semibold text-[#8c532b]">
+                    Ketuk tanggal bertitik warna pada kalender di atas untuk melihat acara.
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* 5. Jojo Kurator Budaya (Kompak di Bawah Agenda) */}
+            <div
+              onClick={handleJojoTipCycle}
+              className="bg-white rounded-2xl border border-[#E8DFC9] p-3 shadow-xs flex items-center gap-3 cursor-pointer hover:border-[#8c532b]/50 transition-all select-none"
+            >
+              <img
+                src="/assets/images/mascot_kalender.webp"
+                alt="Jojo"
+                className="w-11 h-11 object-contain shrink-0 drop-shadow-sm"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[9px] font-extrabold text-[#8c532b] uppercase tracking-wider">
+                    Tips Budaya Jojo
+                  </span>
+                  <span className="text-[8px] text-[#8c532b] font-bold opacity-75">
+                    Ganti Tips ↷
+                  </span>
+                </div>
+                <p className="text-[11px] font-bold text-[#2d180c] m-0 truncate">
+                  {jojoBubbleContent.title}
+                </p>
+                <p className="text-[10px] text-[#786154] m-0 truncate">
+                  {jojoBubbleContent.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* ── MOBILE FILTER BOTTOM DRAWER ── */}
+        <AnimatePresence>
+          {isMobileFilterOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100070] bg-black/50 backdrop-blur-xs flex items-end justify-center"
+              onClick={() => setIsMobileFilterOpen(false)}
+            >
+              <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 260 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-[#FCFBF7] rounded-t-[28px] border-t border-[#E8DFC9] w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 shadow-2xl text-[#2d180c]"
+              >
+                {/* Drawer Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-[#E8DFC9]">
+                  <div>
+                    <h3 className="font-['Outfit'] text-base font-bold text-[#2d180c] m-0">
+                      Filter Kalender Acara
+                    </h3>
+                    <p className="text-[11px] text-[#786154] m-0">
+                      Sesuaikan kategori & wilayah agenda budaya
+                    </p>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      const ev = hoveredEvent;
-                      setHoveredEvent(null);
-                      handleOpenModal(ev);
-                    }}
-                    className="text-[10px] font-bold text-white bg-[#2d180c] hover:bg-[#432311] px-2.5 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shadow-xs"
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center font-bold text-[#2d180c] cursor-pointer hover:bg-black/10 transition-colors"
                   >
-                    <span>Detail &amp; Adab</span>
-                    <ArrowRight size={10} />
+                    ✕
                   </button>
                 </div>
 
-                {/* Downward Pointer Arrow */}
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white border-r-2 border-b-2 border-[#8c532b] rotate-45" />
-              </div>
+                {/* Search */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari nama event..."
+                    className="w-full bg-white text-xs text-[#2d180c] pl-3.5 pr-8 py-2.5 rounded-xl border border-[#E8DFC9] focus:outline-none focus:border-[#8c532b]"
+                  />
+                  <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                </div>
+
+                {/* Categories */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#8c532b] block">
+                    Kategori
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {CATEGORIES_LIST.map((cat) => {
+                      const isChecked = selectedCategories.includes(cat);
+                      return (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => toggleCategory(cat)}
+                          className={`p-2 rounded-xl text-left border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
+                            isChecked
+                              ? 'bg-[#8c532b] text-white border-[#8c532b]'
+                              : 'bg-white text-[#2d180c] border-[#E8DFC9]'
+                          }`}
+                        >
+                          <span className="truncate">{cat}</span>
+                          {isChecked && <span className="text-xs">✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Wilayah */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#8c532b] block">
+                    Wilayah
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {LOCATIONS_LIST.map((loc) => {
+                      const isSelected = selectedLocation === loc.id;
+                      return (
+                        <button
+                          key={loc.id}
+                          type="button"
+                          onClick={() => setSelectedLocation(loc.id)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#2d180c] text-white border-[#2d180c]'
+                              : 'bg-white text-[#2d180c] border-[#E8DFC9]'
+                          }`}
+                        >
+                          {loc.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="pt-3 border-t border-[#E8DFC9] flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategories(CATEGORIES_LIST);
+                      setSelectedLocation('Semua');
+                      setSearchQuery('');
+                      setActiveVibe('semua');
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-white border border-[#E8DFC9] text-[#2d180c] text-xs font-bold cursor-pointer hover:bg-[#FAF6EE]"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="flex-2 py-2.5 rounded-xl bg-[#2d180c] text-white text-xs font-bold cursor-pointer shadow-xs hover:bg-[#432311]"
+                  >
+                    Terapkan Filter
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        
+        
 
         {/* =========================================================================
             4. EVENT DETAIL & ADAB MODAL (Harmonized, Clean & Elevated)
@@ -1626,3 +1951,4 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     </AnimatePresence>
   );
 }
+
