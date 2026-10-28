@@ -252,7 +252,7 @@ function NusantaraApp() {
         setIsQuestBadgePageOpen(false);
         setIsMapOpen(true);
         document.title = 'Peta Budaya & Cagar Wisata DIY - Hamemayu';
-      } else if (route === 'radar' || route === 'near-me') {
+      } else if (route === 'radar' || route === 'near-me' || route === 'kuliner') {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
