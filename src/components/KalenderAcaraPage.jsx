@@ -563,15 +563,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.2 }}
                     onClick={handleJojoTipCycle}
-                    className="bg-white/95 backdrop-blur-md border border-[#D9CEBA] rounded-2xl p-2.5 shadow-[0_8px_20px_rgba(45,24,12,0.12)] relative flex-1 min-w-0 mb-4 -ml-1 cursor-pointer hover:border-[#8c532b]/60 transition-colors group"
+                    className="bg-white/95 backdrop-blur-md border border-[#D9CEBA] rounded-2xl p-2.5 pr-3 shadow-[0_8px_20px_rgba(45,24,12,0.12)] relative flex-1 min-w-0 mb-4 -ml-1 cursor-pointer hover:border-[#8c532b]/60 transition-colors group"
                     title="Klik untuk melihat tips tata krama & budaya Yogyakarta"
                   >
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <div className="flex items-center gap-1.5 text-[9px] font-extrabold text-[#8c532b] uppercase tracking-wider">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#8c532b] shrink-0" />
-                        <span className="truncate">{jojoBubbleContent.tag}</span>
-                      </div>
-                      <span className="text-[8px] text-[#8c532b] font-bold opacity-70 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-between gap-1.5 mb-1 min-w-0">
+                      <span className="text-[9px] font-extrabold text-[#8c532b] uppercase tracking-wider truncate min-w-0 flex-1">
+                        {jojoBubbleContent.tag}
+                      </span>
+                      <span className="text-[8px] text-[#8c532b] font-bold opacity-70 group-hover:opacity-100 transition-opacity shrink-0 whitespace-nowrap pl-1">
                         Ganti Tips
                       </span>
                     </div>
@@ -582,7 +581,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       {jojoBubbleContent.desc}
                     </p>
                     {/* Pointer segitiga bubble ke arah Jojo */}
-                    <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-white/95 border-t border-r border-[#D9CEBA] rotate-45" />
+                    <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-white/95 border-t border-r border-[#D9CEBA] rotate-45 pointer-events-none" />
                   </motion.div>
 
                   {/* Maskot Jojo Memegang Titah Dalem (Bisa Diklik & Animated Bounce) */}
@@ -596,7 +595,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     <img
                       src="/assets/images/mascot_kalender.webp"
                       alt="Jojo si Kurator Agenda Keraton Yogyakarta"
-                      className="w-32 sm:w-36 h-auto object-contain drop-shadow-[0_14px_22px_rgba(45,24,12,0.22)] select-none pointer-events-none"
+                      className="w-28 sm:w-32 h-auto object-contain drop-shadow-[0_14px_22px_rgba(45,24,12,0.22)] select-none pointer-events-none"
                     />
                   </motion.div>
                 </div>

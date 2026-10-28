@@ -180,7 +180,7 @@ function NusantaraApp() {
         document.title = 'Hamemayu - Jelajah Budaya & Warisan Luhur D.I. Yogyakarta';
         return;
       }
-
+      
       const parts = rawHash.split('/');
       const route = parts[0];
       const param = parts[1];

@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
-  Sparkles,
+  Landmark,
   Calendar,
   MapPin,
   Radio,
@@ -223,16 +223,11 @@ export default function TentangKamiPage({
             ========================================================================= */}
         <section
           id="section-filosofi"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-24 sm:pt-28 pb-6 box-border relative overflow-hidden"
+          className="web-section-100vh min-h-screen w-full flex flex-col justify-between px-4 sm:px-8 max-w-7xl mx-auto pt-24 sm:pt-28 pb-6 box-border relative"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center flex-1 max-h-[82vh]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center flex-1 my-2">
             {/* Left Column: Narrative & Values */}
             <div className="lg:col-span-7 flex flex-col justify-center space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] border border-[#E8DFC9] text-xs font-semibold w-fit">
-                <Sparkles size={13} className="text-[#8c532b]" />
-                <span>Filosofi &amp; Nilai Luhur</span>
-              </div>
-
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#1C1917] font-['Outfit'] tracking-tight leading-[1.15] m-0">
                 Terinspirasi dari Falsafah Luhur: <span className="text-[#8c532b]">Hamemayu Hayuning Bawana.</span>
               </h2>
@@ -245,7 +240,7 @@ export default function TentangKamiPage({
               <div className="bg-[#FAF6EE]/90 border border-[#E8DFC9] rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#E8DFC9] gap-3 sm:gap-0 mt-1">
                 <div className="sm:px-3 first:pl-0 space-y-1">
                   <div className="flex items-center gap-1.5 text-[#8c532b]">
-                    <Sparkles size={14} />
+                    <Landmark size={14} />
                     <h4 className="text-xs sm:text-sm font-bold text-neutral-900 font-['Outfit'] m-0">
                       Harmoni Budaya
                     </h4>
@@ -292,9 +287,6 @@ export default function TentangKamiPage({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none" />
 
                 <div className="relative z-10 space-y-1.5 text-white">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-amber-200 text-[10px] font-mono font-semibold border border-amber-200/30 w-fit">
-                    <span>Sumbu Filosofis UNESCO</span>
-                  </div>
                   <h3 className="text-base sm:text-lg font-bold text-white font-['Outfit'] m-0 leading-snug">
                     Kagungan Dalem Karaton Ngayogyakarta
                   </h3>
@@ -307,7 +299,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-2">
+          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
             <button
               type="button"
               onClick={() => scrollToSection('section-layanan')}
@@ -325,7 +317,7 @@ export default function TentangKamiPage({
             ========================================================================= */}
         <section
           id="section-layanan"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative overflow-hidden"
+          className="web-section-100vh min-h-screen w-full flex flex-col justify-between px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative"
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2.5">
             <div>
@@ -342,7 +334,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* Panoramic Expanding Feature Louvers (NO NUMBERS ON COLLAPSED RIBBONS) */}
-          <div className="relative w-full flex-1 max-h-[66vh] min-h-[300px] rounded-3xl overflow-hidden border border-neutral-300 shadow-sm bg-neutral-900 flex flex-col md:flex-row my-3">
+          <div className="relative w-full flex-1 min-h-[320px] sm:h-[420px] rounded-3xl overflow-hidden border border-neutral-300 shadow-sm bg-neutral-900 flex flex-col md:flex-row my-3">
             {HAMEMAYU_FEATURES_LOUVER.map((feature, index) => {
               const isActive = activeFeatureIndex === index;
 
@@ -401,7 +393,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-1">
+          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
             <button
               type="button"
               onClick={() => scrollToSection('section-sumber-data')}
@@ -419,7 +411,7 @@ export default function TentangKamiPage({
             ========================================================================= */}
         <section
           id="section-sumber-data"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative overflow-hidden"
+          className="web-section-100vh min-h-screen w-full flex flex-col justify-between px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative"
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2">
             <div>
@@ -437,7 +429,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* VARIATIVE COMPONENT: Split Archival Register & Live Provenance Stage (Non-card!) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 max-h-[66vh] min-h-[300px] my-3 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-[300px] my-3 items-stretch">
             {/* Left Column (5 Cols): 4 Institutional Destination Registers (Tightly spaced) */}
             <div className="lg:col-span-5 flex flex-col justify-start gap-2 sm:gap-2.5">
               {DATA_SOURCES.map((src, idx) => {
@@ -477,7 +469,7 @@ export default function TentangKamiPage({
             {/* Right Column (7 Cols): Clean Photographic Showcase Stage (100% Clean: Zero Badges, Zero Text Overlay) */}
             <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-neutral-200 bg-white shadow-2xs flex flex-col">
               {/* Perfectly Proportioned, 100% Clean Photo Frame */}
-              <div className="relative h-48 sm:h-56 lg:h-64 w-full bg-neutral-900 shrink-0 overflow-hidden">
+              <div className="relative h-40 sm:h-48 lg:h-52 w-full bg-neutral-900 shrink-0 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={DATA_SOURCES[activeSourceIndex].image}
@@ -493,7 +485,7 @@ export default function TentangKamiPage({
               </div>
 
               {/* Verified Points Certificate below the clean photo */}
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center space-y-2.5 bg-[#FAF6EE]/30">
+              <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-center space-y-2 bg-[#FAF6EE]/30">
                 <div className="flex items-center justify-between pb-2 border-b border-neutral-200/80">
                   <div>
                     <span className="text-[10px] font-bold text-[#8c532b] uppercase tracking-wider block">
@@ -503,9 +495,6 @@ export default function TentangKamiPage({
                       {DATA_SOURCES[activeSourceIndex].sourceName}
                     </h4>
                   </div>
-                  <span className="text-[11px] text-neutral-500 font-medium shrink-0 ml-2">
-                    Rujukan 0{activeSourceIndex + 1} / 0{DATA_SOURCES.length}
-                  </span>
                 </div>
 
                 <div className="space-y-1.5 pt-0.5">
@@ -526,7 +515,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-1">
+          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
             <button
               type="button"
               onClick={() => scrollToSection('section-panduan')}
@@ -544,7 +533,7 @@ export default function TentangKamiPage({
             ========================================================================= */}
         <section
           id="section-panduan"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative overflow-hidden"
+          className="web-section-100vh min-h-screen w-full flex flex-col justify-between px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative"
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2">
             <div>
@@ -584,9 +573,9 @@ export default function TentangKamiPage({
           </div>
 
           {/* VARIATIVE COMPONENT: Dynamic Split Spotlight Stage (Non-card!) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 max-h-[58vh] min-h-[280px] items-stretch my-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-[300px] my-3 items-stretch">
             {/* Left: Cinematic Authentic Photo Stage (100% Clean) */}
-            <div className="lg:col-span-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-200 shadow-sm relative">
+            <div className="lg:col-span-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-200 shadow-sm relative min-h-[260px] sm:min-h-[300px]">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={OPTIMIZATION_TIPS[activeTipIndex].image}
@@ -602,7 +591,7 @@ export default function TentangKamiPage({
             </div>
 
             {/* Right: Detailed Action Guidance Panel */}
-            <div className="lg:col-span-6 rounded-2xl bg-white border border-neutral-200/90 shadow-2xs p-5 flex flex-col justify-between">
+            <div className="lg:col-span-6 rounded-2xl bg-white border border-neutral-200/90 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] w-fit">
                   <span>Langkah Rekomendasi Wisatawan</span>
@@ -650,7 +639,7 @@ export default function TentangKamiPage({
           </div>
 
           {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-1">
+          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
             <button
               type="button"
               onClick={() => scrollToSection('section-prinsip')}
@@ -668,7 +657,7 @@ export default function TentangKamiPage({
             ========================================================================= */}
         <section
           id="section-prinsip"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-center px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative overflow-hidden"
+          className="w-full flex flex-col px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-8 sm:pb-10 box-border relative"
         >
           <div className="text-center max-w-2xl mx-auto space-y-1 mb-2">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8c532b] block">
@@ -772,12 +761,6 @@ export default function TentangKamiPage({
                 </button>
               )}
             </div>
-          </div>
-
-          <div className="text-center pt-2">
-            <p className="text-[10px] text-neutral-400 font-mono m-0">
-              Hamemayu • Merawat Keaslian Budaya, Keadilan Informasi, dan Etika Kesantunan Yogyakarta
-            </p>
           </div>
         </section>
 

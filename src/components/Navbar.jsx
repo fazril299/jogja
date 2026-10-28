@@ -1,6 +1,31 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, LogIn, LogOut, ChevronDown, Sparkles, Shield, Calendar, BookOpen, Utensils, Home, Compass, User, Menu } from 'lucide-react';
+import {
+  X,
+  ChevronRight,
+  LogIn,
+  LogOut,
+  ChevronDown,
+  Sparkles,
+  Shield,
+  Calendar,
+  BookOpen,
+  Utensils,
+  Home,
+  Compass,
+  User,
+  Menu,
+  Landmark,
+  MapPin,
+  Mountain,
+  Gem,
+  Sun,
+  Waves,
+  Palette,
+  Crown,
+  Flame,
+  Theater
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const SPRING_TRANSITION = {
@@ -92,19 +117,19 @@ const DESTINASI_POPULER = [
     id: 'keraton-yogyakarta',
     name: 'Keraton & Tamansari',
     subtitle: 'Pusat Filosofi Kasultanan & Istana Air',
-    image: '/assets/images/jogja_keraton.jpg'
+    icon: Landmark
   },
   {
     id: 'malioboro-tugu',
     name: 'Malioboro & Tugu Jogja',
     subtitle: 'Jantung Kota, Batik & Angkringan',
-    image: '/assets/images/jogja_malioboro.jpg'
+    icon: MapPin
   },
   {
     id: 'merapi-kaliurang',
     name: 'Merapi & Kaliurang',
     subtitle: 'Ullen Sentalu & Lereng Merapi',
-    image: '/assets/images/jogja_merapi.jpg'
+    icon: Mountain
   }
 ];
 
@@ -113,25 +138,25 @@ const DESTINASI_WARISAN = [
     id: 'kotagede',
     name: 'Warisan Kotagede',
     subtitle: 'Ibu Kota Mataram Kuno & Perak',
-    image: '/assets/images/jogja_kotagede.jpg'
+    icon: Gem
   },
   {
     id: 'prambanan-ratuboko',
     name: 'Prambanan & Ratu Boko',
     subtitle: 'Mahakarya Candi Hindu & Senja',
-    image: '/assets/images/jogja_prambanan.jpg'
+    icon: Sun
   },
   {
     id: 'parangtritis-gunungkidul',
     name: 'Parangtritis & Segara Kidul',
     subtitle: 'Pantai Selatan & Tebing Karst',
-    image: '/assets/images/jogja_parangtritis.jpg'
+    icon: Waves
   },
   {
     id: 'kasongan-imogiri',
     name: 'Kasongan & Makam Imogiri',
     subtitle: 'Sentra Kriya Gerabah & Perbukitan Suci',
-    image: '/assets/images/jogja_batik.jpg'
+    icon: Palette
   }
 ];
 
@@ -149,19 +174,19 @@ const KALENDER_PREVIEW = [
     id: 'sekaten-grebeg-mulud',
     name: 'Hajad Dalem Sekaten & Grebeg Mulud',
     subtitle: '16 September 2025 • Upacara Keraton',
-    image: '/assets/images/real_gunungan_grebeg.jpg'
+    icon: Crown
   },
   {
     id: 'labuhan-merapi',
     name: 'Upacara Adat Labuhan Merapi',
     subtitle: '18 Maret 2025 • Lereng Merapi',
-    image: '/assets/images/jogja_merapi.jpg'
+    icon: Flame
   },
   {
     id: 'ramayana-ballet-prambanan',
     name: 'Sendratari Ramayana Prambanan',
     subtitle: 'Rutin Mei–Okt • Panggung Terbuka',
-    image: '/assets/images/event_ramayana_ballet.jpg'
+    icon: Theater
   }
 ];
 
@@ -705,7 +730,7 @@ export default function Navbar({
                 <div className="w-full h-px bg-[#e3e3e3] shrink-0" />
 
                 <AnimatePresence mode="wait">
-                  {/* TAB 1: DESTINASI (Matches Shop layout in Sneks) */}
+                  {/* TAB 1: DESTINASI */}
                   {hoveredTab === 'destinasi' && (
                     <motion.div
                       key="p-destinasi"
@@ -713,101 +738,49 @@ export default function Navbar({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={CONTENT_TRANSITION}
-                      className="flex flex-col text-left space-y-3 shrink-0"
-                      style={{ paddingTop: 12, width: 366 }}
+                      className="flex flex-col items-start text-left shrink-0"
+                      style={{ paddingTop: 12, gap: 16, width: 366 }}
                     >
-                      {/* Segmented Filter Pill */}
-                      <div className="bg-[#f0f0f0] p-1 rounded-full flex text-[12px] font-semibold">
-                        {['Populer', 'Warisan'].map((tab) => (
-                          <button
-                            key={tab}
-                            type="button"
-                            onClick={() => setSubFilter(tab)}
-                            className="flex-1 py-1 rounded-full text-center relative z-10 cursor-pointer"
-                            style={{
-                              color: subFilter === tab ? '#000000' : '#8a8a8a',
-                              transition: 'color 0.15s',
-                              background: 'none',
-                              border: 'none'
-                            }}
-                          >
-                            {subFilter === tab && (
-                              <motion.div
-                                layoutId="seg-nav"
-                                className="absolute inset-0 bg-white rounded-full shadow-xs"
-                                transition={SPRING_TRANSITION}
-                                style={{ zIndex: -1 }}
-                              />
-                            )}
-                            <span className="relative z-10 font-bold">{tab}</span>
-                          </button>
-                        ))}
+                      <h4
+                        className="text-[14px] font-bold text-[#292929] leading-tight"
+                        style={{ margin: 0 }}
+                      >
+                        Destinasi & Cagar Budaya
+                      </h4>
+
+                      <div
+                        className="bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center transition-colors"
+                        style={{
+                          padding: 18,
+                          borderRadius: 17
+                        }}
+                      >
+                        <Landmark
+                          size={38}
+                          className="text-[#2C221E]"
+                          strokeWidth={1.8}
+                        />
                       </div>
 
                       <p
-                        className="text-[14px] font-bold text-[#292929] pt-1"
+                        className="text-[12px] text-[#616161] leading-[1.5] font-normal"
                         style={{ margin: 0 }}
                       >
-                        {subFilter === 'Populer' ? 'Destinasi Utama' : 'Koleksi Warisan'}
+                        Eksplorasi Sumbu Filosofis UNESCO, kompleks percandian purbakala, dan cagar budaya Daerah Istimewa Yogyakarta.
                       </p>
-
-                      <div className="space-y-1">
-                        {displayedDestinations.map((place) => (
-                          <button
-                            key={place.id}
-                            type="button"
-                            onClick={() => {
-                              setActiveTab('destinasi');
-                              closeAll();
-                              if (onSelectPlaceById) {
-                                onSelectPlaceById(place.id);
-                              } else if (onOpenTours) {
-                                onOpenTours();
-                              }
-                            }}
-                            className="w-full flex items-center gap-3 p-2 rounded-2xl hover:bg-[#f5f5f5] transition-colors text-left group cursor-pointer"
-                            style={{ background: 'transparent', border: 'none' }}
-                          >
-                            <div className="w-[52px] h-[52px] bg-[#f2f2f2] rounded-xl overflow-hidden flex items-center justify-center shrink-0">
-                              <img
-                                src={place.image}
-                                alt={place.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                              />
-                            </div>
-                            <div className="min-w-0">
-                              <p
-                                className="text-[12px] font-bold text-black truncate"
-                                style={{ margin: 0 }}
-                              >
-                                {place.name}
-                              </p>
-                              <p
-                                className="text-[11px] text-[#8a8a8a] font-medium truncate mt-0.5"
-                                style={{ margin: 0 }}
-                              >
-                                {place.subtitle}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
 
                       <button
                         type="button"
                         onClick={() => {
                           setActiveTab('destinasi');
                           closeAll();
-                          if (onOpenDestinations) {
-                            onOpenDestinations();
-                          } else if (onOpenAboutUs) {
-                            onOpenAboutUs();
-                          }
+                          if (onOpenDestinations) onOpenDestinations();
+                          else if (onSelectPlaceById) onSelectPlaceById('keraton-yogyakarta');
                         }}
-                        className="w-full py-2.5 rounded-full bg-[#f0f0f0] hover:bg-[#e3e3e3] text-black text-[12px] font-bold text-center transition-colors cursor-pointer mt-1"
-                        style={{ border: 'none' }}
+                        className="px-[18px] py-[6px] rounded-full bg-[#2C221E] hover:bg-[#C99B52] active:scale-95 text-white text-[12px] font-semibold transition-all cursor-pointer inline-flex items-center justify-center leading-none"
+                        style={{ height: 27, border: 'none' }}
                       >
-                        Lihat semua
+                        Selengkapnya
                       </button>
                     </motion.div>
                   )}
@@ -831,17 +804,22 @@ export default function Navbar({
                       </h4>
 
                       <div
-                        className="bg-white flex items-center justify-center"
+                        className="bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center transition-colors"
                         style={{
                           padding: 18,
-                          borderRadius: 17,
-                          border: '1px solid rgba(0, 0, 0, 0.08)'
+                          borderRadius: 17
                         }}
                       >
                         <img
                           src="/assets/icons/icon_culture.svg"
                           alt="Hamemayu"
-                          style={{ width: 38, height: 38, objectFit: 'contain', display: 'block' }}
+                          style={{
+                            width: 38,
+                            height: 38,
+                            objectFit: 'contain',
+                            display: 'block',
+                            filter: 'brightness(0) saturate(100%) invert(13%) sepia(12%) saturate(1212%) hue-rotate(338deg) brightness(97%) contrast(93%)'
+                          }}
                         />
                       </div>
 
@@ -875,49 +853,36 @@ export default function Navbar({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={CONTENT_TRANSITION}
-                      className="flex flex-col text-left space-y-3 shrink-0"
-                      style={{ paddingTop: 12, width: 366 }}
+                      className="flex flex-col items-start text-left shrink-0"
+                      style={{ paddingTop: 12, gap: 16, width: 366 }}
                     >
-                      <p
-                        className="text-[14px] font-bold text-[#292929]"
+                      <h4
+                        className="text-[14px] font-bold text-[#292929] leading-tight"
                         style={{ margin: 0 }}
                       >
                         Temukan lokasi & kuliner
-                      </p>
+                      </h4>
 
-                      <div className="space-y-1">
-                        {KULINER_FEATURES.map((feature) => (
-                          <button
-                            key={feature.id}
-                            type="button"
-                            onClick={() => {
-                              setActiveTab('kuliner');
-                              closeAll();
-                              if (feature.id === 'nearMe' && onOpenNearMe) onOpenNearMe();
-                            }}
-                            className="w-full flex items-center gap-3.5 p-2 rounded-2xl hover:bg-[#f5f5f5] transition-colors text-left group cursor-pointer"
-                            style={{ background: 'transparent', border: 'none' }}
-                          >
-                            <div className="w-[50px] h-[50px] rounded-[14px] overflow-hidden shrink-0 bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center text-[#2C221E] group-hover:bg-[#F3EAD9] transition-colors">
-                              <Utensils size={24} className="text-[#2C221E]" strokeWidth={2.2} />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p
-                                className="text-[13px] font-bold text-black truncate tracking-tight"
-                                style={{ margin: 0 }}
-                              >
-                                {feature.name}
-                              </p>
-                              <p
-                                className="text-[12px] text-[#8a8a8a] font-normal mt-0.5"
-                                style={{ margin: 0 }}
-                              >
-                                {feature.hours}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
+                      <div
+                        className="bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center transition-colors"
+                        style={{
+                          padding: 18,
+                          borderRadius: 17
+                        }}
+                      >
+                        <Utensils
+                          size={38}
+                          className="text-[#2C221E]"
+                          strokeWidth={1.8}
+                        />
                       </div>
+
+                      <p
+                        className="text-[12px] text-[#616161] leading-[1.5] font-normal"
+                        style={{ margin: 0 }}
+                      >
+                        Radar GPS Kuliner Jogja radius 5–10 KM dengan rujukan kuliner legendaris dan kepastian tarif resmi yang transparan.
+                      </p>
 
                       <button
                         type="button"
@@ -926,10 +891,10 @@ export default function Navbar({
                           closeAll();
                           if (onOpenNearMe) onOpenNearMe();
                         }}
-                        className="w-full py-2.5 rounded-full bg-[#f0f0f0] hover:bg-[#e3e3e3] text-black text-[12px] font-bold text-center transition-colors cursor-pointer mt-1"
-                        style={{ border: 'none' }}
+                        className="px-[18px] py-[6px] rounded-full bg-[#2C221E] hover:bg-[#C99B52] active:scale-95 text-white text-[12px] font-semibold transition-all cursor-pointer inline-flex items-center justify-center leading-none"
+                        style={{ height: 27, border: 'none' }}
                       >
-                        Lihat semua
+                        Selengkapnya
                       </button>
                     </motion.div>
                   )}
@@ -942,63 +907,41 @@ export default function Navbar({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={CONTENT_TRANSITION}
-                      className="flex flex-col text-left space-y-3 shrink-0"
-                      style={{ paddingTop: 12, width: 366 }}
+                      className="flex flex-col items-start text-left shrink-0"
+                      style={{ paddingTop: 12, gap: 16, width: 366 }}
                     >
-                      <div className="flex items-center justify-between">
-                        <p
-                          className="text-[14px] font-bold text-[#292929]"
+                      <div className="flex items-center justify-between w-full">
+                        <h4
+                          className="text-[14px] font-bold text-[#292929] leading-tight"
                           style={{ margin: 0 }}
                         >
                           Agenda Budaya Jogja
-                        </p>
+                        </h4>
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
                           Data Resmi 2025/2026
                         </span>
                       </div>
 
-                      <div className="space-y-1">
-                        {KALENDER_PREVIEW.map((item) => (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => {
-                              setActiveTab('kalender');
-                              closeAll();
-                              if (onOpenKalenderAcara) {
-                                onOpenKalenderAcara();
-                              } else if (onOpenCultureEvents) {
-                                onOpenCultureEvents();
-                              }
-                            }}
-                            className="w-full flex items-center gap-3 p-2 rounded-2xl hover:bg-[#f5f5f5] transition-colors text-left group cursor-pointer"
-                            style={{ background: 'transparent', border: 'none' }}
-                          >
-                            <div className="w-[52px] h-[52px] bg-[#f2f2f2] rounded-xl overflow-hidden flex items-center justify-center shrink-0">
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                              />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p
-                                className="text-[12px] font-bold text-black truncate"
-                                style={{ margin: 0 }}
-                              >
-                                {item.name}
-                              </p>
-                              <p
-                                className="text-[11px] text-[#8a8a8a] font-medium truncate mt-0.5"
-                                style={{ margin: 0 }}
-                              >
-                                {item.subtitle}
-                              </p>
-                            </div>
-                            <ChevronRight size={13} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
-                          </button>
-                        ))}
+                      <div
+                        className="bg-[#FAF5EC] border border-[#E5DDD1] shadow-2xs flex items-center justify-center transition-colors"
+                        style={{
+                          padding: 18,
+                          borderRadius: 17
+                        }}
+                      >
+                        <Calendar
+                          size={38}
+                          className="text-[#2C221E]"
+                          strokeWidth={1.8}
+                        />
                       </div>
+
+                      <p
+                        className="text-[12px] text-[#616161] leading-[1.5] font-normal"
+                        style={{ margin: 0 }}
+                      >
+                        Jadwal resmi prosesi Hajad Dalem Karaton, upacara adat sakral, grebeg, dan pementasan seni tradisi di Yogyakarta.
+                      </p>
 
                       <button
                         type="button"
@@ -1011,10 +954,10 @@ export default function Navbar({
                             onOpenCultureEvents();
                           }
                         }}
-                        className="w-full py-2.5 rounded-full bg-[#f0f0f0] hover:bg-[#e3e3e3] text-black text-[12px] font-bold text-center transition-colors cursor-pointer mt-1"
-                        style={{ border: 'none' }}
+                        className="px-[18px] py-[6px] rounded-full bg-[#2C221E] hover:bg-[#C99B52] active:scale-95 text-white text-[12px] font-semibold transition-all cursor-pointer inline-flex items-center justify-center leading-none"
+                        style={{ height: 27, border: 'none' }}
                       >
-                        Lihat semua
+                        Selengkapnya
                       </button>
                     </motion.div>
                   )}
