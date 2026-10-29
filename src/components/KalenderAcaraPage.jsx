@@ -1898,82 +1898,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       </div>
                     </div>
 
-                    {/* ── MODAL BODY CONTENT (Wide, comfortable, no cramped inner scroll) ── */}
-                    <div className="p-5 sm:p-6 space-y-4">
-                  {/* TAB 1: RINGKASAN & MAKNA */}
-                  {modalTab === 'ringkasan' && (
-                    <div className="space-y-4">
-                      {/* 4 Clean Metric Cards */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
-                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
-                            <CalendarIcon size={12} />
-                            <span className="text-[10px] font-bold uppercase tracking-tight">Tanggal</span>
-                          </div>
-                          <strong className="text-[#2d180c] block text-xs truncate">
-                            {activeModalEvent.dayDate} {activeModalEvent.monthName} {activeModalEvent.year}
-                          </strong>
-                          <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
-                            {activeModalEvent.time.split('–')[0]}
-                          </span>
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
-                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
-                            <Sparkles size={12} />
-                            <span className="text-[10px] font-bold uppercase tracking-tight">Kategori Acara</span>
-                          </div>
-                          {(() => {
-                            const conf =
-                              CATEGORY_CONFIG[activeModalEvent.category] ||
-                              CATEGORY_CONFIG['Upacara Keraton'];
-                            return (
-                              <span
-                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
-                              >
-                                {activeModalEvent.category}
-                              </span>
-                            );
-                          })()}
-                          <span className="text-[#786154] text-[10px] block mt-1 truncate">
-                            {activeModalEvent.category === 'Upacara Keraton'
-                              ? 'Adat Sakral Kasultanan'
-                              : activeModalEvent.category === 'Pertunjukan Seni'
-                              ? 'Pentas Seni Teater'
-                              : activeModalEvent.category === 'Festival Rakyat'
-                              ? 'Tradisi Kerakyatan'
-                              : 'Pameran & Galeri Seni'}
-                          </span>
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
-                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
-                            <Compass size={12} />
-                            <span className="text-[10px] font-bold uppercase tracking-tight">Wilayah</span>
-                          </div>
-                          <strong className="text-[#2d180c] block text-xs truncate">
-                            {activeModalEvent.district}
-                          </strong>
-                          <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
-                            D.I. Yogyakarta
-                          </span>
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
-                          <div className="flex items-center gap-1 text-[#8c532b] mb-1">
-                            <Clock size={12} />
-                            <span className="text-[10px] font-bold uppercase tracking-tight">Waktu</span>
-                          </div>
-                          <strong className="text-[#2d180c] block text-xs truncate">
-                            {activeModalEvent.time}
-                          </strong>
-                          <span className="text-emerald-700 text-[10px] font-bold block mt-0.5 truncate">
-                            Sesuai Jadwal
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* ── SCROLLABLE BODY CONTENT ── */}
                     <div className="p-5 sm:p-6 space-y-4">
                       {/* TAB 1: RINGKASAN & MAKNA */}
@@ -2248,8 +2172,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           })()}
                         </div>
                       )}
-                    </div>
-                  )}
                     </div>
                   </div>
                 </div>
