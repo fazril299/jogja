@@ -83,6 +83,17 @@ export default function PaymentModal() {
   // Per-item quantity state
   const [itemQuantities, setItemQuantities] = useState({});
 
+  // Countdown Timer Simulasi Batas Waktu Bayar (15 Menit)
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
+
+  useEffect(() => {
+    if (step !== 'checkout') return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 15 * 60));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [step]);
+
   useEffect(() => {
     if (activePaymentOrder?.items) {
       const initial = {};
@@ -143,6 +154,46 @@ export default function PaymentModal() {
       setPromoError('Kode promo tidak valid atau telah kadaluarsa.');
       setIsPromoApplied(false);
     }
+  };
+
+  const handleDownloadTicket = () => {
+    if (!orderReceipt) return;
+    const bookingCode = orderReceipt.bookingCode || 'HM-JOG-100001';
+    const content = `=====================================================
+          HAMEMAYU YOGYAKARTA - E-TIKET RESMI
+=====================================================
+Kode Booking   : ${bookingCode}
+Nama Pemesan   : ${orderReceipt.userName || currentUser?.name || 'Gabriel Fazriel'}
+Email Pemesan  : ${orderReceipt.userEmail || currentUser?.email || 'user@hamemayu.id'}
+Tanggal Wisata : ${orderReceipt.visitDate || new Date().toISOString().split('T')[0]}
+Waktu Transaksi: ${new Date(orderReceipt.createdAt).toLocaleString('id-ID')}
+Status         : LUNAS / VERIFIED (PAID)
+Metode Bayar   : ${orderReceipt.methodLabel || 'Digital Payment'}
+
+DAFTAR ITEM / DESTINASI:
+${orderReceipt.items.map((it, idx) => `  ${idx + 1}. ${it.name} (${it.category || 'Destinasi'}) x${it.quantity || 1} - Rp ${((it.price || 0) * (it.quantity || 1)).toLocaleString('id-ID')}`).join('\n')}
+
+RINCIAN FINANSIAL:
+  Subtotal      : Rp ${(orderReceipt.subtotal || 0).toLocaleString('id-ID')}
+  Diskon Promo  : - Rp ${(orderReceipt.discount || 0).toLocaleString('id-ID')}
+  Total Bayar   : Rp ${(orderReceipt.totalAmount || 0).toLocaleString('id-ID')}
+
+KODE VERIFIKASI QR GATE:
+${orderReceipt.qrCodeValue || bookingCode}
+=====================================================
+* Tunjukkan tiket ini di gerbang masuk cagar budaya / kasir sentra kuliner Yogyakarta.
+* Layanan bantuan Hamemayu: support@hamemayu.id
+=====================================================`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `E-Tiket-${bookingCode}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handlePaySimulation = () => {
@@ -274,6 +325,20 @@ export default function PaymentModal() {
             {/* ------------------- STEP 1: CHECKOUT FORM ------------------- */}
             {step === 'checkout' && (
               <div className="space-y-6">
+                {/* Simulated Order Countdown Timer */}
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#FFFBF0] border border-[#F3E2B8] flex items-center justify-between text-xs text-[#92400E] shadow-2xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Clock size={15} className="text-[#B45309] animate-pulse shrink-0" />
+                    <span className="font-medium truncate">
+                      Selesaikan pemesanan tiket Anda dalam:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 font-mono font-extrabold text-[#78350F] bg-white px-2.5 py-1 rounded-lg border border-[#F3E2B8] shrink-0 text-xs shadow-2xs">
+                    <span>{String(Math.floor(timeLeft / 60)).padStart(2, '0')}</span>
+                    <span>:</span>
+                    <span>{String(timeLeft % 60).padStart(2, '0')}</span>
+                  </div>
+                </div>
                 {/* 3-Column Review Summary Card (Exact Match to Veroné Reference) */}
                 <div className="border border-[#E5E7EB] rounded-xl p-3.5 sm:p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] text-xs">
                   {/* Contact */}
@@ -785,21 +850,34 @@ export default function PaymentModal() {
                     </div>
                   </div>
 
-                  {/* Buttons to print or close */}
-                  <div className="pt-4 border-t border-neutral-100 flex items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => window.print()}
-                      className="px-4 py-2 rounded-xl border border-neutral-300 hover:bg-neutral-50 text-xs font-bold text-neutral-800 flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Printer size={14} />
-                      <span>Print Ticket</span>
-                    </button>
+                  {/* Buttons to print, download or close */}
+                  <div className="pt-4 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => window.print()}
+                        className="px-3.5 py-2 rounded-xl border border-neutral-300 hover:bg-neutral-50 text-xs font-bold text-neutral-800 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        title="Cetak atau simpan e-tiket sebagai PDF"
+                      >
+                        <Printer size={14} />
+                        <span>Cetak Tiket (PDF)</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleDownloadTicket}
+                        className="px-3.5 py-2 rounded-xl border border-neutral-300 hover:bg-neutral-50 text-xs font-bold text-neutral-800 flex items-center gap-1.5 cursor-pointer transition-colors"
+                        title="Unduh e-tiket resmi dalam format berkas digital"
+                      >
+                        <Download size={14} />
+                        <span>Unduh Tiket</span>
+                      </button>
+                    </div>
 
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="px-6 py-2.5 rounded-full bg-[#1A1412] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm hover:bg-black"
+                      className="px-6 py-2.5 rounded-full bg-[#1A1412] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm hover:bg-black transition-transform active:scale-95"
                     >
                       <span>Selesai & Tutup</span>
                     </button>
