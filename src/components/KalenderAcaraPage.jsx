@@ -23,7 +23,8 @@ import {
   Compass,
   ArrowRight,
   Info,
-  Award
+  Award,
+  CheckCircle2
 } from 'lucide-react';
 import { CULTURAL_EVENTS } from '../data/culturalEventsData';
 import { CULTURAL_PLACES } from '../data/culturalData';
@@ -136,7 +137,9 @@ const LOCATIONS_LIST = [
   { id: 'Semua', label: 'Semua Wilayah' },
   { id: 'Kota Yogyakarta', label: 'Kota Yogyakarta' },
   { id: 'Sleman', label: 'Kabupaten Sleman' },
-  { id: 'Bantul', label: 'Kabupaten Bantul' }
+  { id: 'Bantul', label: 'Kabupaten Bantul' },
+  { id: 'Kulon Progo', label: 'Kabupaten Kulon Progo' },
+  { id: 'Gunungkidul', label: 'Kabupaten Gunungkidul' }
 ];
 
 // Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
@@ -357,6 +360,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       ).length,
       Bantul: CULTURAL_EVENTS.filter(
         (e) => e.district && e.district.toLowerCase().includes('bantul')
+      ).length,
+      'Kulon Progo': CULTURAL_EVENTS.filter(
+        (e) => e.district && e.district.toLowerCase().includes('kulon progo')
+      ).length,
+      Gunungkidul: CULTURAL_EVENTS.filter(
+        (e) =>
+          e.district &&
+          (e.district.toLowerCase().includes('gunungkidul') ||
+            e.district.toLowerCase().includes('gunung kidul'))
       ).length
     };
   }, []);
@@ -1862,8 +1874,20 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
 
-                    {/* Top Tag: AI Badge if applicable */}
-                    <div className="absolute top-4 left-4 z-10">
+                    {/* Top Tags: Official Certification Badges & AI Badge */}
+                    <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
+                      {activeModalEvent.isKenEvent && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 text-xs font-extrabold border border-amber-300 shadow-lg">
+                          <Sparkles size={11} className="text-stone-950" />
+                          <span>Kharisma Event Nusantara (KEN)</span>
+                        </span>
+                      )}
+                      {activeModalEvent.isCoE && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-xs font-semibold border border-emerald-400/40 shadow-md">
+                          <CheckCircle2 size={11} className="text-emerald-200" />
+                          <span>Agenda Resmi CoE DIY 2025</span>
+                        </span>
+                      )}
                       {activeModalEvent.isAiGenerated && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200 text-xs font-semibold border border-amber-400/40 shadow-xs">
                           <Tag size={11} className="text-amber-300" />
