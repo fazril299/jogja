@@ -1038,6 +1038,9 @@ export function AuthProvider({ children }) {
     } catch (e) {}
     setCurrentUser(GUEST_SESSION);
     setPendingBenefitAction(null);
+    try {
+      window.location.hash = "#/home";
+    } catch (e) {}
   }, []);
 
   // FUNGSI ROLE ADMIN: Toggle / Update Role Pengguna

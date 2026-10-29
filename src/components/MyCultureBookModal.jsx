@@ -191,7 +191,17 @@ export default function MyCultureBookModal({
     }
   }, [currentUser]);
 
-  if (!isOpen) return null;
+  // Tutup dan redirect jika user berstatus tamu/guest (UI tamu dihapus, wajib login)
+  useEffect(() => {
+    if (isOpen && isGuest) {
+      if (onClose) onClose();
+      try {
+        window.location.hash = '#/home';
+      } catch (e) {}
+    }
+  }, [isOpen, isGuest, onClose]);
+
+  if (!isOpen || isGuest) return null;
 
   const totalPlaces = places.length || 6;
   const stats = getStats(totalPlaces);

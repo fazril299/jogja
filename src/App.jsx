@@ -90,7 +90,7 @@ function findNearestJogjaZone(lat, lng) {
 }
 
 function NusantaraApp() {
-  const { isAuthModalOpen, openLogin, openRegister, closeAuthModal, setAuthModalMode } = useAuth();
+  const { currentUser, isAuthModalOpen, openLogin, openRegister, closeAuthModal, setAuthModalMode } = useAuth();
   const [places, setPlaces] = useState(() => {
     try {
       const saved = localStorage.getItem('hamemayu_places_v1');
@@ -246,6 +246,20 @@ function NusantaraApp() {
         setIsAboutPageOpen(false);
         setIsQuestBadgePageOpen(false);
         setIsMapOpen(false);
+
+        // Akses profil hanya untuk pengguna yang sudah login (hilangkan UI tamu)
+        const isUserLoggedIn = Boolean(currentUser && !currentUser.isGuest);
+        if (!isUserLoggedIn) {
+          setIsCultureBookOpen(false);
+          window.location.hash = '#/home';
+          openLogin({
+            benefitType: 'general',
+            title: 'Masuk Akun Diperlukan',
+            description: 'Silakan masuk terlebih dahulu untuk mengakses Paspor Budaya, Wishlist, dan Tiket Anda.'
+          });
+          return;
+        }
+
         if (param) setCultureBookInitialTab(param);
         setIsCultureBookOpen(true);
         document.title = 'Buku Budaya & Paspor Budaya - Hamemayu';
@@ -342,7 +356,7 @@ function NusantaraApp() {
       window.removeEventListener('hashchange', handleUrlRoute);
       window.removeEventListener('popstate', handleUrlRoute);
     };
-  }, [places]);
+  }, [places, currentUser, openLogin]);
 
 
   // Close all modal/pages and sync URL back to home
@@ -352,6 +366,14 @@ function NusantaraApp() {
 
   // URL Hash-based lightweight navigation handlers
   const handleOpenCultureBookWithTab = (tab = 'badges-quests') => {
+    if (!currentUser || currentUser.isGuest) {
+      openLogin({
+        benefitType: 'general',
+        title: 'Masuk Akun Diperlukan',
+        description: 'Silakan masuk terlebih dahulu untuk mengakses Paspor Budaya, Wishlist, dan Tiket Anda.'
+      });
+      return;
+    }
     window.location.hash = `#/buku-budaya/${tab}`;
   };
 
