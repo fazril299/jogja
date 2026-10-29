@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export default function TravelFAQ({ id }) {
   const [openIdx, setOpenIdx] = useState(null);
@@ -118,17 +118,7 @@ export default function TravelFAQ({ id }) {
       <div className="max-w-[1140px] mx-auto w-full flex flex-col justify-center">
         {/* SECTION HEADER - Clean Apple Luxury Style */}
         <div className="text-center max-w-[720px] mx-auto mb-8 sm:mb-14">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 text-[#8C532B] text-xs sm:text-sm font-semibold tracking-wide uppercase mb-3 px-3.5 py-1 rounded-full bg-[#8C532B]/8 border border-[#8C532B]/15"
-          >
-            <HelpCircle size={15} strokeWidth={2} />
-            <span>Tanya Jawab Wisata & Kuliner</span>
-          </motion.div>
-
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight">
+          <h2 className="font-['Outfit'] text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight">
             Hal Penting Sebelum Anda<br className="hidden sm:inline" /> Menjelajahi Yogyakarta
           </h2>
           <p className="text-sm sm:text-base text-[#2D180C]/70 mt-3 max-w-xl mx-auto leading-relaxed">

@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
   X,
   Heart,
   Star,
@@ -30,6 +33,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCommunity } from '../context/CommunityContext';
 import { useCultureBook } from '../context/CultureBookContext';
 import ShareExperienceModal from './ShareExperienceModal';
+import HeritageDestinationCard from './HeritageDestinationCard';
 
 // Theme Categories with exact Eastward template SVG icons directly from eastward.framer.website
 const THEME_CATEGORIES = [
@@ -435,6 +439,12 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
 
 export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack, onSelectPlace, onOpenCultureBook }) {
   const [activeTheme, setActiveTheme] = useState('all');
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  // Reset 3D coverflow index when switching theme tabs
+  useEffect(() => {
+    setActiveCardIndex(0);
+  }, [activeTheme]);
   const [activeMapPlace, setActiveMapPlace] = useState(place || CULTURAL_PLACES[0]);
   const [isReviewBtnHovered, setIsReviewBtnHovered] = useState(false);
   const [isInquireOpen, setIsInquireOpen] = useState(false);
@@ -972,32 +982,15 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           margin: '0 auto'
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <span
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: '#c5904e',
-              display: 'block',
-              marginBottom: '0.65rem'
-            }}
-          >
-            Peta Wilayah D.I. Yogyakarta
-          </span>
-          <h2
-            style={{
-              fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-              fontSize: 'clamp(1.75rem, 3.2vw, 2.6rem)',
-              fontWeight: 800,
-              color: '#131021',
-              margin: '0 0 0.75rem 0'
-            }}
-          >
+        <div className="text-center mb-12 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] mb-3">
+            <MapPin size={12} className="text-[#8c532b]" />
+            <span>Peta Wilayah Budaya Yogyakarta</span>
+          </div>
+          <h2 className="font-['Outfit'] text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight mb-3">
             Jelajahi Sudut Budaya Jogja Lainnya
           </h2>
-          <p style={{ margin: 0, fontSize: '0.95rem', color: '#6b7280' }}>
+          <p className="text-sm sm:text-base text-[#2D180C]/70 max-w-xl mx-auto leading-relaxed m-0">
             Klik destinasi di bawah untuk langsung memuat cerita, foto asli, dan ulasan komunitasnya.
           </p>
         </div>
@@ -1091,152 +1084,235 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           })}
         </div>
 
-        {/* Exact Eastward 3-Column Image Cards Grid with dark gradient, vertical line, serif title */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))',
-            gap: '1.75rem',
-            marginBottom: '4rem'
-          }}
-        >
-          {filteredPlaces.map((dest, idx) => (
-            <motion.div
-              key={dest.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: idx * 0.05 }}
-              onClick={() => {
-                if (onSelectPlace) onSelectPlace(dest);
-                setActiveMapPlace(dest);
-                const viewport = document.getElementById('storybook-viewport');
-                if (viewport) viewport.scrollTo({ top: 0, behavior: 'smooth' });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{
-                cursor: 'pointer',
-                position: 'relative',
-                height: '460px',
-                borderRadius: '0px',
-                overflow: 'hidden',
-                backgroundColor: '#111019',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)'
-              }}
-              className="group"
-            >
-              {/* Image with zoom effect */}
-              <img
-                src={dest.coverImage || dest.thumbnail}
-                alt={dest.name}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  transition: 'transform 0.18s ease-out'
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.025)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
-              />
+        {/* =========================================================================
+            SECTION 3: JELAJAHI DESTINASI JOGJA LAINNYA
+            3D PERSPECTIVE COVER-FLOW HERITAGE STAGE (BUKAN NGEJEJER / ZERO REPETITIVE GRID)
+            ========================================================================= */}
+        {(() => {
+          const currentCardIdx = Math.min(activeCardIndex, Math.max(0, filteredPlaces.length - 1));
 
-              {/* Exact Eastward dark bottom gradient */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background:
-                    'linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,0.85) 88%, rgba(0,0,0,0.95) 100%)',
-                  pointerEvents: 'none'
-                }}
-              />
+          return (
+            <div className="relative w-full max-w-5xl mx-auto py-2 sm:py-6 select-none">
+              {/* Main 3D Cover-Flow Perspective Stage */}
+              <div className="relative w-full min-h-[560px] sm:min-h-[590px] flex items-center justify-center overflow-visible">
+                {filteredPlaces.map((dest, idx) => {
+                  const offset = idx - currentCardIdx;
+                  const isCenter = offset === 0;
+                  const isPrev = offset === -1;
+                  const isNext = offset === 1;
+                  const isVisible = Math.abs(offset) <= 1;
 
-              {/* Wishlist Heart Button (Fitur Benefit 1) */}
-              <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', zIndex: 10 }}>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleWishlistToggle(dest);
-                  }}
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '50%',
-                    backgroundColor: isFavorite(dest.id) ? '#e11d48' : 'rgba(0, 0, 0, 0.45)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.25)',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
-                    transition: 'all 0.2s'
-                  }}
-                  title={isFavorite(dest.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist (Benefit Member)'}
-                >
-                  <Heart size={16} fill={isFavorite(dest.id) ? '#ffffff' : 'none'} color="#ffffff" />
-                </button>
+                  if (!isVisible) return null;
+
+                  return (
+                    <motion.div
+                      key={dest.id}
+                      initial={false}
+                      animate={{
+                        x: isCenter ? '0%' : isPrev ? '-52%' : '52%',
+                        scale: isCenter ? 1 : 0.86,
+                        rotateY: isCenter ? 0 : isPrev ? 12 : -12,
+                        rotateZ: isCenter ? 0 : isPrev ? -2.5 : 2.5,
+                        zIndex: isCenter ? 30 : 15,
+                        opacity: isCenter ? 1 : 0.55,
+                        filter: isCenter ? 'blur(0px)' : 'blur(1.2px)'
+                      }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 280,
+                        damping: 26,
+                        mass: 0.9
+                      }}
+                      onClick={() => {
+                        if (!isCenter) {
+                          setActiveCardIndex(idx);
+                        }
+                      }}
+                      className={`absolute w-full max-w-[440px] sm:max-w-[480px] md:max-w-[500px] transition-shadow ${
+                        !isCenter ? 'cursor-pointer hover:opacity-80' : ''
+                      }`}
+                      style={{
+                        transformStyle: 'preserve-3d'
+                      }}
+                    >
+                      <div
+                        className={`bg-white rounded-[28px] p-3.5 sm:p-4 border transition-all duration-300 ${
+                          isCenter
+                            ? 'border-[#8c532b]/40 shadow-[0_25px_60px_-15px_rgba(45,24,12,0.22),0_10px_25px_rgba(0,0,0,0.06)]'
+                            : 'border-[#EDE5DA] shadow-[0_12px_30px_-8px_rgba(45,24,12,0.12)]'
+                        }`}
+                      >
+                        {/* Inner Photo Canvas */}
+                        <div className="relative w-full h-[250px] sm:h-[275px] rounded-[22px] overflow-hidden bg-neutral-900 shadow-inner">
+                          <img
+                            src={dest.coverImage || dest.thumbnail}
+                            alt={dest.name}
+                            className="w-full h-full object-cover select-none"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
+
+                          {/* Top-Left Category Badge */}
+                          <div className="absolute top-3 left-3 z-10 pointer-events-none">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-md text-[#2D180C] shadow-sm border border-white/70">
+                              <Sparkles size={11} className="text-[#8c532b]" />
+                              <span>{dest.badges?.[0] || 'Cagar Budaya'}</span>
+                            </span>
+                          </div>
+
+                          {/* Top-Right Wishlist Heart Button */}
+                          <div className="absolute top-3 right-3 z-10">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleWishlistToggle(dest);
+                              }}
+                              className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 cursor-pointer shadow-sm active:scale-90 ${
+                                isFavorite(dest.id)
+                                  ? 'bg-rose-600 text-white border border-rose-500 shadow-rose-900/30'
+                                  : 'bg-black/35 hover:bg-white text-white hover:text-rose-600 border border-white/30'
+                              }`}
+                              title={isFavorite(dest.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                            >
+                              <Heart size={15} fill={isFavorite(dest.id) ? '#ffffff' : 'none'} strokeWidth={2} />
+                            </button>
+                          </div>
+
+                          {/* Bottom-Left Price Badge */}
+                          {dest.ticketInfo?.domestik && (
+                            <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
+                              <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-black/60 backdrop-blur-md text-amber-100 border border-white/10 tracking-normal">
+                                {dest.ticketInfo.domestik.split('(')[0].trim()}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Bottom-Right Region Pill */}
+                          <div className="absolute bottom-3 right-3 z-10 pointer-events-none">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#2D180C]/80 backdrop-blur-md text-amber-200/95 border border-white/10 tracking-normal">
+                              <MapPin size={11} className="text-amber-300" />
+                              <span>{dest.regionLabel || 'D.I. Yogyakarta'}</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Body Content */}
+                        <div className="p-3.5 sm:p-4 space-y-3">
+                          <div className="space-y-1.5">
+                            {/* Region & Rating */}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8c532b]">
+                                <MapPin size={12} className="text-[#8c532b] shrink-0" />
+                                <span className="truncate">{dest.regionLabel || 'D.I. Yogyakarta'}</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-xs font-semibold text-neutral-600 shrink-0">
+                                <Star size={12} className="text-amber-500 fill-amber-500" />
+                                <span>4.9 (Kurasi Sahih)</span>
+                              </div>
+                            </div>
+
+                            {/* Title (font-serif Playfair, NO capslock) */}
+                            <h3 className="font-['Outfit'] text-2xl sm:text-[25px] font-bold text-[#2D180C] leading-snug line-clamp-1 m-0">
+                              {dest.name}
+                            </h3>
+
+                            {/* Subtitle */}
+                            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed line-clamp-2 m-0 font-normal">
+                              {dest.subtitle || dest.passportStamp?.quote || 'Eksplorasi nilai historis, arsitektur luhur, dan kearifan lokal Yogyakarta.'}
+                            </p>
+                          </div>
+
+                          {/* Action Footer */}
+                          <div className="pt-3.5 border-t border-[#F0E8DC] flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-1.5 text-xs text-neutral-500 font-normal truncate">
+                              <Clock size={13} className="text-[#8c532b]/80 shrink-0" />
+                              <span className="truncate">
+                                {dest.ticketInfo?.jamBuka ? dest.ticketInfo.jamBuka.split('(')[0].trim() : 'Buka Setiap Hari'}
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (onSelectPlace) onSelectPlace(dest);
+                                setActiveMapPlace(dest);
+                                const viewport = document.getElementById('storybook-viewport');
+                                if (viewport) viewport.scrollTo({ top: 0, behavior: 'smooth' });
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-[#8c532b] hover:bg-[#724222] text-white shadow-sm active:scale-95 transition-all cursor-pointer shrink-0"
+                            >
+                              <span>Buka Kisah Lengkap</span>
+                              <ArrowRight size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
-              {/* Bottom Left: Vertical bar + All-caps Title + Region/Ticket */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '2.2rem',
-                  left: '2rem',
-                  right: '2rem',
-                  display: 'flex',
-                  alignItems: 'stretch',
-                  gap: '1rem',
-                  pointerEvents: 'none',
-                  zIndex: 2
-                }}
-              >
-                {/* Thin vertical accent bar */}
-                <div
-                  style={{
-                    width: '2px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-                    borderRadius: '1px',
-                    flexShrink: 0
-                  }}
-                />
+              {/* Floating Navigation Controls (Arrows + Counter + Mini Thumbnails) */}
+              <div className="flex flex-col items-center gap-4 mt-3">
+                {/* Nav Arrows & Counter */}
+                <div className="flex items-center justify-center gap-4 sm:gap-6">
+                  <button
+                    type="button"
+                    onClick={() => setActiveCardIndex((prev) => Math.max(0, prev - 1))}
+                    disabled={currentCardIdx === 0}
+                    className="w-11 h-11 rounded-full flex items-center justify-center bg-white border border-[#E8DFC9] text-[#2D180C] shadow-sm hover:bg-[#FAF6EE] hover:border-[#8c532b] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-90"
+                    aria-label="Destinasi Sebelumnya"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
 
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: "'Cinzel', 'Playfair Display', Georgia, serif",
-                      fontSize: '1.55rem',
-                      fontWeight: 600,
-                      color: '#ffffff',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      lineHeight: 1.15,
-                      margin: '0 0 0.35rem 0',
-                      textShadow: '0 2px 10px rgba(0, 0, 0, 0.6)'
-                    }}
+                  <div className="text-center min-w-[130px]">
+                    <span className="font-['Outfit'] text-sm sm:text-base font-bold text-[#2D180C]">
+                      {currentCardIdx + 1}
+                    </span>
+                    <span className="text-xs text-neutral-400 mx-1.5 font-normal">/</span>
+                    <span className="text-xs text-neutral-500 font-medium">
+                      {filteredPlaces.length} Destinasi
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveCardIndex((prev) => Math.min(filteredPlaces.length - 1, prev + 1))}
+                    disabled={currentCardIdx === filteredPlaces.length - 1}
+                    className="w-11 h-11 rounded-full flex items-center justify-center bg-white border border-[#E8DFC9] text-[#2D180C] shadow-sm hover:bg-[#FAF6EE] hover:border-[#8c532b] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-90"
+                    aria-label="Destinasi Berikutnya"
                   >
-                    {dest.name}
-                  </h3>
-                  <p
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.12em',
-                      color: 'rgba(255, 255, 255, 0.82)',
-                      textTransform: 'uppercase',
-                      margin: 0
-                    }}
-                  >
-                    {dest.regionLabel || 'D.I. YOGYAKARTA'}
-                  </p>
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+
+                {/* Interactive Destination Pills Selector */}
+                <div className="flex flex-wrap items-center justify-center gap-2 max-w-2xl px-4 pt-1">
+                  {filteredPlaces.map((p, pIdx) => {
+                    const isSelected = pIdx === currentCardIdx;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setActiveCardIndex(pIdx)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs transition-all cursor-pointer border flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-[#8c532b] text-white border-[#8c532b] font-semibold shadow-xs scale-105'
+                            : 'bg-white hover:bg-[#FAF6EE] text-neutral-600 border-[#E8DFC9] font-normal'
+                        }`}
+                      >
+                        <span className="truncate max-w-[140px] sm:max-w-[180px]">{p.name.split(' & ')[0]}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          );
+        })()}
       </section>
 
       {/* =========================================================================

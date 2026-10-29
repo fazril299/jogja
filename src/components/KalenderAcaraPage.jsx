@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar as CalendarIcon,
+  Tag,
+  Link2,
   Clock,
   MapPin,
   Sparkles,
@@ -137,6 +139,131 @@ const LOCATIONS_LIST = [
   { id: 'Bantul', label: 'Kabupaten Bantul' }
 ];
 
+// Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
+function CulturalBurstIcon({ category }) {
+  if (category === 'Pertunjukan Seni') {
+    return (
+      <svg
+        viewBox="0 0 100 130"
+        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(146,64,14,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="crestGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="50%" stopColor="#D97706" />
+            <stop offset="100%" stopColor="#78350F" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 8 C24 8, 8 28, 12 60 C16 88, 35 118, 50 124 C65 118, 84 88, 88 60 C92 28, 76 8, 50 8 Z"
+          fill="url(#crestGoldGrad)"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M28 46 C35 50, 44 50, 48 46 M52 46 C56 50, 65 50, 72 46"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M50 52 L50 78 L42 86 L58 86"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M36 98 C44 102, 56 102, 64 98"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28"
+          fill="#FDE047"
+          stroke="#92400E"
+          strokeWidth="1.8"
+        />
+      </svg>
+    );
+  }
+
+  if (category === 'Upacara Keraton') {
+    return (
+      <svg
+        viewBox="0 0 100 140"
+        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.45)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="gununganGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="25%" stopColor="#F59E0B" />
+            <stop offset="65%" stopColor="#B45309" />
+            <stop offset="100%" stopColor="#78350F" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 4 C36 28, 12 56, 5 90 C-2 110, 6 135, 50 137 C94 135, 102 110, 95 90 C88 56, 64 28, 50 4 Z"
+          fill="url(#gununganGoldGrad)"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M50 18 L50 120"
+          stroke="#FFFFFF"
+          strokeOpacity="0.85"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <path
+          d="M26 68 C40 82, 60 82, 74 68 M20 96 C40 110, 60 110, 80 96 M14 120 C34 132, 66 132, 86 120"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <circle cx="50" cy="45" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Default (Festival Rakyat, Pameran Seni, dll.)
+  return (
+    <svg
+      viewBox="0 0 100 130"
+      className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="crestPusakaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FEF08A" />
+          <stop offset="35%" stopColor="#F59E0B" />
+          <stop offset="70%" stopColor="#B45309" />
+          <stop offset="100%" stopColor="#78350F" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M50 6 C28 10, 14 34, 18 64 C22 92, 40 118, 50 124 C60 118, 78 92, 82 64 C86 34, 72 10, 50 6 Z"
+        fill="url(#crestPusakaGrad)"
+        stroke="#FFFFFF"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M50 20 L50 115 M32 60 L68 60 M28 82 L72 82"
+        stroke="#FEF3C7"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <circle cx="50" cy="40" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null }) {
   // Calendar time state
   const [activeYear, setActiveYear] = useState(2025);
@@ -234,10 +361,55 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [modalTab, setModalTab] = useState('ringkasan');
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareCopiedToast, setShareCopiedToast] = useState(false);
+
+  const getShareUrl = (ev) => {
+    if (typeof window === 'undefined') return '';
+    return `${window.location.origin}${window.location.pathname}#/kalender?event=${ev?.id || ''}`;
+  };
+
+  const getShareText = (ev) => {
+    if (!ev) return '';
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2025}`;
+    return `Saksikan acara budaya Jogja: *${ev.name}*\n📅 Tanggal: ${dateStr}\n⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}\n📍 Lokasi: ${ev.location || ''}, ${ev.district || 'D.I. Yogyakarta'}\n\nSelengkapnya di Hamemayu:\n`;
+  };
+
+  const handleShareWhatsApp = (ev) => {
+    if (!ev) return;
+    const url = getShareUrl(ev);
+    const text = encodeURIComponent(`${getShareText(ev)}${url}`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleShareTwitter = (ev) => {
+    if (!ev) return;
+    const url = encodeURIComponent(getShareUrl(ev));
+    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2025})`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Hamemayu,BudayaJogja,WisataJogja`, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleShareInstagram = (ev) => {
+    if (!ev) return;
+    handleCopyEventLink(ev);
+    window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleCopyEventLink = (ev) => {
+    if (!ev) return;
+    const url = getShareUrl(ev);
+    navigator.clipboard?.writeText?.(url);
+    setShareCopiedToast(true);
+    setTimeout(() => {
+      setShareCopiedToast(false);
+    }, 3000);
+  };
 
   const handleOpenModal = (ev) => {
     setModalTab('ringkasan');
     setActiveModalEvent(ev);
+    setIsShareModalOpen(false);
+    setShareCopiedToast(false);
     onPopupChange?.(true);
     // Sinkronkan URL hash browser untuk deep linking
     window.history.replaceState(null, '', `#/kalender-acara/${ev.id}`);
@@ -245,6 +417,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   const handleCloseModal = () => {
     setActiveModalEvent(null);
+    setIsShareModalOpen(false);
+    setShareCopiedToast(false);
     onPopupChange?.(false);
     // Kembalikan URL hash ke halaman kalender umum
     window.history.replaceState(null, '', '#/kalender-acara');
@@ -999,9 +1173,9 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
               {/* ── SUB-VIEW: BULAN (Default Monthly Matrix Grid) ── */}
               {viewTab === 'Bulan' && (
-                <div className="border border-[#E8DFC9] rounded-xl overflow-hidden">
+                <div className="border border-[#E8DFC9] rounded-xl bg-white relative">
                   {/* 7 Columns Weekday Header Row */}
-                  <div className="grid grid-cols-7 bg-[#FAF6EE] border-b border-[#E8DFC9] text-center">
+                  <div className="grid grid-cols-7 bg-[#FAF6EE] border-b border-[#E8DFC9] text-center rounded-t-xl relative z-10">
                     {DAY_HEADERS.map((dayName, idx) => (
                       <div
                         key={dayName}
@@ -1014,7 +1188,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   </div>
 
                   {/* Calendar Grid Matrix */}
-                  <div className="grid grid-cols-7 divide-x divide-y divide-[#E8DFC9] bg-white">
+                  <div className="grid grid-cols-7 divide-x divide-y divide-[#E8DFC9] bg-white relative rounded-b-xl">
                     {calendarCells.map((cell, idx) => {
                       const cellKey = `${cell.year}-${cell.month}-${cell.day}`;
                       const cellEvents = eventsByDateKey[cellKey] || [];
@@ -1024,25 +1198,28 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       const hasKeratonEvent = cellEvents.some(e => e.category === 'Upacara Keraton');
 
                       return (
-                        <div
+                                                <div
                           key={`${cellKey}-${idx}`}
                           onClick={() => {
                             if (cell.isCurrentMonth) setSelectedDay(cell.day);
                           }}
                           className={`min-h-[86px] sm:min-h-[100px] p-1.5 flex flex-col justify-between transition-all cursor-pointer relative group ${
                             !cell.isCurrentMonth
-                              ? 'bg-[#FBF9F5] text-neutral-300'
+                              ? 'bg-[#FBF9F5] text-neutral-300 z-0'
                               : isSelected
-                              ? 'bg-[#FAF6EE] shadow-[inset_0_0_0_2px_#8c532b]'
-                              : hasKeratonEvent
-                              ? 'bg-gradient-to-b from-white to-[#FDFBF7] hover:bg-[#FAF6EE]/80'
+                              ? 'bg-[#FAF6EE] shadow-[inset_0_0_0_2px_#8c532b] z-20'
                               : hasEvents
-                              ? 'bg-white hover:bg-[#FAF6EE]/60'
-                              : 'bg-white hover:bg-[#FAF6EE]/30'
+                              ? 'bg-gradient-to-b from-[#FFFDF9] to-[#FAF5EB] shadow-[inset_0_0_0_1.5px_rgba(180,83,9,0.35)] z-20 hover:z-30 hover:shadow-[inset_0_0_0_2px_#8c532b]'
+                              : 'bg-white hover:bg-[#FAF6EE]/30 z-0'
                           }`}
                         >
+                          {/* Opsi 3: Cultural Burst 3D Out-of-Bounds Icon */}
+                          {cell.isCurrentMonth && hasEvents && (
+                            <CulturalBurstIcon category={cellEvents[0]?.category} />
+                          )}
+
                           {/* Top Row: Pasaran Jawa (Left) & Date Number (Right) */}
-                          <div className="flex items-center justify-between w-full select-none">
+                          <div className="flex items-center justify-between w-full select-none relative z-20">
                             <span
                               className={`text-[9px] tracking-tight truncate pr-0.5 transition-colors ${
                                 !cell.isCurrentMonth
@@ -1082,7 +1259,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           </div>
 
                           {/* Event Colored Badges inside cell */}
-                          <div className="mt-1 space-y-1 overflow-hidden">
+                          <div className="mt-1 space-y-1 overflow-hidden relative z-20">
                             {cellEvents.map((ev) => {
                               const conf =
                                 CATEGORY_CONFIG[ev.category] ||
@@ -1650,20 +1827,20 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                 onClick={(e) => e.stopPropagation()}
                 className="bg-[#FCFBF7] rounded-[28px] border border-[#E8DFC9] max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_30px_90px_rgba(45,24,12,0.3)] relative text-[#2d180c] overflow-hidden my-auto"
               >
-                {/* ── ALWAYS-ACCESSIBLE FLOATING CLOSE BUTTON (Pinned Top-Right) ── */}
+                {/* Floating Close Button: Always accessible on top */}
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md hover:bg-black/85 text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-md active:scale-95"
+                  className="absolute top-4 right-4 z-40 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md hover:bg-black/85 text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-md active:scale-95"
                   aria-label="Tutup"
                   title="Tutup (Esc)"
                 >
                   <X size={17} />
                 </button>
 
-                {/* ── UNIFIED CONTINUOUS SCROLL CONTAINER (Natural Sheet Scroll) ── */}
-                <div className="flex-1 overflow-y-auto overscroll-contain relative scroll-smooth">
-                  {/* ── HERO BANNER SECTION (Scrolls away as text sheets over it) ── */}
+                {/* UNIFIED SCROLL CONTAINER (Membuat teks deskripsi meluncur ke atas menutupi foto hero saat di-scroll) */}
+                <div className="flex-1 overflow-y-auto overscroll-contain relative scroll-smooth no-scrollbar">
+                  {/* ── HERO BANNER SECTION ── */}
                   <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 select-none">
                     <img
                       src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
@@ -1672,8 +1849,18 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
 
-                    {/* Hero Bottom: Nama Acara Only */}
-                    <div className="absolute bottom-8 left-5 right-14 text-white z-10">
+                    {/* Top Tag: AI Badge if applicable */}
+                    <div className="absolute top-4 left-4 z-10">
+                      {activeModalEvent.isAiGenerated && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200 text-xs font-semibold border border-amber-400/40 shadow-xs">
+                          <Tag size={11} className="text-amber-300" />
+                          <span>Ilustrasi AI</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Hero Bottom: Nama Acara */}
+                    <div className="absolute bottom-6 left-5 right-5 text-white z-10">
                       <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight m-0 font-['Outfit'] drop-shadow-md">
                         {activeModalEvent.name}
                       </h3>
@@ -1785,227 +1972,296 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           </span>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Makna Filosofis Card */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E8DFC9] space-y-2.5 shadow-2xs">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-[#8c532b]" />
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-[#2d180c] m-0">
-                            Makna Filosofis &amp; Prosesi Sakral
-                          </h4>
-                        </div>
-                        <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed m-0 font-normal">
-                          {activeModalEvent.description}
-                        </p>
-
-                        {/* Highlight Pill */}
-                        {activeModalEvent.highlight && (
-                          <div className="mt-3 p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9]/80 flex items-start gap-2.5 text-xs text-[#2d180c]">
-                            <Award size={15} className="text-[#8c532b] shrink-0 mt-0.5" />
-                            <div>
-                              <span className="font-bold block text-[11px] text-[#8c532b] uppercase tracking-wide">
-                                Sorotan Utama Acara:
+                    {/* ── SCROLLABLE BODY CONTENT ── */}
+                    <div className="p-5 sm:p-6 space-y-4">
+                      {/* TAB 1: RINGKASAN & MAKNA */}
+                      {modalTab === 'ringkasan' && (
+                        <div className="space-y-4">
+                          {/* 4 Clean Metric Cards */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                            <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                              <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                                <CalendarIcon size={12} />
+                                <span className="text-[10px] font-bold uppercase tracking-tight">Tanggal</span>
+                              </div>
+                              <strong className="text-[#2d180c] block text-xs truncate">
+                                {activeModalEvent.dayDate} {activeModalEvent.monthName} {activeModalEvent.year}
+                              </strong>
+                              <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
+                                {activeModalEvent.time.split('–')[0]}
                               </span>
-                              <span className="font-semibold text-[#2d180c]">{activeModalEvent.highlight}</span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                              <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                                <Tag size={12} />
+                                <span className="text-[10px] font-bold uppercase tracking-tight">Kategori Acara</span>
+                              </div>
+                              {(() => {
+                                const conf =
+                                  CATEGORY_CONFIG[activeModalEvent.category] ||
+                                  CATEGORY_CONFIG['Upacara Keraton'];
+                                return (
+                                  <span
+                                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
+                                  >
+                                    {activeModalEvent.category}
+                                  </span>
+                                );
+                              })()}
+                              <span className="text-[#786154] text-[10px] block mt-1 truncate">
+                                {activeModalEvent.category === 'Upacara Keraton'
+                                  ? 'Adat Sakral Kasultanan'
+                                  : activeModalEvent.category === 'Pertunjukan Seni'
+                                  ? 'Pentas Seni Teater'
+                                  : activeModalEvent.category === 'Festival Rakyat'
+                                  ? 'Tradisi Kerakyatan'
+                                  : 'Pameran & Galeri Seni'}
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                              <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                                <Compass size={12} />
+                                <span className="text-[10px] font-bold uppercase tracking-tight">Wilayah</span>
+                              </div>
+                              <strong className="text-[#2d180c] block text-xs truncate">
+                                {activeModalEvent.district}
+                              </strong>
+                              <span className="text-[#786154] text-[10px] block mt-0.5 truncate">
+                                D.I. Yogyakarta
+                              </span>
+                            </div>
+
+                            <div className="p-3 rounded-xl bg-white border border-[#E8DFC9] shadow-2xs">
+                              <div className="flex items-center gap-1 text-[#8c532b] mb-1">
+                                <Clock size={12} />
+                                <span className="text-[10px] font-bold uppercase tracking-tight">Waktu</span>
+                              </div>
+                              <strong className="text-[#2d180c] block text-xs truncate">
+                                {activeModalEvent.time}
+                              </strong>
+                              <span className="text-emerald-700 text-[10px] font-bold block mt-0.5 truncate">
+                                Sesuai Jadwal
+                              </span>
                             </div>
                           </div>
-                        )}
-                      </div>
 
-                      {/* Official Source Reference & AI/Real Image Notice */}
-                      <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-2xs">
-                        <div className="flex items-center gap-2 text-[#786154]">
-                          <ShieldCheck size={15} className="text-[#8c532b] shrink-0" />
-                          <span>
-                            Rujukan Resmi:{' '}
-                            <strong className="text-[#2d180c]">{activeModalEvent.source}</strong>
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
-                          Data Terverifikasi 2025
-                        </span>
-                      </div>
-
-                      {/* Photo Attribution Notice Box */}
-                      {activeModalEvent.isAiGenerated ? (
-                        <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300/80 flex items-start gap-2.5 text-xs text-amber-950 shadow-2xs">
-                          <Sparkles size={16} className="text-amber-600 shrink-0 mt-0.5" />
-                          <div className="space-y-0.5">
-                            <strong className="block font-bold text-[#2d180c]">
-                              Keterangan Foto: Dihasilkan oleh AI (Ilustrasi Tradisi)
-                            </strong>
-                            <p className="text-amber-900/90 leading-relaxed m-0 text-[11px] sm:text-xs">
-                              Foto visualisasi di atas dihasilkan oleh AI untuk memberikan gambaran visual kepada pengunjung mengenai prosesi upacara sakral, sedangkan seluruh informasi jadwal, makna filosofis, dan tata krama adalah <strong>100% fakta riil Kasultanan Yogyakarta</strong>.
+                          {/* Makna Filosofis Card */}
+                          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E8DFC9] space-y-2.5 shadow-2xs">
+                            <div>
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-[#2d180c] m-0">
+                                Makna Filosofis &amp; Prosesi Sakral
+                              </h4>
+                            </div>
+                            <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed m-0 font-normal">
+                              {activeModalEvent.description}
                             </p>
+
+                            {/* Highlight Pill */}
+                            {activeModalEvent.highlight && (
+                              <div className="mt-3 p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9]/80 flex items-start gap-2.5 text-xs text-[#2d180c]">
+                                <Award size={15} className="text-[#8c532b] shrink-0 mt-0.5" />
+                                <div>
+                                  <span className="font-bold block text-[11px] text-[#8c532b] uppercase tracking-wide">
+                                    Sorotan Utama Acara:
+                                  </span>
+                                  <span className="font-semibold text-[#2d180c]">{activeModalEvent.highlight}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Source Verification Card */}
+                          <div className="p-3.5 rounded-2xl bg-[#FAF6EE] border border-[#E8DFC9] flex items-center justify-between gap-3 text-xs text-[#786154]">
+                            <div className="flex items-center gap-2">
+                              <ShieldCheck size={16} className="text-[#8c532b] shrink-0" />
+                              <span>
+                                Sumber Terverifikasi:{' '}
+                                <strong className="text-[#2d180c]">{activeModalEvent.source}</strong>
+                              </span>
+                            </div>
+                            <span className="text-[11px] text-[#8c532b] font-bold shrink-0">
+                              Data Kalender Resmi
+                            </span>
+                          </div>
+
+                          {/* Image Caption & Archival Source */}
+                          <div className="p-3 rounded-xl bg-white/70 border border-[#E8DFC9]/70 text-[11px] text-[#786154] leading-relaxed">
+                            {activeModalEvent.isAiGenerated ? (
+                              <div className="flex items-start gap-2">
+                                <Info size={13} className="text-amber-600 shrink-0 mt-0.5" />
+                                <span>
+                                  Visual di atas merupakan ilustrasi rekonstruksi estetika sakral untuk merepresentasikan suasana upacara adat ini.
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-start gap-2">
+                                <Check size={13} className="text-emerald-600 shrink-0 mt-0.5" />
+                                <span>
+                                  Foto di atas merupakan dokumentasi asli lapangan ({activeModalEvent.imageCaption || activeModalEvent.source}).
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      ) : (
-                        <div className="p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-200/80 flex items-start gap-2.5 text-xs text-emerald-950 shadow-2xs">
-                          <ShieldCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" />
-                          <div className="space-y-0.5">
-                            <strong className="block font-bold text-emerald-950">
-                              Keterangan Foto: Dokumentasi Foto Asli Lapangan
-                            </strong>
-                            <p className="text-emerald-900/90 leading-relaxed m-0 text-[11px] sm:text-xs">
-                              Foto di atas merupakan dokumentasi asli lapangan ({activeModalEvent.imageCaption || activeModalEvent.source}).
+                      )}
+
+                      {/* TAB 2: ADAB & TATA KRAMA */}
+                      {modalTab === 'adab' && (
+                        <div className="space-y-4">
+                          {/* Alert Notice */}
+                          <div className="p-4 rounded-2xl bg-[#FFFBF0] border border-[#F3E2B8] flex items-start gap-3">
+                            <AlertCircle size={18} className="text-[#B45309] shrink-0 mt-0.5" />
+                            <div className="text-xs text-[#78350F] space-y-1">
+                              <strong className="block text-sm font-bold text-[#92400E]">
+                                Menjaga Kesakralan Upacara Adat
+                              </strong>
+                              <p className="m-0 leading-relaxed">
+                                Mohon hormati tata tertib adat Keraton Yogyakarta demi kenyamanan bersama dan kelestarian tradisi leluhur.
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Clean Adab Checklist */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-2 shadow-2xs">
+                              <div className="flex items-center gap-2 font-bold text-[#2d180c]">
+                                <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                                  <Check size={12} strokeWidth={2.5} />
+                                </div>
+                                <span>Adab Berpakaian</span>
+                              </div>
+                              <p className="text-[#786154] leading-relaxed m-0 pl-7">
+                                Kenakan pakaian sopan, rapi, dan tertutup (batik, kemeja, atau busana tradisional). Hindari celana pendek atau kaos tanpa lengan.
+                              </p>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-2 shadow-2xs">
+                              <div className="flex items-center gap-2 font-bold text-[#2d180c]">
+                                <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                                  <Check size={12} strokeWidth={2.5} />
+                                </div>
+                                <span>Adab Mengambil Foto</span>
+                              </div>
+                              <p className="text-[#786154] leading-relaxed m-0 pl-7">
+                                Matikan lampu kilat (*flash*), gunakan mode senyap (*silent*), dan jangan menghalangi jalannya arak-arakan prajurit bregada.
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Specific Event Advice */}
+                          <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-2 shadow-2xs">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-[#8c532b] m-0">
+                              Catatan Khusus untuk Agenda Ini:
+                            </h4>
+                            <p className="text-xs text-[#2d180c] leading-relaxed m-0">
+                              {activeModalEvent.tips} Dilarang keras melangkah di atas instrumen pusaka atau memotong barisan bregada prajurit yang sedang bertugas.
                             </p>
                           </div>
                         </div>
                       )}
-                    </div>
-                  )}
 
-                  {/* TAB 2: ADAB & TATA KRAMA */}
-                  {modalTab === 'adab' && (
-                    <div className="space-y-3.5">
-                      {/* Alert Guidance Banner */}
-                      <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-start gap-3">
-                        <AlertCircle size={18} className="text-[#8c532b] shrink-0 mt-0.5" />
-                        <div className="text-xs space-y-1">
-                          <strong className="text-[#2d180c] block font-bold text-sm">
-                            Tata Krama Menghadiri Upacara Adat
-                          </strong>
-                          <p className="text-[#786154] m-0 leading-relaxed">
-                            Prosesi adat dan tradisi Kasultanan Yogyakarta memiliki nilai spiritual luhur. Pengunjung dimohon senantiasa menjaga ketertiban dan menghormati kesakralan acara.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* 3 Dedicated Guidance Cards */}
-                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
-                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
-                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
-                            1
-                          </span>
-                          <span>Ketentuan Busana &amp; Pakaian</span>
-                        </div>
-                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
-                          Wajib berpakaian sopan, tertutup, dan rapi. Di area sakral Pagelaran Keraton dan Masjid Kauman dilarang memakai celana pendek, kaos tanpa lengan, atau sandal jepit.
-                        </p>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
-                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
-                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
-                            2
-                          </span>
-                          <span>Perilaku &amp; Ketertiban Sakral</span>
-                        </div>
-                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
-                          {activeModalEvent.tips} Dilarang keras melangkah di atas instrumen pusaka atau memotong barisan bregada prajurit yang sedang bertugas.
-                        </p>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-white border border-[#E8DFC9] space-y-1.5 shadow-2xs">
-                        <div className="flex items-center gap-2 font-bold text-xs text-[#2d180c]">
-                          <span className="w-5 h-5 rounded-full bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center text-[11px]">
-                            3
-                          </span>
-                          <span>Etika Dokumentasi &amp; Fotografi</span>
-                        </div>
-                        <p className="text-xs text-neutral-600 pl-7 m-0 leading-relaxed">
-                          Dilarang menggunakan lampu kilat (flash) ke arah Sultan, abdi dalem, maupun pusaka. Berdirilah di luar garis pembatas yang ditentukan aparat keamanan keraton.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TAB 3: LOKASI & AKSES */}
-                  {modalTab === 'lokasi' && (
-                    <div className="space-y-3.5">
-                      {/* Venue Address Card */}
-                      <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-3 shadow-2xs">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-start gap-3 text-xs">
-                            <MapPin size={16} className="text-[#8c532b] shrink-0 mt-0.5" />
-                            <div>
-                              <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
-                                Tempat Pelaksanaan
-                              </span>
-                              <strong className="text-sm font-bold text-[#2d180c] block mt-0.5">
-                                {activeModalEvent.location}
-                              </strong>
-                              <span className="text-[#786154] text-xs block mt-0.5">
-                                Kawasan {activeModalEvent.district}, Daerah Istimewa Yogyakarta
-                              </span>
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => handleCopyAddress(`${activeModalEvent.location}, ${activeModalEvent.district}, Yogyakarta`)}
-                            className="py-1.5 px-3 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-[11px] font-semibold shrink-0 cursor-pointer transition-colors"
-                          >
-                            {copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat'}
-                          </button>
-                        </div>
-
-                        {/* Coordinates info if present */}
-                        {activeModalEvent.coordinates && (
-                          <div className="pt-2 border-t border-[#E8DFC9]/70 flex items-center justify-between text-[11px] text-[#786154]">
-                            <span>
-                              Titik GPS: {activeModalEvent.coordinates.lat.toFixed(4)},{' '}
-                              {activeModalEvent.coordinates.lng.toFixed(4)}
-                            </span>
-                            <span className="text-emerald-700 font-bold">Koordinat Asli</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Associated Destination Card */}
-                      {(() => {
-                        const associatedPlace = getAssociatedPlace(activeModalEvent);
-                        if (!associatedPlace) return null;
-                        return (
-                          <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 shadow-2xs">
-                            <div className="flex items-center gap-3 min-w-0">
-                              <img
-                                src={associatedPlace.image || '/assets/images/jogja_keraton.jpg'}
-                                alt={associatedPlace.name}
-                                className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#E8DFC9]"
-                              />
-                              <div className="min-w-0">
-                                <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
-                                  Destinasi Warisan Terkait
-                                </span>
-                                <strong className="text-xs font-bold text-[#2d180c] block truncate">
-                                  {associatedPlace.name}
-                                </strong>
-                                <span className="text-[11px] text-[#786154] truncate block">
-                                  {associatedPlace.subtitle || associatedPlace.location}
-                                </span>
+                      {/* TAB 3: LOKASI & AKSES */}
+                      {modalTab === 'lokasi' && (
+                        <div className="space-y-3.5">
+                          {/* Venue Address Card */}
+                          <div className="p-4 rounded-2xl bg-white border border-[#E8DFC9] space-y-3 shadow-2xs">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-start gap-3 text-xs">
+                                <MapPin size={16} className="text-[#8c532b] shrink-0 mt-0.5" />
+                                <div>
+                                  <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
+                                    Tempat Pelaksanaan
+                                  </span>
+                                  <strong className="text-sm font-bold text-[#2d180c] block mt-0.5">
+                                    {activeModalEvent.location}
+                                  </strong>
+                                  <span className="text-[#786154] text-xs block mt-0.5">
+                                    Kawasan {activeModalEvent.district}, Daerah Istimewa Yogyakarta
+                                  </span>
+                                </div>
                               </div>
-                            </div>
 
-                            {onSelectPlace && (
                               <button
                                 type="button"
-                                onClick={() => {
-                                  handleCloseModal();
-                                  onSelectPlace(associatedPlace);
-                                }}
-                                className="py-2 px-3.5 rounded-xl bg-[#8c532b] hover:bg-[#754422] text-white text-xs font-bold shrink-0 cursor-pointer transition-all shadow-xs"
+                                onClick={() => handleCopyAddress(`${activeModalEvent.location}, ${activeModalEvent.district}, Yogyakarta`)}
+                                className="py-1.5 px-3 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-[11px] font-semibold shrink-0 cursor-pointer transition-colors"
                               >
-                                Eksplorasi
+                                {copiedAddress ? 'Alamat Tersalin' : 'Salin Alamat'}
                               </button>
+                            </div>
+
+                            {/* Coordinates info if present */}
+                            {activeModalEvent.coordinates && (
+                              <div className="pt-2 border-t border-[#E8DFC9]/70 flex items-center justify-between text-[11px] text-[#786154]">
+                                <span>
+                                  Titik GPS: {activeModalEvent.coordinates.lat.toFixed(4)},{' '}
+                                  {activeModalEvent.coordinates.lng.toFixed(4)}
+                                </span>
+                                <span className="text-emerald-700 font-bold">Koordinat Asli</span>
+                              </div>
                             )}
                           </div>
-                        );
-                      })()}
+
+                          {/* Associated Destination Card */}
+                          {(() => {
+                            const associatedPlace = getAssociatedPlace(activeModalEvent);
+                            if (!associatedPlace) return null;
+                            return (
+                              <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 shadow-2xs">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <img
+                                    src={associatedPlace.image || '/assets/images/jogja_keraton.jpg'}
+                                    alt={associatedPlace.name}
+                                    className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#E8DFC9]"
+                                  />
+                                  <div className="min-w-0">
+                                    <span className="text-[10px] font-bold text-[#8c532b] uppercase block">
+                                      Destinasi Warisan Terkait
+                                    </span>
+                                    <strong className="text-xs font-bold text-[#2d180c] block truncate">
+                                      {associatedPlace.name}
+                                    </strong>
+                                    <span className="text-[11px] text-[#786154] truncate block">
+                                      {associatedPlace.subtitle || associatedPlace.location}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {onSelectPlace && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      handleCloseModal();
+                                      onSelectPlace(associatedPlace);
+                                    }}
+                                    className="py-2 px-3.5 rounded-xl bg-[#8c532b] hover:bg-[#754422] text-white text-xs font-bold shrink-0 cursor-pointer transition-all shadow-xs"
+                                  >
+                                    Eksplorasi
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
                   )}
                     </div>
                   </div>
                 </div>
 
-                {/* ── CLEAN FOOTER ACTIONS ROW (Pinned at bottom) ── */}
-                <div className="p-4 sm:p-5 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-3 shrink-0 z-20">
+                {/* ── STICKY FOOTER ACTIONS ROW ── */}
+                <div className="p-3.5 sm:p-4 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-2.5 shrink-0 z-30">
                   {/* Left Action Buttons */}
                   <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                     {/* 1. Salin Jadwal Lengkap & Link */}
                     <button
                       type="button"
-                      onClick={() => handleCopySchedule(activeModalEvent)}
+onClick={() => handleCopySchedule(activeModalEvent)}
                       className={`py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-xl border text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs ${
                         copiedId === activeModalEvent.id
                           ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
@@ -2024,6 +2280,20 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           <span>Salin Jadwal</span>
                         </>
                       )}
+                    </button>
+
+                    {/* Tombol Share Acara (Fitur Teman) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsShareModalOpen(true);
+                        setShareCopiedToast(false);
+                      }}
+                      className="py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                      title="Bagikan agenda acara ini ke media sosial"
+                    >
+                      <Share2 size={14} className="text-[#8c532b]" />
+                      <span>Share Acara</span>
                     </button>
 
                     {/* 2. Salin Link Saja */}
@@ -2128,6 +2398,129 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     </a>
                   </div>
                 </div>
+
+                {/* ── POP-UP SHEET SHARE ACARA ── */}
+                <AnimatePresence>
+                  {isShareModalOpen && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.18 }}
+                      className="absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end"
+                      onClick={() => setIsShareModalOpen(false)}
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 40 }}
+                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-t-[28px] border-t border-[#E8DFC9] p-5 sm:p-6 shadow-[0_-20px_50px_rgba(45,24,12,0.25)] space-y-4"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-outfit font-extrabold text-base text-[#2d180c] m-0">
+                              Bagikan Acara Budaya
+                            </h4>
+                            <p className="text-xs text-[#786154] m-0 mt-0.5">
+                              Ajak kerabat dan teman untuk menyaksikan tradisi sakral ini
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsShareModalOpen(false)}
+                            className="w-8 h-8 rounded-full bg-[#FAF6EE] hover:bg-[#EAE1D2] text-[#786154] hover:text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <X size={15} />
+                          </button>
+                        </div>
+
+                        {/* 4 Social Platforms */}
+                        <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+                          {/* WhatsApp */}
+                          <button
+                            type="button"
+                            onClick={() => handleShareWhatsApp(activeModalEvent)}
+                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#25D366]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
+                          >
+                            <div className="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.072-2.18-.544-1.9-1.282-3.125-3.23-3.22-3.359-.096-.13-.772-1.026-.772-1.956 0-.93.488-1.385.662-1.574.174-.189.379-.236.505-.236.127 0 .253.001.364.007.117.006.273-.044.426.326.158.384.538 1.313.585 1.409.048.096.08.208.016.335-.064.127-.096.206-.191.317-.096.111-.202.248-.288.333-.096.096-.196.2-.084.392.112.192.499.824 1.07 1.334.736.657 1.357.861 1.55.957.192.096.304.08.416-.048.112-.128.48-.559.608-.751.127-.192.255-.16.432-.096.176.064 1.116.526 1.308.622.192.096.32.144.367.224.048.08.048.464-.096.869z"/>
+                              </svg>
+                            </div>
+                            <span className="text-[11px] font-bold text-[#2d180c]">WhatsApp</span>
+                          </button>
+
+                          {/* X / Twitter */}
+                          <button
+                            type="button"
+                            onClick={() => handleShareTwitter(activeModalEvent)}
+                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-black/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
+                          >
+                            <div className="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                              </svg>
+                            </div>
+                            <span className="text-[11px] font-bold text-[#2d180c]">X (Twitter)</span>
+                          </button>
+
+                          {/* Instagram */}
+                          <button
+                            type="button"
+                            onClick={() => handleShareInstagram(activeModalEvent)}
+                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#d6249f]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
+                          >
+                            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#fdf497] via-[#fd5949] to-[#d6249f] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                              </svg>
+                            </div>
+                            <span className="text-[11px] font-bold text-[#2d180c]">Instagram</span>
+                          </button>
+
+                          {/* Salin Link */}
+                          <button
+                            type="button"
+                            onClick={() => handleCopyEventLink(activeModalEvent)}
+                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#8c532b]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
+                          >
+                            <div className="w-11 h-11 rounded-full bg-[#8c532b] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                              <Link2 size={19} />
+                            </div>
+                            <span className="text-[11px] font-bold text-[#2d180c]">Salin Link</span>
+                          </button>
+                        </div>
+
+                        {/* Copy Link Feedback & Preview */}
+                        <div className="p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9] flex items-center justify-between gap-3 text-xs">
+                          <span className="font-mono text-[11px] text-[#786154] truncate">
+                            {typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}#/kalender?event=${activeModalEvent.id}` : ''}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyEventLink(activeModalEvent)}
+                            className="py-1.5 px-3 rounded-lg bg-[#2d180c] hover:bg-[#432311] text-white text-[11px] font-bold shrink-0 transition-all cursor-pointer"
+                          >
+                            {shareCopiedToast ? 'Tersalin!' : 'Salin'}
+                          </button>
+                        </div>
+
+                        {shareCopiedToast && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
+                          >
+                            <Check size={14} className="text-emerald-600" />
+                            <span>Tautan agenda berhasil disalin ke papan klip!</span>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </motion.div>
           )}

@@ -1252,19 +1252,6 @@ export default function TentangKamiPage({
                 </button>
               )}
 
-              {onOpenMap && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onOpenMap();
-                  }}
-                  className="py-2 px-3.5 rounded-full bg-white hover:bg-neutral-100 border border-neutral-300 text-neutral-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                >
-                  <MapPin size={13} className="text-[#8c532b]" />
-                  <span>Peta Cagar Budaya</span>
-                </button>
-              )}
 
               {onOpenJurnal && (
                 <button

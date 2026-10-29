@@ -4,7 +4,6 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  Compass,
   Radio,
   BookMarked,
   Scroll,
@@ -362,15 +361,6 @@ export default function Footer({
                   <BookMarked size={14} className="text-amber-800 flex-shrink-0" />
                   <span>Paspor Budaya</span>
                 </button>
-              </li>
-              <li>
-                <a
-                  href="#packages"
-                  className="hover:opacity-60 hover:translate-x-1 transition-all duration-150 inline-flex items-center gap-2 text-left font-medium text-black"
-                >
-                  <Compass size={14} className="text-amber-800 flex-shrink-0" />
-                  <span>Rute Ekspedisi</span>
-                </a>
               </li>
               <li>
                 <button
