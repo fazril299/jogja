@@ -6,7 +6,7 @@ import {
   Link2,
   Clock,
   MapPin,
-  Sparkles,
+  ShieldAlert,
   Share2,
   Copy,
   Check,
@@ -142,138 +142,122 @@ const LOCATIONS_LIST = [
   { id: 'Gunungkidul', label: 'Kabupaten Gunungkidul' }
 ];
 
-// Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
+// Cultural Burst 3D Out-of-Bounds Icon (4 Kategori Budaya Berbeda: Wayang, Gunungan, Canting, Grebeg)
 function CulturalBurstIcon({ category, isMobile = false }) {
   const gradId = React.useId().replace(/:/g, '');
   const sizeClasses = isMobile
     ? "w-6 h-8 absolute -top-3.5 -right-2 rotate-12 pointer-events-none z-30 drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]"
     : "w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300";
 
-  if (category === 'Pertunjukan Seni') {
-    return (
-      <svg
-        viewBox="0 0 100 130"
-        className={sizeClasses}
-        fill="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id={`crest-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FDE047" />
-            <stop offset="35%" stopColor="#F59E0B" />
-            <stop offset="70%" stopColor="#B45309" />
-            <stop offset="100%" stopColor="#78350F" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M50 8 C24 8, 8 28, 12 60 C16 88, 35 118, 50 124 C65 118, 84 88, 88 60 C92 28, 76 8, 50 8 Z"
-          fill={`url(#crest-${gradId})`}
-          stroke="#FFFFFF"
-          strokeWidth="3"
-        />
-        <path
-          d="M28 46 C35 50, 44 50, 48 46 M52 46 C56 50, 65 50, 72 46"
-          stroke="#FEF3C7"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M50 52 L50 78 L42 86 L58 86"
-          stroke="#FEF3C7"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M36 98 C44 102, 56 102, 64 98"
-          stroke="#FEF3C7"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28"
-          fill="#FDE047"
-          stroke="#92400E"
-          strokeWidth="2"
-        />
-      </svg>
-    );
-  }
-
+  // 1. UPACARA KERATON: Songsong Kebesaran & Surya Gunungan Ageng
   if (category === 'Upacara Keraton') {
     return (
-      <svg
-        viewBox="0 0 100 140"
-        className={sizeClasses}
-        fill="none"
-        aria-hidden="true"
-      >
+      <svg viewBox="0 0 100 140" className={sizeClasses} fill="none" aria-hidden="true">
         <defs>
-          <linearGradient id={`gunungan-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`keraton-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FEF08A" />
             <stop offset="25%" stopColor="#F59E0B" />
             <stop offset="65%" stopColor="#B45309" />
             <stop offset="100%" stopColor="#78350F" />
           </linearGradient>
+          <linearGradient id={`gold-${gradId}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="100%" stopColor="#D97706" />
+          </linearGradient>
         </defs>
         <path
           d="M50 4 C36 28, 12 56, 5 90 C-2 110, 6 135, 50 137 C94 135, 102 110, 95 90 C88 56, 64 28, 50 4 Z"
-          fill={`url(#gunungan-${gradId})`}
+          fill={`url(#keraton-${gradId})`}
           stroke="#FFFFFF"
           strokeWidth="3"
         />
-        <path
-          d="M50 18 L50 120"
-          stroke="#FFFFFF"
-          strokeOpacity="0.9"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M26 68 C40 82, 60 82, 74 68 M20 96 C40 110, 60 110, 80 96 M14 120 C34 132, 66 132, 86 120"
-          stroke="#FEF3C7"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <circle cx="50" cy="45" r="7.5" fill="#FEF3C7" stroke="#B45309" strokeWidth="2" />
+        <path d="M50 16 L50 125" stroke="#FFFFFF" strokeOpacity="0.9" strokeWidth="3.5" strokeLinecap="round" />
+        <path d="M24 64 C38 78, 62 78, 76 64 M18 92 C38 106, 62 106, 82 92 M12 118 C34 130, 66 130, 88 118" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="50" cy="42" r="8.5" fill={`url(#gold-${gradId})`} stroke="#B45309" strokeWidth="2" />
+        <path d="M50 28 L50 34 M50 50 L50 56 M36 42 L42 42 M58 42 L64 42" stroke="#FFFBEB" strokeWidth="2" strokeLinecap="round" />
       </svg>
     );
   }
 
-  // Default (Festival Rakyat, Pameran Seni, dll.)
+  // 2. PERTUNJUKAN SENI: Topeng Tari Panji & Sunggingan Wayang
+  if (category === 'Pertunjukan Seni') {
+    return (
+      <svg viewBox="0 0 100 130" className={sizeClasses} fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={`tari-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="30%" stopColor="#F59E0B" />
+            <stop offset="70%" stopColor="#C2410C" />
+            <stop offset="100%" stopColor="#7C2D12" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 6 C24 6, 8 26, 12 58 C16 86, 35 118, 50 124 C65 118, 84 86, 88 58 C92 26, 76 6, 50 6 Z"
+          fill={`url(#tari-${gradId})`}
+          stroke="#FFFFFF"
+          strokeWidth="3"
+        />
+        <path d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28 M50 0 L44 12 L32 6 L36 18 L24 18 L32 28" fill="#FDE047" stroke="#78350F" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M26 44 C34 40, 44 48, 47 48 M74 44 C66 40, 56 48, 53 48" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+        <path d="M50 48 L50 76 L43 83 L57 83" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M36 96 C44 103, 56 103, 64 96" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 3. FESTIVAL RAKYAT: Gunungan Grebeg & Panji Bregada
+  if (category === 'Festival Rakyat') {
+    return (
+      <svg viewBox="0 0 100 135" className={sizeClasses} fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={`rakyat-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FED7AA" />
+            <stop offset="30%" stopColor="#FB923C" />
+            <stop offset="70%" stopColor="#EA580C" />
+            <stop offset="100%" stopColor="#9A3412" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 6 L78 52 C86 68, 88 95, 84 122 C84 128, 16 128, 16 122 C12 95, 14 68, 22 52 Z"
+          fill={`url(#rakyat-${gradId})`}
+          stroke="#FFFFFF"
+          strokeWidth="3"
+        />
+        <path d="M50 6 L50 0 L66 6 L50 12" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M30 55 C42 62, 58 62, 70 55 M24 80 C40 90, 60 90, 76 80 M18 105 C38 116, 62 116, 82 105" stroke="#FFF7ED" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="50" cy="38" r="5.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+        <circle cx="36" cy="68" r="4.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+        <circle cx="64" cy="68" r="4.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // 4. PAMERAN SENI: Canting Kriya & Sulur Batik Morosanto
   return (
-    <svg
-      viewBox="0 0 100 130"
-      className={sizeClasses}
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 100 135" className={sizeClasses} fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id={`pusaka-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FEF08A" />
-          <stop offset="35%" stopColor="#F59E0B" />
+        <linearGradient id={`kriya-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDE68A" />
+          <stop offset="35%" stopColor="#D97706" />
           <stop offset="70%" stopColor="#B45309" />
-          <stop offset="100%" stopColor="#78350F" />
+          <stop offset="100%" stopColor="#451A03" />
         </linearGradient>
       </defs>
       <path
         d="M50 6 C28 10, 14 34, 18 64 C22 92, 40 118, 50 124 C60 118, 78 92, 82 64 C86 34, 72 10, 50 6 Z"
-        fill={`url(#pusaka-${gradId})`}
+        fill={`url(#kriya-${gradId})`}
         stroke="#FFFFFF"
         strokeWidth="3"
       />
-      <path
-        d="M50 20 L50 115 M32 60 L68 60 M28 82 L72 82"
-        stroke="#FEF3C7"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <circle cx="50" cy="40" r="7.5" fill="#FEF3C7" stroke="#B45309" strokeWidth="2" />
+      <path d="M38 32 C38 22, 52 18, 62 26 C68 32, 66 42, 56 46 L38 32 Z" fill="#FDE047" stroke="#78350F" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M38 32 C30 36, 26 44, 28 50 C32 58, 48 56, 52 68 C56 80, 42 88, 46 98 C50 108, 68 104, 72 114" stroke="#FFFBEB" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="62" cy="72" r="6" fill="#FDE047" stroke="#78350F" strokeWidth="2" />
+      <circle cx="48" cy="88" r="4.5" fill="#FDE047" stroke="#78350F" strokeWidth="1.5" />
     </svg>
   );
 }
 
-export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null }) {
+export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null, onShowEventLocation }) {
   // Calendar time state
   const [activeYear, setActiveYear] = useState(2025);
   const [activeMonth, setActiveMonth] = useState(2); // Default to Maret (Bulan awal tahun agenda budaya)
@@ -549,7 +533,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         matchVibe = ev.category !== 'Upacara Keraton' || !ev.name?.toLowerCase().includes('jamasan');
       }
 
-      return matchCategory && matchLocation && matchQuery && matchVibe;
+      const matchYear = parseInt(ev.year || 2025, 10) === activeYear;
+      return matchCategory && matchLocation && matchQuery && matchVibe && matchYear;
     });
   }, [selectedCategories, selectedLocation, searchQuery, activeVibe, activeYear]);
 
@@ -612,7 +597,10 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       const key = `${cell.year}-${cell.month}-${cell.day}`;
       if (!map[key]) {
         map[key] = filteredEvents.filter(
-          (ev) => ev.monthIndex === cell.month && parseInt(ev.dayDate, 10) === cell.day
+          (ev) =>
+            parseInt(ev.year || 2025, 10) === cell.year &&
+            ev.monthIndex === cell.month &&
+            parseInt(ev.dayDate, 10) === cell.day
         );
       }
     });
@@ -1043,7 +1031,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     >
                       {MONTH_NAMES.map((m, idx) => {
                         const monthEventsCount = CULTURAL_EVENTS.filter(
-                          (e) => e.monthIndex === idx
+                          (e) => parseInt(e.year || 2025, 10) === activeYear && e.monthIndex === idx
                         ).length;
                         return (
                           <option key={m} value={idx}>
@@ -1232,7 +1220,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           }`}
                         >
                           {/* Opsi 3: Cultural Burst 3D Out-of-Bounds Icon */}
-                          {cell.isCurrentMonth && hasEvents && (
+                          {hasEvents && (
                             <CulturalBurstIcon category={cellEvents[0]?.category} />
                           )}
 
@@ -1551,7 +1539,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     >
                       {/* Tanggal Bulat dengan Ikon Pop-out di Pundak Lingkaran */}
                       <div className="relative">
-                        {hasEvents && cell.isCurrentMonth && (
+                        {hasEvents && (
                           <CulturalBurstIcon category={cellEvents[0]?.category} isMobile={true} />
                         )}
                         <div
@@ -1876,12 +1864,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
                     {/* Top Tags: Official Certification Badges & AI Badge */}
                     <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
-                      {activeModalEvent.isKenEvent && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 text-xs font-extrabold border border-amber-300 shadow-lg">
-                          <Sparkles size={11} className="text-stone-950" />
-                          <span>Kharisma Event Nusantara (KEN)</span>
-                        </span>
-                      )}
                       {activeModalEvent.isCoE && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-xs font-semibold border border-emerald-400/40 shadow-md">
                           <CheckCircle2 size={11} className="text-emerald-200" />
@@ -2215,12 +2197,11 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
                 {/* ── STICKY FOOTER ACTIONS ROW ── */}
                 <div className="p-3.5 sm:p-4 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-2.5 shrink-0 z-30">
-                  {/* Left Action Buttons */}
+                  {/* Left Action Button: Salin Jadwal Sahaja */}
                   <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    {/* 1. Salin Jadwal Lengkap & Link */}
                     <button
                       type="button"
-onClick={() => handleCopySchedule(activeModalEvent)}
+                      onClick={() => handleCopySchedule(activeModalEvent)}
                       className={`py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-xl border text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs ${
                         copiedId === activeModalEvent.id
                           ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
@@ -2240,246 +2221,44 @@ onClick={() => handleCopySchedule(activeModalEvent)}
                         </>
                       )}
                     </button>
-
-                    {/* Tombol Share Acara (Fitur Teman) */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsShareModalOpen(true);
-                        setShareCopiedToast(false);
-                      }}
-                      className="py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs"
-                      title="Bagikan agenda acara ini ke media sosial"
-                    >
-                      <Share2 size={14} className="text-[#8c532b]" />
-                      <span>Share Acara</span>
-                    </button>
-
-                    {/* 2. Salin Link Saja */}
-                    <button
-                      type="button"
-                      onClick={() => handleCopyLinkOnly(activeModalEvent)}
-                      className={`py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl border text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs ${
-                        copiedLink
-                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-                          : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] border-[#E8DFC9] text-[#2d180c]'
-                      }`}
-                      title="Salin tautan URL langsung ke acara ini"
-                    >
-                      {copiedLink ? (
-                        <>
-                          <Check size={13} className="text-emerald-600" />
-                          <span className="text-emerald-700">Link Tersalin!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Share2 size={13} className="text-[#8c532b]" />
-                          <span>Link</span>
-                        </>
-                      )}
-                    </button>
-
-                    {/* 3. Share ke WhatsApp */}
-                    <a
-                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventShareText(activeModalEvent))}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#128C7E] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs no-underline"
-                      title="Kirim Jadwal Acara ke WhatsApp"
-                    >
-                      <svg className="w-3.5 h-3.5 fill-current text-[#25D366] shrink-0" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.077-1.785-.395-1.472-.603-2.42-2.102-2.493-2.199-.074-.096-.596-.793-.596-1.511 0-.719.378-1.073.513-1.22.135-.147.294-.184.393-.184.099 0 .198.001.284.005.09.004.211-.034.33.252.122.294.417 1.018.454 1.092.037.074.062.16.012.257-.049.098-.074.16-.148.245-.074.086-.156.192-.223.258-.074.074-.151.155-.065.303.086.148.384.633.824 1.025.567.505 1.045.661 1.193.735.148.074.234.062.32-.037.086-.098.37-.43.468-.577.099-.148.197-.123.332-.074.135.049.862.406 1.01.48.148.074.246.111.284.172.037.062.037.362-.107.767z"/>
-                      </svg>
-                      <span>WA</span>
-                    </a>
-
-                    {/* 4. Share ke Facebook */}
-                    <a
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventShareUrl(activeModalEvent))}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-[#1877F2] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs no-underline"
-                      title="Bagikan ke Facebook"
-                    >
-                      <svg className="w-3.5 h-3.5 fill-current text-[#1877F2] shrink-0" viewBox="0 0 24 24">
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                      </svg>
-                      <span>FB</span>
-                    </a>
-
-                    {/* 5. Bagikan Medsos / Instagram (Web Share API) */}
-                    <button
-                      type="button"
-                      onClick={() => handleShareNative(activeModalEvent)}
-                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-pink-400/30 text-[#C13584] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
-                      title="Bagikan ke Instagram / Media Sosial Lainnya"
-                    >
-                      <svg className="w-3.5 h-3.5 fill-current text-[#C13584] shrink-0" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                      </svg>
-                      <span>IG</span>
-                    </button>
-
-                    {/* 6. Simpan Google Calendar */}
-                    <a
-                      href={getGoogleCalendarUrl(activeModalEvent)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hidden sm:inline-flex py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold items-center gap-1.5 no-underline transition-all active:scale-95 shadow-2xs cursor-pointer"
-                      title="Tambahkan ke Google Calendar"
-                    >
-                      <CalendarPlus size={14} className="text-[#8c532b]" />
-                      <span>Kalender</span>
-                    </a>
                   </div>
 
-                  {/* Right Action Buttons */}
+                  {/* Right Action Buttons: Tutup & Tunjukkan Lokasi / Peringatan Adat */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      className="py-2.5 px-4 rounded-xl bg-white hover:bg-[#FAF6EE] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold cursor-pointer transition-all active:scale-95"
+                      className="py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer transition-colors"
                     >
                       Tutup
                     </button>
 
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${activeModalEvent.name} ${activeModalEvent.location} Yogyakarta`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#432311] text-white text-xs font-bold inline-flex items-center gap-1.5 no-underline shadow-xs transition-all active:scale-95 cursor-pointer"
-                    >
-                      <MapPin size={13} />
-                      <span>Buka Maps</span>
-                      <ExternalLink size={11} className="text-white/70" />
-                    </a>
+                    {activeModalEvent.isRestricted ? (
+                      <div
+                        className="py-2.5 px-4 rounded-xl bg-amber-950/10 border border-amber-800/30 text-amber-950 text-xs font-bold inline-flex items-center gap-2 select-none"
+                        title="Upacara sakral tertutup kasultanan"
+                      >
+                        <ShieldAlert size={15} className="text-amber-800 shrink-0" />
+                        <span>Tidak diperkenankan dikunjungi orang luar</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleCloseModal();
+                          if (onShowEventLocation) {
+                            onShowEventLocation(activeModalEvent);
+                          }
+                        }}
+                        className="py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#432311] text-white text-xs font-bold inline-flex items-center gap-1.5 no-underline shadow-xs transition-all active:scale-95 cursor-pointer"
+                        title="Tampilkan lokasi dan rute ke event ini di peta radar"
+                      >
+                        <MapPin size={14} className="text-amber-400" />
+                        <span>Tunjukkan Lokasi</span>
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                {/* ── POP-UP SHEET SHARE ACARA ── */}
-                <AnimatePresence>
-                  {isShareModalOpen && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.18 }}
-                      className="absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end"
-                      onClick={() => setIsShareModalOpen(false)}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 40 }}
-                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-t-[28px] border-t border-[#E8DFC9] p-5 sm:p-6 shadow-[0_-20px_50px_rgba(45,24,12,0.25)] space-y-4"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-outfit font-extrabold text-base text-[#2d180c] m-0">
-                              Bagikan Acara Budaya
-                            </h4>
-                            <p className="text-xs text-[#786154] m-0 mt-0.5">
-                              Ajak kerabat dan teman untuk menyaksikan tradisi sakral ini
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setIsShareModalOpen(false)}
-                            className="w-8 h-8 rounded-full bg-[#FAF6EE] hover:bg-[#EAE1D2] text-[#786154] hover:text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer"
-                          >
-                            <X size={15} />
-                          </button>
-                        </div>
-
-                        {/* 4 Social Platforms */}
-                        <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-                          {/* WhatsApp */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareWhatsApp(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#25D366]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.072-2.18-.544-1.9-1.282-3.125-3.23-3.22-3.359-.096-.13-.772-1.026-.772-1.956 0-.93.488-1.385.662-1.574.174-.189.379-.236.505-.236.127 0 .253.001.364.007.117.006.273-.044.426.326.158.384.538 1.313.585 1.409.048.096.08.208.016.335-.064.127-.096.206-.191.317-.096.111-.202.248-.288.333-.096.096-.196.2-.084.392.112.192.499.824 1.07 1.334.736.657 1.357.861 1.55.957.192.096.304.08.416-.048.112-.128.48-.559.608-.751.127-.192.255-.16.432-.096.176.064 1.116.526 1.308.622.192.096.32.144.367.224.048.08.048.464-.096.869z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">WhatsApp</span>
-                          </button>
-
-                          {/* X / Twitter */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareTwitter(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-black/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">X (Twitter)</span>
-                          </button>
-
-                          {/* Instagram */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareInstagram(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#d6249f]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#fdf497] via-[#fd5949] to-[#d6249f] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">Instagram</span>
-                          </button>
-
-                          {/* Salin Link */}
-                          <button
-                            type="button"
-                            onClick={() => handleCopyEventLink(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#8c532b]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-[#8c532b] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <Link2 size={19} />
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">Salin Link</span>
-                          </button>
-                        </div>
-
-                        {/* Copy Link Feedback & Preview */}
-                        <div className="p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9] flex items-center justify-between gap-3 text-xs">
-                          <span className="font-mono text-[11px] text-[#786154] truncate">
-                            {typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}#/kalender?event=${activeModalEvent.id}` : ''}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleCopyEventLink(activeModalEvent)}
-                            className="py-1.5 px-3 rounded-lg bg-[#2d180c] hover:bg-[#432311] text-white text-[11px] font-bold shrink-0 transition-all cursor-pointer"
-                          >
-                            {shareCopiedToast ? 'Tersalin!' : 'Salin'}
-                          </button>
-                        </div>
-
-                        {shareCopiedToast && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
-                          >
-                            <Check size={14} className="text-emerald-600" />
-                            <span>Tautan agenda berhasil disalin ke papan klip!</span>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </motion.div>
             </motion.div>
           )}

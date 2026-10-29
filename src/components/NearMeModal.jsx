@@ -24,7 +24,8 @@ import {
   Heart,
   Ticket,
   CheckCircle2,
-  CreditCard
+  CreditCard,
+  Calendar
 } from 'lucide-react';
 import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
@@ -153,7 +154,9 @@ export default function NearMeModal({
   userLiveAddress,
   gpsErrorMsg,
   onRefreshDeviceGps,
-  isGpsLoading
+  isGpsLoading,
+  eventTarget = null,
+  onClearEventTarget
 }) {
   const [selectedZoneId, setSelectedZoneId] = useState(
     autoDetectedZoneId || JOGJA_GPS_ZONES[0].id
@@ -222,6 +225,14 @@ export default function NearMeModal({
     }
   }, [isSidePanelOpen]);
 
+  useEffect(() => {
+    if (eventTarget) {
+      setSelectedCardId(eventTarget.id);
+      setShowGpsRequiredPrompt(false);
+      setIsSidePanelOpen(true);
+    }
+  }, [eventTarget]);
+
   // Sinkronisasi saat GPS mendeteksi wilayah terdekat di dalam D.I. Yogyakarta
   useEffect(() => {
     if (autoDetectedZoneId) {
@@ -274,13 +285,46 @@ export default function NearMeModal({
   }, [activeZone, currentReferenceCoord, hasUserGps, searchQuery, radiusLimitKm]);
 
   const activeItem = useMemo(() => {
+    if (eventTarget && selectedCardId === eventTarget.id) {
+      const origin = userLiveCoords || TITIK_NOL_YOGYAKARTA;
+      const distMeters = eventTarget.coordinates
+        ? getHaversineMeters(origin, eventTarget.coordinates)
+        : null;
+      return {
+        id: eventTarget.id,
+        name: eventTarget.name,
+        category: `Acara Budaya • ${eventTarget.category}`,
+        spotName: `${eventTarget.location}, ${eventTarget.district}`,
+        locationAddress: `${eventTarget.location}, ${eventTarget.district}, D.I. Yogyakarta`,
+        coordinates: eventTarget.coordinates,
+        image: eventTarget.image,
+        operatingHours: eventTarget.time,
+        priceRange: 'Sesuai Ketentuan Acara',
+        verdictLabel: 'Agenda Resmi CoE DIY',
+        realDistanceMeters: distMeters,
+        distanceLabel: hasUserGps
+          ? formatDistanceLabel(distMeters, 'dari Anda')
+          : formatDistanceLabel(distMeters, 'dari Titik Nol'),
+        description: eventTarget.description,
+        isCulturalEvent: true,
+        dateFull: eventTarget.dateFull,
+        shortTip: eventTarget.shortTip
+      };
+    }
     return activeZone.kulinerList.find((i) => i.id === selectedCardId) || null;
-  }, [activeZone, selectedCardId]);
+  }, [activeZone, selectedCardId, eventTarget, userLiveCoords, hasUserGps]);
 
   const activeNavTarget = useMemo(() => {
     if (!activeNavRouteId) return null;
+    if (eventTarget && activeNavRouteId === eventTarget.id) {
+      return {
+        id: eventTarget.id,
+        name: eventTarget.name,
+        coordinates: eventTarget.coordinates
+      };
+    }
     return activeZone.kulinerList.find((item) => item.id === activeNavRouteId) || null;
-  }, [activeNavRouteId, activeZone]);
+  }, [activeNavRouteId, activeZone, eventTarget]);
 
   const navDistMeters = useMemo(() => {
     if (!activeNavTarget || !activeNavTarget.coordinates) return null;
@@ -618,6 +662,45 @@ export default function NearMeModal({
       }).addTo(group);
     }
 
+    // Marker Khusus Acara Budaya (Event Target dari Kalender)
+    if (eventTarget && eventTarget.coordinates) {
+      const isSelected = activeItem && activeItem.id === eventTarget.id;
+      const eventMarkerHtml = `
+        <div style="display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-100%);cursor:pointer;filter:drop-shadow(0 8px 18px rgba(44,34,30,0.45));">
+          <div style="background:linear-gradient(135deg, #2d180c 0%, #432311 100%);color:#FDE047;padding:5px 12px;border-radius:999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid #F59E0B;margin-bottom:3px;display:flex;align-items:center;gap:6px;">
+            <span>👑</span>
+            <span>${eventTarget.name.slice(0, 24)}${eventTarget.name.length > 24 ? '...' : ''}</span>
+          </div>
+          <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 0C8.06 0 0 8.06 0 18C0 30.25 16.1 42.7 17.21 43.54C17.68 43.89 18.32 43.89 18.79 43.54C19.9 42.7 36 30.25 36 18C36 8.06 27.94 0 18 0Z" fill="#2d180c"/>
+            <circle cx="18" cy="18" r="8" fill="#F59E0B"/>
+            <circle cx="18" cy="18" r="4.5" fill="#FFFBEB"/>
+          </svg>
+        </div>
+      `;
+
+      const eventIcon = L.divIcon({
+        className: 'jogja-event-marker',
+        html: eventMarkerHtml,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0]
+      });
+
+      const eventMarker = L.marker([eventTarget.coordinates.lat, eventTarget.coordinates.lng], {
+        icon: eventIcon,
+        zIndexOffset: isSelected ? 1500 : 1200
+      });
+
+      eventMarker.on('click', () => {
+        setSelectedCardId(eventTarget.id);
+        setShowGpsRequiredPrompt(false);
+        setIsSidePanelOpen(true);
+        map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16.5, { duration: 0.65 });
+      });
+
+      group.addLayer(eventMarker);
+    }
+
     // 2. Marker Setiap Tempat Rekomendasi Kuliner (Pin Elegan Emas & Espresso)
     filteredItems.forEach((item) => {
       if (!item.coordinates) return;
@@ -689,6 +772,8 @@ export default function NearMeModal({
         16.5,
         { duration: 0.6 }
       );
+    } else if (eventTarget?.coordinates && !activeNavTarget) {
+      map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16, { duration: 0.7 });
     } else if (activeZone?.coordinates) {
       if (!initialCameraSetRef.current) {
         initialCameraSetRef.current = true;
@@ -710,7 +795,8 @@ export default function NearMeModal({
     searchQuery,
     radiusLimitKm,
     userLiveCoords,
-    userLiveAddress
+    userLiveAddress,
+    eventTarget
   ]);
 
   if (!isOpen) return null;
@@ -889,11 +975,12 @@ export default function NearMeModal({
                       onClick={() => {
                         setSelectedCardId(null);
                         setShowGpsRequiredPrompt(false);
+                        if (onClearEventTarget) onClearEventTarget();
                       }}
                       className="inline-flex items-center gap-2 text-xs font-bold text-[#8A5D26] hover:text-[#2C221E] bg-[#FAF5EC] hover:bg-[#EAE1D2] px-3 py-1.5 rounded-xl border border-[#E5DDD1] transition-all cursor-pointer"
                     >
                       <ArrowLeft size={14} />
-                      <span>Daftar Kuliner</span>
+                      <span>{activeItem.isCulturalEvent ? 'Buka Radar Kuliner' : 'Daftar Kuliner'}</span>
                     </button>
 
                     <button
@@ -940,6 +1027,14 @@ export default function NearMeModal({
                         <span>{activeItem.spotName}</span>
                       </p>
                     </div>
+
+                    {/* Tanggal Acara Budaya (Jika Event) */}
+                    {activeItem.dateFull && (
+                      <div className="p-3 rounded-xl bg-[#FAF5EC] border border-[#E8DFC9] flex items-center gap-2.5 text-xs text-[#2d180c]">
+                        <Calendar size={14} className="text-[#8c532b] shrink-0" />
+                        <span className="font-semibold">{activeItem.dateFull}</span>
+                      </div>
+                    )}
 
                     {/* 2x2 Meta Grid (Jarak, Jam Buka, Kisaran Harga, Kategori) */}
                     <div className="grid grid-cols-2 gap-2.5">

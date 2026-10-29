@@ -145,6 +145,15 @@ function NusantaraApp() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [quickViewLandmark, setQuickViewLandmark] = useState(null);
 
+  const handleShowEventLocation = (ev) => {
+    setIsKalenderAcaraOpen(false);
+    setIsKalenderPopupOpen(false);
+    setInitialEventId(null);
+    setEventMapTarget(ev);
+    setIsNearMeOpen(true);
+    window.location.hash = '#/kuliner';
+  };
+
   // Modals & Dedicated GPS Page States
   const [isNearMeOpen, setIsNearMeOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -158,6 +167,7 @@ function NusantaraApp() {
   const [isQuestBadgePageOpen, setIsQuestBadgePageOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
+  const [eventMapTarget, setEventMapTarget] = useState(null);
 
   // Deep-linking & Browser Back/Forward URL Routing Sync
   useEffect(() => {
@@ -361,6 +371,7 @@ function NusantaraApp() {
 
   // Close all modal/pages and sync URL back to home
   const handleCloseToHome = () => {
+    setEventMapTarget(null);
     window.location.hash = '#/home';
   };
 
@@ -962,8 +973,13 @@ function NusantaraApp() {
         {isNearMeOpen && (
           <NearMeModal
             isOpen={isNearMeOpen}
-            onClose={handleCloseToHome}
+            onClose={() => {
+              setEventMapTarget(null);
+              handleCloseToHome();
+            }}
             places={places}
+            eventTarget={eventMapTarget}
+            onClearEventTarget={() => setEventMapTarget(null)}
             onSelectPlace={(place) => { window.location.hash = `#/destinasi/${place.id}`; }}
             autoDetectedZoneId={autoDetectedZoneId}
             userLiveCoords={userLiveCoords}
@@ -1005,6 +1021,7 @@ function NusantaraApp() {
               handleCloseToHome();
             }}
             onPopupChange={setIsKalenderPopupOpen}
+            onShowEventLocation={handleShowEventLocation}
             onSelectPlace={(place) => {
               setIsKalenderPopupOpen(false);
               window.location.hash = `#/destinasi/${place.id}`;

@@ -1,6 +1,8 @@
-// Real, verified cultural events and curated cultural travel journals of D.I. Yogyakarta
-// Sources: Dinas Pariwisata Daerah Istimewa Yogyakarta (visitingjogja.jogjaprov.go.id),
-// Kharisma Event Nusantara (Kemenparekraf RI), & Keraton Ngayogyakarta Hadiningrat (kratonjogja.id)
+// =====================================================================
+// DATA AGENDA RESMI BUDAYA YOGYAKARTA (CALENDAR OF EVENTS 2025)
+// Kurasi 60 Event Unggulan 5 Kabupaten/Kota D.I. Yogyakarta
+// Sumber: Dinas Pariwisata DIY & Agenda Keraton Ngayogyakarta Hadiningrat
+// =====================================================================
 
 export const CULTURAL_EVENTS = [
   {
@@ -33,7 +35,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan rapi berkerah. Dilarang berbicara keras atau mondar-mandir selama alunan gending sakral sedang berlangsung.",
     "source": "Kawedanan Kridhamardawa Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pameran-parama-iswari",
@@ -65,7 +68,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang menggunakan blitz saat memotret kain antik. Tiket masuk museum sangat terjangkau.",
     "source": "Dinas Pariwisata DIY & Museum Sonobudoyo",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "gebyar-wisata-kaliurang",
@@ -97,7 +101,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang lebih awal sebelum pertunjukan dimulai. Tempat duduk terbuka di plaza taman.",
     "source": "Dinas Pariwisata Kabupaten Sleman",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "dhaup-ageng-pakualaman",
@@ -129,7 +134,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Patuhi barikade keamanan dan tata krama penghormatan kepada keluarga kerajaan.",
     "source": "Puro Pakualaman Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pentas-srimanganti-februari",
@@ -161,7 +167,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang mengenakan topi atau kacamata hitam di dalam bangsal keraton. Duduk tertib di karpet yang disediakan.",
     "source": "Kawedanan Kridhamardawa Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-jenang-mataram",
@@ -193,7 +200,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Membawa wadah makan guna ulang (tumbler/kotak makan) sangat disarankan untuk mendukung gerakan bebas sampah.",
     "source": "Dinas Kebudayaan Kota Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "labuhan-parangkusumo",
@@ -225,7 +233,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Patuhi batas garis aman pantai yang ditetapkan petugas SAR dan Abdi Dalem. Jangan mengenakan pakaian berwarna hijau gadung menyala di bibir pantai selatan.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "tingalan-jumenengan-dalem",
@@ -257,7 +266,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Hanya undangan khusus yang diperkenankan masuk ke Bangsal Kencana. Wisatawan dapat menyaksikan pameran dokumentasi di area Pagelaran.",
     "source": "Kraton Ngayogyakarta Hadiningrat",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pentas-srimanganti-maret",
@@ -289,7 +299,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan berkerah dan celana/rok panjang. Dilarang merokok dan membuat kegaduhan.",
     "source": "Kawedanan Kridhamardawa Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "kirab-bregada-kotagede",
@@ -321,7 +332,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Berikan ruang di kanan-kiri barisan prajurit. Jaga kebersihan kawasan cagar budaya pusaka Kotagede.",
     "source": "Dinas Kebudayaan (Kundha Kabudayan) Kota Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pameran-keris-senopaten",
@@ -353,7 +365,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang menyentuh bilah pusaka tanpa sarung tangan pemandu. Pengambilan foto tanpa lampu kilat diperbolehkan.",
     "source": "Museum Sonobudoyo D.I. Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "labuhan-merapi",
@@ -385,7 +398,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian lapangan dan sepatu trekking bertapak kuat. Bawa mantel hujan dan patuhi arahan Abdi Dalem Juru Kunci Merapi.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "wayang-kulit-semalam-suntuk",
@@ -417,7 +431,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang sebelum pukul 20.00 WIB untuk mendapatkan tempat duduk nyaman. Tiket masuk sangat terjangkau.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-dhaup-ageng",
@@ -449,7 +464,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang mulai pukul 16.00 WIB untuk menikmati suasana sore Tamansari sambil mencicipi hidangan.",
     "source": "Dinas Pariwisata DIY & Komunitas Kuliner Tradisi",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "grebeg-syawal",
@@ -481,7 +497,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang menerbangkan drone di atas kompleks Keraton. Berhati-hatilah saat warga berebut berkah gunungan.",
     "source": "Penghulu Widya Budaya & Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "sendratari-roro-jonggrang",
@@ -513,7 +530,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang pukul 18.30 WIB untuk menikmati suasana senja candi sebelum pintu panggung dibuka.",
     "source": "PT Taman Wisata Candi Borobudur Prambanan Ratu Boko",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "upacara-sadranan-wonokromo",
@@ -545,7 +563,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan dan tertutup saat memasuki area makam bersejarah.",
     "source": "Kundha Kabudayan Bantul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "upacara-melasti-parangkusumo",
@@ -577,7 +596,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Jaga jarak tenang dari barisan pandita yang memimpin doa. Patuhi imbauan batas ombak pantai.",
     "source": "PHDI D.I. Yogyakarta & Dinas Pariwisata DIY",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pentas-ketoprak-suryomentaram",
@@ -609,7 +629,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang tepat waktu. Dilarang menyalakan nada dering HP selama pertunjukan.",
     "source": "Taman Budaya Yogyakarta (TBY)",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pameran-kriya-kasongan",
@@ -641,7 +662,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Sangat cocok untuk keluarga dan anak-anak. Gunakan celemek saat mengikuti workshop tanah liat.",
     "source": "Koperasi Kriya Kasongan & Dispar Bantul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "gelar-desa-wisata-pentingsari",
@@ -673,7 +695,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Cobalah mencicipi jamu gendong dan tempe benguk khas pedesaan lereng Merapi.",
     "source": "Dinas Pariwisata Kabupaten Sleman",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "ramayana-ballet-prambanan",
@@ -705,7 +728,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Pesan tiket kelas Special atau VIP untuk mendapatkan sudut pandang tengah berlatar megah candi.",
     "source": "PT Taman Wisata Candi Borobudur Prambanan Ratu Boko",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "wayang-wong-srimanganti",
@@ -737,7 +761,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang menggunakan flash kamera saat pemotretan berlangsung.",
     "source": "Kawedanan Kridhamardawa Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pameran-seni-rupa-isi",
@@ -769,7 +794,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Tersedia diskusi seni (artist talk) pada sore hari bersama kurator.",
     "source": "Fakultas Seni Rupa Institut Seni Indonesia (ISI) Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-gejog-lesung-gunungkidul",
@@ -801,7 +827,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Tersedia kuliner tiwul dan gatot khas Gunungkidul di area bazar TBG.",
     "source": "Dinas Kebudayaan (Kundha Kabudayan) Kabupaten Gunungkidul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "grebeg-besar",
@@ -833,7 +860,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Hormati jalannya upacara adat. Dilarang menerobos barisan prajurit bregada saat aba-aba salvo dibunyikan.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "festival-pantai-glagah",
@@ -865,7 +893,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Bawa kacamata hitam dan nikmati ikan bakar segar di sekitar dermaga laguna.",
     "source": "Dinas Pariwisata Kabupaten Kulon Progo",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "peringatan-sumbu-filosofis",
@@ -897,7 +926,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Gunakan transportasi umum Trans Jogja atau berjalan kaki menikmati pedestrian Malioboro.",
     "source": "Sekretariat Bersama Sumbu Filosofis Dinas Kebudayaan DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "artjog",
@@ -929,7 +959,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang menyentuh karya seni tanpa izin kurator. Ruangan ber-AC dan ramah disabilitas.",
     "source": "Yayasan Hita Pranajiwa Mandaya & Dispar DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "pameran-patung-kotabaru",
@@ -961,7 +992,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Tersedia kafe dan kuliner legendaris Kotabaru di sepanjang jalan Suroto.",
     "source": "Dinas Kebudayaan Kota Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "rasulan-playen-gunungkidul",
@@ -993,7 +1025,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan dan nikmati keramahan tradisi gotong royong warga desa.",
     "source": "Kundha Kabudayan Gunungkidul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "tour-de-merapi-budaya",
@@ -1025,7 +1058,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Gunakan helm standar SNI dan patuhi rambu lalu lintas jalan perbukitan.",
     "source": "Dinas Pariwisata Kabupaten Sleman",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-angklung-kulonprogo",
@@ -1057,7 +1091,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Gunakan alas kaki antiselip untuk berjalan di jalur bebatuan mata air.",
     "source": "Dinas Pariwisata Kulon Progo & Ekowisata Mudal",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "tapa-bisu-1-suro",
@@ -1089,7 +1124,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan warna gelap atau batik tanpa alas kaki bagi yang sanggup. Jaga keheningan mutlak sepanjang rute.",
     "source": "Kraton Ngayogyakarta Hadiningrat",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "festival-jemparingan-alkid",
@@ -1121,7 +1157,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Peserta wajib berbusana adat Jawa peranakan/surjan rapi. Wisatawan dipersilakan menonton dari tepi lapangan.",
     "source": "Paguyuban Jemparingan Mataram & Dinas Kebudayaan DIY",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "jamasan-pusaka",
@@ -1153,7 +1190,9 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang berebut air bekas jamasan secara anarkis. Jaga ketertiban di area Museum Kereta.",
     "source": "Tepas Dwarapura & Kawedanan Widya Budaya Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": true,
+    "restrictedReason": "Ritual sakral tertutup Kasultanan — Tidak diperkenankan dikunjungi orang luar / umum."
   },
   {
     "id": "jogja-fashion-carnival",
@@ -1185,7 +1224,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang lebih awal dengan berjalan kaki. Jalan Malioboro ditutup untuk kendaraan bermotor selama karnaval.",
     "source": "Dinas Pariwisata Daerah Istimewa Yogyakarta",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "upacara-buka-cupu-panjala",
@@ -1217,7 +1257,9 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan pakaian sopan dan bersiap duduk berjam-jam di pelataran rumah adat. Hormati suasana khidmat.",
     "source": "Trah Keluarga Panjala & Kundha Kabudayan Gunungkidul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": true,
+    "restrictedReason": "Ritual sakral tertutup Kasultanan — Tidak diperkenankan dikunjungi orang luar / umum."
   },
   {
     "id": "bekakak-gamping",
@@ -1249,7 +1291,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang sebelum pukul 13.00 WIB untuk menghindari penutupan jalan utama Yogyakarta - Wates.",
     "source": "Dinas Pariwisata Sleman & Kalurahan Ambarketawang",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-teater-tby",
@@ -1281,7 +1324,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Hadir 30 menit sebelum pertunjukan dimulai. Pintu gedung ditutup saat pementasan berlangsung.",
     "source": "Taman Budaya Yogyakarta (TBY) & Dinas Kebudayaan DIY",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "tari-angguk-kolosal-kulonprogo",
@@ -1313,7 +1357,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Area alun-alun terbuka, gunakan payung atau topi pelindung terik matahari sore.",
     "source": "Dinas Pariwisata & Dinas Kebudayaan Kabupaten Kulon Progo",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-kebudayaan-yogyakarta",
@@ -1345,7 +1390,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Cek jadwal harian pentas FKY di booth informasi. Datang sore hari saat pasar kuliner mulai ramai.",
     "source": "Dinas Kebudayaan (Kundha Kabudayan) D.I. Yogyakarta",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "sekaten-grebeg-mulud",
@@ -1377,7 +1423,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Suasana di halaman Masjid Gedhe Kauman sangat padat. Simpan barang berharga di tas dada depan.",
     "source": "Kawedanan Widya Budaya & Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "siraman-tunggul-wulung",
@@ -1409,7 +1456,9 @@ export const CULTURAL_EVENTS = [
     "tips": "Ritual internal berlangsung di area inti keraton. Wisatawan dapat menyaksikan pameran sejarah pusaka di museum keraton.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": true,
+    "restrictedReason": "Ritual sakral tertutup Kasultanan — Tidak diperkenankan dikunjungi orang luar / umum."
   },
   {
     "id": "rebo-pungkasan",
@@ -1441,7 +1490,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Parkir kendaraan di kantong parkir resmi dekat lapangan desa untuk menghindari kemacetan.",
     "source": "Dinas Kebudayaan Kabupaten Bantul",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "jibb-batik-biennale",
@@ -1473,7 +1523,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kenakan busana batik terbaik Anda saat berkunjung untuk merayakan Hari Batik Nasional.",
     "source": "Dewan Kerajinan Nasional Daerah (Dekranasda) DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "wayang-jogja-night-carnival",
@@ -1505,7 +1556,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Kawasan Tugu ditutup total untuk kendaraan sejak pukul 16.00 WIB. Disarankan menggunakan transportasi umum.",
     "source": "Dinas Pariwisata Kota Yogyakarta & Kemenparekraf RI",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "pameran-temporer-keraton",
@@ -1537,7 +1589,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Dilarang memotret manuskrip kuno dengan lampu kilat. Jaga ketenangan di ruang pamer.",
     "source": "Kawedanan Tandha Yekti & Widya Budaya Kraton Jogja",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "kustomfest",
@@ -1569,7 +1622,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Gunakan pakaian kasual yang nyaman untuk berkeliling gedung pameran yang sangat luas.",
     "source": "Retro Classic Cycles & Dispar DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "sendratari-kiskendo",
@@ -1601,7 +1655,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Bawa pakaian santai dan jaket tipis. Pemandangan tebing karst Menoreh sangat fotogenik.",
     "source": "Dinas Pariwisata Kabupaten Kulon Progo",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "parade-bregada-keistimewaan",
@@ -1633,7 +1688,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Patuhi batas garis penonton. Suasana sangat meriah dan ramah untuk wisatawan.",
     "source": "Dinas Kebudayaan (Kundha Kabudayan) DIY",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "ngayogjazz",
@@ -1665,7 +1721,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Tidak ada biaya tiket masuk. Gunakan kantong parkir warga dan dukung ekonomi UMKM desa.",
     "source": "Komunitas Ngayogjazz & Dinas Pariwisata DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "jaff-film-festival",
@@ -1697,7 +1754,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang lebih awal sebelum penayangan film dimulai untuk menghindari antrean studio bioskop.",
     "source": "Yayasan JAFF & Kemenparekraf RI",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "biennale-jogja",
@@ -1729,7 +1787,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Pameran tersebar di beberapa venue satelit, gunakan sepeda atau ojek daring untuk mobilitas.",
     "source": "Yayasan Biennale Yogyakarta & Dinas Kebudayaan DIY",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   },
   {
     "id": "festival-langen-mandrawanara",
@@ -1761,7 +1820,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Pertunjukan membutuhkan keheningan agar vokal tembang terdengar jernih. Pintu terbuka bebas.",
     "source": "Kundha Kabudayan Bantul & Kawedanan Kridhamardawa",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "kirab-pusaka-tutup-tahun",
@@ -1793,7 +1853,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Patuhi batas garis aman jalan. Bersikap tenang dan santun saat barisan pusaka melintas.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "festival-waduk-sermo",
@@ -1825,7 +1886,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Wajib mengenakan pelampung keselamatan (life jacket) saat menaiki perahu wisata danau.",
     "source": "Dinas Pariwisata Kabupaten Kulon Progo",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "pameran-seni-bentara-budaya",
@@ -1857,7 +1919,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Tersedia katalog pameran dan perbincangan santai dengan seniman di pelataran pendopo.",
     "source": "Bentara Budaya Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "wayang-ruwatan-tutup-tahun",
@@ -1889,7 +1952,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Membawa alas duduk atau jaket tebal. Warung kuliner wedang ronde Alkid buka hingga dini hari.",
     "source": "Tepas Dwarapura Keraton Yogyakarta",
     "isCoE": true,
-    "isKenEvent": false
+    "isKenEvent": false,
+    "isRestricted": false
   },
   {
     "id": "swara-prambanan",
@@ -1921,7 +1985,8 @@ export const CULTURAL_EVENTS = [
     "tips": "Datang mulai sore hari untuk menghindari kemacetan Jalan Solo - Yogyakarta. Tersedia kantong parkir luas.",
     "source": "Dinas Pariwisata DIY & PT TWC Borobudur Prambanan Ratu Boko",
     "isCoE": true,
-    "isKenEvent": true
+    "isKenEvent": true,
+    "isRestricted": false
   }
 ];
 
