@@ -18,53 +18,6 @@ import {
 } from 'lucide-react';
 import Footer from './Footer';
 
-// =========================================================================
-// DATA: 5 FITUR UTAMA HAMEMAYU (Expanding Horizontal Louvers - Non-Card)
-// Visual must instantly communicate what the feature is before reading!
-// Set of 5 UNIQUE photos - NO REPETITION!
-// =========================================================================
-const HAMEMAYU_FEATURES_LOUVER = [
-  {
-    id: 'radar-kuliner',
-    badge: 'Radar Kuliner',
-    title: 'Radar Kuliner Terverifikasi & Tarif Transparan',
-    tagline: 'Transparansi daftar menu resmi: cita rasa otentik dengan kepastian harga wajar.',
-    image: '/assets/images/jogja_gudeg.jpg',
-    desc: 'Menghubungkan posisi GPS perangkat Anda dengan kurasi destinasi kuliner legendaris terdekat (radius 5–10 km). Dilengkapi informasi jarak presisi serta transparansi daftar harga menu resmi guna melindungi hak konsumen dan mewujudkan kenyamanan berwisata.'
-  },
-  {
-    id: 'kalender-kasultanan',
-    badge: 'Kalender Tradisi',
-    title: 'Kalender Upacara Adat Kasultanan',
-    tagline: 'Rujukan primer agenda Hajad Dalem & prosesi sakral Karaton Ngayogyakarta.',
-    image: '/assets/images/real_bregada_keraton.jpg',
-    desc: 'Sentralisasi jadwal resmi pelaksanaan upacara Grebeg, Sekaten, dan Labuhan dari Karaton Ngayogyakarta Hadiningrat. Menyajikan tanggal penanggalan Masehi, kalender Jawa Sultan Agungan, titik kumpul masyarakat, serta panduan tata susila saat menghadiri prosesi.'
-  },
-  {
-    id: 'peta-cagar',
-    badge: 'Peta Cagar Budaya',
-    title: 'Peta Interaktif 5 Wilayah Cagar Budaya DIY',
-    tagline: 'Eksplorasi spasial Kawasan Cagar Budaya & Warisan Dunia UNESCO.',
-    image: '/assets/images/jogja_prambanan.jpg',
-    desc: 'Peta digital interaktif berbasis koordinat presisi yang memetakan Kawasan Sumbu Filosofis UNESCO, kompleks percandian purbakala, pesanggrahan bersejarah, hingga bentang alam pesisir selatan dengan rute terintegrasi ke navigasi digital.'
-  },
-  {
-    id: 'jurnal-adab',
-    badge: 'Panduan Tata Krama',
-    title: 'Jurnal Tata Krama & Adab Busana Keraton',
-    tagline: 'Pedoman etika kesantunan bertamu & pemahaman motif batik larangan.',
-    image: '/assets/images/real_tari_srimanganti.jpg',
-    desc: 'Panduan tata busana kepatutan saat memasuki kawasan sakral keraton dan makam raja Mataram, pemahaman mendalam mengenai filosofi motif batik larangan kasultanan, serta pembekalan kosakata bahasa Jawa krama halus sehari-hari.'
-  },
-  {
-    id: 'paspor-budaya',
-    badge: 'Paspor Penjelajah',
-    title: 'Paspor Budaya & Lencana Penjelajah Tradisi',
-    tagline: 'Buku saku digital rekam jejak apresiasi warisan cagar budaya.',
-    image: '/assets/images/real_ramayana_stage.jpg',
-    desc: 'Buku saku digital interaktif untuk mendokumentasikan jejak penjelajahan situs cagar budaya Anda di Yogyakarta, mengapresiasi pencapaian melalui koleksi lencana tradisi, serta merencanakan rute eksplorasi budaya secara terstruktur.'
-  }
-];
 
 // =========================================================================
 // DATA: SUMBER DATA RESMI & VERIFIKASI (Verifiable Sources)
@@ -146,31 +99,6 @@ const OPTIMIZATION_TIPS = [
     image: '/assets/images/jogja_batik.jpg',
     visualDesc: 'Batik Tulis Tradisional',
     tip: 'Sebelum melangkah ke kawasan Keraton, Tamansari, atau makam raja-raja, luangkan waktu membaca Jurnal Adab untuk memastikan busana Anda memenuhi standar kepatutan dan tidak mengenakan motif batik larangan kasultanan.'
-  },
-  {
-    action: 'Manfaatkan Integrasi Navigasi Presisi Menuju Destinasi',
-    target: 'Peta Cagar',
-    image: '/assets/images/jogja_tugu.jpg',
-    visualDesc: 'Tugu Pal Putih',
-    tip: 'Setiap cagar budaya dan destinasi kuliner dilengkapi tombol terintegrasi ke Google Maps. Klik tombol tersebut untuk membuka panduan navigasi rute tercepat secara langsung dari posisi Anda.'
-  }
-];
-
-// =========================================================================
-// DATA: PRINSIP UTAMA HAMEMAYU (No numbers - pure typography & values)
-// =========================================================================
-const CORE_PRINCIPLES = [
-  {
-    title: 'Independensi Kurasi (Bebas Sponsor Komersial)',
-    desc: 'Hamemayu beroperasi secara independen tanpa menerima imbalan promosi berbayar, titipan sponsor terselubung, maupun ulasan komersial dari tempat usaha. Setiap rujukan murni didasarkan pada keaslian nilai historis, mutu sajian, dan kepuasan publik.'
-  },
-  {
-    title: 'Penghormatan terhadap Paugeran & Martabat Budaya',
-    desc: 'Seluruh materi informasi diselaraskan dengan paugeran Kasultanan Ngayogyakarta Hadiningrat, mengedepankan edukasi kepatutan dan rasa hormat terhadap ruang sakral tanpa mengeksploitasi tradisi sebagai komoditas semata.'
-  },
-  {
-    title: 'Integritas Informasi & Transparansi Data Publik',
-    desc: 'Kami menjunjung tinggi keakuratan data secara faktual: kepastian kisaran tarif menu resmi, jadwal prosesi adat yang terverifikasi, serta panduan praktis yang dapat dipertanggungjawabkan demi kenyamanan wisatawan dan keharmonisan masyarakat lokal.'
   }
 ];
 
@@ -183,15 +111,26 @@ export default function TentangKamiPage({
   onOpenJurnal,
   onOpenCultureBook
 }) {
-  const [activeFeatureIndex, setActiveFeatureIndex] = React.useState(0);
   const [activeSourceIndex, setActiveSourceIndex] = React.useState(0);
   const [activeTipIndex, setActiveTipIndex] = React.useState(0);
   const containerRef = useRef(null);
 
-  // Reset scroll when opened
+  // Reset scroll when opened & lock document body/html overflow to eliminate double scrollbar
   useEffect(() => {
-    if (isOpen && containerRef.current) {
-      containerRef.current.scrollTop = 0;
+    if (isOpen) {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = 0;
+      }
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      const prevBodyOverflow = document.body.style.overflow;
+
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.documentElement.style.overflow = prevHtmlOverflow;
+        document.body.style.overflow = prevBodyOverflow;
+      };
     }
   }, [isOpen]);
 
@@ -302,100 +241,6 @@ export default function TentangKamiPage({
           <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
             <button
               type="button"
-              onClick={() => scrollToSection('section-layanan')}
-              className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-500 hover:text-[#8c532b] transition-colors cursor-pointer py-1"
-            >
-              <span>Telusuri Layanan &amp; Fitur</span>
-              <ChevronDown size={14} className="animate-bounce" />
-            </button>
-          </div>
-        </section>
-
-        {/* =========================================================================
-            SECTION 2 (100VH): LAYANAN & FITUR UNGGULAN
-            Bilah Tirai Panorama (Expanding Louvers - NO NUMBERS, DISTINCT PHOTOS)
-            ========================================================================= */}
-        <section
-          id="section-layanan"
-          className="web-section-100vh min-h-screen w-full flex flex-col justify-between px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-6 box-border relative"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2.5">
-            <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8c532b] block">
-                Layanan Utama Platform
-              </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#1C1917] font-['Outfit'] m-0 mt-0.5">
-                Layanan &amp; Fitur Unggulan Hamemayu
-              </h3>
-            </div>
-            <p className="text-xs text-neutral-500 m-0">
-              Arahkan kursor atau pilih bilah instrumen untuk menelaah fungsi setiap layanan budaya.
-            </p>
-          </div>
-
-          {/* Panoramic Expanding Feature Louvers (NO NUMBERS ON COLLAPSED RIBBONS) */}
-          <div className="relative w-full flex-1 min-h-[320px] sm:h-[420px] rounded-3xl overflow-hidden border border-neutral-300 shadow-sm bg-neutral-900 flex flex-col md:flex-row my-3">
-            {HAMEMAYU_FEATURES_LOUVER.map((feature, index) => {
-              const isActive = activeFeatureIndex === index;
-
-              return (
-                <div
-                  key={feature.id}
-                  onClick={() => setActiveFeatureIndex(index)}
-                  onMouseEnter={() => setActiveFeatureIndex(index)}
-                  className={`relative cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] overflow-hidden border-b md:border-b-0 md:border-r border-white/15 last:border-none ${
-                    isActive
-                      ? 'md:flex-[4] flex-[3]'
-                      : 'md:flex-[1] flex-[1] hover:brightness-110'
-                  }`}
-                >
-                  <img
-                    src={feature.image}
-                    alt={feature.title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${
-                      isActive ? 'scale-100' : 'scale-110 brightness-75'
-                    }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/15 pointer-events-none" />
-
-                  {/* Collapsed Ribbon Tag (NO NUMBERS - JUST THE SERVICE TITLE) */}
-                  {!isActive && (
-                    <div className="absolute inset-0 flex md:flex-col items-center justify-center p-4 text-white z-10">
-                      <span className="md:-rotate-90 md:origin-center md:whitespace-nowrap text-xs font-bold font-['Outfit'] tracking-wider uppercase text-neutral-200">
-                        {feature.badge}
-                      </span>
-                    </div>
-                  )}
-
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.35 }}
-                        className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-end text-white z-20 pointer-events-none"
-                      >
-                        <div className="max-w-xl space-y-2">
-                          <h4 className="text-xl sm:text-3xl font-extrabold text-white font-['Outfit'] m-0 leading-tight">
-                            {feature.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed m-0 font-normal line-clamp-3 sm:line-clamp-none">
-                            {feature.desc}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
-            <button
-              type="button"
               onClick={() => scrollToSection('section-sumber-data')}
               className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-500 hover:text-[#8c532b] transition-colors cursor-pointer py-1"
             >
@@ -406,7 +251,7 @@ export default function TentangKamiPage({
         </section>
 
         {/* =========================================================================
-            SECTION 3 (100VH): DAPAT DATA DARI MANA SAJA?
+            SECTION 2 (100VH): DAPAT DATA DARI MANA SAJA?
             Dossier Sumber Data Sahih (Tamansari, Ratu Boko, Kotagede - NO NUMBERS)
             ========================================================================= */}
         <section
@@ -565,7 +410,6 @@ export default function TentangKamiPage({
                       : 'bg-white hover:bg-neutral-50 text-neutral-600 border-neutral-200/80'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-amber-300' : 'bg-neutral-300'}`} />
                   <span className="truncate">{tip.target}</span>
                 </button>
               );
@@ -637,64 +481,13 @@ export default function TentangKamiPage({
               </div>
             </div>
           </div>
-
-          {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
-            <button
-              type="button"
-              onClick={() => scrollToSection('section-prinsip')}
-              className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-neutral-500 hover:text-[#8c532b] transition-colors cursor-pointer py-1"
-            >
-              <span>Telusuri Prinsip &amp; Akses Layanan</span>
-              <ChevronDown size={14} className="animate-bounce" />
-            </button>
-          </div>
+
         </section>
+
 
-        {/* =========================================================================
-            SECTION 5 (100VH): TIGA PRINSIP POKOK & AKSES LANGSUNG LAYANAN
-            NO NUMBERS - Clean typography, icons, and CTA access buttons
-            ========================================================================= */}
-        <section
-          id="section-prinsip"
-          className="w-full flex flex-col px-4 sm:px-8 max-w-7xl mx-auto pt-16 pb-8 sm:pb-10 box-border relative"
-        >
-          <div className="text-center max-w-2xl mx-auto space-y-1 mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8c532b] block">
-              Prinsip &amp; Komitmen Integritas
-            </span>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-[#1C1917] font-['Outfit'] m-0">
-              Piagam Komitmen Layanan Hamemayu
-            </h3>
-            <p className="text-xs text-neutral-600 leading-relaxed m-0">
-              Komitmen etika yang senantiasa kami junjung tinggi dalam menyajikan informasi kebudayaan dan cagar sejarah.
-            </p>
-          </div>
-
-          {/* VARIATIVE COMPONENT: Triad Manifesto Charter (Continuous with Hairline Dividers - No repetitive white card boxes!) */}
-          <div className="rounded-2xl bg-white border border-neutral-200 shadow-2xs p-5 sm:p-6 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-neutral-200/90 gap-4 md:gap-0 my-2">
-            {CORE_PRINCIPLES.map((pr) => (
-              <div
-                key={pr.title}
-                className="md:px-5 first:pl-0 last:pr-0 space-y-2 pt-2 md:pt-0"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-[#FAF6EE] text-[#8c532b] flex items-center justify-center shrink-0 border border-[#E8DFC9]">
-                    <ShieldCheck size={14} />
-                  </div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#1C1917] font-['Outfit'] m-0 leading-snug">
-                    {pr.title}
-                  </h4>
-                </div>
-                <p className="text-[11px] sm:text-xs text-neutral-600 leading-relaxed m-0 font-normal">
-                  {pr.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* VARIATIVE COMPONENT: Executive Floating Action Launch Dock */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6EE] border border-[#E8DFC9] flex flex-col lg:flex-row items-center justify-between gap-4 mt-2">
+        {/* ACTION LAUNCH DOCK (Tanpa Tombol Peta Cagar Budaya) */}
+        <div className="w-full px-4 sm:px-8 max-w-7xl mx-auto my-6 box-border">
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6EE] border border-[#E8DFC9] flex flex-col lg:flex-row items-center justify-between gap-4">
             <div className="space-y-0.5 text-center lg:text-left">
               <span className="text-[10px] font-bold text-[#8c532b] uppercase tracking-wider block">
                 Jelajahi Yogyakarta Bersama Hamemayu
@@ -733,20 +526,6 @@ export default function TentangKamiPage({
                 </button>
               )}
 
-              {onOpenMap && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onOpenMap();
-                  }}
-                  className="py-2 px-3.5 rounded-full bg-white hover:bg-neutral-100 border border-neutral-300 text-neutral-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-                >
-                  <MapPin size={13} className="text-[#8c532b]" />
-                  <span>Peta Cagar Budaya</span>
-                </button>
-              )}
-
               {onOpenJurnal && (
                 <button
                   type="button"
@@ -762,7 +541,7 @@ export default function TentangKamiPage({
               )}
             </div>
           </div>
-        </section>
+        </div>
 
         {/* =========================================================================
             SECTION 6: INSTITUTIONAL FOOTER (AS REQUESTED: "TAMBAH FOOTER JUGA")

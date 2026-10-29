@@ -97,7 +97,7 @@ export default function InstagramStories() {
     >
       {/* SECTION HEADER */}
       <div className="text-center max-w-4xl mx-auto px-6 mb-2 sm:mb-3 relative z-20 pointer-events-none">
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#2b1e16] leading-tight tracking-tight mb-3">
+                <h2 className="font-['Outfit'] text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2b1e16] leading-tight tracking-tight mb-3">
           Potret Keindahan Budaya, Alam &<br className="hidden sm:block" /> Kuliner Asli Yogyakarta
         </h2>
 

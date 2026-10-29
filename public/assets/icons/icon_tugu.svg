@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+  <!-- Peak Sphere (Bola Emas) -->
+  <circle cx="12" cy="2" r="1.2"/>
+  
+  <!-- Tapering Cone / Spire Point -->
+  <path d="M11.3 3.5h1.4l.6 3.5h-2.6z"/>
+  
+  <!-- Ring Collar -->
+  <rect x="10.2" y="7" width="3.6" height="1" rx="0.3"/>
+  
+  <!-- Main Shaft (Badan Tugu) -->
+  <path d="M10.6 8.3h2.8l.5 6.2h-3.8z"/>
+  
+  <!-- Middle Cornice Pedestal -->
+  <rect x="9.5" y="14.8" width="5" height="1.4" rx="0.3"/>
+  <path d="M9 16.4h6l.6 2.8H8.4z"/>
+  
+  <!-- Base Pedestal (Umpak) -->
+  <rect x="7.5" y="19.4" width="9" height="1.4" rx="0.3"/>
+  <rect x="5.5" y="21" width="13" height="1.6" rx="0.4"/>
+</svg>

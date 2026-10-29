@@ -556,9 +556,12 @@ function NusantaraApp() {
   // Lock body & html scroll when any full-screen overlay or modal is active to eliminate double scrollbars
   const isAnyOverlayActive = Boolean(
     isKalenderAcaraOpen ||
+    isKalenderPopupOpen ||
     isNearMeOpen ||
     selectedPlace ||
     isJurnalBudayaOpen ||
+    isAboutPageOpen ||
+    isQuestBadgePageOpen ||
     isCultureBookOpen ||
     isAdminOpen ||
     isGlobalShareOpen ||

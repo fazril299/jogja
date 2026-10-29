@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetail }) {
@@ -7,55 +7,38 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
     {
       id: 'prambanan-ratuboko',
       title: 'Prambanan & Ratu Boko',
+      badge: 'Prambanan & Ratu Boko',
       subtitle: 'Sleman • Candi & Senja Bukit Boko',
-      summary: 'Kemegahan candi Hindu abad ke-9 & panorama senja bukit',
+      summary: 'Kemegahan candi Hindu abad ke-9 & panorama senja bukit Mataram Kuno.',
       image: '/assets/images/jogja_prambanan.jpg'
     },
     {
       id: 'wijilan-prawirotaman',
       title: 'Kuliner Wijilan & Jejeran',
-      subtitle: 'Gudeg Kayu Bakar & Sate Klathak',
-      summary: 'Gudeg resep pusaka kayu bakar & sate klathak otentik',
+      badge: 'Kuliner Wijilan & Jejeran',
+      subtitle: 'Kota Yogyakarta • Gudeg Pusaka & Sate Klathak',
+      summary: 'Gudeg resep pusaka kuali tanah liat & sate klathak otentik dengan kepastian tarif.',
       image: '/assets/images/jogja_gudeg.jpg'
     },
     {
       id: 'kasongan-imogiri',
       title: 'Kasongan, Giriloyo & Imogiri',
+      badge: 'Kasongan & Imogiri',
       subtitle: 'Bantul • Gerabah & Batik Tulis',
-      summary: 'Sentra kerajinan gerabah tanah liat & batik tulis warisan leluhur',
+      summary: 'Sentra kerajinan gerabah tanah liat & batik tulis warisan leluhur Yogyakarta.',
       image: '/assets/images/jogja_batik.jpg'
     },
     {
       id: 'parangtritis-gunungkidul',
       title: 'Parangtritis & Gunungkidul',
-      subtitle: 'Gumuk Pasir & Geopark Karst',
-      summary: 'Fenomena gumuk pasir langka & gugusan tebing karang samudra',
+      badge: 'Parangtritis & Geopark',
+      subtitle: 'Gunungkidul • Gumuk Pasir & Geopark',
+      summary: 'Fenomena gumuk pasir langka & gugusan tebing karang samudra pesisir selatan.',
       image: '/assets/images/jogja_parangtritis.jpg'
     }
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef(null);
-
-  const handleScroll = (e) => {
-    const el = e.currentTarget;
-    const scrollLeft = el.scrollLeft;
-    const cardWidth = 270;
-    const newIdx = Math.round(scrollLeft / (cardWidth + 14));
-    if (newIdx !== activeIndex && newIdx >= 0 && newIdx < packages.length) {
-      setActiveIndex(newIdx);
-    }
-  };
-
-  const scrollToCard = (index) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        left: index * (270 + 14),
-        behavior: 'smooth'
-      });
-      setActiveIndex(index);
-    }
-  };
 
   const handleCardClick = (pkg) => {
     if (onOpenTourDetail) {
@@ -66,157 +49,104 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
   };
 
   return (
-    <section id={id || "packages"} className="handcrafted-section web-section-100vh border-b border-[#D9CEBA]/60 bg-[#FAF6EE]">
-      
-      {/* ========================================================
-          MOBILE VIEW (block lg:hidden): Opsi 1 - Horizontal Cinematic Reel
-          Bersih tanpa badge mengambang, pas 1 layar, dengan gap bawah yang lega
-          ======================================================== */}
-      <div className="block lg:hidden w-full max-w-[440px] mx-auto pt-2 pb-6">
-        
-        {/* Section Header (Bersih tanpa eyebrow 4 Rute) */}
-        <div className="px-4 mb-3.5">
-          <h2 className="font-outfit text-2xl font-bold text-[#2d180c] leading-tight m-0 mb-1">
-            Destinasi Pilihan
-          </h2>
-          <p className="text-xs text-[#7A6B58] font-medium m-0">
-            Ekspedisi budaya, kuliner pusaka, kriya & pesisir Jogja
+    <section
+      id={id || 'packages'}
+      className="web-section-100vh border-b border-[#D9CEBA]/60 bg-[#FAF6EE] flex flex-col justify-center px-4 sm:px-8 py-10 sm:py-14 box-border relative"
+    >
+      <div className="max-w-7xl mx-auto w-full flex flex-col justify-between h-full">
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4 sm:mb-6">
+          <div>
+            <h2 className="font-['Outfit'] text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0">
+              Destinasi Pilihan Yogyakarta
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#2D180C]/70 m-0 max-w-md sm:text-right leading-relaxed">
+            Arahkan kursor atau pilih bilah instrumen untuk menelaah destinasi budaya unggulan.
           </p>
         </div>
 
-        {/* Horizontal Swipe Track (Foto bersih tanpa chip badge di atas) */}
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className="flex gap-3.5 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar px-4 pb-2 pt-1"
-          style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {packages.map((pkg) => (
-            <motion.div
-              key={pkg.id}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleCardClick(pkg)}
-              className="w-[270px] shrink-0 h-[310px] rounded-[24px] overflow-hidden relative shadow-[0_12px_28px_rgba(45,24,12,0.16)] border border-black/10 bg-neutral-900 snap-center cursor-pointer select-none group"
-            >
-              {/* Full-bleed Photo */}
-              <img
-                src={pkg.image}
-                alt={pkg.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+        {/* Panoramic Expanding Destination Louvers (Tirai Akordion Foto 1 - Sesuai Tema Foto 2) */}
+        <div className="relative w-full flex-1 min-h-[400px] sm:min-h-[460px] lg:h-[480px] rounded-3xl overflow-hidden border border-[#D9CEBA] shadow-lg bg-neutral-900 flex flex-col md:flex-row my-2">
+          {packages.map((pkg, index) => {
+            const isActive = activeIndex === index;
 
-              {/* Atmospheric Gradient Vignette (Non-Flat) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#140b06] via-[#140b06]/40 to-transparent z-[2]" />
-
-              {/* Bottom Content Overlay */}
-              <div className="absolute bottom-3.5 inset-x-3.5 z-[3] text-left text-white">
-                <h3 className="font-outfit text-lg font-bold text-amber-50 leading-tight mb-1 drop-shadow-md">
-                  {pkg.title}
-                </h3>
-                <p className="text-[11px] text-white/80 line-clamp-2 leading-relaxed mb-2 font-normal">
-                  {pkg.summary}
-                </p>
-                <div className="flex items-center justify-between pt-2 border-t border-white/15 text-[11px] text-amber-200 font-semibold">
-                  <span>Buka Panduan Budaya</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-amber-300" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Swipe Pagination Dots & Hint */}
-        <div className="flex items-center justify-between px-4 mt-3.5 pt-2 border-t border-[#E8DFC9]/70">
-          <div className="flex items-center gap-1.5">
-            {packages.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => scrollToCard(i)}
-                aria-label={`Lihat rute ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  activeIndex === i ? 'w-6 bg-[#8c532b]' : 'w-1.5 bg-[#D9CEBA]'
+            return (
+              <div
+                key={pkg.id}
+                onClick={() => setActiveIndex(index)}
+                onMouseEnter={() => setActiveIndex(index)}
+                className={`relative cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] overflow-hidden border-b md:border-b-0 md:border-r border-white/20 last:border-none ${
+                  isActive
+                    ? 'md:flex-[4] lg:flex-[5] flex-[3]'
+                    : 'md:flex-[1] flex-[1] hover:brightness-110'
                 }`}
-              />
-            ))}
-          </div>
-          <span className="text-[10px] font-medium text-[#7A6B58] flex items-center gap-1">
-            <span>Geser untuk rute lain</span>
-            <span>→</span>
-          </span>
-        </div>
-      </div>
-
-      {/* ========================================================
-          DESKTOP VIEW (hidden lg:block): 100% Desktop Asli Terjaga
-          ======================================================== */}
-      <div className="hidden lg:flex flex-col handcrafted-container">
-        {/* SECTION HEADER */}
-        <div className="handcrafted-header">
-          {/* Sub-badge line mountain icon */}
-          <motion.div 
-            initial={{ opacity: 0, y: -15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="handcrafted-eyebrow"
-          >
-            <img 
-              src="/assets/icons/icon_culinary.svg"
-              alt="Ikon katalog destinasi dan kuliner" 
-              style={{ height: '26px', width: '26px', objectFit: 'contain', opacity: 0.85 }}
-            />
-            Katalog Wilayah & Kuliner DIY
-          </motion.div>
-
-          {/* Headline */}
-          <h2 className="handcrafted-title">
-            Destinasi Pilihan Yogyakarta
-          </h2>
-        </div>
-
-        {/* 4 TOUR CARDS GRID */}
-        <div className="handcrafted-grid">
-          {packages.map((pkg, idx) => (
-            <motion.button
-              key={pkg.id}
-              type="button"
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              whileHover={{ y: -4, transition: { duration: 0.16, ease: 'easeOut' } }}
-              className="handcrafted-card"
-              onClick={() => handleCardClick(pkg)}
-            >
-              {/* Card Photo Container */}
-              <div className="handcrafted-card-image">
-                <img 
-                  src={pkg.image} 
-                  alt={pkg.title} 
+              >
+                {/* Destination Photo */}
+                <img
+                  src={pkg.image}
+                  alt={pkg.title}
+                  className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${
+                    isActive ? 'scale-100' : 'scale-110 brightness-75'
+                  }`}
                 />
-              </div>
 
-              {/* Card Info Below Photo */}
-              <div className="handcrafted-card-info">
-                <div className="handcrafted-card-location">
-                  {pkg.subtitle}
-                </div>
-                <h3 className="handcrafted-card-title">
-                  {pkg.title}
-                </h3>
-              </div>
-            </motion.button>
-          ))}
-        </div>
+                {/* Atmospheric Vignette Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/15 pointer-events-none" />
 
-        {/* BOTTOM ROW (Informational guidance note) */}
-        <div className="handcrafted-footer">
-          <span className="handcrafted-footer-copy">
-            Pilih salah satu destinasi di atas untuk menyingkap cerita budaya, sejarah, dan panduan lengkapnya.
-          </span>
+                {/* Collapsed Ribbon Tag (Vertikal saat panel tertutup) */}
+                {!isActive && (
+                  <div className="absolute inset-0 flex md:flex-col items-center justify-center p-4 text-white z-10 pointer-events-none">
+                    <span className="md:-rotate-90 md:origin-center md:whitespace-nowrap text-xs sm:text-sm font-bold font-['Outfit'] tracking-wider uppercase text-neutral-200 drop-shadow-md">
+                      {pkg.badge}
+                    </span>
+                  </div>
+                )}
+
+                {/* Active Expanded Content (Panel Terbuka Lebar) */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35 }}
+                      className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-end text-white z-20 pointer-events-none"
+                    >
+                      <div className="max-w-xl space-y-2.5">
+                        {/* Title (Font Outfit Extrabold) */}
+                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-['Outfit'] m-0 leading-tight drop-shadow-md">
+                          {pkg.title}
+                        </h3>
+
+                        {/* Summary */}
+                        <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed m-0 font-normal line-clamp-3 sm:line-clamp-none">
+                          {pkg.summary}
+                        </p>
+
+                        {/* Interactive Action Button */}
+                        <div className="pt-2 pointer-events-auto">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCardClick(pkg);
+                            }}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-neutral-100 text-[#2D180C] text-xs sm:text-sm font-bold transition-all duration-200 shadow-md active:scale-95 cursor-pointer group/btn"
+                          >
+                            <span>Buka Panduan Budaya</span>
+                            <ArrowRight size={14} className="text-[#8c532b] transition-transform group-hover/btn:translate-x-0.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </div>
-
     </section>
   );
 }

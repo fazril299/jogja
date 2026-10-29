@@ -53,10 +53,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
       bgImage: '/assets/images/jogja_malioboro.jpg',
       imagePosition: 'center 50%',
-      cardBg: '#F0C254', // Emas Bros Keraton & Pin Tugu Si Jojo
+      cardBg: '#FFFFFF', // Putih Bersih
       textColor: '#2D180C',
       accentColor: '#2D180C',
-      iconSrc: '/assets/icons/icon_soul.svg', // Ikon Sayap Denyut Jiwa Jogja Asli Pengguna
+      iconSrc: '/assets/icons/icon_tugu.svg', // Ikon Tugu Pal Putih Yogyakarta
       onClick: onOpenSwissDetail
     },
     {
@@ -69,9 +69,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
       bgImage: '/assets/images/jogja_kotagede.jpg',
       imagePosition: 'center 72%',
-      cardBg: '#D5C4B4', // Perak Antik Kotagede & Kamera Vintage Jojo
-      textColor: '#22150A',
-      accentColor: '#22150A',
+      cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
+      textColor: '#2D180C',
+      accentColor: '#2D180C',
       iconSrc: '/assets/icons/icon_culture.svg', // Ikon Pusaka Budaya Asli Pengguna
       onClick: onOpenParisDetail
     },
@@ -85,10 +85,10 @@ export default function MostLovedDestinations({
       cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
       bgImage: '/assets/images/jogja_prambanan.jpg',
       imagePosition: 'center 40%',
-      cardBg: '#DE7445', // Oranye Paruh Ramah Si Jojo & Senja Ratu Boko
-      textColor: '#FFFFFF',
-      accentColor: '#FFFFFF',
-      iconSrc: '/assets/icons/icon_culture.svg', // Ikon Cagar Budaya Asli Pengguna
+      cardBg: '#FFFFFF', // Putih Bersih
+      textColor: '#2D180C',
+      accentColor: '#2D180C',
+      iconSrc: '/assets/icons/icon_candi.svg', // Ikon Candi Prambanan Mataram Kuno
       onClick: onOpenPrambananDetail || (() => onSelectPlaceById && onSelectPlaceById('prambanan-ratuboko'))
     },
     {
@@ -101,9 +101,9 @@ export default function MostLovedDestinations({
       cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
       bgImage: '/assets/images/jogja_merapi.jpg',
       imagePosition: 'center 38%',
-      cardBg: '#4A2B18', // Cokelat Tua Lurik & Gagang Keris Si Jojo (Bukan Hijau)
-      textColor: '#FFFFFF',
-      accentColor: '#FFFFFF',
+      cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
+      textColor: '#2D180C',
+      accentColor: '#2D180C',
       iconSrc: '/assets/icons/icon_nature.svg', // Ikon Bentang Alam Asli Pengguna
       onClick: onOpenNYDetail
     }
@@ -288,7 +288,7 @@ export default function MostLovedDestinations({
                     WebkitTransform: 'translateZ(0)'
                   }}
                   className={`w-[180px] sm:w-[235px] md:w-[270px] h-[260px] sm:h-[335px] md:h-[385px] rounded-[22px] sm:rounded-[26px] md:rounded-[30px] p-3 sm:p-4 md:p-5 flex flex-col justify-between select-none cursor-pointer border ${
-                    isFront ? 'border-white/40 ring-2 ring-black/10' : 'border-black/10'
+                    isFront ? 'border-[#8c532b]/30 ring-2 ring-[#8c532b]/20' : 'border-[#2D180C]/10'
                   } transition-shadow duration-300`}
                   title={dest.title}
                 >
