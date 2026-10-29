@@ -703,55 +703,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
         >
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            {isItemPaid(activeMapPlace.id) ? (
-              <button
-                type="button"
-                onClick={() => {
-                  const t = getPaidTicketByItemId(activeMapPlace.id);
-                  if (t) setSelectedTicketToView(t);
-                }}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  backgroundColor: '#16A34A',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '999px',
-                  padding: '0.55rem 1.15rem',
-                  fontSize: '0.8rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)'
-                }}
-              >
-                <CheckCircle2 size={15} />
-                <span>E-Tiket Aktif</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => initiatePayment(activeMapPlace)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  backgroundColor: '#C99B52',
-                  color: '#1A1412',
-                  border: 'none',
-                  borderRadius: '999px',
-                  padding: '0.55rem 1.15rem',
-                  fontSize: '0.8rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(201, 155, 82, 0.4)'
-                }}
-              >
-                <Ticket size={15} />
-                <span>Beli Tiket (Rp {parseItemPrice(activeMapPlace).toLocaleString('id-ID')})</span>
-              </button>
-            )}
-
             <button
               type="button"
               onClick={onBack}
