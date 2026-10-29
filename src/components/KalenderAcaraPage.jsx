@@ -140,52 +140,58 @@ const LOCATIONS_LIST = [
 ];
 
 // Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
-function CulturalBurstIcon({ category }) {
+function CulturalBurstIcon({ category, isMobile = false }) {
+  const gradId = React.useId().replace(/:/g, '');
+  const sizeClasses = isMobile
+    ? "w-6 h-8 absolute -top-3.5 -right-2 rotate-12 pointer-events-none z-30 drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]"
+    : "w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300";
+
   if (category === 'Pertunjukan Seni') {
     return (
       <svg
         viewBox="0 0 100 130"
-        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(146,64,14,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        className={sizeClasses}
         fill="none"
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="crestGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`crest-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FDE047" />
-            <stop offset="50%" stopColor="#D97706" />
+            <stop offset="35%" stopColor="#F59E0B" />
+            <stop offset="70%" stopColor="#B45309" />
             <stop offset="100%" stopColor="#78350F" />
           </linearGradient>
         </defs>
         <path
           d="M50 8 C24 8, 8 28, 12 60 C16 88, 35 118, 50 124 C65 118, 84 88, 88 60 C92 28, 76 8, 50 8 Z"
-          fill="url(#crestGoldGrad)"
+          fill={`url(#crest-${gradId})`}
           stroke="#FFFFFF"
-          strokeWidth="2.5"
+          strokeWidth="3"
         />
         <path
           d="M28 46 C35 50, 44 50, 48 46 M52 46 C56 50, 65 50, 72 46"
           stroke="#FEF3C7"
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
         />
         <path
           d="M50 52 L50 78 L42 86 L58 86"
           stroke="#FEF3C7"
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M36 98 C44 102, 56 102, 64 98"
           stroke="#FEF3C7"
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
         />
         <path
           d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28"
           fill="#FDE047"
           stroke="#92400E"
-          strokeWidth="1.8"
+          strokeWidth="2"
         />
       </svg>
     );
@@ -195,12 +201,12 @@ function CulturalBurstIcon({ category }) {
     return (
       <svg
         viewBox="0 0 100 140"
-        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.45)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        className={sizeClasses}
         fill="none"
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="gununganGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`gunungan-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FEF08A" />
             <stop offset="25%" stopColor="#F59E0B" />
             <stop offset="65%" stopColor="#B45309" />
@@ -209,24 +215,24 @@ function CulturalBurstIcon({ category }) {
         </defs>
         <path
           d="M50 4 C36 28, 12 56, 5 90 C-2 110, 6 135, 50 137 C94 135, 102 110, 95 90 C88 56, 64 28, 50 4 Z"
-          fill="url(#gununganGoldGrad)"
+          fill={`url(#gunungan-${gradId})`}
           stroke="#FFFFFF"
-          strokeWidth="2.5"
+          strokeWidth="3"
         />
         <path
           d="M50 18 L50 120"
           stroke="#FFFFFF"
-          strokeOpacity="0.85"
-          strokeWidth="3"
+          strokeOpacity="0.9"
+          strokeWidth="3.5"
           strokeLinecap="round"
         />
         <path
           d="M26 68 C40 82, 60 82, 74 68 M20 96 C40 110, 60 110, 80 96 M14 120 C34 132, 66 132, 86 120"
           stroke="#FEF3C7"
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
         />
-        <circle cx="50" cy="45" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+        <circle cx="50" cy="45" r="7.5" fill="#FEF3C7" stroke="#B45309" strokeWidth="2" />
       </svg>
     );
   }
@@ -235,12 +241,12 @@ function CulturalBurstIcon({ category }) {
   return (
     <svg
       viewBox="0 0 100 130"
-      className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+      className={sizeClasses}
       fill="none"
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="crestPusakaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={`pusaka-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#FEF08A" />
           <stop offset="35%" stopColor="#F59E0B" />
           <stop offset="70%" stopColor="#B45309" />
@@ -249,17 +255,17 @@ function CulturalBurstIcon({ category }) {
       </defs>
       <path
         d="M50 6 C28 10, 14 34, 18 64 C22 92, 40 118, 50 124 C60 118, 78 92, 82 64 C86 34, 72 10, 50 6 Z"
-        fill="url(#crestPusakaGrad)"
+        fill={`url(#pusaka-${gradId})`}
         stroke="#FFFFFF"
-        strokeWidth="2.5"
+        strokeWidth="3"
       />
       <path
         d="M50 20 L50 115 M32 60 L68 60 M28 82 L72 82"
         stroke="#FEF3C7"
-        strokeWidth="2.5"
+        strokeWidth="3"
         strokeLinecap="round"
       />
-      <circle cx="50" cy="40" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+      <circle cx="50" cy="40" r="7.5" fill="#FEF3C7" stroke="#B45309" strokeWidth="2" />
     </svg>
   );
 }
@@ -1243,13 +1249,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                               <span className="w-5 h-5 rounded-full bg-[#8c532b] text-white text-[11px] font-bold flex items-center justify-center shadow-xs shrink-0">
                                 {cell.day}
                               </span>
+                            ) : hasEvents && cell.isCurrentMonth ? (
+                              <span className="w-5 h-5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B]/70 text-[11px] font-bold flex items-center justify-center shadow-2xs shrink-0">
+                                {cell.day}
+                              </span>
                             ) : (
                               <span
                                 className={`text-xs font-semibold shrink-0 ${
                                   !cell.isCurrentMonth
                                     ? 'text-neutral-300'
-                                    : hasEvents
-                                    ? 'text-[#2d180c] font-bold'
                                     : 'text-[#2d180c]'
                                 }`}
                               >
@@ -1497,7 +1505,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
             </div>
 
             {/* 3. Native Mobile Calendar Table Grid (Bulat, Titik Warna & Teks Mini) */}
-            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] overflow-hidden p-2.5 shadow-xs">
+            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] relative p-2.5 shadow-xs">
               {/* Day Headers */}
               <div className="grid grid-cols-7 text-center pb-2 border-b border-[#E8DFC9]/70 mb-1">
                 {DAY_HEADERS.map((day, idx) => (
@@ -1527,21 +1535,26 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       onClick={() => {
                         if (cell.isCurrentMonth) setSelectedDay(cell.day);
                       }}
-                      className="h-[52px] sm:h-[58px] flex flex-col items-center justify-start py-0.5 cursor-pointer relative select-none"
+                      className="h-[52px] sm:h-[58px] flex flex-col items-center justify-start py-0.5 cursor-pointer relative select-none overflow-visible group"
                     >
-                      {/* Tanggal Bulat (rounded-full) */}
-                      <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all ${
-                          !cell.isCurrentMonth
-                            ? 'text-neutral-300 font-normal'
-                            : isSelected
-                            ? 'bg-[#2d180c] text-white font-bold shadow-xs scale-105'
-                            : hasEvents
-                            ? 'text-[#2d180c] font-bold bg-amber-500/15 hover:bg-amber-500/25 ring-1 ring-amber-500/30'
-                            : 'text-[#2d180c] font-medium hover:bg-[#FAF6EE]'
-                        }`}
-                      >
-                        {cell.day}
+                      {/* Tanggal Bulat dengan Ikon Pop-out di Pundak Lingkaran */}
+                      <div className="relative">
+                        {hasEvents && cell.isCurrentMonth && (
+                          <CulturalBurstIcon category={cellEvents[0]?.category} isMobile={true} />
+                        )}
+                        <div
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all relative z-20 ${
+                            !cell.isCurrentMonth
+                              ? 'text-neutral-300 font-normal'
+                              : isSelected
+                              ? 'bg-[#2d180c] text-white font-bold shadow-xs scale-105'
+                              : hasEvents
+                              ? 'text-[#92400E] font-bold bg-[#FEF3C7] ring-1.5 ring-[#F59E0B] shadow-2xs'
+                              : 'text-[#2d180c] font-medium hover:bg-[#FAF6EE]'
+                          }`}
+                        >
+                          {cell.day}
+                        </div>
                       </div>
 
                       {/* Indikator Titik Warna Event Sesuai Kategori */}
