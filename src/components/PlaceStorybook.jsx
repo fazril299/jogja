@@ -18,8 +18,12 @@ import {
   Search,
   Award,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Ticket,
+  Receipt,
+  CreditCard
 } from 'lucide-react';
+import { usePayment } from '../context/PaymentContext';
 import { CULTURAL_PLACES } from '../data/culturalData';
 import { CULTURAL_BADGES } from '../data/badgeQuestData';
 import { useAuth } from '../context/AuthContext';
@@ -441,6 +445,13 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
   const { currentUser, requireAuth, openLogin } = useAuth();
   const { isFavorite, toggleFavorite } = useCultureBook();
   const {
+    initiatePayment,
+    isItemPaid,
+    getPaidTicketByItemId,
+    setSelectedTicketToView,
+    parseItemPrice
+  } = usePayment();
+  const {
     reviews,
     getPlaceReviews,
     addReview,
@@ -666,6 +677,94 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           overflow: 'hidden'
         }}
       >
+        {/* Floating Top Navigation Bar */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '1.25rem',
+            left: 'clamp(1rem, 3vw, 2.5rem)',
+            right: 'clamp(1rem, 3vw, 2.5rem)',
+            zIndex: 30,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            pointerEvents: 'auto'
+          }}
+        >
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            {isItemPaid(activeMapPlace.id) ? (
+              <button
+                type="button"
+                onClick={() => {
+                  const t = getPaidTicketByItemId(activeMapPlace.id);
+                  if (t) setSelectedTicketToView(t);
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  backgroundColor: '#16A34A',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '999px',
+                  padding: '0.55rem 1.15rem',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)'
+                }}
+              >
+                <CheckCircle2 size={15} />
+                <span>E-Tiket Aktif</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => initiatePayment(activeMapPlace)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  backgroundColor: '#C99B52',
+                  color: '#1A1412',
+                  border: 'none',
+                  borderRadius: '999px',
+                  padding: '0.55rem 1.15rem',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(201, 155, 82, 0.4)'
+                }}
+              >
+                <Ticket size={15} />
+                <span>Beli Tiket (Rp {parseItemPrice(activeMapPlace).toLocaleString('id-ID')})</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onBack}
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(26, 20, 18, 0.65)',
+                color: '#ffffff',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
+              }}
+              title="Tutup (Esc)"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
         {/* Full-bleed background photo (Foto Asli Jogja Sesuai Tempat Terpilih) */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
           <img
@@ -771,6 +870,91 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
               >
                 {activeMapPlace.subtitle}
               </p>
+
+              {/* Payment & Wishlist Action Bar */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '0.85rem',
+                  marginTop: '1.25rem'
+                }}
+              >
+                {isItemPaid(activeMapPlace.id) ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const t = getPaidTicketByItemId(activeMapPlace.id);
+                      if (t) setSelectedTicketToView(t);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.6rem',
+                      backgroundColor: '#16A34A',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '0.75rem 1.4rem',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 18px rgba(22, 163, 74, 0.45)',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <CheckCircle2 size={18} />
+                    <span>✓ E-Tiket Aktif (Buka Boarding Pass)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => initiatePayment(activeMapPlace)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.6rem',
+                      backgroundColor: '#C99B52',
+                      color: '#1A1412',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '0.75rem 1.4rem',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 18px rgba(201, 155, 82, 0.45)',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Ticket size={18} />
+                    <span>Beli Tiket Masuk • Rp {parseItemPrice(activeMapPlace).toLocaleString('id-ID')}</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleWishlistToggle(activeMapPlace)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    backgroundColor: isFavorite(activeMapPlace.id) ? '#e11d48' : 'rgba(255, 255, 255, 0.15)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    backdropFilter: 'blur(12px)',
+                    borderRadius: '12px',
+                    padding: '0.75rem 1.25rem',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Heart size={16} fill={isFavorite(activeMapPlace.id) ? '#ffffff' : 'none'} />
+                  <span>{isFavorite(activeMapPlace.id) ? 'Disimpan di Wishlist' : 'Simpan ke Wishlist'}</span>
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>

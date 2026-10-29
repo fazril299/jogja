@@ -20,8 +20,15 @@ import {
   Info,
   BookOpen,
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  Heart,
+  Ticket,
+  CheckCircle2,
+  CreditCard
 } from 'lucide-react';
+import { useCultureBook } from '../context/CultureBookContext';
+import { useAuth } from '../context/AuthContext';
+import { usePayment } from '../context/PaymentContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
@@ -168,6 +175,31 @@ export default function NearMeModal({
 
   const [activeMapLayer, setActiveMapLayer] = useState('google-streets'); // Default: Google Maps HD Super Cepat
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true); // Panel floating drawer di dalam peta
+
+  // Wishlist, Auth & Dummy Payment integration
+  const { isFavorite, toggleFavorite } = useCultureBook();
+  const { requireAuth } = useAuth();
+  const {
+    initiatePayment,
+    isItemPaid,
+    getPaidTicketByItemId,
+    setSelectedTicketToView,
+    parseItemPrice
+  } = usePayment();
+
+  const handleCulinaryWishlistToggle = (e, item) => {
+    e.stopPropagation();
+    requireAuth(
+      () => {
+        toggleFavorite(item.id);
+      },
+      {
+        benefitType: 'wishlist',
+        title: 'Simpan ke Wishlist',
+        description: `Masuk ke akun Anda untuk menyimpan ${item.name} ke Wishlist pribadi Anda.`
+      }
+    );
+  };
   const initialCameraSetRef = useRef(false);
 
   // Status ketersediaan sensor GPS pengguna
@@ -1063,6 +1095,45 @@ export default function NearMeModal({
                       )}
                     </AnimatePresence>
 
+                    {/* Tombol Pembayaran Voucher Kuliner */}
+                    <div className="flex items-center gap-2">
+                      {isItemPaid(activeItem.id) ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const t = getPaidTicketByItemId(activeItem.id);
+                            if (t) setSelectedTicketToView(t);
+                          }}
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                        >
+                          <CheckCircle2 size={15} />
+                          <span>✓ Voucher Aktif (Buka Boarding Pass)</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => initiatePayment(activeItem)}
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#C99B52] hover:bg-[#D4A75E] text-[#2C221E] text-xs font-black flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                        >
+                          <Ticket size={15} />
+                          <span>Pesan Voucher • Rp {parseItemPrice(activeItem).toLocaleString('id-ID')}</span>
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
+                        className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                          isFavorite(activeItem.id)
+                            ? 'bg-rose-50 border-rose-200 text-rose-500'
+                            : 'border-[#E2D7C7] hover:bg-[#FAF6EE] text-[#786B5E] hover:text-[#2C221E]'
+                        }`}
+                        title={isFavorite(activeItem.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                      >
+                        <Heart size={16} fill={isFavorite(activeItem.id) ? '#f43f5e' : 'none'} />
+                      </button>
+                    </div>
+
                     <div className="flex items-center gap-2">
                       {activeNavRouteId === activeItem.id ? (
                         <button
@@ -1384,24 +1455,66 @@ export default function NearMeModal({
                             </AnimatePresence>
 
                             {/* Tombol Aksi di Kartu */}
-                            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#EAE3D6]/70 mt-2">
-                              <span className="text-[10px] font-bold text-[#8A5D26] group-hover:text-[#2C221E] flex items-center gap-1">
-                                <ArrowLeft size={11} className="rotate-180" />
-                                <span>Lihat Detail</span>
-                              </span>
+                            <div className="flex items-center justify-between gap-1.5 pt-2 border-t border-[#EAE3D6]/70 mt-2 flex-wrap">
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleCulinaryWishlistToggle(e, item)}
+                                  className={`p-1 rounded-lg transition-colors cursor-pointer ${
+                                    isFavorite(item.id)
+                                      ? 'text-rose-500 bg-rose-50'
+                                      : 'text-neutral-400 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200'
+                                  }`}
+                                  title={isFavorite(item.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                                >
+                                  <Heart size={12} fill={isFavorite(item.id) ? '#f43f5e' : 'none'} />
+                                </button>
+                                <span className="text-[10px] font-bold text-[#8A5D26] group-hover:text-[#2C221E] flex items-center gap-0.5">
+                                  <span>Detail</span>
+                                </span>
+                              </div>
 
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedCardId(item.id);
-                                  handleStartRoute(item);
-                                }}
-                                className="py-1 px-3 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
-                              >
-                                <Navigation size={10} />
-                                <span>Petunjuk Rute</span>
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                {isItemPaid(item.id) ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const t = getPaidTicketByItemId(item.id);
+                                      if (t) setSelectedTicketToView(t);
+                                    }}
+                                    className="py-1 px-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                                  >
+                                    <CheckCircle2 size={10} />
+                                    <span>Voucher Aktif</span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      initiatePayment(item);
+                                    }}
+                                    className="py-1 px-2.5 rounded-full bg-[#FAF4E8] hover:bg-[#8A5D26] text-[#8A5D26] hover:text-white border border-[#EFE0C7] text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                                  >
+                                    <Ticket size={10} />
+                                    <span>Pesan Voucher</span>
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedCardId(item.id);
+                                    handleStartRoute(item);
+                                  }}
+                                  className="py-1 px-2.5 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                                >
+                                  <Navigation size={10} />
+                                  <span>Rute</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );

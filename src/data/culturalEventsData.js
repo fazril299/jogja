@@ -456,6 +456,50 @@ export const CULTURAL_EVENTS = [
 // Lengkap dengan foto asset lokal, aturan Do's & Don'ts, serta adab kearifan lokal
 export const CULTURAL_ETIQUETTE_GUIDE = [
   {
+    id: 'etiquette-panduan-adab-khas-jogja',
+    title: 'Panduan Adab Khas Jogja & Unggah-Ungguh Budaya',
+    subTitle: 'Jaga Sikap, Lestarikan Budaya, Nikmati Keindahannya',
+    category: 'Unggah-Ungguh & Sikap',
+    image: '/assets/images/panduan_adab.jpg',
+    accentColor: '#1A4D2E',
+    overview:
+      'Yogyakarta menyambut seluruh tamu dan wisatawan dengan kehangatan budi pekerti. Agar interaksi senantiasa selaras dan membawa berkah, amalkan 6 pilar panduan adab khas Jogja dalam setiap langkah penjelajahan Anda.',
+    rules: [
+      {
+        type: 'do',
+        title: '01. Sopan Berbicara',
+        desc: 'Gunakan bahasa santun, rendahkan volume bicara, dan hormati lawan bicara dengan tutur kata yang sejuk serta andhap asor.'
+      },
+      {
+        type: 'do',
+        title: '02. Hormati Tradisi & Paugeran',
+        desc: 'Ikuti tata krama di tempat budaya dan bersejarah seperti Keraton, Tamansari, dan makam leluhur Mataram.'
+      },
+      {
+        type: 'do',
+        title: '03. Jaga Kebersihan & Asri Lingkungan',
+        desc: 'Buang sampah pada tempatnya, hindari vandalisme, dan jaga keasrian ruang publik maupun cagar budaya pusaka.'
+      },
+      {
+        type: 'do',
+        title: '04. Berpakaian Sopan & Pantas',
+        desc: 'Sesuaikan busana dengan tempat yang dikunjungi, gunakan pakaian tertutup dan sopan saat bertandang ke situs sakral.'
+      },
+      {
+        type: 'do',
+        title: '05. Jaga Ketertiban & Ketenangan',
+        desc: 'Patuhi aturan dan marka setempat, jaga ketertiban lalu lintas, serta hormati ketenteraman warga sekitar.'
+      },
+      {
+        type: 'do',
+        title: '06. Dukung UMKM & Pengrajin Lokal',
+        desc: 'Hargai karya seni, kuliner khas, dan beli produk lokal dari pengrajin serta pedagang UMKM masyarakat Jogja.'
+      }
+    ],
+    proTip:
+      'Semboyan leluhur: "Sugeng Rawuh ing Jogja!" Hormatilah tuan rumah, maka tanah istimewa ini akan selalu menjadi rumah yang ramah untuk kembali.'
+  },
+  {
     id: 'etiquette-clothing-keraton',
     title: 'Adab Berbusana di Keraton & Makam Raja Mataram',
     subTitle: 'Unggah-Ungguh Busana Sopan & Pantangan Motif Larangan',

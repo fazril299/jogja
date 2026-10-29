@@ -4,6 +4,8 @@ import { MapPin } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
+import { PaymentProvider } from './context/PaymentContext';
+import PaymentModal from './components/PaymentModal';
 import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
 import { isSupabaseConfigured, fetchPlacesFromSupabase } from './lib/supabase';
 
@@ -149,6 +151,7 @@ function NusantaraApp() {
   const [isCultureBookOpen, setIsCultureBookOpen] = useState(false);
   const [cultureBookInitialTab, setCultureBookInitialTab] = useState('badges-quests');
   const [isKalenderAcaraOpen, setIsKalenderAcaraOpen] = useState(false);
+  const [initialEventId, setInitialEventId] = useState(null);
   const [isKalenderPopupOpen, setIsKalenderPopupOpen] = useState(false);
   const [isJurnalBudayaOpen, setIsJurnalBudayaOpen] = useState(false);
   const [isAboutPageOpen, setIsAboutPageOpen] = useState(false);
@@ -169,6 +172,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -190,13 +194,14 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
         setIsMapOpen(false);
         setIsQuestBadgePageOpen(true);
         document.title = 'Katalog Misi & Lencana Budaya - Hamemayu';
-      } else if (route === 'kalender-acara' || route === 'kalender' || route === 'events') {
+      } else if (route === 'kalender-acara' || route === 'kalender' || route === 'events' || route === 'acara') {
         setIsNearMeOpen(false);
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
@@ -205,6 +210,7 @@ function NusantaraApp() {
         setIsQuestBadgePageOpen(false);
         setIsKalenderPopupOpen(false);
         setIsMapOpen(false);
+        setInitialEventId(param || null);
         setIsKalenderAcaraOpen(true);
         document.title = 'Kalender Acara Budaya DIY - Hamemayu';
       } else if (route === 'jurnal-budaya' || route === 'jurnal') {
@@ -212,6 +218,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsAboutPageOpen(false);
         setIsQuestBadgePageOpen(false);
@@ -223,6 +230,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsQuestBadgePageOpen(false);
@@ -246,6 +254,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -256,6 +265,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -268,6 +278,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -282,6 +293,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -296,6 +308,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -317,6 +330,8 @@ function NusantaraApp() {
           setSelectedPlace(found);
           document.title = `${found.name} - Hamemayu`;
         }
+      } else if (route === 'pembayaran' || route === 'checkout' || route === 'payment') {
+        document.title = 'Pembayaran & Checkout E-Tiket - Hamemayu';
       }
     };
 
@@ -958,8 +973,10 @@ function NusantaraApp() {
         {isKalenderAcaraOpen && (
           <KalenderAcaraPage
             isOpen={isKalenderAcaraOpen}
+            initialEventId={initialEventId}
             onClose={() => {
               setIsKalenderPopupOpen(false);
+              setInitialEventId(null);
               handleCloseToHome();
             }}
             onPopupChange={setIsKalenderPopupOpen}
@@ -1041,6 +1058,9 @@ function NusantaraApp() {
             }}
           />
         )}
+
+        {/* Modal Pembayaran Dummy & E-Tiket Resmi */}
+        <PaymentModal />
     </div>
   );
 }
@@ -1051,7 +1071,9 @@ export default function App() {
       <AuthProvider>
         <CultureBookProvider>
           <CommunityProvider>
-            <NusantaraApp />
+            <PaymentProvider>
+              <NusantaraApp />
+            </PaymentProvider>
           </CommunityProvider>
         </CultureBookProvider>
       </AuthProvider>

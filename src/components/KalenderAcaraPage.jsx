@@ -6,6 +6,7 @@ import {
   MapPin,
   Sparkles,
   Share2,
+  Copy,
   Check,
   ShieldCheck,
   AlertCircle,
@@ -136,7 +137,7 @@ const LOCATIONS_LIST = [
   { id: 'Bantul', label: 'Kabupaten Bantul' }
 ];
 
-export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange }) {
+export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null }) {
   // Calendar time state
   const [activeYear, setActiveYear] = useState(2025);
   const [activeMonth, setActiveMonth] = useState(2); // Default to Maret (Bulan awal tahun agenda budaya)
@@ -230,6 +231,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   // Detail Modal state
   const [activeModalEvent, setActiveModalEvent] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [modalTab, setModalTab] = useState('ringkasan');
 
@@ -237,12 +239,36 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     setModalTab('ringkasan');
     setActiveModalEvent(ev);
     onPopupChange?.(true);
+    // Sinkronkan URL hash browser untuk deep linking
+    window.history.replaceState(null, '', `#/kalender-acara/${ev.id}`);
   };
 
   const handleCloseModal = () => {
     setActiveModalEvent(null);
     onPopupChange?.(false);
+    // Kembalikan URL hash ke halaman kalender umum
+    window.history.replaceState(null, '', '#/kalender-acara');
   };
+
+  // Buka otomatis detail acara jika URL memiliki deep link event ID (misal dari share WA/FB/IG)
+  useEffect(() => {
+    if (initialEventId && isOpen) {
+      const target = initialEventId.toLowerCase().trim();
+      const found = CULTURAL_EVENTS.find(
+        (e) => e.id.toLowerCase() === target || e.id.toLowerCase().includes(target)
+      );
+      if (found) {
+        handleOpenModal(found);
+        if (typeof found.monthIndex === 'number') {
+          setActiveMonth(found.monthIndex);
+        }
+        if (found.dayDate) {
+          const dayNum = parseInt(found.dayDate, 10);
+          if (!isNaN(dayNum)) setSelectedDay(dayNum);
+        }
+      }
+    }
+  }, [initialEventId, isOpen]);
 
   useEffect(() => {
     return () => {
@@ -441,11 +467,116 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     ].filter(Boolean);
   }, []);
 
-  const handleCopySchedule = (ev) => {
-    const text = `[Agenda Budaya Yogyakarta]\n${ev.name}\nTanggal: ${ev.dayDate} ${ev.monthName} ${ev.year || activeYear} (${ev.jawaCalendar})\nWaktu: ${ev.time}\nLokasi: ${ev.location} (${ev.district})\nAdab & Tata Krama: ${ev.tips}\nSumber: ${ev.source}`;
-    navigator.clipboard?.writeText(text);
-    setCopiedId(ev.id);
-    setTimeout(() => setCopiedId(null), 2500);
+  const copyToClipboard = async (text) => {
+    if (!text) return false;
+    // 1. Coba Clipboard API modern (HTTPS / browser modern)
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.warn('Clipboard writeText gagal/diblokir, mencoba fallback execCommand:', err);
+      }
+    }
+
+    // 2. Fallback universal (bekerja di HTTP, localhost IP, mobile webview, iframe)
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      textarea.style.left = '-9999px';
+      textarea.style.opacity = '0';
+      textarea.setAttribute('readonly', '');
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (successful) return true;
+    } catch (fallbackErr) {
+      console.error('Semua metode copy gagal:', fallbackErr);
+    }
+
+    return false;
+  };
+
+  // Deep-link URL generator langsung ke ID acara database / katalog
+  const getEventShareUrl = (ev) => {
+    if (!ev) return window.location.href;
+    const origin = window.location.origin || '';
+    const pathname = window.location.pathname || '/';
+    return `${origin}${pathname}#/kalender-acara/${ev.id}`;
+  };
+
+  // Format teks lengkap untuk dibagikan ke WhatsApp, FB, dan media sosial
+  const getEventShareText = (ev) => {
+    if (!ev) return '';
+    const yearStr = ev.year || activeYear || '2025';
+    const shareUrl = getEventShareUrl(ev);
+
+    const lines = [
+      `🏛️ [AGENDA BUDAYA YOGYAKARTA]`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `📌 ${ev.name}`,
+      `🏷️ Kategori: ${ev.category || 'Upacara & Tradisi'}`,
+      `🗓️ Tanggal: ${ev.dayDate} ${ev.monthName} ${yearStr}${ev.jawaCalendar ? ` (${ev.jawaCalendar})` : ''}`,
+      `⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}`,
+      `📍 Lokasi: ${ev.location || 'Yogyakarta'}${ev.district ? `, ${ev.district}` : ''}`,
+      ev.tips ? `\n💡 Tata Krama / Adab:\n${ev.tips}` : '',
+      ev.shortDesc ? `\n📖 Sekilas Tradisi:\n${ev.shortDesc}` : '',
+      `\n🔗 Buka Jadwal & Panduan Lengkap:\n${shareUrl}`,
+      `\n🏛️ Rujukan Resmi: ${ev.source || 'Kasultanan Ngayogyakarta Hadiningrat'}`
+    ].filter(Boolean);
+
+    return lines.join('\n');
+  };
+
+  // Salin rincian jadwal + link URL asli ke clipboard
+  const handleCopySchedule = async (ev) => {
+    if (!ev) return;
+    const formattedText = getEventShareText(ev);
+    const success = await copyToClipboard(formattedText);
+
+    if (success) {
+      setCopiedId(ev.id);
+      setTimeout(() => setCopiedId(null), 3000);
+    }
+  };
+
+  // Salin hanya tautan link URL acara
+  const handleCopyLinkOnly = async (ev) => {
+    if (!ev) return;
+    const shareUrl = getEventShareUrl(ev);
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    }
+  };
+
+  // Bagikan via Web Share API (Langsung ke Instagram, WhatsApp, Stories, Medsos)
+  const handleShareNative = async (ev) => {
+    if (!ev) return;
+    const shareUrl = getEventShareUrl(ev);
+    const text = `Agenda Budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName} ${ev.year || activeYear})`;
+    if (navigator?.share) {
+      try {
+        await navigator.share({
+          title: ev.name,
+          text: text,
+          url: shareUrl
+        });
+        return;
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.warn('Native share gagal, beralih ke salin link:', err);
+        }
+      }
+    }
+    // Fallback jika Web Share API tidak didukung di desktop
+    handleCopyLinkOnly(ev);
   };
 
   const getAssociatedPlace = (ev) => {
@@ -762,11 +893,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           alt={ev.name}
                           className="w-12 h-12 rounded-xl object-cover border border-[#E8DFC9]"
                         />
-                        {ev.isAiGenerated && (
-                          <span className="absolute -bottom-1 -right-1 px-1 py-0.2 bg-amber-950 text-amber-200 text-[8px] font-bold rounded-sm border border-amber-400/40">
-                            AI
-                          </span>
-                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <strong className="text-xs font-bold text-[#2d180c] block truncate group-hover:text-[#8c532b] leading-snug">
@@ -1076,14 +1202,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           alt={ev.name}
                           className="w-full h-full object-cover"
                         />
-                        {ev.isAiGenerated && (
-                          <div className="absolute top-2 left-2">
-                            <span className="px-2 py-0.5 rounded-full bg-black/65 backdrop-blur-md text-amber-200 text-[9px] font-semibold border border-amber-400/30 flex items-center gap-1">
-                              <Sparkles size={9} className="text-amber-300" />
-                              <span>Ilustrasi AI</span>
-                            </span>
-                          </div>
-                        )}
                       </div>
 
                       {/* Event Title & Category */}
@@ -1532,75 +1650,69 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                 onClick={(e) => e.stopPropagation()}
                 className="bg-[#FCFBF7] rounded-[28px] border border-[#E8DFC9] max-w-2xl w-full max-h-[92vh] flex flex-col shadow-[0_30px_90px_rgba(45,24,12,0.3)] relative text-[#2d180c] overflow-hidden my-auto"
               >
-                {/* ── HERO BANNER SECTION ── */}
-                <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 shrink-0 select-none">
-                  <img
-                    src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
-                    alt={activeModalEvent.name}
-                    className="w-full h-full object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
+                {/* ── ALWAYS-ACCESSIBLE FLOATING CLOSE BUTTON (Pinned Top-Right) ── */}
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md hover:bg-black/85 text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-md active:scale-95"
+                  aria-label="Tutup"
+                  title="Tutup (Esc)"
+                >
+                  <X size={17} />
+                </button>
 
-                  {/* Top Bar: 1 Single AI Badge (if AI) & Close Button */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-3 z-10">
-                    <div>
-                      {activeModalEvent.isAiGenerated && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200 text-xs font-semibold border border-amber-400/40 shadow-xs">
-                          <Sparkles size={12} className="text-amber-300" />
-                          <span>Ilustrasi AI</span>
-                        </span>
-                      )}
+                {/* ── UNIFIED CONTINUOUS SCROLL CONTAINER (Natural Sheet Scroll) ── */}
+                <div className="flex-1 overflow-y-auto overscroll-contain relative scroll-smooth">
+                  {/* ── HERO BANNER SECTION (Scrolls away as text sheets over it) ── */}
+                  <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 select-none">
+                    <img
+                      src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                      alt={activeModalEvent.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
+
+                    {/* Hero Bottom: Nama Acara Only */}
+                    <div className="absolute bottom-8 left-5 right-14 text-white z-10">
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight m-0 font-['Outfit'] drop-shadow-md">
+                        {activeModalEvent.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* ── CONTENT SHEET (Slides over the hero banner on scroll) ── */}
+                  <div className="relative z-10 -mt-5 bg-[#FCFBF7] rounded-t-[28px] shadow-[0_-12px_28px_rgba(0,0,0,0.12)] border-t border-[#E8DFC9]/70">
+                    {/* ── STICKY CLEAN SEGMENTED TAB SWITCHER ── */}
+                    <div className="sticky top-0 z-20 px-4 sm:px-6 pr-14 sm:pr-16 pt-3.5 pb-2.5 bg-[#FCFBF7]/95 backdrop-blur-md border-b border-[#E8DFC9] rounded-t-[28px]">
+                      <div className="flex items-center gap-1.5 p-1 bg-[#F5EEDC] rounded-xl border border-[#E8DFC9]">
+                        {[
+                          { id: 'ringkasan', label: 'Ringkasan & Makna', shortLabel: 'Ringkasan', icon: Info },
+                          { id: 'adab', label: 'Adab & Tata Krama', shortLabel: 'Adab', icon: ShieldCheck },
+                          { id: 'lokasi', label: 'Lokasi & Akses', shortLabel: 'Lokasi', icon: MapPin }
+                        ].map((tab) => {
+                          const isActive = modalTab === tab.id;
+                          const Icon = tab.icon;
+                          return (
+                            <button
+                              key={tab.id}
+                              type="button"
+                              onClick={() => setModalTab(tab.id)}
+                              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${isActive
+                                  ? 'bg-white text-[#2d180c] shadow-xs'
+                                  : 'text-[#786154] hover:text-[#2d180c] hover:bg-white/40'
+                                }`}
+                            >
+                              <Icon size={13} className={isActive ? 'text-[#8c532b]' : 'opacity-70'} />
+                              <span className="hidden sm:inline truncate">{tab.label}</span>
+                              <span className="sm:hidden truncate">{tab.shortLabel}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleCloseModal}
-                      className="w-9 h-9 rounded-full bg-black/55 backdrop-blur-md hover:bg-black/85 text-white/90 hover:text-white flex items-center justify-center cursor-pointer transition-all border border-white/20 shadow-xs active:scale-95"
-                      aria-label="Tutup"
-                      title="Tutup (Esc)"
-                    >
-                      <X size={17} />
-                    </button>
-                  </div>
-
-                  {/* Hero Bottom: Nama Acara Only */}
-                  <div className="absolute bottom-5 left-5 right-5 text-white z-10">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight m-0 font-['Outfit'] drop-shadow-md">
-                      {activeModalEvent.name}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* ── CLEAN SEGMENTED TAB SWITCHER ── */}
-                <div className="px-5 sm:px-6 pt-3 pb-2 bg-white border-b border-[#E8DFC9] shrink-0">
-                  <div className="flex items-center gap-1.5 p-1 bg-[#F5EEDC] rounded-xl border border-[#E8DFC9]">
-                    {[
-                      { id: 'ringkasan', label: 'Ringkasan & Makna', icon: Info },
-                      { id: 'adab', label: 'Adab & Tata Krama', icon: ShieldCheck },
-                      { id: 'lokasi', label: 'Lokasi & Akses', icon: MapPin }
-                    ].map((tab) => {
-                      const isActive = modalTab === tab.id;
-                      const Icon = tab.icon;
-                      return (
-                        <button
-                          key={tab.id}
-                          type="button"
-                          onClick={() => setModalTab(tab.id)}
-                          className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${isActive
-                              ? 'bg-white text-[#2d180c] shadow-xs'
-                              : 'text-[#786154] hover:text-[#2d180c] hover:bg-white/40'
-                            }`}
-                        >
-                          <Icon size={13} className={isActive ? 'text-[#8c532b]' : 'opacity-70'} />
-                          <span className="truncate">{tab.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* ── SCROLLABLE MODAL BODY CONTENT ── */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+                    {/* ── MODAL BODY CONTENT (Wide, comfortable, no cramped inner scroll) ── */}
+                    <div className="p-5 sm:p-6 space-y-4">
                   {/* TAB 1: RINGKASAN & MAKNA */}
                   {modalTab === 'ringkasan' && (
                     <div className="space-y-4">
@@ -1882,39 +1994,113 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       })()}
                     </div>
                   )}
+                    </div>
+                  </div>
                 </div>
 
-                {/* ── CLEAN FOOTER ACTIONS ROW ── */}
-                <div className="p-4 sm:p-5 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-3 shrink-0">
+                {/* ── CLEAN FOOTER ACTIONS ROW (Pinned at bottom) ── */}
+                <div className="p-4 sm:p-5 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-3 shrink-0 z-20">
                   {/* Left Action Buttons */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    {/* 1. Salin Jadwal Lengkap & Link */}
                     <button
                       type="button"
                       onClick={() => handleCopySchedule(activeModalEvent)}
-                      className="py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                      className={`py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-xl border text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs ${
+                        copiedId === activeModalEvent.id
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                          : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] border-[#E8DFC9] text-[#2d180c]'
+                      }`}
+                      title="Salin rincian jadwal dan link deep-link ke clipboard"
                     >
                       {copiedId === activeModalEvent.id ? (
                         <>
                           <Check size={14} className="text-emerald-600" />
-                          <span className="text-emerald-700 font-bold">Jadwal Tersalin!</span>
+                          <span className="text-emerald-700 font-bold">Jadwal & Link Tersalin!</span>
                         </>
                       ) : (
                         <>
-                          <Share2 size={14} className="text-[#8c532b]" />
+                          <Copy size={14} className="text-[#8c532b]" />
                           <span>Salin Jadwal</span>
                         </>
                       )}
                     </button>
 
+                    {/* 2. Salin Link Saja */}
+                    <button
+                      type="button"
+                      onClick={() => handleCopyLinkOnly(activeModalEvent)}
+                      className={`py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl border text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs ${
+                        copiedLink
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                          : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] border-[#E8DFC9] text-[#2d180c]'
+                      }`}
+                      title="Salin tautan URL langsung ke acara ini"
+                    >
+                      {copiedLink ? (
+                        <>
+                          <Check size={13} className="text-emerald-600" />
+                          <span className="text-emerald-700">Link Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 size={13} className="text-[#8c532b]" />
+                          <span>Link</span>
+                        </>
+                      )}
+                    </button>
+
+                    {/* 3. Share ke WhatsApp */}
+                    <a
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getEventShareText(activeModalEvent))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#128C7E] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs no-underline"
+                      title="Kirim Jadwal Acara ke WhatsApp"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current text-[#25D366] shrink-0" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.077-1.785-.395-1.472-.603-2.42-2.102-2.493-2.199-.074-.096-.596-.793-.596-1.511 0-.719.378-1.073.513-1.22.135-.147.294-.184.393-.184.099 0 .198.001.284.005.09.004.211-.034.33.252.122.294.417 1.018.454 1.092.037.074.062.16.012.257-.049.098-.074.16-.148.245-.074.086-.156.192-.223.258-.074.074-.151.155-.065.303.086.148.384.633.824 1.025.567.505 1.045.661 1.193.735.148.074.234.062.32-.037.086-.098.37-.43.468-.577.099-.148.197-.123.332-.074.135.049.862.406 1.01.48.148.074.246.111.284.172.037.062.037.362-.107.767z"/>
+                      </svg>
+                      <span>WA</span>
+                    </a>
+
+                    {/* 4. Share ke Facebook */}
+                    <a
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getEventShareUrl(activeModalEvent))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-[#1877F2] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs no-underline"
+                      title="Bagikan ke Facebook"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current text-[#1877F2] shrink-0" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      <span>FB</span>
+                    </a>
+
+                    {/* 5. Bagikan Medsos / Instagram (Web Share API) */}
+                    <button
+                      type="button"
+                      onClick={() => handleShareNative(activeModalEvent)}
+                      className="py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-pink-400/30 text-[#C13584] text-xs font-bold inline-flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-2xs"
+                      title="Bagikan ke Instagram / Media Sosial Lainnya"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current text-[#C13584] shrink-0" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      </svg>
+                      <span>IG</span>
+                    </button>
+
+                    {/* 6. Simpan Google Calendar */}
                     <a
                       href={getGoogleCalendarUrl(activeModalEvent)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hidden sm:inline-flex py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold items-center gap-1.5 no-underline transition-all active:scale-95 shadow-2xs cursor-pointer"
+                      className="hidden sm:inline-flex py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold items-center gap-1.5 no-underline transition-all active:scale-95 shadow-2xs cursor-pointer"
                       title="Tambahkan ke Google Calendar"
                     >
                       <CalendarPlus size={14} className="text-[#8c532b]" />
-                      <span>Simpan Kalender</span>
+                      <span>Kalender</span>
                     </a>
                   </div>
 
