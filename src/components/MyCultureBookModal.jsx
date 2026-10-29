@@ -76,6 +76,7 @@ export default function MyCultureBookModal({
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
   const [showGuideDetail, setShowGuideDetail] = useState(false);
   const [badgeFilterType, setBadgeFilterType] = useState('all');
+  const [ticketCategoryFilter, setTicketCategoryFilter] = useState('all'); // 'all' | 'wisata' | 'kuliner'
   const [isDestinasiExpanded, setIsDestinasiExpanded] = useState(true);
 
   // Sync tab saat initialTab berubah atau modal dibuka
@@ -155,6 +156,35 @@ export default function MyCultureBookModal({
   const totalWishlistUnpaidAmount = React.useMemo(() => {
     return unpaidWishlistItems.reduce((acc, itm) => acc + parseItemPrice(itm), 0);
   }, [unpaidWishlistItems, parseItemPrice]);
+
+  const totalSpendAmount = React.useMemo(() => {
+    return (paymentHistory || []).reduce((acc, order) => acc + (order.totalAmount || 0), 0);
+  }, [paymentHistory]);
+
+  const totalTicketsIssued = React.useMemo(() => {
+    return (paymentHistory || []).reduce(
+      (acc, order) => acc + (order.items || []).reduce((sum, itm) => sum + (itm.quantity || 1), 0),
+      0
+    );
+  }, [paymentHistory]);
+
+  const wisataTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type)).length;
+  }, [paymentHistory]);
+
+  const kulinerTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner')).length;
+  }, [paymentHistory]);
+
+  const filteredPaymentHistory = React.useMemo(() => {
+    if (ticketCategoryFilter === 'wisata') {
+      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type));
+    }
+    if (ticketCategoryFilter === 'kuliner') {
+      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner'));
+    }
+    return paymentHistory || [];
+  }, [paymentHistory, ticketCategoryFilter]);
 
   const isGuest = !currentUser || currentUser.isGuest;
 
@@ -842,7 +872,39 @@ export default function MyCultureBookModal({
                       E-Tiket resmi dengan QR Code siap scan
                     </p>
                   </div>
+                  {paymentHistory.length > 0 && (
+                    <span className="text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF6EE] border border-[#E5D7BE] px-2 py-0.5 rounded-full">
+                      Rp {totalSpendAmount.toLocaleString('id-ID')}
+                    </span>
+                  )}
                 </div>
+
+                {/* Mobile Filter Pills */}
+                {paymentHistory.length > 0 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+                    {[
+                      { id: 'all', label: `Semua (${paymentHistory.length})` },
+                      { id: 'wisata', label: `Wisata (${wisataTicketsCount})` },
+                      { id: 'kuliner', label: `Kuliner (${kulinerTicketsCount})` }
+                    ].map((f) => {
+                      const isSel = ticketCategoryFilter === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setTicketCategoryFilter(f.id)}
+                          className={`px-2.5 py-1 rounded-full font-bold whitespace-nowrap cursor-pointer transition-colors ${
+                            isSel
+                              ? 'bg-[#2C221E] text-white'
+                              : 'bg-[#FAF6EE] text-[#786B5E] border border-[#E5D7BE]'
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {paymentHistory.length === 0 ? (
                   <div className="text-center py-8 text-neutral-400 text-xs">
@@ -861,7 +923,7 @@ export default function MyCultureBookModal({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {paymentHistory.map((order) => (
+                    {filteredPaymentHistory.map((order) => (
                       <div
                         key={order.id}
                         className="p-3 rounded-2xl bg-[#FCFAF8] border border-[#EAE4DC] shadow-2xs space-y-2.5"
@@ -2477,7 +2539,7 @@ export default function MyCultureBookModal({
               {/* TAB CONTENT: TIKET SAYA (DESKTOP) */}
               {activeTab === 'tickets' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                     <div>
                       <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#2C221E', margin: '0 0 0.25rem 0' }}>
                         Koleksi E-Tiket & Voucher Budaya ({paymentHistory.length})
@@ -2487,6 +2549,83 @@ export default function MyCultureBookModal({
                       </p>
                     </div>
                   </div>
+
+                  {/* 1. RINGKASAN FINANSIAL & TIKET AKTIF */}
+                  {paymentHistory.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#8A5D26', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <CreditCard size={14} />
+                          <span>Total Transaksi</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#2C221E' }}>
+                          Rp {totalSpendAmount.toLocaleString('id-ID')}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#786B5E', marginTop: '0.15rem' }}>
+                          {paymentHistory.length} pesanan terverifikasi lunas
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#8A5D26', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <Ticket size={14} />
+                          <span>Tiket & Voucher</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#2C221E' }}>
+                          {totalTicketsIssued} Lembar
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#786B5E', marginTop: '0.15rem' }}>
+                          {wisataTicketsCount} Tiket Wisata • {kulinerTicketsCount} Voucher Kuliner
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#15803D', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <ShieldCheck size={14} />
+                          <span>Status E-Tiket</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#15803D' }}>
+                          100% Aktif
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#166534', marginTop: '0.15rem' }}>
+                          Siap di-scan di gate cagar budaya
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 2. FILTER KATEGORI TIKET PILLS */}
+                  {paymentHistory.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {[
+                        { id: 'all', label: `Semua Tiket (${paymentHistory.length})` },
+                        { id: 'wisata', label: `Tiket Wisata (${wisataTicketsCount})` },
+                        { id: 'kuliner', label: `Voucher Kuliner (${kulinerTicketsCount})` }
+                      ].map((f) => {
+                        const isSelected = ticketCategoryFilter === f.id;
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setTicketCategoryFilter(f.id)}
+                            style={{
+                              padding: '0.4rem 0.95rem',
+                              borderRadius: '999px',
+                              border: isSelected ? '1.5px solid #2C221E' : '1px solid #E5D7BE',
+                              backgroundColor: isSelected ? '#2C221E' : '#FAF6EE',
+                              color: isSelected ? '#FAF8F5' : '#786B5E',
+                              fontSize: '0.75rem',
+                              fontWeight: isSelected ? 800 : 600,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {f.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   {paymentHistory.length === 0 ? (
                     <div
@@ -2530,7 +2669,7 @@ export default function MyCultureBookModal({
                         gap: '1.25rem'
                       }}
                     >
-                      {paymentHistory.map((order) => (
+                      {filteredPaymentHistory.map((order) => (
                         <div
                           key={order.id}
                           style={{
