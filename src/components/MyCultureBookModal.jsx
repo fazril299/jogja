@@ -75,7 +75,9 @@ export default function MyCultureBookModal({
   const [verificationFeedback, setVerificationFeedback] = useState(null);
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
   const [showGuideDetail, setShowGuideDetail] = useState(false);
-  const [badgeFilterType, setBadgeFilterType] = useState('all'); // 'all' | 'quests' | 'badges'
+  const [badgeFilterType, setBadgeFilterType] = useState('all');
+  const [isDestinasiExpanded, setIsDestinasiExpanded] = useState(true);
+  const [isKategoriExpanded, setIsKategoriExpanded] = useState(false); // 'all' | 'quests' | 'badges'
 
   // Sync tab saat initialTab berubah atau modal dibuka
   useEffect(() => {
@@ -1569,7 +1571,7 @@ export default function MyCultureBookModal({
                 </button>
               </div>
 
-              {/* KARTU 2: CHECKLIST TEMPAT DIKUNJUNGI (GPS CHECK-IN) */}
+              {/* KARTU 2: CHECKLIST TEMPAT DIKUNJUNGI (GPS CHECK-IN) - ACCORDION DROPDOWN */}
               <div
                 style={{
                   backgroundColor: '#FFFFFF',
@@ -1582,205 +1584,292 @@ export default function MyCultureBookModal({
                 }}
               >
                 <div
+                  onClick={() => setIsDestinasiExpanded((prev) => !prev)}
                   style={{
                     fontSize: '0.86rem',
                     fontWeight: 800,
                     color: '#2C221E',
-                    paddingBottom: '0.75rem',
-                    marginBottom: '0.65rem',
-                    borderBottom: '1px solid #F2EDE4',
+                    paddingBottom: isDestinasiExpanded ? '0.75rem' : '0',
+                    marginBottom: isDestinasiExpanded ? '0.65rem' : '0',
+                    borderBottom: isDestinasiExpanded ? '1px solid #F2EDE4' : 'none',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
+                  title={isDestinasiExpanded ? 'Tutup daftar destinasi' : 'Buka daftar destinasi'}
                 >
-                  <span>Destinasi Warisan Budaya</span>
-                  <span
-                    style={{
-                      padding: '0.18rem 0.6rem',
-                      borderRadius: '999px',
-                      backgroundColor: '#F4EFE6',
-                      color: '#2C221E',
-                      fontSize: '0.74rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <MapPin size={15} color="#8A5D26" />
+                    <span>Destinasi Warisan Budaya</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <span
+                      style={{
+                        padding: '0.18rem 0.6rem',
+                        borderRadius: '999px',
+                        backgroundColor: '#F4EFE6',
+                        color: '#2C221E',
+                        fontSize: '0.74rem',
+                        fontWeight: 700
+                      }}
+                    >
+                      {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
+                    </span>
+                    <motion.div
+                      animate={{ rotate: isDestinasiExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ display: 'flex', alignItems: 'center', color: '#8A7B6E' }}
+                    >
+                      <ChevronDown size={16} />
+                    </motion.div>
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {places.map((place, index) => {
-                    const isGpsDone = isGpsVerified(place.id);
-                    const distNow = userLiveCoords && place.coordinates
-                      ? getHaversineDistance(userLiveCoords, place.coordinates)
-                      : null;
-
-                    return (
+                <AnimatePresence initial={false}>
+                  {isDestinasiExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: 'hidden' }}
+                    >
                       <div
-                        key={place.id}
                         style={{
                           display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '0.5rem',
-                          padding: '0.65rem 0',
-                          borderBottom:
-                            index < places.length - 1 ? '1px solid #F5F1EA' : 'none'
+                          flexDirection: 'column',
+                          maxHeight: '260px',
+                          overflowY: 'auto',
+                          paddingRight: '0.25rem'
                         }}
                       >
-                        <div
-                          onClick={() => onSelectPlace && onSelectPlace(place)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            minWidth: 0,
-                            flex: 1,
-                            cursor: 'pointer'
-                          }}
-                          title={`Buka Cerita & Informasi ${place.name}`}
-                        >
-                          <div
-                            style={{
-                              width: '20px',
-                              height: '20px',
-                              borderRadius: '50%',
-                              backgroundColor: isGpsDone ? '#2C221E' : '#F4EFE6',
-                              color: isGpsDone ? '#FFFFFF' : '#786B5E',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '0.65rem',
-                              fontWeight: 700,
-                              flexShrink: 0
-                            }}
-                          >
-                            {index + 1}
-                          </div>
-                          <span
-                            style={{
-                              fontSize: '0.76rem',
-                              fontWeight: 600,
-                              color: '#3D312A',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              transition: 'color 0.15s ease'
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = '#8A5D26')}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = '#3D312A')}
-                          >
-                            {place.name.split('&')[0]}
-                          </span>
-                        </div>
+                        {places.map((place, index) => {
+                          const isGpsDone = isGpsVerified(place.id);
+                          const distNow =
+                            userLiveCoords && place.coordinates
+                              ? getHaversineDistance(userLiveCoords, place.coordinates)
+                              : null;
 
-                        {isGpsDone ? (
-                          <div
-                            title="Telah Dikunjungi"
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '50%',
-                              backgroundColor: '#DCFCE7',
-                              border: '1px solid #BBF7D0',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0
-                            }}
-                          >
-                            <Check size={14} color="#15803D" strokeWidth={3} />
-                          </div>
-                        ) : distNow !== null && distNow <= 1500 ? (
-                          <button
-                            type="button"
-                            onClick={() => handleClaimBadgeViaGps(place)}
-                            disabled={verifyingPlaceId === place.id}
-                            style={{
-                              padding: '0.26rem 0.65rem',
-                              borderRadius: '6px',
-                              backgroundColor: '#2C221E',
-                              border: '1px solid #C99B52',
-                              color: '#FAF8F5',
-                              fontSize: '0.68rem',
-                              fontWeight: 700,
-                              cursor: 'pointer',
-                              flexShrink: 0,
-                              whiteSpace: 'nowrap'
-                            }}
-                          >
-                            {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim Badge'}
-                          </button>
-                        ) : (
-                          <div
-                            onClick={() => onSelectPlace && onSelectPlace(place)}
-                            style={{
-                              padding: '0.22rem 0.55rem',
-                              borderRadius: '6px',
-                              backgroundColor: '#FAF8F5',
-                              border: '1px solid #ECE4D8',
-                              color: '#8A7B6E',
-                              fontSize: '0.67rem',
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              flexShrink: 0,
-                              whiteSpace: 'nowrap',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem'
-                            }}
-                            title={`Buka info & cerita ${place.name}`}
-                          >
-                            <Lock size={10} color="#A89A8D" />
-                            <span>Terkunci</span>
-                          </div>
-                        )}
+                          return (
+                            <div
+                              key={place.id}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '0.5rem',
+                                padding: '0.65rem 0',
+                                borderBottom:
+                                  index < places.length - 1 ? '1px solid #F5F1EA' : 'none'
+                              }}
+                            >
+                              <div
+                                onClick={() => onSelectPlace && onSelectPlace(place)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  minWidth: 0,
+                                  flex: 1,
+                                  cursor: 'pointer'
+                                }}
+                                title={`Buka Cerita & Informasi ${place.name}`}
+                              >
+                                <div
+                                  style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    backgroundColor: isGpsDone ? '#2C221E' : '#F4EFE6',
+                                    color: isGpsDone ? '#FFFFFF' : '#786B5E',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 700,
+                                    flexShrink: 0
+                                  }}
+                                >
+                                  {index + 1}
+                                </div>
+                                <span
+                                  style={{
+                                    fontSize: '0.76rem',
+                                    fontWeight: 600,
+                                    color: '#3D312A',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    transition: 'color 0.15s ease'
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.color = '#8A5D26')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.color = '#3D312A')}
+                                >
+                                  {place.name.split('&')[0]}
+                                </span>
+                              </div>
+
+                              {isGpsDone ? (
+                                <div
+                                  title="Telah Dikunjungi"
+                                  style={{
+                                    width: '24px',
+                                    height: '24px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#DCFCE7',
+                                    border: '1px solid #BBF7D0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0
+                                  }}
+                                >
+                                  <Check size={14} color="#15803D" strokeWidth={3} />
+                                </div>
+                              ) : distNow !== null && distNow <= 1500 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleClaimBadgeViaGps(place)}
+                                  disabled={verifyingPlaceId === place.id}
+                                  style={{
+                                    padding: '0.26rem 0.65rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#2C221E',
+                                    border: '1px solid #C99B52',
+                                    color: '#FAF8F5',
+                                    fontSize: '0.68rem',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                >
+                                  {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim Badge'}
+                                </button>
+                              ) : (
+                                <div
+                                  onClick={() => onSelectPlace && onSelectPlace(place)}
+                                  style={{
+                                    padding: '0.22rem 0.55rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#FAF8F5',
+                                    border: '1px solid #ECE4D8',
+                                    color: '#8A7B6E',
+                                    fontSize: '0.67rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    whiteSpace: 'nowrap',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem'
+                                  }}
+                                  title={`Buka info & cerita ${place.name}`}
+                                >
+                                  <Lock size={10} color="#A89A8D" />
+                                  <span>Terkunci</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* KARTU 3: KATEGORI BUDAYA */}
+              {/* KARTU 3: KATEGORI BUDAYA - ACCORDION DROPDOWN */}
               <div
                 style={{
                   backgroundColor: '#FFFFFF',
                   borderRadius: '16px',
                   border: '1px solid #EAE4DC',
-                  padding: '1.25rem'
+                  padding: 'clamp(0.85rem, 2.5vw, 1.25rem)',
+                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)',
+                  width: '100%',
+                  boxSizing: 'border-box'
                 }}
               >
                 <div
+                  onClick={() => setIsKategoriExpanded((prev) => !prev)}
                   style={{
                     fontSize: '0.86rem',
                     fontWeight: 700,
                     color: '#2C221E',
-                    paddingBottom: '0.75rem',
-                    marginBottom: '0.85rem',
-                    borderBottom: '1px solid #F2EDE4'
+                    paddingBottom: isKategoriExpanded ? '0.75rem' : '0',
+                    marginBottom: isKategoriExpanded ? '0.85rem' : '0',
+                    borderBottom: isKategoriExpanded ? '1px solid #F2EDE4' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
+                  title={isKategoriExpanded ? 'Tutup kategori budaya' : 'Buka kategori budaya'}
                 >
-                  Kategori Budaya
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                  {skillTags.map((tag) => (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <Sparkles size={15} color="#8A5D26" />
+                    <span>Kategori Budaya</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                     <span
-                      key={tag}
                       style={{
-                        padding: '0.35rem 0.65rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #DCD3C6',
-                        color: '#3D312A',
+                        padding: '0.15rem 0.55rem',
+                        borderRadius: '999px',
+                        backgroundColor: '#FAF6EE',
+                        color: '#8A5D26',
                         fontSize: '0.72rem',
-                        fontWeight: 600
+                        fontWeight: 700,
+                        border: '1px solid #E5D7BE'
                       }}
                     >
-                      {tag}
+                      {skillTags.length} Kategori
                     </span>
-                  ))}
+                    <motion.div
+                      animate={{ rotate: isKategoriExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ display: 'flex', alignItems: 'center', color: '#8A7B6E' }}
+                    >
+                      <ChevronDown size={16} />
+                    </motion.div>
+                  </div>
                 </div>
+
+                <AnimatePresence initial={false}>
+                  {isKategoriExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                        {skillTags.map((tag) => (
+                          <span
+                            key={tag}
+                            style={{
+                              padding: '0.35rem 0.65rem',
+                              borderRadius: '8px',
+                              backgroundColor: '#FAF6EE',
+                              border: '1px solid #E8DFC9',
+                              color: '#3D312A',
+                              fontSize: '0.72rem',
+                              fontWeight: 600,
+                              boxShadow: '0 1px 3px rgba(44, 34, 30, 0.04)',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
