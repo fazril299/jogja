@@ -123,6 +123,41 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
         </motion.div>
       </div>
 
+      {/* 3.5. LAYER DEPAN JOJO: OUTLINE KHUSUS HURUF TENGAH ("yak") (z-25 di depan Jojo agar huruf terbaca utuh) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.1, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          y: contentY,
+          opacity: contentOpacity
+        }}
+        className="absolute inset-0 z-25 flex items-center justify-center pointer-events-none px-4 select-none"
+        aria-hidden="true"
+      >
+        <span
+          className="text-[17vw] sm:text-[14vw] md:text-[12vw] lg:text-[9.5rem] xl:text-[11rem] font-serif font-normal tracking-[-0.035em] leading-none select-none m-0 text-center"
+          style={{
+            fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif"
+          }}
+        >
+          {/* "Yog" di belakang Jojo (huruf "g" tertutup sebagian secara simetris seperti "a") */}
+          <span className="invisible">Yog</span>
+          {/* Khusus huruf tengah "yak": Outline tipis berongga transparan */}
+          <span
+            className="text-transparent"
+            style={{
+              WebkitTextStroke: '1.5px rgba(251, 247, 238, 0.95)',
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))'
+            }}
+          >
+            yak
+          </span>
+          {/* "arta" di belakang Jojo (huruf "a" kedua tertutup sebagian secara simetris seperti "g") */}
+          <span className="invisible">arta</span>
+        </span>
+      </motion.div>
+
       {/* 4. BOTTOM BAR: Tombol CTA di Samping Kanan */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
