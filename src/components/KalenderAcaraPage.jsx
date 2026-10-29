@@ -259,9 +259,9 @@ function CulturalBurstIcon({ category, isMobile = false }) {
 
 export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null, onShowEventLocation }) {
   // Calendar time state
-  const [activeYear, setActiveYear] = useState(2025);
-  const [activeMonth, setActiveMonth] = useState(2); // Default to Maret (Bulan awal tahun agenda budaya)
-  const [selectedDay, setSelectedDay] = useState(18);
+  const [activeYear, setActiveYear] = useState(() => Math.max(2026, new Date().getFullYear()));
+  const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
+  const [selectedDay, setSelectedDay] = useState(() => new Date().getDate());
 
   // Active view toggle: 'Bulan' | 'Minggu' | 'Hari' | 'Daftar'
   const [viewTab, setViewTab] = useState('Bulan');
@@ -309,11 +309,11 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       semua: CULTURAL_EVENTS.length,
       sakral: CULTURAL_EVENTS.filter((e) => e.category === 'Upacara Keraton').length,
       weekend: CULTURAL_EVENTS.filter((e) => {
-        const d = new Date(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10)).getDay();
+        const d = new Date(e.year || 2026, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10)).getDay();
         return d === 0 || d === 6 || e.category === 'Pertunjukan Seni';
       }).length,
       kliwon: CULTURAL_EVENTS.filter((e) => {
-        const p = getPasaranJawa(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10));
+        const p = getPasaranJawa(e.year || 2026, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10));
         return p === 'Kliwon' || e.jawaCalendar?.toLowerCase().includes('kliwon') || e.name?.toLowerCase().includes('tapa bisu');
       }).length,
       terbuka: CULTURAL_EVENTS.filter((e) => e.category !== 'Upacara Keraton' || !e.name?.toLowerCase().includes('jamasan')).length
@@ -373,7 +373,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   const getShareText = (ev) => {
     if (!ev) return '';
-    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2025}`;
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2026}`;
     return `Saksikan acara budaya Jogja: *${ev.name}*\n📅 Tanggal: ${dateStr}\n⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}\n📍 Lokasi: ${ev.location || ''}, ${ev.district || 'D.I. Yogyakarta'}\n\nSelengkapnya di Hamemayu:\n`;
   };
 
@@ -387,7 +387,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const handleShareTwitter = (ev) => {
     if (!ev) return;
     const url = encodeURIComponent(getShareUrl(ev));
-    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2025})`);
+    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2026})`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Hamemayu,BudayaJogja,WisataJogja`, '_blank', 'noopener,noreferrer');
   };
 
@@ -533,7 +533,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         matchVibe = ev.category !== 'Upacara Keraton' || !ev.name?.toLowerCase().includes('jamasan');
       }
 
-      const matchYear = parseInt(ev.year || 2025, 10) === activeYear;
+      const matchYear = parseInt(ev.year || 2026, 10) === activeYear;
       return matchCategory && matchLocation && matchQuery && matchVibe && matchYear;
     });
   }, [selectedCategories, selectedLocation, searchQuery, activeVibe, activeYear]);
@@ -598,7 +598,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       if (!map[key]) {
         map[key] = filteredEvents.filter(
           (ev) =>
-            parseInt(ev.year || 2025, 10) === cell.year &&
+            parseInt(ev.year || 2026, 10) === cell.year &&
             ev.monthIndex === cell.month &&
             parseInt(ev.dayDate, 10) === cell.day
         );
@@ -609,9 +609,12 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   // Navigation handlers
   const handlePrevMonth = () => {
+    if (activeYear <= 2026 && activeMonth === 0) {
+      return; // Dibatasi: tidak bisa navigasi sebelum Januari 2026
+    }
     if (activeMonth === 0) {
       setActiveMonth(11);
-      setActiveYear((y) => y - 1);
+      setActiveYear((y) => Math.max(2026, y - 1));
     } else {
       setActiveMonth((m) => m - 1);
     }
@@ -693,7 +696,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   // Format teks lengkap untuk dibagikan ke WhatsApp, FB, dan media sosial
   const getEventShareText = (ev) => {
     if (!ev) return '';
-    const yearStr = ev.year || activeYear || '2025';
+    const yearStr = ev.year || activeYear || '2026';
     const shareUrl = getEventShareUrl(ev);
 
     const lines = [
@@ -1031,7 +1034,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     >
                       {MONTH_NAMES.map((m, idx) => {
                         const monthEventsCount = CULTURAL_EVENTS.filter(
-                          (e) => parseInt(e.year || 2025, 10) === activeYear && e.monthIndex === idx
+                          (e) => parseInt(e.year || 2026, 10) === activeYear && e.monthIndex === idx
                         ).length;
                         return (
                           <option key={m} value={idx}>
@@ -1102,8 +1105,13 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   <button
                     type="button"
                     onClick={handlePrevMonth}
+                    disabled={activeYear <= 2026 && activeMonth === 0}
                     aria-label="Bulan Sebelumnya"
-                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                    className={`w-8 h-8 rounded-lg border border-[#E8DFC9] flex items-center justify-center transition-colors ${
+                      activeYear <= 2026 && activeMonth === 0
+                        ? 'bg-stone-100 text-stone-300 cursor-not-allowed opacity-40'
+                        : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] cursor-pointer active:scale-95'
+                    }`}
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -1444,7 +1452,12 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                 <button
                   type="button"
                   onClick={handlePrevMonth}
-                  className="w-8 h-8 rounded-xl bg-white border border-[#E8DFC9] text-[#2d180c] flex items-center justify-center hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95 transition-transform"
+                  disabled={activeYear <= 2026 && activeMonth === 0}
+                  className={`w-8 h-8 rounded-xl border border-[#E8DFC9] flex items-center justify-center transition-transform ${
+                    activeYear <= 2026 && activeMonth === 0
+                      ? 'bg-stone-100 text-stone-300 cursor-not-allowed opacity-40'
+                      : 'bg-white text-[#2d180c] hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95'
+                  }`}
                   aria-label="Bulan sebelumnya"
                 >
                   <ChevronLeft size={16} />
@@ -1651,7 +1664,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     Tidak ada jadwal agenda khusus pada {selectedDay} {MONTH_NAMES[activeMonth]}.
                   </p>
                   <span className="text-[10px] font-semibold text-[#8c532b]">
-                    Ketuk tanggal bertitik warna pada kalender di atas untuk melihat acara.
+                    Ketuk tanggal berikon pada kalender di atas untuk melihat acara.
                   </span>
                 </div>
               )}
@@ -1867,7 +1880,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       {activeModalEvent.isCoE && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-xs font-semibold border border-emerald-400/40 shadow-md">
                           <CheckCircle2 size={11} className="text-emerald-200" />
-                          <span>Agenda Resmi CoE DIY 2025</span>
+                          <span>Agenda Resmi CoE DIY 2026</span>
                         </span>
                       )}
                       {activeModalEvent.isAiGenerated && (

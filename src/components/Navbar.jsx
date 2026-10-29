@@ -173,13 +173,13 @@ const KALENDER_PREVIEW = [
   {
     id: 'sekaten-grebeg-mulud',
     name: 'Hajad Dalem Sekaten & Grebeg Mulud',
-    subtitle: '16 September 2025 • Upacara Keraton',
+    subtitle: '16 September 2026 • Upacara Keraton',
     icon: Crown
   },
   {
     id: 'labuhan-merapi',
     name: 'Upacara Adat Labuhan Merapi',
-    subtitle: '18 Maret 2025 • Lereng Merapi',
+    subtitle: '18 Maret 2026 • Lereng Merapi',
     icon: Flame
   },
   {
@@ -918,7 +918,7 @@ export default function Navbar({
                           Agenda Budaya Jogja
                         </h4>
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
-                          Data Resmi 2025/2026
+                          Data Resmi 2026
                         </span>
                       </div>
 
