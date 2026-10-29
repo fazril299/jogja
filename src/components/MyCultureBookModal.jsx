@@ -77,7 +77,6 @@ export default function MyCultureBookModal({
   const [showGuideDetail, setShowGuideDetail] = useState(false);
   const [badgeFilterType, setBadgeFilterType] = useState('all');
   const [isDestinasiExpanded, setIsDestinasiExpanded] = useState(true);
-  const [isKategoriExpanded, setIsKategoriExpanded] = useState(false); // 'all' | 'quests' | 'badges'
 
   // Sync tab saat initialTab berubah atau modal dibuka
   useEffect(() => {
@@ -221,14 +220,7 @@ export default function MyCultureBookModal({
   ];
   const headerMiniBadges = portfolioBadges;
 
-  const skillTags = [
-    'Sumbu Filosofis UNESCO',
-    'Warisan Mataram Islam',
-    'Sentra Gudeg Wijilan',
-    'Kerajinan Perak Kotagede',
-    'Gerabah Kasongan',
-    'Lereng Merapi'
-  ];
+  
 
   const filteredEvents = CULTURAL_EVENTS.filter((ev) => {
     const matchCat =
@@ -1791,97 +1783,7 @@ export default function MyCultureBookModal({
                 </AnimatePresence>
               </div>
 
-              {/* KARTU 3: KATEGORI BUDAYA - ACCORDION DROPDOWN */}
-              <div
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '16px',
-                  border: '1px solid #EAE4DC',
-                  padding: 'clamp(0.85rem, 2.5vw, 1.25rem)',
-                  boxShadow: '0 4px 16px rgba(44, 34, 30, 0.03)',
-                  width: '100%',
-                  boxSizing: 'border-box'
-                }}
-              >
-                <div
-                  onClick={() => setIsKategoriExpanded((prev) => !prev)}
-                  style={{
-                    fontSize: '0.86rem',
-                    fontWeight: 700,
-                    color: '#2C221E',
-                    paddingBottom: isKategoriExpanded ? '0.75rem' : '0',
-                    marginBottom: isKategoriExpanded ? '0.85rem' : '0',
-                    borderBottom: isKategoriExpanded ? '1px solid #F2EDE4' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    userSelect: 'none'
-                  }}
-                  title={isKategoriExpanded ? 'Tutup kategori budaya' : 'Buka kategori budaya'}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                    <Sparkles size={15} color="#8A5D26" />
-                    <span>Kategori Budaya</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                    <span
-                      style={{
-                        padding: '0.15rem 0.55rem',
-                        borderRadius: '999px',
-                        backgroundColor: '#FAF6EE',
-                        color: '#8A5D26',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        border: '1px solid #E5D7BE'
-                      }}
-                    >
-                      {skillTags.length} Kategori
-                    </span>
-                    <motion.div
-                      animate={{ rotate: isKategoriExpanded ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ display: 'flex', alignItems: 'center', color: '#8A7B6E' }}
-                    >
-                      <ChevronDown size={16} />
-                    </motion.div>
-                  </div>
-                </div>
-
-                <AnimatePresence initial={false}>
-                  {isKategoriExpanded && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                        {skillTags.map((tag) => (
-                          <span
-                            key={tag}
-                            style={{
-                              padding: '0.35rem 0.65rem',
-                              borderRadius: '8px',
-                              backgroundColor: '#FAF6EE',
-                              border: '1px solid #E8DFC9',
-                              color: '#3D312A',
-                              fontSize: '0.72rem',
-                              fontWeight: 600,
-                              boxShadow: '0 1px 3px rgba(44, 34, 30, 0.04)',
-                              transition: 'all 0.15s ease'
-                            }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
-            </div>
 
             {/* =================================================================
                 KOLOM KANAN: TAB CONTENT & PANDUAN CARA DAPAT BADGE
