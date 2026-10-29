@@ -138,6 +138,131 @@ const LOCATIONS_LIST = [
   { id: 'Bantul', label: 'Kabupaten Bantul' }
 ];
 
+// Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
+function CulturalBurstIcon({ category }) {
+  if (category === 'Pertunjukan Seni') {
+    return (
+      <svg
+        viewBox="0 0 100 130"
+        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(146,64,14,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="crestGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="50%" stopColor="#D97706" />
+            <stop offset="100%" stopColor="#78350F" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 8 C24 8, 8 28, 12 60 C16 88, 35 118, 50 124 C65 118, 84 88, 88 60 C92 28, 76 8, 50 8 Z"
+          fill="url(#crestGoldGrad)"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M28 46 C35 50, 44 50, 48 46 M52 46 C56 50, 65 50, 72 46"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M50 52 L50 78 L42 86 L58 86"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M36 98 C44 102, 56 102, 64 98"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28"
+          fill="#FDE047"
+          stroke="#92400E"
+          strokeWidth="1.8"
+        />
+      </svg>
+    );
+  }
+
+  if (category === 'Upacara Keraton') {
+    return (
+      <svg
+        viewBox="0 0 100 140"
+        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.45)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="gununganGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="25%" stopColor="#F59E0B" />
+            <stop offset="65%" stopColor="#B45309" />
+            <stop offset="100%" stopColor="#78350F" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 4 C36 28, 12 56, 5 90 C-2 110, 6 135, 50 137 C94 135, 102 110, 95 90 C88 56, 64 28, 50 4 Z"
+          fill="url(#gununganGoldGrad)"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M50 18 L50 120"
+          stroke="#FFFFFF"
+          strokeOpacity="0.85"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <path
+          d="M26 68 C40 82, 60 82, 74 68 M20 96 C40 110, 60 110, 80 96 M14 120 C34 132, 66 132, 86 120"
+          stroke="#FEF3C7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <circle cx="50" cy="45" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // Default (Festival Rakyat, Pameran Seni, dll.)
+  return (
+    <svg
+      viewBox="0 0 100 130"
+      className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="crestPusakaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FEF08A" />
+          <stop offset="35%" stopColor="#F59E0B" />
+          <stop offset="70%" stopColor="#B45309" />
+          <stop offset="100%" stopColor="#78350F" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M50 6 C28 10, 14 34, 18 64 C22 92, 40 118, 50 124 C60 118, 78 92, 82 64 C86 34, 72 10, 50 6 Z"
+        fill="url(#crestPusakaGrad)"
+        stroke="#FFFFFF"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M50 20 L50 115 M32 60 L68 60 M28 82 L72 82"
+        stroke="#FEF3C7"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <circle cx="50" cy="40" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange }) {
   // Calendar time state
   const [activeYear, setActiveYear] = useState(2025);
@@ -922,9 +1047,9 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
               {/* ── SUB-VIEW: BULAN (Default Monthly Matrix Grid) ── */}
               {viewTab === 'Bulan' && (
-                <div className="border border-[#E8DFC9] rounded-xl overflow-hidden">
+                <div className="border border-[#E8DFC9] rounded-xl bg-white relative">
                   {/* 7 Columns Weekday Header Row */}
-                  <div className="grid grid-cols-7 bg-[#FAF6EE] border-b border-[#E8DFC9] text-center">
+                  <div className="grid grid-cols-7 bg-[#FAF6EE] border-b border-[#E8DFC9] text-center rounded-t-xl relative z-10">
                     {DAY_HEADERS.map((dayName, idx) => (
                       <div
                         key={dayName}
@@ -937,7 +1062,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   </div>
 
                   {/* Calendar Grid Matrix */}
-                  <div className="grid grid-cols-7 divide-x divide-y divide-[#E8DFC9] bg-white">
+                  <div className="grid grid-cols-7 divide-x divide-y divide-[#E8DFC9] bg-white relative rounded-b-xl">
                     {calendarCells.map((cell, idx) => {
                       const cellKey = `${cell.year}-${cell.month}-${cell.day}`;
                       const cellEvents = eventsByDateKey[cellKey] || [];
@@ -947,25 +1072,28 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       const hasKeratonEvent = cellEvents.some(e => e.category === 'Upacara Keraton');
 
                       return (
-                        <div
+                                                <div
                           key={`${cellKey}-${idx}`}
                           onClick={() => {
                             if (cell.isCurrentMonth) setSelectedDay(cell.day);
                           }}
                           className={`min-h-[86px] sm:min-h-[100px] p-1.5 flex flex-col justify-between transition-all cursor-pointer relative group ${
                             !cell.isCurrentMonth
-                              ? 'bg-[#FBF9F5] text-neutral-300'
+                              ? 'bg-[#FBF9F5] text-neutral-300 z-0'
                               : isSelected
-                              ? 'bg-[#FAF6EE] shadow-[inset_0_0_0_2px_#8c532b]'
-                              : hasKeratonEvent
-                              ? 'bg-gradient-to-b from-white to-[#FDFBF7] hover:bg-[#FAF6EE]/80'
+                              ? 'bg-[#FAF6EE] shadow-[inset_0_0_0_2px_#8c532b] z-20'
                               : hasEvents
-                              ? 'bg-white hover:bg-[#FAF6EE]/60'
-                              : 'bg-white hover:bg-[#FAF6EE]/30'
+                              ? 'bg-gradient-to-b from-[#FFFDF9] to-[#FAF5EB] shadow-[inset_0_0_0_1.5px_rgba(180,83,9,0.35)] z-20 hover:z-30 hover:shadow-[inset_0_0_0_2px_#8c532b]'
+                              : 'bg-white hover:bg-[#FAF6EE]/30 z-0'
                           }`}
                         >
+                          {/* Opsi 3: Cultural Burst 3D Out-of-Bounds Icon */}
+                          {cell.isCurrentMonth && hasEvents && (
+                            <CulturalBurstIcon category={cellEvents[0]?.category} />
+                          )}
+
                           {/* Top Row: Pasaran Jawa (Left) & Date Number (Right) */}
-                          <div className="flex items-center justify-between w-full select-none">
+                          <div className="flex items-center justify-between w-full select-none relative z-20">
                             <span
                               className={`text-[9px] tracking-tight truncate pr-0.5 transition-colors ${
                                 !cell.isCurrentMonth
@@ -1005,7 +1133,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           </div>
 
                           {/* Event Colored Badges inside cell */}
-                          <div className="mt-1 space-y-1 overflow-hidden">
+                          <div className="mt-1 space-y-1 overflow-hidden relative z-20">
                             {cellEvents.map((ev) => {
                               const conf =
                                 CATEGORY_CONFIG[ev.category] ||
@@ -1729,8 +1857,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
                           {/* Makna Filosofis Card */}
                           <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E8DFC9] space-y-2.5 shadow-2xs">
-                            <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-[#8c532b]" />
+                            <div>
                               <h4 className="text-xs font-bold uppercase tracking-wider text-[#2d180c] m-0">
                                 Makna Filosofis &amp; Prosesi Sakral
                               </h4>
