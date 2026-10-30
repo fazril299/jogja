@@ -997,7 +997,7 @@ export default function MyCultureBookModal({
                               <span>SUDAH DIPAKAI</span>
                             </span>
                           ) : (
-                            <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-0.5 animate-pulse">
+                            <span className="text-[9px] font-bold text-[#34D399] bg-[#064E3B] border border-[#059669] px-2 py-0.5 rounded-full flex items-center gap-1.5">
                               <CheckCircle2 size={10} />
                               <span>SIAP PAKAI</span>
                             </span>
@@ -1027,7 +1027,7 @@ export default function MyCultureBookModal({
                           <button
                             type="button"
                             onClick={() => setSelectedTicketToView(order)}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                            className="px-3.5 py-1.5 rounded-lg bg-[#1A1412] hover:bg-black text-white text-[11px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                           >
                             <Ticket size={12} />
                             <span>Buka E-Tiket</span>
@@ -2803,14 +2803,15 @@ export default function MyCultureBookModal({
                                   fontWeight: 800,
                                   padding: '0.2rem 0.65rem',
                                   borderRadius: '999px',
-                                  backgroundColor: '#15803D',
-                                  color: '#FFFFFF',
+                                  backgroundColor: '#064E3B',
+                                  color: '#34D399',
+                                  border: '1px solid #059669',
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '0.25rem'
+                                  gap: '0.35rem'
                                 }}
                               >
-                                <CheckCircle2 size={11} />
+                                <span style={{ width: '6px', height: '6px', borderRadius: '999px', backgroundColor: '#34D399', display: 'inline-block' }} />
                                 <span>SIAP PAKAI</span>
                               </span>
                             )}
@@ -2856,16 +2857,15 @@ export default function MyCultureBookModal({
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '0.45rem',
-                                  backgroundColor: '#16A34A',
+                                  backgroundColor: '#1A1412',
                                   color: '#FFFFFF',
-                                  border: 'none',
-                                  borderRadius: '10px',
-                                  padding: '0.55rem 1rem',
-                                  fontSize: '0.8rem',
-                                  fontWeight: 800,
+                                  border: '1px solid #1A1412',
+                                  borderRadius: '8px',
+                                  padding: '0.5rem 0.95rem',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
                                   cursor: 'pointer',
-                                  transition: 'background-color 0.2s',
-                                  boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)'
+                                  transition: 'background-color 0.15s ease'
                                 }}
                               >
                                 <Receipt size={13} />
