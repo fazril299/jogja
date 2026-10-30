@@ -555,6 +555,14 @@ function NusantaraApp() {
       return;
     }
 
+    if (window.isSecureContext === false) {
+      setIsGpsLoading(false);
+      setGpsErrorMsg(
+        'Akses sensor GPS dibatasi oleh browser karena koneksi belum aman (HTTP). Silakan gunakan Titik Nol KM atau jalankan dengan HTTPS.'
+      );
+      return;
+    }
+
     setIsGpsLoading(true);
     setGpsErrorMsg('');
 
@@ -562,7 +570,15 @@ function NusantaraApp() {
       (pos) => {
         handleRealPositionUpdate(pos, autoOpenPage);
       },
-      () => {
+      (errHigh) => {
+        if (errHigh.code === 1) {
+          setIsGpsLoading(false);
+          setGpsErrorMsg(
+            'Izin lokasi GPS belum diaktifkan di browser. Klik ikon gembok/lokasi di address bar browser lalu pilih "Izinkan" untuk mendeteksi posisi Anda.'
+          );
+          return;
+        }
+
         navigator.geolocation.getCurrentPosition(
           (posFallback) => {
             handleRealPositionUpdate(posFallback, autoOpenPage);
@@ -571,7 +587,7 @@ function NusantaraApp() {
             setIsGpsLoading(false);
             if (errFinal.code === 1) {
               setGpsErrorMsg(
-                'Izin lokasi GPS ditolak di browser. Klik ikon gembok/lokasi di address bar browser lalu pilih "Allow / Izinkan" untuk memeriksa apakah Anda berada di wilayah D.I. Yogyakarta.'
+                'Izin lokasi GPS belum diaktifkan di browser. Klik ikon gembok/lokasi di address bar browser lalu pilih "Izinkan" untuk mendeteksi posisi Anda.'
               );
             } else if (errFinal.code === 2) {
               setGpsErrorMsg(
@@ -583,10 +599,10 @@ function NusantaraApp() {
               );
             }
           },
-          { enableHighAccuracy: false, timeout: 12000, maximumAge: 0 }
+          { enableHighAccuracy: false, timeout: 12000, maximumAge: 60000 }
         );
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
     );
   };
 
