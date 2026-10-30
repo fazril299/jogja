@@ -727,9 +727,9 @@ export default function MyCultureBookModal({
                     <button
                       type="button"
                       onClick={() => checkoutWishlist(unpaidWishlistItems)}
-                      className="px-2.5 py-1 rounded-xl bg-[#2C221E] text-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-[#C99B52] transition-colors"
+                      className="px-2.5 py-1 rounded-lg bg-white border border-[#2C221E] text-[#2C221E] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-none"
                     >
-                      <CreditCard size={11} className="text-[#C99B52]" />
+                      <CreditCard size={11} className="text-[#2C221E]" />
                       <span>Bayar Semua</span>
                     </button>
                   )}
@@ -848,9 +848,9 @@ export default function MyCultureBookModal({
                               <button
                                 type="button"
                                 onClick={() => initiatePayment(item, { fromWishlist: true })}
-                                className="px-3 py-1 rounded-xl bg-[#2C221E] hover:bg-[#C99B52] text-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                                className="px-3 py-1 rounded-lg bg-white border border-[#2C221E] text-[#2C221E] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-none"
                               >
-                                <Ticket size={11} className="text-[#C99B52]" />
+                                <Ticket size={11} className="text-[#2C221E]" />
                                 <span>Beli Tiket Masuk</span>
                               </button>
                             )}
@@ -861,22 +861,14 @@ export default function MyCultureBookModal({
 
                     {/* Ringkasan Checkout Bawah Mobile */}
                     {unpaidWishlistItems.length > 0 && (
-                      <div className="p-3 rounded-2xl bg-[#2C221E] text-white flex items-center justify-between gap-2 shadow-none border border-[#3D302A]">
-                        <div>
-                          <p className="text-[9px] text-[#D4C9BD] font-semibold m-0 uppercase tracking-wider">
-                            Total Belum Lunas
-                          </p>
-                          <p className="text-xs font-black text-white m-0">
-                            Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}
-                          </p>
-                        </div>
+                      <div className="pt-1">
                         <button
                           type="button"
                           onClick={() => checkoutWishlist(unpaidWishlistItems)}
-                          className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-[#FAF6EE] text-[#2C221E] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-none"
+                          className="w-full py-2.5 px-3 rounded-xl bg-white border border-[#2C221E] text-[#2C221E] text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-none transition-colors hover:bg-[#FAF8F5]"
                         >
-                          <ShoppingBag size={13} />
-                          <span>Bayar Semua</span>
+                          <ShoppingBag size={14} className="text-[#2C221E]" />
+                          <span>Bayar Semua Wishlist ({unpaidWishlistItems.length}) • Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}</span>
                         </button>
                       </div>
                     )}
@@ -2289,19 +2281,19 @@ export default function MyCultureBookModal({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.5rem',
-                          backgroundColor: '#2C221E',
-                          color: '#FAF8F5',
-                          border: 'none',
-                          borderRadius: '12px',
+                          backgroundColor: '#FFFFFF',
+                          color: '#2C221E',
+                          border: '1.5px solid #2C221E',
+                          borderRadius: '10px',
                           padding: '0.65rem 1.25rem',
                           fontSize: '0.84rem',
                           fontWeight: 800,
                           cursor: 'pointer',
                           boxShadow: 'none',
-                          transition: 'all 0.2s'
+                          transition: 'background-color 0.15s ease'
                         }}
                       >
-                        <CreditCard size={15} color="#FFFFFF" />
+                        <CreditCard size={15} color="#2C221E" />
                         <span>Bayar Semua Wishlist ({unpaidWishlistItems.length} Item)</span>
                       </button>
                     )}
@@ -2504,16 +2496,18 @@ export default function MyCultureBookModal({
                                         alignItems: 'center',
                                         gap: '0.35rem',
                                         padding: '0.45rem 0.85rem',
-                                        backgroundColor: '#2C221E',
-                                        color: '#FAF8F5',
-                                        border: 'none',
+                                        backgroundColor: '#FFFFFF',
+                                        color: '#2C221E',
+                                        border: '1.5px solid #2C221E',
+                                        borderRadius: '8px',
                                         fontSize: '0.75rem',
                                         fontWeight: 800,
                                         cursor: 'pointer',
-                                        transition: 'background-color 0.2s'
+                                        boxShadow: 'none',
+                                        transition: 'background-color 0.15s ease'
                                       }}
                                     >
-                                      <Ticket size={12} color="#C99B52" />
+                                      <Ticket size={12} color="#2C221E" />
                                       <span>Beli Tiket Masuk</span>
                                     </button>
                                   )}
@@ -2524,56 +2518,32 @@ export default function MyCultureBookModal({
                         })}
                       </div>
 
-                      {/* Sticky / Floating Bottom Summary Bar */}
+                      {/* Tombol Checkout Wishlist Bawah Desktop - Simpel Putih Solid */}
                       {unpaidWishlistItems.length > 0 && (
-                        <div
-                          style={{
-                            padding: '1.25rem 1.5rem',
-                            backgroundColor: '#2C221E',
-                            color: '#FFFFFF',
-                            borderRadius: '16px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexWrap: 'wrap',
-                            gap: '1rem',
-                            boxShadow: 'none', border: '1px solid #3D302A',
-                            marginTop: '0.5rem'
-                          }}
-                        >
-                          <div>
-                            <span style={{ fontSize: '0.75rem', color: '#D4C9BD', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                              Ringkasan Pembayaran Wishlist
-                            </span>
-                            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF', marginTop: '0.15rem' }}>
-                              Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}{' '}
-                              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: '#D4C9BD' }}>
-                                ({unpaidWishlistItems.length} destinasi & voucher belum lunas)
-                              </span>
-                            </div>
-                          </div>
-
+                        <div style={{ marginTop: '1.25rem' }}>
                           <button
                             type="button"
                             onClick={() => checkoutWishlist(unpaidWishlistItems)}
                             style={{
-                              display: 'inline-flex',
+                              width: '100%',
+                              display: 'flex',
                               alignItems: 'center',
+                              justifyContent: 'center',
                               gap: '0.65rem',
                               backgroundColor: '#FFFFFF',
                               color: '#2C221E',
-                              border: 'none',
-                              borderRadius: '10px',
-                              padding: '0.75rem 1.6rem',
-                              fontSize: '0.88rem',
+                              border: '1.5px solid #2C221E',
+                              borderRadius: '12px',
+                              padding: '0.85rem 1.5rem',
+                              fontSize: '0.9rem',
                               fontWeight: 800,
                               cursor: 'pointer',
                               boxShadow: 'none',
                               transition: 'background-color 0.15s ease'
                             }}
                           >
-                            <ShoppingBag size={17} />
-                            <span>Checkout & Bayar Semua Sekaligus</span>
+                            <ShoppingBag size={18} color="#2C221E" />
+                            <span>Checkout & Bayar Semua Sekaligus ({unpaidWishlistItems.length} Item) • Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}</span>
                           </button>
                         </div>
                       )}
