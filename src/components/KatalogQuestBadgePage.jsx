@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
-  Sparkles,
   Award,
   Compass,
   MapPin,
@@ -367,7 +366,6 @@ export default function KatalogQuestBadgePage({
                               </span>
                             ) : isInRange ? (
                               <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-300 animate-pulse">
-                                <Sparkles size={12} />
                                 <span>Bisa Diklaim!</span>
                               </span>
                             ) : (

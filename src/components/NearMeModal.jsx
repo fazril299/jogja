@@ -5,32 +5,22 @@ import {
   Search,
   Navigation,
   X,
-  Check,
-  Map,
-  List,
   ChevronDown,
   ChevronLeft,
-  ChevronRight,
   Layers,
   Compass,
   Utensils,
   Clock,
   Tag,
-  ExternalLink,
   Info,
   BookOpen,
   ArrowLeft,
   AlertCircle,
   Heart,
-  Ticket,
-  CheckCircle2,
-  CreditCard,
-  Calendar,
-  Share2
+  Calendar
 } from 'lucide-react';
 import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
-import { usePayment } from '../context/PaymentContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
@@ -184,17 +174,18 @@ export default function NearMeModal({
 
   const [activeMapLayer, setActiveMapLayer] = useState('google-streets'); // Default: Google Maps HD Super Cepat
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true); // Panel floating drawer di dalam peta
+  const [isMobilePopupCollapsed, setIsMobilePopupCollapsed] = useState(false); // Mobile: popup sisi atas (bisa ditutup/buka)
 
-  // Wishlist, Auth & Dummy Payment integration
+  // Otomatis buka popup mobile saat marker atau item kuliner dipilih
+  useEffect(() => {
+    if (selectedCardId) {
+      setIsMobilePopupCollapsed(false);
+    }
+  }, [selectedCardId]);
+
+  // Wishlist & Auth integration
   const { isFavorite, toggleFavorite } = useCultureBook();
   const { requireAuth } = useAuth();
-  const {
-    initiatePayment,
-    isItemPaid,
-    getPaidTicketByItemId,
-    setSelectedTicketToView,
-    parseItemPrice
-  } = usePayment();
 
   const handleCulinaryWishlistToggle = (e, item) => {
     e.stopPropagation();
@@ -408,6 +399,7 @@ export default function NearMeModal({
     }
     setShowGpsRequiredPrompt(false);
     setActiveNavRouteId(item.id);
+    setIsMobilePopupCollapsed(true);
 
     if (mapInstanceRef.current && userLiveCoords && item.coordinates) {
       mapInstanceRef.current.fitBounds(
@@ -418,6 +410,18 @@ export default function NearMeModal({
         { padding: [70, 70], maxZoom: 17 }
       );
     }
+  };
+
+  const handleEndRoute = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setActiveNavRouteId(null);
+    setRouteCoordinates([]);
+    setRouteDistanceMeters(null);
+    setRouteDurationMinutes(null);
+    setIsRouteLoading(false);
   };
 
   const handleRequestEnableGps = () => {
@@ -446,6 +450,9 @@ export default function NearMeModal({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  // Kunci scroll body & documentElement untuk menghilangkan scrollbar dan scroll hantu di halaman kuliner
+  // Scroll lock is handled centrally by App.jsx
 
   // Inisialisasi Peta Leaflet Berpusat di Kota Yogyakarta
   useEffect(() => {
@@ -892,16 +899,18 @@ export default function NearMeModal({
         initial={false}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        className="fixed inset-0 w-full h-full overflow-hidden select-none no-scrollbar touch-none"
         style={{
           position: 'fixed',
           inset: 0,
-          width: '100vw',
-          height: '100vh',
-          maxHeight: '100vh',
+          width: '100%',
+          height: '100%',
+          maxHeight: '100%',
           zIndex: 9990,
           backgroundColor: '#FAF8F5',
           color: '#2C221E',
           overflow: 'hidden',
+          overscrollBehavior: 'none',
           fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
         }}
       >
@@ -921,54 +930,70 @@ export default function NearMeModal({
         />
 
         {/* =========================================================================
-            MINIMALIST TOP NAVIGATION HUD BAR (RUTE AKTIF LIVE)
-            Clean, glassmorphic pill bar (Tanpa emoji, tipografi elegan modern)
+            NAVIGATION HUD BAR (RUTE AKTIF LIVE)
+            - Mobile: Di atas navbar bawah dan center (bottom-[72px] inset-x-3 max-w-md mx-auto)
+            - Desktop: Kanan/tengah atas (sm:top-24 sm:left-1/2)
+            - Menampilkan Jarak Rute & Tombol Jelas 'Akhiri Rute'
             ========================================================================= */}
         <AnimatePresence>
           {activeNavRouteId && activeNavTarget && (
             <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 15, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              exit={{ opacity: 0, y: 15, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-[997] bg-[#FAF6EE]/95 backdrop-blur-md text-[#2D180C] px-4 sm:px-6 py-2 sm:py-2.5 rounded-full shadow-[0_12px_32px_rgba(45,24,12,0.18)] border border-[#C7AE98] flex items-center gap-3 sm:gap-4 max-w-[calc(100vw-32px)]"
+              className="fixed sm:absolute bottom-[72px] sm:bottom-auto sm:top-24 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 max-w-md mx-auto z-[100010] bg-[#FAF6EE]/95 backdrop-blur-xl text-[#2D180C] px-3.5 sm:px-5 py-2.5 rounded-2xl sm:rounded-full shadow-[0_12px_36px_rgba(45,24,12,0.22)] border border-[#C7AE98] flex items-center justify-between gap-3 pointer-events-auto select-none"
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-[#8C532B] animate-pulse shrink-0 ring-4 ring-[#8C532B]/20" />
-              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium">
-                <span className="font-bold text-[#2D180C] truncate max-w-[140px] sm:max-w-[200px]">
-                  {activeNavTarget.name}
-                </span>
-                <span className="text-[#8C532B]/40">•</span>
-                <span className="text-[#8C532B] font-bold shrink-0">
-                  {isRouteLoading && routeDistanceMeters === null
-                    ? 'Mencari rute jalan...'
-                    : routeDistanceMeters !== null
-                    ? formatDistanceLabel(routeDistanceMeters)
-                    : navDistMeters !== null
-                    ? formatDistanceLabel(navDistMeters)
-                    : 'Menghitung...'}
-                </span>
-                <span className="text-[#8C532B]/40 hidden sm:inline">•</span>
-                <span className="text-[#786154] text-xs font-semibold hidden sm:inline shrink-0">
-                  ± {routeDurationMinutes ?? navEstMinutes} menit jalan
-                </span>
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#8C532B] animate-pulse shrink-0 ring-4 ring-[#8C532B]/20" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-xs sm:text-sm text-[#2D180C] truncate leading-tight">
+                    {activeNavTarget.name}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] mt-0.5 leading-none">
+                    <span className="text-[#8C532B] font-extrabold shrink-0">
+                      {isRouteLoading && routeDistanceMeters === null
+                        ? 'Mencari rute jalan...'
+                        : routeDistanceMeters !== null
+                        ? formatDistanceLabel(routeDistanceMeters)
+                        : navDistMeters !== null
+                        ? formatDistanceLabel(navDistMeters)
+                        : 'Menghitung...'}
+                    </span>
+                    <span className="text-[#8C532B]/40">•</span>
+                    <span className="text-[#786154] font-medium shrink-0">
+                      ± {routeDurationMinutes ?? navEstMinutes} menit
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              {/* Tombol Akhiri Rute (Jelas, Kontras Tinggi, & Mengakhiri Line Track) */}
               <button
                 type="button"
-                onClick={() => setActiveNavRouteId(null)}
-                className="ml-1 sm:ml-2 px-3.5 py-1 bg-[#8C532B] hover:bg-[#704222] text-[#FAF8F5] rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs"
+                onClick={handleEndRoute}
+                className="px-3.5 py-2 sm:py-1.5 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl sm:rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 shadow-sm flex items-center gap-1.5 active:scale-95 whitespace-nowrap"
+                title="Hentikan petunjuk rute dan hilangkan garis rute di peta"
               >
-                Akhiri Rute
+                <X size={13} strokeWidth={2.5} />
+                <span>Akhiri Rute</span>
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* =========================================================================
-            FLOATING ACTION TOOLS DI KANAN ATAS (Z-INDEX 995)
-            Tombol Cepat: Fokus Kota, Ganti Basemap, Lacak GPS, dan Tutup
+            FLOATING ACTION TOOLS:
+            - Desktop: Kanan atas (sm:top-24 sm:right-6)
+            - Mobile: Kanan bawah di atas navbar bawah (geser ke atas saat rute aktif)
             ========================================================================= */}
-        <div className="absolute top-20 sm:top-24 right-3 sm:right-6 z-[995] flex flex-col gap-2">
+        <div
+          className={`absolute right-3 sm:right-6 z-[995] flex flex-col gap-2 transition-all duration-300 ${
+            activeNavRouteId
+              ? 'bottom-[130px] sm:bottom-auto sm:top-24'
+              : 'bottom-20 sm:bottom-auto sm:top-24'
+          }`}
+        >
           {/* Tombol Fokus Kota Yogyakarta */}
           <button
             type="button"
@@ -982,10 +1007,10 @@ export default function NearMeModal({
                 });
               }
             }}
-            className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#2C221E] hover:bg-[#FAF8F5] hover:text-[#8A5D26] hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#2C221E] hover:bg-[#FAF8F5] hover:text-[#8A5D26] hover:scale-105 active:scale-95 transition-all cursor-pointer group"
             title="Tampilkan Seluruh Kota Yogyakarta"
           >
-            <Compass size={18} className="group-hover:rotate-45 transition-transform" />
+            <Compass size={17} className="group-hover:rotate-45 transition-transform" />
           </button>
 
           {/* Tombol Ganti Layer Peta */}
@@ -1000,7 +1025,7 @@ export default function NearMeModal({
                   : 'google-streets'
               )
             }
-            className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#2C221E] hover:bg-[#FAF8F5] hover:text-[#8A5D26] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#2C221E] hover:bg-[#FAF8F5] hover:text-[#8A5D26] hover:scale-105 active:scale-95 transition-all cursor-pointer"
             title={`Ganti Tampilan Peta (${
               activeMapLayer === 'google-streets'
                 ? 'Aktif: Google Streets HD (Super Cepat)'
@@ -1009,7 +1034,7 @@ export default function NearMeModal({
                 : 'Aktif: Standar OSM'
             })`}
           >
-            <Layers size={18} />
+            <Layers size={17} />
           </button>
 
           {/* Tombol Lacak GPS Real-Time */}
@@ -1017,14 +1042,14 @@ export default function NearMeModal({
             <button
               type="button"
               onClick={onRefreshDeviceGps}
-              className={`w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center transition-all cursor-pointer ${
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center transition-all cursor-pointer ${
                 isGpsLoading
                   ? 'text-[#C99B52] animate-spin'
                   : 'text-[#2C221E] hover:bg-[#FAF8F5] hover:text-[#8A5D26] hover:scale-105 active:scale-95'
               }`}
               title="Perbarui Deteksi Lokasi GPS"
             >
-              <Navigation size={17} />
+              <Navigation size={16} />
             </button>
           )}
 
@@ -1032,10 +1057,10 @@ export default function NearMeModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#786B5E] hover:text-[#2C221E] hover:bg-[#FAF8F5] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-[#E2D7C7] shadow-lg flex items-center justify-center text-[#786B5E] hover:text-[#2C221E] hover:bg-[#FAF8F5] hover:scale-105 active:scale-95 transition-all cursor-pointer"
             title="Tutup Peta"
           >
-            <X size={18} />
+            <X size={17} />
           </button>
         </div>
 
@@ -1052,21 +1077,13 @@ export default function NearMeModal({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -35 }}
               transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-[72px] sm:bottom-6 inset-x-2.5 sm:inset-x-auto sm:top-24 sm:left-5 h-[44vh] max-h-[46vh] sm:h-auto sm:max-h-none sm:w-[420px] sm:max-w-[420px] z-[995] bg-white/95 backdrop-blur-xl rounded-3xl border border-[#E2D7C7] shadow-[0_12px_36px_rgba(44,34,30,0.18)] flex flex-col overflow-hidden transition-all"
+              className="hidden sm:flex absolute sm:bottom-6 sm:top-24 sm:left-5 sm:h-auto sm:max-h-none sm:w-[420px] sm:max-w-[420px] z-[995] bg-white/95 backdrop-blur-xl rounded-3xl border border-[#E2D7C7] shadow-[0_12px_36px_rgba(44,34,30,0.18)] flex-col overflow-hidden transition-all"
             >
               {activeItem ? (
                 /* ===================================================================
                    1. SINGLE DESTINATION FULL SIDEBAR VIEW (DESKTOP DETAIL)
                    =================================================================== */
                 <div className="flex flex-col h-full overflow-hidden">
-                  {/* Mobile Grab / Peek Bar & Tips Badge */}
-                  <div className="sm:hidden flex flex-col items-center pt-2 pb-1 shrink-0 bg-white/95 border-b border-[#F0EAE1]">
-                    <div className="w-10 h-1 bg-[#D9CEBA] rounded-full mb-1.5" />
-                    <div className="flex items-center gap-1.5 text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#EFE0C7] max-w-[90%] truncate">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52] shrink-0" />
-                      <span className="truncate">Tips Jojo: Cobain {getSignatureFood(activeItem)}</span>
-                    </div>
-                  </div>
                   {/* Top Bar with Back and Close */}
                   <div className="p-3.5 sm:p-4 border-b border-[#EAE3D6] bg-white/95 flex items-center justify-between gap-3 shrink-0">
                     <button
@@ -1289,51 +1306,47 @@ export default function NearMeModal({
                       )}
                     </AnimatePresence>
 
-                    {/* Tombol Pembayaran Voucher Kuliner */}
-                    <div className="flex items-center gap-2">
-                      {isItemPaid(activeItem.id) ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const t = getPaidTicketByItemId(activeItem.id);
-                            if (t) setSelectedTicketToView(t);
-                          }}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                    {/* Tombol Pemesanan GoFood Resmi (Hanya untuk destinasi kuliner, bukan agenda budaya) */}
+                    {!activeItem.isCulturalEvent && (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={activeItem.hasGofood ? activeItem.gofoodUrl : `https://gofood.co.id/search?q=${encodeURIComponent(activeItem.name)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#EE2737] hover:bg-[#d61e2d] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                          title={`Pesan ${activeItem.name} langsung di GoFood`}
                         >
-                          <CheckCircle2 size={15} />
-                          <span>✓ Voucher Aktif (Buka Boarding Pass)</span>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => initiatePayment(activeItem)}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#C99B52] hover:bg-[#D4A75E] text-[#2C221E] text-xs font-black flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
-                        >
-                          <Ticket size={15} />
-                          <span>Pesan Voucher • Rp {parseItemPrice(activeItem).toLocaleString('id-ID')}</span>
-                        </button>
-                      )}
+                          <GoFoodBadge
+                            size="md"
+                            showExternalIcon={true}
+                            rating={activeItem.hasGofood ? activeItem.gofoodRating : undefined}
+                            reviews={activeItem.hasGofood ? activeItem.gofoodReviews : undefined}
+                            tier={activeItem.hasGofood ? activeItem.gofoodTier : undefined}
+                            showRating={Boolean(activeItem.hasGofood && activeItem.gofoodRating)}
+                          />
+                        </a>
 
-                      <button
-                        type="button"
-                        onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
-                        className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                          isFavorite(activeItem.id)
-                            ? 'bg-rose-50 border-rose-200 text-rose-500'
-                            : 'border-[#E2D7C7] hover:bg-[#FAF6EE] text-[#786B5E] hover:text-[#2C221E]'
-                        }`}
-                        title={isFavorite(activeItem.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
-                      >
-                        <Heart size={16} fill={isFavorite(activeItem.id) ? '#f43f5e' : 'none'} />
-                      </button>
-                    </div>
+                        <button
+                          type="button"
+                          onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
+                          className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                            isFavorite(activeItem.id)
+                              ? 'bg-rose-50 border-rose-200 text-rose-500'
+                              : 'border-[#E2D7C7] hover:bg-[#FAF6EE] text-[#786B5E] hover:text-[#2C221E]'
+                          }`}
+                          title={isFavorite(activeItem.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                        >
+                          <Heart size={16} fill={isFavorite(activeItem.id) ? '#f43f5e' : 'none'} />
+                        </button>
+                      </div>
+                    )}
 
                     <div className="flex items-center gap-2">
                       {activeNavRouteId === activeItem.id ? (
                         <button
                           type="button"
-                          onClick={() => setActiveNavRouteId(null)}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#8C532B] hover:bg-[#704222] text-[#FAF8F5] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                          onClick={handleEndRoute}
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                         >
                           <X size={14} />
                           <span>Akhiri Panduan Rute</span>
@@ -1373,14 +1386,6 @@ export default function NearMeModal({
                    2. MULTI-ITEM EXPLORER LIST VIEW
                    =================================================================== */
                 <div className="flex flex-col h-full overflow-hidden">
-                  {/* Mobile Grab / Peek Bar & Tips Badge */}
-                  <div className="sm:hidden flex flex-col items-center pt-2 pb-1 shrink-0 bg-white/95 border-b border-[#F0EAE1]">
-                    <div className="w-10 h-1 bg-[#D9CEBA] rounded-full mb-1.5" />
-                    <div className="flex items-center gap-1.5 text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#EFE0C7] max-w-[90%] truncate">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52] shrink-0" />
-                      <span className="truncate">Tips Jojo: Cobain {getSignatureFood(activeItem)}</span>
-                    </div>
-                  </div>
                   {/* Drawer Top Header */}
                   <div className="p-4 border-b border-[#EAE3D6] bg-white/95 shrink-0">
                     <div className="flex items-center justify-between gap-3 mb-3">
@@ -1737,7 +1742,7 @@ export default function NearMeModal({
           <button
             type="button"
             onClick={() => setIsSidePanelOpen(true)}
-            className="absolute top-20 sm:top-24 left-3 sm:left-5 z-[995] bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-extrabold text-[#2C221E] cursor-pointer hover:bg-[#FAF8F5] border border-[#E2D7C7] hover:border-[#C99B52] transition-all"
+            className="hidden sm:flex absolute sm:top-24 sm:left-5 z-[995] bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl items-center gap-2 text-xs font-extrabold text-[#2C221E] cursor-pointer hover:bg-[#FAF8F5] border border-[#E2D7C7] hover:border-[#C99B52] transition-all"
           >
             <Utensils size={15} className="text-[#2C221E]" strokeWidth={2.2} />
             <span>Daftar Kuliner ({filteredItems.length})</span>
@@ -1838,214 +1843,108 @@ export default function NearMeModal({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-2 pt-1 border-t border-[#F2ECE3]">
-                  {activeItem?.hasGofood && (
-                    <a
-                      href={activeItem.gofoodUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-pointer shrink-0 inline-flex"
-                      title={`Pesan ${activeItem.name} di GoFood Resmi`}
-                    >
-                      <GoFoodBadge size="md" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleStartRoute(activeItem);
-                    }}
-                    className="flex-1 py-2.5 px-4 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
-                  >
-                    <Navigation size={13} />
-                    <span>Petunjuk Rute</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsSidePanelOpen(true)}
-                    className="px-3.5 py-2.5 rounded-full border border-[#E2D7C7] hover:bg-[#FAF6EE] text-xs font-bold text-[#786B5E] hover:text-[#2C221E] transition-colors cursor-pointer"
-                  >
-                    Buka Detail
-                  </button>
-                </div>
-              </motion.div>
+                <div className="flex flex-col gap-2 pt-1 border-t border-[#F2ECE3]">
+                  {/* In-Card GPS Alert (Desktop Bottom Card) */}
+                  <AnimatePresence>
+                    {showGpsRequiredPrompt && !hasUserGps && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                        className="p-3 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-[#92400E] space-y-2 shadow-sm"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 font-bold text-xs text-[#92400E]">
+                            <AlertCircle size={14} className="text-[#D97706] shrink-0" />
+                            <span>Akses GPS Diperlukan untuk Navigasi Rute</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowGpsRequiredPrompt(false)}
+                            className="text-[#92400E] hover:text-[#78350F] p-0.5 cursor-pointer"
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+                        <p className="text-[11px] leading-relaxed m-0 text-[#78350F]">
+                          Aktifkan sensor lokasi perangkat Anda, atau tampilkan rute mulai dari Titik Nol KM Yogyakarta.
+                        </p>
+                        <div className="flex items-center gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={handleRequestEnableGps}
+                            className="flex-1 py-1.5 px-3 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white text-[11px] font-bold transition-colors cursor-pointer shadow-xs text-center"
+                          >
+                            Nyalakan GPS Perangkat
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowGpsRequiredPrompt(false);
+                              setActiveNavRouteId(activeItem.id);
+                              if (mapInstanceRef.current && activeItem.coordinates) {
+                                mapInstanceRef.current.fitBounds(
+                                  [
+                                    [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng],
+                                    [activeItem.coordinates.lat, activeItem.coordinates.lng]
+                                  ],
+                                  { padding: [70, 70], maxZoom: 17 }
+                                );
+                              }
+                            }}
+                            className="px-2.5 py-1.5 rounded-xl bg-white/90 hover:bg-white text-[#78350F] text-[10px] font-bold border border-[#FDE68A] transition-colors cursor-pointer shrink-0"
+                            title="Tampilkan rute menggunakan Titik Nol KM sebagai titik awal default"
+                          >
+                            Rute dari Titik Nol
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-              {/* --- 2. TAMPILAN PERSIS GOOGLE MAPS KHUSUS MOBILE (< 640px) --- */}
-              <motion.div
-                initial={{ opacity: 0, y: 35, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 25, scale: 0.98 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="sm:hidden absolute bottom-[72px] left-1/2 -translate-x-1/2 w-[calc(100vw-20px)] max-w-[480px] z-[998] bg-white rounded-3xl shadow-[0_14px_40px_rgba(0,0,0,0.18)] border border-neutral-200/90 p-4 select-none overflow-hidden font-sans"
-              >
-                {/* Header: Info di Kiri, Foto + Tutup di Kanan (Sama Persis Google Maps) */}
-                <div className="flex items-start justify-between gap-3 mb-3.5">
-                  {/* Kolom Kiri: Nama Tempat, Rating Bintang, Kategori, Jam Buka & Jarak */}
-                  <div className="flex-1 min-w-0 pr-1">
-                    {/* Nama Tempat / Judul */}
-                    <h3 className="font-outfit font-extrabold text-base text-[#202124] m-0 leading-tight truncate">
-                      {activeItem.name}
-                    </h3>
+                  <div className="flex items-center gap-2">
+                    {!activeItem?.isCulturalEvent && (
+                      <a
+                        href={activeItem?.hasGofood ? activeItem.gofoodUrl : `https://gofood.co.id/search?q=${encodeURIComponent(activeItem?.name || '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer shrink-0 inline-flex transition-transform hover:scale-105 active:scale-95"
+                        title={`Pesan ${activeItem?.name} di GoFood Resmi`}
+                      >
+                        <GoFoodBadge
+                          size="md"
+                          showExternalIcon={true}
+                          rating={activeItem?.hasGofood ? activeItem.gofoodRating : undefined}
+                          reviews={activeItem?.hasGofood ? activeItem.gofoodReviews : undefined}
+                          tier={activeItem?.hasGofood ? activeItem.gofoodTier : undefined}
+                          showRating={Boolean(activeItem?.hasGofood && activeItem?.gofoodRating)}
+                        />
+                      </a>
+                    )}
 
-                    {/* Rating & Review (Ciri Khas Google Maps) */}
-                    <div className="flex items-center gap-1.5 mt-1 text-xs text-[#5F6368] flex-wrap">
-                      <span className="font-bold text-[#202124]">
-                        {activeItem.status === 'enak' ? '4.8' : '4.7'}
-                      </span>
-                      <div className="flex items-center text-[#F59E0B] text-xs tracking-tighter" aria-label="5 Bintang">
-                        ★★★★★
-                      </div>
-                      <span className="text-[#70757A] text-[11px]">
-                        ({activeItem.verdictLabel ? '1.4rb+' : '950+'})
-                      </span>
-                      <span className="text-[#70757A]">•</span>
-                      <span className="text-[#3C4043] font-medium text-xs truncate max-w-[130px]">
-                        {activeItem.category || 'Kuliner Khas'}
-                      </span>
-                      {activeItem.priceRange && (
-                        <>
-                          <span className="text-[#70757A]">•</span>
-                          <span className="text-[#3C4043] text-xs font-semibold">
-                            {activeItem.priceRange.replace('Rp ', '').split('-')[0].trim()}
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Status Jam Buka Hijau (Google Maps: "Buka • Tutup pukul XX:XX") */}
-                    <div className="flex items-center gap-1.5 mt-1 text-xs">
-                      <span className="font-bold text-[#188038]">Buka</span>
-                      <span className="text-[#70757A]">•</span>
-                      <span className="text-[#5F6368] text-[11px] truncate">
-                        {activeItem.operatingHours 
-                          ? (activeItem.operatingHours.includes('-') 
-                              ? `Tutup ${activeItem.operatingHours.split('-')[1].trim()}` 
-                              : activeItem.operatingHours)
-                          : 'Buka setiap hari'}
-                      </span>
-                    </div>
-
-                    {/* Lokasi & Jarak Real-Time */}
-                    <p className="text-[11px] text-[#70757A] mt-1 m-0 truncate flex items-center gap-1">
-                      <MapPin size={11} className="text-[#EA4335] shrink-0" />
-                      <span className="font-bold text-[#202124]">
-                        {activeItem.distanceLabel || 'Terdekat'}
-                      </span>
-                      <span>•</span>
-                      <span className="truncate">{activeItem.spotName}</span>
-                    </p>
-                  </div>
-
-                  {/* Kolom Kanan: Tombol Close (X) Abu-abu & Foto Tempat Kotak Bersudut Halus */}
-                  <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedCardId(null);
-                        setShowGpsRequiredPrompt(false);
+                        if (activeNavRouteId === activeItem.id) {
+                          handleEndRoute();
+                        } else {
+                          handleStartRoute(activeItem);
+                        }
                       }}
-                      className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-[#5F6368] hover:text-[#202124] flex items-center justify-center transition-colors cursor-pointer"
-                      title="Tutup Popup"
+                      className="flex-1 py-2.5 px-4 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                     >
-                      <X size={15} />
+                      <Navigation size={13} />
+                      <span>{activeNavRouteId === activeItem.id ? 'Akhiri Rute' : 'Petunjuk Rute'}</span>
                     </button>
-
-                    {activeItem.image && (
-                      <div className="relative w-[80px] h-[80px] rounded-2xl overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-2xs">
-                        <img
-                          src={activeItem.image}
-                          alt={activeItem.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                        {activeItem.hasGofood && (
-                          <div className="absolute top-1 left-1 z-10 scale-90 origin-top-left">
-                            <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons Row (Persis Seperti Tombol Aksi Google Maps) */}
-                <div className="flex items-center gap-2 pt-2 border-t border-neutral-100 overflow-x-auto no-scrollbar">
-                  {/* Official GoFood Direct Link */}
-                  {activeItem?.hasGofood && (
-                    <a
-                      href={activeItem.gofoodUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-pointer shrink-0 inline-flex"
-                      title={`Pesan ${activeItem.name} di GoFood Resmi`}
+                    <button
+                      type="button"
+                      onClick={() => setIsSidePanelOpen(true)}
+                      className="px-3.5 py-2.5 rounded-full border border-[#E2D7C7] hover:bg-[#FAF6EE] text-xs font-bold text-[#786B5E] hover:text-[#2C221E] transition-colors cursor-pointer"
                     >
-                      <GoFoodBadge size="sm" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
-                    </a>
-                  )}
-
-                  {/* 1. Tombol Rute (Google Blue Hero Pill) */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleStartRoute(activeItem);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
-                  >
-                    <Navigation size={13} fill="white" className="rotate-45" />
-                    <span>{activeNavRouteId === activeItem.id ? 'Akhiri Rute' : 'Rute'}</span>
-                  </button>
-
-                  {/* 2. Tombol Simpan (Save ke Wishlist) */}
-                  <button
-                    type="button"
-                    onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-colors cursor-pointer shrink-0 ${
-                      isFavorite(activeItem.id)
-                        ? 'bg-rose-50 border-rose-200 text-rose-600'
-                        : 'bg-white hover:bg-neutral-50 border-neutral-300 text-[#3C4043]'
-                    }`}
-                  >
-                    <Heart
-                      size={13}
-                      fill={isFavorite(activeItem.id) ? '#e11d48' : 'none'}
-                      className={isFavorite(activeItem.id) ? 'text-rose-600' : 'text-[#5F6368]'}
-                    />
-                    <span>{isFavorite(activeItem.id) ? 'Tersimpan' : 'Simpan'}</span>
-                  </button>
-
-                  {/* 3. Tombol Bagikan (Share Link) */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: activeItem.name,
-                          text: `Rekomendasi Kuliner Jogja: ${activeItem.name}`,
-                          url: window.location.href
-                        }).catch(() => {});
-                      } else {
-                        navigator.clipboard.writeText(window.location.href);
-                        alert('Tautan kuliner berhasil disalin!');
-                      }
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-neutral-50 border border-neutral-300 text-[#3C4043] text-xs font-medium transition-colors cursor-pointer shrink-0"
-                    title="Bagikan Lokasi Ini"
-                  >
-                    <Share2 size={13} className="text-[#5F6368]" />
-                    <span>Bagikan</span>
-                  </button>
-
-                  {/* 4. Tombol Detail (Buka Panel Cerita & Ulasan Penuh) */}
-                  <button
-                    type="button"
-                    onClick={() => setIsSidePanelOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-neutral-50 border border-neutral-300 text-[#3C4043] text-xs font-medium transition-colors cursor-pointer shrink-0"
-                  >
-                    <Info size={13} className="text-[#5F6368]" />
-                    <span>Detail</span>
-                  </button>
+                      Buka Detail
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             </>
@@ -2053,9 +1952,523 @@ export default function NearMeModal({
         </AnimatePresence>
 
         {/* =========================================================================
-            FLOATING MASKOT JOJO (PANDUAN KULINER GUDEG) DI KANAN BAWAH GPS
+            MOBILE TOP POPUP (COLLAPSIBLE / ACCORDION TOP SHEET)
+            - Pindah ke sisi atas (< 640px)
+            - Ringkas, rapi, tidak memenuhkan layar
+            - Dapat diklik untuk menutup ke atas (slide up) atau membuka (slide down)
+            - Jojo di-hide, tanpa ornamen berlebih
             ========================================================================= */}
-        <div className="hidden sm:flex absolute bottom-6 right-7 z-[996] pointer-events-none flex-col items-end select-none">
+        <div className="sm:hidden fixed top-3 left-3 right-3 z-[998] pointer-events-auto">
+          <AnimatePresence mode="wait">
+            {activeItem ? (
+              /* --- A. MODE DETAIL KULINER TERPILIH (MOBILE TOP) --- */
+              isMobilePopupCollapsed ? (
+                /* 1. Collapsed Pill (Tertutup ke atas - Minimalis ~40px) */
+                <motion.div
+                  key="active-collapsed"
+                  initial={{ y: -12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -12, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setIsMobilePopupCollapsed(false)}
+                  className="bg-white/95 backdrop-blur-md rounded-2xl border border-[#E8DFC9] shadow-md p-2 flex items-center justify-between gap-2 cursor-pointer active:scale-[0.99] select-none"
+                  title="Ketuk untuk membuka detail kuliner"
+                >
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    {activeItem.image ? (
+                      <img
+                        src={activeItem.image}
+                        alt={activeItem.name}
+                        className="w-7 h-7 rounded-lg object-cover shrink-0 border border-[#E8DFC9]"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div className="w-7 h-7 rounded-lg bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center shrink-0">
+                        <Utensils size={13} />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-['Outfit'] font-bold text-xs text-[#2d180c] truncate m-0 leading-tight">
+                        {activeItem.name}
+                      </h3>
+                      <p className="text-[10px] text-[#786154] truncate m-0 flex items-center gap-1 leading-none mt-0.5">
+                        <span className="font-semibold text-[#8c532b]">{activeItem.distanceLabel || 'Terdekat'}</span>
+                        <span>•</span>
+                        <span>{activeItem.category || 'Kuliner'}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span className="text-[10px] font-bold text-[#8c532b] bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9] flex items-center gap-0.5">
+                      <span>Buka</span>
+                      <ChevronDown size={12} />
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCardId(null);
+                        setShowGpsRequiredPrompt(false);
+                        if (onClearEventTarget) onClearEventTarget();
+                      }}
+                      className="w-6 h-6 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center cursor-pointer"
+                      title="Tutup Pilihan"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                /* 2. Expanded Card (Terbuka ke bawah - Kompak & Ringkas max-h-[48vh] +2% panjang ke bawah) */
+                <motion.div
+                  key="active-expanded"
+                  initial={{ y: -16, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -16, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="bg-white/95 backdrop-blur-xl rounded-2xl border border-[#E8DFC9] shadow-xl flex flex-col max-h-[48vh] overflow-hidden"
+                >
+                  {/* Accordion Toggle Bar (Tapping folds it up) */}
+                  <div
+                    onClick={() => setIsMobilePopupCollapsed(true)}
+                    className="py-1.5 px-3 border-b border-[#F0EAE1] bg-[#FAF8F5] flex items-center justify-between cursor-pointer hover:bg-[#F2ECE1] select-none shrink-0"
+                    title="Ketuk untuk menutup popup ke atas"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8c532b]" />
+                      <span className="text-[10px] font-bold text-[#8c532b] uppercase tracking-wider">
+                        Detail Kuliner Terpilih
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-[#8c532b]">
+                      <span>Tutup ke atas</span>
+                      <ChevronDown size={13} className="rotate-180" />
+                    </div>
+                  </div>
+
+                  {/* Body Content - Detail Lengkap Dapat Dilihat & Di-scroll */}
+                  <div className="p-3 overflow-y-auto overscroll-contain space-y-2.5 flex-1 touch-pan-y [scrollbar-width:thin] [scrollbar-color:#C99B52_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[#C99B52]/50 [&::-webkit-scrollbar-thumb]:rounded-full">
+                    {/* Header: Foto + Nama + Kategori + Tombol X */}
+                    <div className="flex items-start gap-2.5">
+                      {activeItem.image && (
+                        <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-[#E8DFC9] bg-[#FAF6EE] shadow-2xs">
+                          <img
+                            src={activeItem.image}
+                            alt={activeItem.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                          {activeItem.hasGofood && (
+                            <div className="absolute top-1 left-1 scale-75 origin-top-left">
+                              <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                          {activeItem.category && (
+                            <span className="text-[9px] font-bold text-[#8c532b] bg-[#FAF6EE] border border-[#E8DFC9] px-1.5 py-0.5 rounded">
+                              {activeItem.category}
+                            </span>
+                          )}
+                          {activeItem.verdictLabel && (
+                            <span className="text-[9px] text-[#786154] font-medium truncate">
+                              • {activeItem.verdictLabel}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-['Outfit'] font-bold text-xs sm:text-sm text-[#2d180c] leading-snug m-0">
+                          {activeItem.name}
+                        </h3>
+                        <p className="text-[10px] text-[#786154] m-0 mt-0.5 flex items-center gap-1">
+                          <MapPin size={10} className="text-[#8c532b] shrink-0" />
+                          <span className="truncate">{activeItem.spotName}</span>
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCardId(null);
+                          setShowGpsRequiredPrompt(false);
+                          if (onClearEventTarget) onClearEventTarget();
+                        }}
+                        className="w-6 h-6 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-neutral-800 flex items-center justify-center shrink-0 cursor-pointer"
+                        title="Tutup Pilihan"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+
+                    {/* Chips Meta: Jam Operasional, Kisaran Harga, Jarak Real */}
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#786154] flex-wrap">
+                      {activeItem.operatingHours && (
+                        <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9]">
+                          <Clock size={10} className="text-[#8c532b]" />
+                          <span>{activeItem.operatingHours}</span>
+                        </span>
+                      )}
+                      {activeItem.priceRange && (
+                        <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9] font-bold text-[#8c532b]">
+                          <Tag size={10} className="text-[#8c532b]" />
+                          <span>{activeItem.priceRange}</span>
+                        </span>
+                      )}
+                      <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9] font-semibold text-[#2d180c]">
+                        <MapPin size={10} className="text-[#8c532b]" />
+                        <span>{activeItem.distanceLabel || 'Terdekat'}</span>
+                      </span>
+                    </div>
+
+                    {/* Tanggal Acara jika ada (Event Target) */}
+                    {activeItem.dateFull && (
+                      <div className="p-2 rounded-xl bg-[#FAF5EC] border border-[#E8DFC9] flex items-center gap-2 text-[10px] text-[#2d180c]">
+                        <Calendar size={12} className="text-[#8c532b] shrink-0" />
+                        <span className="font-semibold">{activeItem.dateFull}</span>
+                      </div>
+                    )}
+
+                    {/* Deskripsi Lengkap Destinasi / Acara */}
+                    {activeItem.description && (
+                      <div className="text-[11px] text-[#4A3E37] bg-[#FAF8F5] p-2.5 rounded-xl border border-[#E8DFC9] space-y-1 leading-relaxed">
+                        <div className="flex items-center gap-1.5 font-bold text-[#8c532b] uppercase text-[9px] tracking-wider">
+                          <Info size={11} className="text-[#8c532b]" />
+                          <span>Deskripsi Destinasi:</span>
+                        </div>
+                        <p className="m-0 leading-relaxed">{activeItem.description}</p>
+                      </div>
+                    )}
+
+                    {/* Profil Cita Rasa Otentik */}
+                    {activeItem.tasteProfile && (
+                      <div className="text-[11px] text-[#5C4E43] bg-[#FAF6EE] p-2.5 rounded-xl border border-[#EFE4D0] space-y-1 leading-relaxed">
+                        <div className="flex items-center gap-1.5 font-bold text-[#8A5D26] uppercase text-[9px] tracking-wider">
+                          <Utensils size={11} className="text-[#C99B52]" />
+                          <span>Profil Cita Rasa Otentik:</span>
+                        </div>
+                        <p className="m-0 leading-relaxed text-[#5C4E43]">{activeItem.tasteProfile}</p>
+                      </div>
+                    )}
+
+                    {/* Catatan Sejarah & Filosofi Kuliner */}
+                    {activeItem.honestReview && (
+                      <div className="text-[11px] text-[#6B5E54] bg-[#F7F2E7] p-2.5 rounded-xl border border-[#EADFCB] space-y-1 leading-relaxed">
+                        <div className="flex items-center gap-1.5 font-bold text-[#2C221E] text-[9px] uppercase tracking-wider">
+                          <BookOpen size={11} className="text-[#C99B52]" />
+                          <span>Catatan Sejarah & Filosofi:</span>
+                        </div>
+                        <p className="m-0 leading-relaxed text-[#6B5E54]">{activeItem.honestReview}</p>
+                      </div>
+                    )}
+
+                    {/* Tips Kunjungan jika ada */}
+                    {activeItem.shortTip && (
+                      <div className="text-[10.5px] text-[#78350F] bg-[#FFFBEB] p-2 rounded-xl border border-[#FDE68A] flex items-start gap-1.5 leading-relaxed">
+                        <AlertCircle size={12} className="text-[#D97706] shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold">Tips: </span>
+                          <span>{activeItem.shortTip}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Detail Alamat Lengkap & Titik Koordinat */}
+                    <div className="text-[10px] text-[#786154] bg-white p-2 rounded-xl border border-[#EFE8DD] flex items-start gap-1.5 leading-snug">
+                      <MapPin size={11} className="text-[#C99B52] shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-medium text-[#2d180c]">{activeItem.locationAddress || activeItem.spotName}</div>
+                        {activeItem.coordinates && (
+                          <div className="text-[9px] text-[#8c532b] font-mono mt-0.5">
+                            Koordinat: {activeItem.coordinates.lat.toFixed(5)}, {activeItem.coordinates.lng.toFixed(5)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons Section with GPS Prompt */}
+                  <div className="p-2.5 border-t border-[#F0EAE1] bg-white flex flex-col gap-2 shrink-0">
+                    {/* In-Card GPS Alert untuk Mobile (Nyalakan GPS & Rute dari Titik Nol) */}
+                    <AnimatePresence>
+                      {showGpsRequiredPrompt && !hasUserGps && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                          transition={{ duration: 0.2 }}
+                          className="p-2.5 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] text-[#92400E] space-y-1.5 shadow-xs"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 font-bold text-[11px] text-[#92400E]">
+                              <AlertCircle size={13} className="text-[#D97706] shrink-0" />
+                              <span>Akses GPS Diperlukan untuk Navigasi Rute</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setShowGpsRequiredPrompt(false)}
+                              className="text-[#92400E] hover:text-[#78350F] p-0.5 cursor-pointer"
+                              title="Tutup Peringatan GPS"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                          <p className="text-[10px] leading-relaxed m-0 text-[#78350F]">
+                            Aktifkan sensor lokasi perangkat Anda untuk rute real-time, atau mulai rute dari Titik Nol KM Yogyakarta.
+                          </p>
+                          <div className="flex items-center gap-1.5 pt-0.5">
+                            <button
+                              type="button"
+                              onClick={handleRequestEnableGps}
+                              className="flex-1 py-1.5 px-2 rounded-lg bg-[#D97706] hover:bg-[#B45309] text-white text-[10px] font-bold transition-colors cursor-pointer shadow-xs text-center"
+                            >
+                              Nyalakan GPS
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowGpsRequiredPrompt(false);
+                                setActiveNavRouteId(activeItem.id);
+                                setIsMobilePopupCollapsed(true);
+                                if (mapInstanceRef.current && activeItem.coordinates) {
+                                  mapInstanceRef.current.fitBounds(
+                                    [
+                                      [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng],
+                                      [activeItem.coordinates.lat, activeItem.coordinates.lng]
+                                    ],
+                                    { padding: [50, 50], maxZoom: 17 }
+                                  );
+                                }
+                              }}
+                              className="px-2 py-1.5 rounded-lg bg-white/95 hover:bg-white text-[#78350F] text-[10px] font-bold border border-[#FDE68A] transition-colors cursor-pointer shrink-0"
+                              title="Tampilkan rute menggunakan Titik Nol KM sebagai titik awal default"
+                            >
+                              Rute dari Titik Nol
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Fixed Bottom Action Bar - Selalu terlihat dan tidak tenggelam oleh scroll */}
+                  <div className="p-2.5 bg-[#FAF8F5] border-t border-[#E8DFC9] flex items-center gap-2 shrink-0">
+                    {!activeItem.isCulturalEvent && (
+                      <a
+                        href={activeItem.hasGofood ? activeItem.gofoodUrl : `https://gofood.co.id/search?q=${encodeURIComponent(activeItem.name)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 inline-flex transition-transform hover:scale-105 active:scale-95"
+                        title={`Pesan ${activeItem.name} di GoFood`}
+                      >
+                        <GoFoodBadge
+                          size="sm"
+                          showExternalIcon={true}
+                          rating={activeItem.hasGofood ? activeItem.gofoodRating : undefined}
+                          reviews={activeItem.hasGofood ? activeItem.gofoodReviews : undefined}
+                          tier={activeItem.hasGofood ? activeItem.gofoodTier : undefined}
+                          showRating={Boolean(activeItem.hasGofood && activeItem.gofoodRating)}
+                        />
+                      </a>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (activeNavRouteId === activeItem.id) {
+                          handleEndRoute();
+                        } else {
+                          handleStartRoute(activeItem);
+                        }
+                      }}
+                      className={`flex-1 py-1.5 px-3 rounded-xl text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer ${
+                        activeNavRouteId === activeItem.id
+                          ? 'bg-rose-600 hover:bg-rose-700'
+                          : 'bg-[#2d180c] hover:bg-[#8c532b]'
+                      }`}
+                    >
+                      <Navigation size={12} />
+                      <span>{activeNavRouteId === activeItem.id ? 'Akhiri Rute' : 'Petunjuk Rute'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
+                      className={`p-1.5 rounded-xl border transition-colors cursor-pointer shrink-0 ${
+                        isFavorite(activeItem.id) ? 'bg-rose-50 border-rose-200 text-rose-500' : 'border-[#E8DFC9] text-[#786154]'
+                      }`}
+                      title={isFavorite(activeItem.id) ? 'Hapus dari Wishlist' : 'Simpan Wishlist'}
+                    >
+                      <Heart size={14} fill={isFavorite(activeItem.id) ? '#f43f5e' : 'none'} />
+                    </button>
+                  </div>
+                </motion.div>
+              )
+            ) : (
+              /* --- B. MODE EXPLORER / DAFTAR KULINER (MOBILE TOP) --- */
+              isMobilePopupCollapsed ? (
+                /* 1. Collapsed Search Pill (Tertutup ke atas - Minimalis ~40px) */
+                <motion.div
+                  key="list-collapsed"
+                  initial={{ y: -12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -12, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setIsMobilePopupCollapsed(false)}
+                  className="bg-white/95 backdrop-blur-md rounded-2xl border border-[#E8DFC9] shadow-md p-2 flex items-center justify-between gap-2 cursor-pointer active:scale-[0.99] select-none"
+                  title="Ketuk untuk mencari atau melihat daftar kuliner"
+                >
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 rounded-lg bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center shrink-0">
+                      <Search size={14} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-['Outfit'] font-bold text-xs text-[#2d180c] truncate m-0 leading-tight">
+                        {searchQuery ? `Cari: "${searchQuery}"` : `Radar Kuliner ${activeZone.wilayahName.split(',')[0]}`}
+                      </h3>
+                      <p className="text-[10px] text-[#786154] truncate m-0 leading-none mt-0.5">
+                        {filteredItems.length} Tempat • Ketuk untuk buka daftar
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-bold text-[#8c532b] bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9] flex items-center gap-0.5 shrink-0">
+                    <span>Daftar</span>
+                    <ChevronDown size={12} />
+                  </span>
+                </motion.div>
+              ) : (
+                /* 2. Expanded Search Drawer (Terbuka ke bawah - Kompak max-h-[46vh]) */
+                <motion.div
+                  key="list-expanded"
+                  initial={{ y: -16, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -16, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="bg-white/95 backdrop-blur-xl rounded-2xl border border-[#E8DFC9] shadow-xl flex flex-col max-h-[46vh] overflow-hidden"
+                >
+                  {/* Accordion Toggle Bar */}
+                  <div
+                    onClick={() => setIsMobilePopupCollapsed(true)}
+                    className="py-1.5 px-3 border-b border-[#F0EAE1] bg-[#FAF8F5] flex items-center justify-between cursor-pointer hover:bg-[#F2ECE1] select-none shrink-0"
+                    title="Ketuk untuk menutup popup ke atas"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Utensils size={13} className="text-[#8c532b]" />
+                      <span className="font-['Outfit'] text-xs font-bold text-[#2d180c]">
+                        Radar Kuliner ({filteredItems.length} Tempat)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-[#8c532b]">
+                      <span>Tutup ke atas</span>
+                      <ChevronDown size={13} className="rotate-180" />
+                    </div>
+                  </div>
+
+                  {/* Search Bar & Kawasan Chips */}
+                  <div className="p-2.5 pb-2 border-b border-[#F0EAE1] space-y-1.5 shrink-0 bg-white">
+                    <div className="relative">
+                      <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8c532b]" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Cari gudeg, kopi joss, bakpia..."
+                        className="w-full pl-7 pr-7 py-1.5 text-xs rounded-xl bg-[#FAF8F5] border border-[#E8DFC9] text-[#2d180c] placeholder:text-neutral-400 focus:outline-none focus:border-[#8c532b]"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center text-[10px] cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Zone Chips */}
+                    <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
+                      {JOGJA_GPS_ZONES.map((zone) => {
+                        const isSelected = zone.id === activeZone.id;
+                        return (
+                          <button
+                            key={zone.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedZoneId(zone.id);
+                              setSelectedCardId(null);
+                              setShowGpsRequiredPrompt(false);
+                              if (mapInstanceRef.current && zone.coordinates) {
+                                mapInstanceRef.current.flyTo([zone.coordinates.lat, zone.coordinates.lng], 15.5, { duration: 0.7 });
+                              }
+                            }}
+                            className={`shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-[#2d180c] text-white shadow-xs'
+                                : 'bg-[#FAF8F5] text-[#786154] border border-[#E8DFC9]'
+                            }`}
+                          >
+                            {zone.wilayahName.split(',')[0]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* List Tempat Kuliner */}
+                  <div className="p-2 space-y-1.5 overflow-y-auto flex-1">
+                    {filteredItems.length === 0 ? (
+                      <div className="py-6 text-center text-xs text-[#786154]">
+                        Tidak ada kuliner dalam pencarian ini.
+                      </div>
+                    ) : (
+                      filteredItems.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedCardId(item.id);
+                            setShowGpsRequiredPrompt(false);
+                            if (mapInstanceRef.current && item.coordinates) {
+                              mapInstanceRef.current.flyTo([item.coordinates.lat, item.coordinates.lng], 16.5, { duration: 0.7 });
+                            }
+                          }}
+                          className="p-2 rounded-xl border border-[#E8DFC9] bg-white hover:border-[#8c532b] hover:bg-[#FAF8F5] transition-all flex items-center gap-2 cursor-pointer shadow-2xs active:scale-[0.99]"
+                        >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-10 h-10 rounded-lg object-cover shrink-0 border border-[#E8DFC9]"
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-['Outfit'] font-bold text-xs text-[#2d180c] truncate m-0 leading-tight">
+                              {item.name}
+                            </h4>
+                            <p className="text-[10px] text-[#786154] truncate m-0 flex items-center gap-1 mt-0.5">
+                              <span className="font-bold text-[#8c532b]">{item.distanceLabel}</span>
+                              <span>•</span>
+                              <span>{item.category || item.spotName}</span>
+                            </p>
+                          </div>
+                          <span className="text-[#8c532b] text-xs font-bold shrink-0">→</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* =========================================================================
+            FLOATING MASKOT JOJO (PANDUAN KULINER GUDEG) DI KANAN BAWAH GPS
+            (Hanya pada desktop layar besar lg:flex, tersembunyi penuh di layar mobile)
+            ========================================================================= */}
+        <div className="hidden lg:flex absolute bottom-6 right-7 z-[996] pointer-events-none flex-col items-end select-none">
           {/* Bubble Chat Panduan Kuliner */}
           <motion.div
             key={activeItem ? activeItem.id : 'default-kuliner'}

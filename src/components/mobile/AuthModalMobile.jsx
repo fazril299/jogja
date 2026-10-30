@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Check,
   ShieldCheck,
-  Sparkles
 } from 'lucide-react';
 
 export default function AuthModalMobile({

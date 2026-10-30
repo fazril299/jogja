@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Star, Sparkles, Clock, ArrowRight, Heart } from 'lucide-react';
+import { MapPin, Star, Clock, ArrowRight, Heart } from 'lucide-react';
 
 export default function HeritageDestinationCard({
   id,
@@ -38,7 +38,6 @@ export default function HeritageDestinationCard({
         {badge && (
           <div className="absolute top-3 left-3 z-10 pointer-events-none">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-md text-[#2D180C] shadow-sm border border-white/70">
-              <Sparkles size={11} className="text-[#8c532b]" />
               <span>{badge}</span>
             </span>
           </div>

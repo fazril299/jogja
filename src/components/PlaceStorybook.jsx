@@ -12,7 +12,6 @@ import {
   ThumbsUp,
   Trash2,
   Send,
-  Sparkles,
   User,
   ShieldCheck,
   Clock,
@@ -1101,7 +1100,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                           {/* Top-Left Category Badge */}
                           <div className="absolute top-3 left-3 z-10 pointer-events-none">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/95 backdrop-blur-md text-[#2D180C] shadow-sm border border-white/70">
-                              <Sparkles size={11} className="text-[#8c532b]" />
                               <span>{dest.badges?.[0] || 'Cagar Budaya'}</span>
                             </span>
                           </div>
@@ -3591,7 +3589,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                             gap: '4px'
                           }}
                         >
-                          <Sparkles size={12} />
                           <span>Klaim di Paspor ➔</span>
                         </button>
                       )}
@@ -3708,7 +3705,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                               }}
                               title={isShowcased ? 'Hapus dari pameran profil' : 'Pamerkan badge ini di profil'}
                             >
-                              <Sparkles size={11} color={isShowcased ? '#8C5E3C' : '#5f6368'} />
                               <span>{isShowcased ? 'Terpajang' : 'Pamerkan'}</span>
                             </button>
                           </div>

@@ -6,7 +6,6 @@ import {
   LogIn,
   LogOut,
   ChevronDown,
-  Sparkles,
   Shield,
   Calendar,
   BookOpen,
@@ -963,104 +962,58 @@ export default function Navbar({
       </div>
 
       {/* =========================================================================
-          DEDICATED MOBILE FLOATING NAVBAR (Viewport < 640px)
-          Unified, elegant pill that never collides, overlaps, or causes horizontal scroll
+          NATIVE SLIDE-UP MOBILE MENU BOTTOM SHEET (Viewport < 640px)
+          Top navbar mobile dihapus (layar atas bersih & lega).
+          Menu profil & Jurnal Budaya dibuka dari tab [Menu] di Bottom Dock.
           ========================================================================= */}
-      <div className="sm:hidden fixed top-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.25rem)] max-w-sm pointer-events-auto z-[100010]">
-        <div className="bg-white/95 backdrop-blur-md rounded-full border border-black/10 shadow-lg px-3.5 py-1.5 flex items-center justify-between">
-          {/* Logo & Brand */}
-          <button
-            type="button"
-            onClick={() => {
-              closeAll();
-              if (onGoHome) onGoHome();
-              else window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none p-0 text-left"
-          >
-            <img
-              src="/assets/icons/icon_culture.svg"
-              alt="Hamemayu"
-              className="w-5 h-5 object-contain"
-            />
-            <span className="font-extrabold text-[13px] tracking-tight text-neutral-900 font-['Outfit']">
-              Hamemayu
-            </span>
-          </button>
-
-          {/* Right Mobile Actions */}
-          <div className="flex items-center gap-1.5">
-            {/* Quick Profile / Login Trigger */}
-            {currentUser && !currentUser.isGuest ? (
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-7 h-7 rounded-full overflow-hidden border border-amber-400 cursor-pointer shadow-2xs"
-                title={currentUser.name}
-              >
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  closeAll();
-                  openLogin({
-                    benefitType: 'general',
-                    title: 'Selamat Datang di Hamemayu',
-                    description: 'Akses penuh ke fitur Wishlist, ulasan, serta galeri momen budaya Yogyakarta.'
-                  });
-                }}
-                className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-black text-[11px] font-bold cursor-pointer transition-colors"
-              >
-                Masuk
-              </button>
-            )}
-
-            {/* Hamburger Toggle */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Mobile Menu"
-              className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-black cursor-pointer bg-transparent border-none"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-4 h-4" />
-              ) : (
-                <svg
-                  width="18"
-                  height="12"
-                  viewBox="0 0 18 12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <line x1="1" y1="2" x2="17" y2="2" />
-                  <line x1="1" y1="10" x2="17" y2="10" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Dropdown Panel */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop Gelap untuk Menutup Menu saat Area Luar Diklik */}
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="sm:hidden fixed inset-0 bg-black/45 backdrop-blur-xs z-[100018] cursor-pointer"
+            />
+
+            {/* Slide-Up Bottom Sheet Drawer */}
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.96 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="mt-2 w-full max-h-[82vh] overflow-y-auto bg-white rounded-2xl p-3 border border-neutral-200/80 shadow-2xl space-y-2 text-left"
+              exit={{ opacity: 0, y: 50, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="sm:hidden fixed bottom-[64px] inset-x-2.5 max-w-md mx-auto max-h-[82vh] overflow-y-auto bg-white rounded-3xl p-4 border border-[#EAE3D6] shadow-[0_-16px_40px_rgba(45,24,12,0.22)] z-[100019] space-y-3 text-left font-sans select-none"
             >
+              {/* Header Handle Bar & Title */}
+              <div className="flex flex-col items-center pb-1">
+                <div className="w-10 h-1.5 bg-[#D9CEBA] rounded-full mb-2" />
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="/assets/icons/icon_culture.svg"
+                      alt="Hamemayu"
+                      className="w-5 h-5 object-contain"
+                    />
+                    <span className="font-outfit font-extrabold text-sm text-[#2C221E]">
+                      Menu &amp; Panduan Budaya
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-7 h-7 rounded-full bg-[#FAF5EC] hover:bg-[#EAE1D2] text-[#6E6053] hover:text-[#2C221E] flex items-center justify-center transition-colors cursor-pointer"
+                    title="Tutup Menu"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+              </div>
+
               {/* User Status Card */}
               {currentUser && !currentUser.isGuest ? (
-                <div className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 flex items-center justify-between gap-2">
+                <div className="p-2.5 rounded-2xl bg-amber-50/80 border border-amber-200/70 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <img
                       src={currentUser.avatar}
@@ -1089,12 +1042,12 @@ export default function Navbar({
                   </button>
                 </div>
               ) : (
-                <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between gap-2">
+                <div className="p-2.5 rounded-2xl bg-[#FAF6EE] border border-[#EAE3D6] flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-neutral-900 m-0">
+                    <p className="text-xs font-bold text-[#2C221E] m-0">
                       Penjelajah Budaya
                     </p>
-                    <p className="text-[10px] text-neutral-500 m-0">
+                    <p className="text-[10px] text-[#786B5E] m-0">
                       Masuk untuk simpan paspor &amp; momen
                     </p>
                   </div>
@@ -1108,74 +1061,30 @@ export default function Navbar({
                         description: 'Akses penuh ke paspor budaya & wishlist destinasi.'
                       });
                     }}
-                    className="shrink-0 px-2.5 py-1.5 rounded-lg bg-black text-white text-[11px] font-bold cursor-pointer"
+                    className="shrink-0 px-3 py-1.5 rounded-full bg-[#2C221E] hover:bg-[#8A5D26] text-white text-[11px] font-bold cursor-pointer transition-colors"
                   >
                     Masuk Akun
                   </button>
                 </div>
               )}
 
-              {/* Main Navigation Items */}
-              <div className="space-y-1">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleNavClick(item.id)}
-                      className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
-                        isActive
-                          ? 'bg-neutral-900 text-white'
-                          : 'text-neutral-700 hover:bg-neutral-100'
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Cultural Highlights */}
-              <div className="pt-2 border-t border-neutral-100 space-y-1">
-                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider px-2 m-0 mb-1">
-                  Fitur Budaya &amp; Kuliner
+              {/* FEATURED: JURNAL & PANDUAN BUDAYA JOGJA (UTAMA) */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-br from-[#FAF4E8] to-[#F5ECE0] border border-[#E8DFC9] shadow-xs">
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF6EE] px-2.5 py-0.5 rounded-full border border-[#EFE0C7] tracking-wider uppercase">
+                    <BookOpen size={11} className="text-[#C99B52]" />
+                    <span>Panduan Resmi</span>
+                  </span>
+                  <span className="text-[10px] font-semibold text-[#8C5E3C]">
+                    4 Modul Tradisi
+                  </span>
+                </div>
+                <h4 className="font-outfit font-extrabold text-sm text-[#2C221E] m-0 mb-1">
+                  Jurnal Budaya &amp; Folklor Jogja
+                </h4>
+                <p className="text-[11px] text-[#786B5E] m-0 mb-3 line-clamp-2 leading-relaxed">
+                  Tata krama berbusana Keraton, unggah-ungguh sikap, upacara adat sakral, serta kamus bahasa Jawa online.
                 </p>
-
-                {/* Radar Kuliner GPS */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeAll();
-                    if (onOpenNearMe) onOpenNearMe();
-                  }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-amber-950 bg-amber-50/70 hover:bg-amber-100/80 border border-amber-200/60"
-                >
-                  <div className="flex items-center gap-2">
-                    <Utensils className="w-3.5 h-3.5 text-amber-800" strokeWidth={2.2} />
-                    <span>Radar GPS Kuliner (Radius 5–10 KM)</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-amber-800" />
-                </button>
-
-                {/* Peta Budaya & Cagar Wisata DIY */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeAll();
-                    if (onOpenMap) onOpenMap();
-                  }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-[#2D180C] bg-[#FAF6EE] hover:bg-[#E6D2C1]/60 border border-[#D9CEBA]"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#C89B3C]" />
-                    <span>Peta Budaya &amp; Cagar Wisata DIY</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-[#8C5E3C]" />
-                </button>
-
-                {/* Jurnal Budaya */}
                 <button
                   type="button"
                   onClick={() => {
@@ -1184,33 +1093,11 @@ export default function Navbar({
                     else if (onOpenCultureJournals) onOpenCultureJournals();
                     else if (onOpenCultureBook) onOpenCultureBook();
                   }}
-                  className={`w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer ${
-                    currentView === 'jurnal'
-                      ? 'bg-amber-100 text-amber-950 font-black'
-                      : 'text-neutral-800 hover:bg-neutral-100'
-                  }`}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#2C221E] hover:bg-[#8A5D26] text-[#FAF8F5] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
                 >
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-3.5 h-3.5 text-amber-800" />
-                    <span>Jurnal &amp; Panduan Budaya</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                </button>
-
-                {/* Paspor Budaya */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeAll();
-                    if (onOpenCultureBook) onOpenCultureBook();
-                  }}
-                  className="w-full py-2 px-3 rounded-xl text-left font-bold text-[12px] flex items-center justify-between transition-colors cursor-pointer text-neutral-800 hover:bg-neutral-100"
-                >
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Paspor Budaya &amp; Lencana</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                  <BookOpen size={13} />
+                  <span>Buka Jurnal Budaya</span>
+                  <ChevronRight size={13} className="ml-auto opacity-70" />
                 </button>
               </div>
 
@@ -1250,9 +1137,9 @@ export default function Navbar({
                 </button>
               )}
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* =========================================================================
           THUMB-FRIENDLY MOBILE BOTTOM NAVIGATION DOCK (Viewport < 640px)
@@ -1263,43 +1150,26 @@ export default function Navbar({
         className="sm:hidden fixed bottom-0 inset-x-0 z-[100020] bg-[#FCFBF7] border-t border-[#E8DFC9] px-2 pt-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(45,24,12,0.12)] pointer-events-auto select-none"
       >
         <div className="flex items-center justify-around max-w-md mx-auto">
-          {/* 1. Beranda */}
-          <motion.button
-            whileTap={{ scale: 0.92 }}
-            type="button"
-            onClick={() => {
-              closeAll();
-              if (onGoHome) onGoHome();
-              else window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
-              currentView === 'home'
-                ? 'text-[#8c532b] font-bold'
-                : 'text-[#786154] hover:text-[#2d180c] font-medium'
-            }`}
-          >
-            <div className={`p-1 rounded-xl transition-all ${currentView === 'home' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
-              <Home size={19} strokeWidth={currentView === 'home' ? 2.5 : 1.9} />
-            </div>
-            <span className="text-[10px] tracking-tight">Beranda</span>
-          </motion.button>
-
-          {/* 2. Destinasi */}
+          {/* 1. Destinasi */}
           <motion.button
             whileTap={{ scale: 0.92 }}
             type="button"
             onClick={() => {
               closeAll();
               if (onOpenDestinations) onOpenDestinations();
+              else if (onGoHome) onGoHome();
+              else window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
-              currentView === 'storybook' || currentView === 'destinasi'
+              currentView === 'home' || currentView === 'storybook' || currentView === 'destinasi'
                 ? 'text-[#8c532b] font-bold'
                 : 'text-[#786154] hover:text-[#2d180c] font-medium'
             }`}
           >
-            <div className={`p-1 rounded-xl transition-all ${currentView === 'storybook' || currentView === 'destinasi' ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
-              <Compass size={19} strokeWidth={currentView === 'storybook' || currentView === 'destinasi' ? 2.5 : 1.9} />
+            <div className={`p-1 rounded-xl transition-all ${
+              currentView === 'home' || currentView === 'storybook' || currentView === 'destinasi' ? 'bg-[#8c532b]/12 shadow-2xs' : ''
+            }`}>
+              <Compass size={19} strokeWidth={currentView === 'home' || currentView === 'storybook' || currentView === 'destinasi' ? 2.5 : 1.9} />
             </div>
             <span className="text-[10px] tracking-tight">Destinasi</span>
           </motion.button>

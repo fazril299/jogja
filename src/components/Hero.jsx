@@ -76,10 +76,10 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
           y: contentY,
           opacity: contentOpacity
         }}
-        className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-4 select-none"
+        className="absolute inset-0 z-30 sm:z-10 flex items-start pt-16 sm:pt-0 sm:items-center justify-center pointer-events-none px-4 select-none"
       >
         <h1
-          className="text-[17vw] sm:text-[14vw] md:text-[12vw] lg:text-[9.5rem] xl:text-[11rem] font-serif font-normal tracking-[-0.035em] leading-none text-[#FBF7EE] drop-shadow-[0_18px_45px_rgba(0,0,0,0.7)] select-none m-0 text-center"
+          className="text-[15vw] sm:text-[14vw] md:text-[12vw] lg:text-[9.5rem] xl:text-[11rem] font-serif font-normal tracking-[-0.035em] leading-none text-[#FBF7EE] drop-shadow-[0_18px_45px_rgba(0,0,0,0.7)] select-none m-0 text-center"
           style={{
             fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif"
           }}
@@ -117,7 +117,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
               fetchPriority="high"
               decoding="async"
               draggable={false}
-              className="h-[67vh] sm:h-[69vh] md:h-[71vh] lg:h-[72vh] max-h-[760px] w-auto object-contain select-none filter drop-shadow-[0_24px_45px_rgba(0,0,0,0.8)]"
+              className="h-[56vh] sm:h-[69vh] md:h-[71vh] lg:h-[72vh] max-h-[760px] w-auto object-contain select-none filter drop-shadow-[0_24px_45px_rgba(0,0,0,0.8)]"
             />
           </motion.div>
         </motion.div>
@@ -132,7 +132,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
           y: contentY,
           opacity: contentOpacity
         }}
-        className="absolute inset-0 z-[25] flex items-center justify-center pointer-events-none px-4 select-none"
+        className="hidden sm:flex absolute inset-0 z-[25] items-center justify-center pointer-events-none px-4 select-none"
         aria-hidden="true"
       >
         <h1
@@ -167,7 +167,7 @@ export default function Hero({ onOpenBooking, onOpenNearMe }) {
           y: contentY,
           opacity: contentOpacity
         }}
-        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-10 md:bottom-10 md:right-14 z-30 pointer-events-none"
+        className="absolute bottom-20 right-6 sm:bottom-8 sm:right-10 md:bottom-10 md:right-14 z-30 pointer-events-none"
       >
         <motion.button
           onClick={onOpenBooking}

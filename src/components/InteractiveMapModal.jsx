@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, MapPin, Compass, ExternalLink, Sparkles, Layers, Info } from 'lucide-react';
+import { X, MapPin, Compass, ExternalLink, Layers, Info } from 'lucide-react';
 
 export default function InteractiveMapModal({
   isOpen,

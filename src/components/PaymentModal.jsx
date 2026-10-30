@@ -14,7 +14,6 @@ import {
   ChevronRight,
   Plus,
   Minus,
-  Sparkles,
   Ticket,
   Copy,
   Check,

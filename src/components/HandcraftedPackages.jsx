@@ -51,13 +51,13 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
   return (
     <section
       id={id || 'packages'}
-      className="web-section-100vh border-b border-[#D9CEBA]/60 bg-[#FAF6EE] flex flex-col justify-center px-4 sm:px-8 py-10 sm:py-14 box-border relative"
+      className="border-b border-[#D9CEBA]/60 bg-[#FAF6EE] flex flex-col justify-center px-4 sm:px-8 py-6 sm:py-10 md:py-12 box-border relative"
     >
-      <div className="max-w-7xl mx-auto w-full flex flex-col justify-between h-full">
+      <div className="max-w-7xl mx-auto w-full flex flex-col">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-3 mb-3 sm:mb-6">
           <div>
-            <h2 className="font-['Outfit'] text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0">
+            <h2 className="font-['Outfit'] text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0">
               Destinasi Pilihan Yogyakarta
             </h2>
           </div>
@@ -67,7 +67,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
         </div>
 
         {/* Panoramic Expanding Destination Louvers (Tirai Akordion Foto 1 - Sesuai Tema Foto 2) */}
-        <div className="relative w-full flex-1 min-h-[400px] sm:min-h-[460px] lg:h-[480px] rounded-3xl overflow-hidden border border-[#D9CEBA] shadow-lg bg-neutral-900 flex flex-col md:flex-row my-2">
+        <div className="relative w-full h-[410px] sm:h-[460px] md:h-[480px] lg:h-[500px] rounded-3xl overflow-hidden border border-[#D9CEBA] shadow-lg bg-neutral-900 flex flex-col md:flex-row mt-1 mb-2 sm:my-2">
           {packages.map((pkg, index) => {
             const isActive = activeIndex === index;
 

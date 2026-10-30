@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, BookOpen } from 'lucide-react';
 
-export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
+export default function AboutSection({ onOpenBooking, onOpenAboutUs, onOpenJurnalBudaya }) {
   // Pure photographic images of iconic Yogyakarta landmarks with custom focus positions
   const slideshowImages = [
     {
@@ -203,6 +203,18 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs }) {
               <span>Jelajahi Direktori</span>
               <ArrowUpRight className="w-4 h-4 text-stone-500" />
             </motion.button>
+
+            {onOpenJurnalBudaya && (
+              <motion.button
+                onClick={onOpenJurnalBudaya}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100/90 text-[#8A5D26] text-xs sm:text-sm font-semibold tracking-wide transition-colors cursor-pointer shadow-xs"
+              >
+                <BookOpen className="w-4 h-4 text-[#C99B52]" />
+                <span>Baca Jurnal Budaya</span>
+              </motion.button>
+            )}
           </div>
         </motion.div>
 

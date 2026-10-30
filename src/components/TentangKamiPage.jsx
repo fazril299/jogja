@@ -119,22 +119,10 @@ export default function TentangKamiPage({
   const [activeTipIndex, setActiveTipIndex] = React.useState(0);
   const containerRef = useRef(null);
 
-  // Reset scroll when opened & lock document body/html overflow to eliminate double scrollbar
+  // Reset scroll when opened (scroll lock is handled centrally by App.jsx)
   useEffect(() => {
-    if (isOpen) {
-      if (containerRef.current) {
-        containerRef.current.scrollTop = 0;
-      }
-      const prevHtmlOverflow = document.documentElement.style.overflow;
-      const prevBodyOverflow = document.body.style.overflow;
-
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-
-      return () => {
-        document.documentElement.style.overflow = prevHtmlOverflow;
-        document.body.style.overflow = prevBodyOverflow;
-      };
+    if (isOpen && containerRef.current) {
+      containerRef.current.scrollTop = 0;
     }
   }, [isOpen]);
 

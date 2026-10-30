@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Award,
   Compass,
-  Sparkles,
   Navigation,
   Lock,
   CheckCircle2,
@@ -3010,7 +3009,6 @@ export default function MyCultureBookModal({
                         gap: '0.35rem'
                       }}
                     >
-                      <Sparkles size={12} />
                       <span>{CULTURAL_EVENTS.length} Agenda Terverifikasi</span>
                     </div>
                   </div>

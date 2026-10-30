@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Database,
   FileCode,
-  Sparkles,
   Trash2,
   Users,
   Check,

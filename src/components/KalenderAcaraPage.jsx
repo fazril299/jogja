@@ -536,6 +536,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     };
   }, [onPopupChange]);
 
+  // Scroll lock is handled centrally by App.jsx
+
   // Close modal on Escape key press
   useEffect(() => {
     if (!activeModalEvent) return;
@@ -1141,6 +1143,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   <h2 className="text-lg sm:text-xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 ml-1">
                     {MONTH_NAMES[activeMonth]} {activeYear}
                   </h2>
+
+                  <button
+                    type="button"
+                    onClick={handleJumpToToday}
+                    className="ml-2 px-2.5 py-1 text-xs font-bold bg-[#FAF6EE] hover:bg-white text-[#8c532b] border border-[#E8DFC9] rounded-lg shadow-2xs transition-all active:scale-95 cursor-pointer"
+                    title="Kembali ke Hari Ini"
+                  >
+                    Hari Ini
+                  </button>
                 </div>
 
                 {/* Right Mode Toggle Pills ([Bulan] [Minggu] [Hari] [Daftar]) */}
@@ -1330,64 +1341,99 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
               )}
 
               {/* ── SUB-VIEW: MINGGU / HARI / DAFTAR ── */}
-              {viewTab !== 'Bulan' && (
-                <div className="border border-[#E8DFC9] rounded-xl p-4 space-y-3 bg-[#FAF6EE]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#2d180c] uppercase">
-                      Tampilan {viewTab}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setViewTab('Bulan')}
-                      className="text-xs font-semibold text-[#8c532b] hover:underline cursor-pointer"
-                    >
-                      Kembali ke Tampilan Bulan
-                    </button>
-                  </div>
+              {viewTab !== 'Bulan' && (() => {
+                const subViewEvents = (() => {
+                  if (viewTab === 'Hari') {
+                    return filteredEvents.filter(
+                      (e) => e.monthIndex === activeMonth && parseInt(e.dayDate, 10) === selectedDay
+                    );
+                  }
+                  if (viewTab === 'Minggu') {
+                    const selDate = new Date(activeYear, activeMonth, selectedDay);
+                    const dayOfWeek = selDate.getDay();
+                    const startOfWeek = selectedDay - dayOfWeek;
+                    const endOfWeek = startOfWeek + 6;
+                    return filteredEvents.filter((e) => {
+                      if (e.monthIndex !== activeMonth) return false;
+                      const d = parseInt(e.dayDate, 10);
+                      return d >= startOfWeek && d <= endOfWeek;
+                    });
+                  }
+                  return filteredEvents.filter((e) => e.monthIndex === activeMonth);
+                })();
 
-                  <div className="space-y-2">
-                    {filteredEvents
-                      .filter((e) => e.monthIndex === activeMonth)
-                      .map((ev) => {
-                        const conf =
-                          CATEGORY_CONFIG[ev.category] ||
-                          CATEGORY_CONFIG['Upacara Keraton'];
-                        return (
-                          <div
-                            key={ev.id}
-                            className="p-3 rounded-xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 hover:border-[#8c532b] transition-colors cursor-pointer"
-                            onClick={() => {
-                              setSelectedDay(parseInt(ev.dayDate, 10));
-                              handleOpenModal(ev);
-                            }}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
-                              >
-                                {ev.dayDate} {ev.monthName.slice(0, 3)}
-                              </span>
-                              <div>
-                                <h4 className="text-xs font-bold text-[#2d180c] m-0">
-                                  {ev.name}
-                                </h4>
-                                <span className="text-[11px] text-[#786154]">
-                                  {ev.location} • {ev.time}
-                                </span>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              className="px-3 py-1 rounded-lg bg-[#2d180c] text-white text-[11px] font-semibold"
+                return (
+                  <div className="border border-[#E8DFC9] rounded-xl p-4 space-y-3 bg-[#FAF6EE]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#2d180c] uppercase">
+                        Tampilan {viewTab} {viewTab === 'Hari' ? `• ${selectedDay} ${MONTH_NAMES[activeMonth]}` : viewTab === 'Minggu' ? `• Pekan ke-${Math.ceil(selectedDay / 7)}` : `• ${MONTH_NAMES[activeMonth]}`} ({subViewEvents.length} Acara)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setViewTab('Bulan')}
+                        className="text-xs font-semibold text-[#8c532b] hover:underline cursor-pointer"
+                      >
+                        Kembali ke Tampilan Bulan
+                      </button>
+                    </div>
+
+                    {subViewEvents.length > 0 ? (
+                      <div className="space-y-2">
+                        {subViewEvents.map((ev) => {
+                          const conf =
+                            CATEGORY_CONFIG[ev.category] ||
+                            CATEGORY_CONFIG['Upacara Keraton'];
+                          return (
+                            <div
+                              key={ev.id}
+                              className="p-3 rounded-xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 hover:border-[#8c532b] transition-colors cursor-pointer"
+                              onClick={() => {
+                                setSelectedDay(parseInt(ev.dayDate, 10));
+                                handleOpenModal(ev);
+                              }}
                             >
-                              Detail
-                            </button>
-                          </div>
-                        );
-                      })}
+                              <div className="flex items-center gap-3">
+                                <span
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold ${conf.colorBg} ${conf.colorText}`}
+                                >
+                                  {ev.dayDate} {ev.monthName.slice(0, 3)}
+                                </span>
+                                <div>
+                                  <h4 className="text-xs font-bold text-[#2d180c] m-0">
+                                    {ev.name}
+                                  </h4>
+                                  <span className="text-[11px] text-[#786154]">
+                                    {ev.location} • {ev.time}
+                                  </span>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                className="px-3 py-1 rounded-lg bg-[#2d180c] text-white text-[11px] font-semibold"
+                              >
+                                Detail
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center bg-white rounded-xl border border-[#E8DFC9] space-y-2">
+                        <p className="text-xs text-[#786154] m-0">
+                          Tidak ada agenda acara pada {viewTab === 'Hari' ? `tanggal ${selectedDay} ${MONTH_NAMES[activeMonth]}` : 'periode ini'}.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setViewTab('Bulan')}
+                          className="px-3 py-1.5 rounded-lg bg-[#8c532b] text-white text-xs font-bold cursor-pointer"
+                        >
+                          Lihat Kalender Bulan Penuh
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* ─────────────────────────────────────────────────────────────────
@@ -1838,8 +1884,12 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
               className="bg-[#FAF6EE] rounded-xl border border-[#E8DFC9] p-2.5 shadow-2xs flex items-center gap-2.5 cursor-pointer hover:border-[#8c532b]/50 transition-all select-none active:scale-[0.99]"
               title="Klik untuk melihat tips tata krama & adat Jogja"
             >
-              <div className="w-8 h-8 rounded-full bg-[#8c532b]/15 border border-[#8c532b]/30 flex items-center justify-center text-sm shrink-0">
-                👑
+              <div className="w-8 h-8 rounded-full bg-[#8c532b]/15 border border-[#8c532b]/30 flex items-center justify-center shrink-0 overflow-hidden">
+                <img
+                  src="/assets/images/mascot_kalender.webp"
+                  alt="Jojo"
+                  className="w-full h-full object-cover object-top select-none pointer-events-none"
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between mb-0.5">

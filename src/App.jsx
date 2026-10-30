@@ -169,6 +169,17 @@ function NusantaraApp() {
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
   const [eventMapTarget, setEventMapTarget] = useState(null);
 
+  // Helper to completely unlock scrolling on root document and body
+  const unlockBodyScroll = () => {
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.height = "";
+    document.body.style.overflow = "";
+    document.body.style.height = "";
+    document.body.style.overscrollBehavior = "";
+    document.documentElement.classList.remove("modal-scroll-lock");
+    document.body.classList.remove("modal-scroll-lock");
+  };
+
   // Deep-linking & Browser Back/Forward URL Routing Sync
   useEffect(() => {
     const handleUrlRoute = () => {
@@ -191,6 +202,7 @@ function NusantaraApp() {
         setIsAdminOpen(false);
         setIsGlobalShareOpen(false);
         closeAuthModal();
+        unlockBodyScroll();
         document.title = 'Hamemayu - Jelajah Budaya & Warisan Luhur D.I. Yogyakarta';
         return;
       }
@@ -620,16 +632,16 @@ function NusantaraApp() {
 
   useEffect(() => {
     if (isAnyOverlayActive) {
-      const prevHtmlOverflow = document.documentElement.style.overflow;
-      const prevBodyOverflow = document.body.style.overflow;
-
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      document.documentElement.classList.add("modal-scroll-lock");
+      document.body.classList.add("modal-scroll-lock");
 
       return () => {
-        document.documentElement.style.overflow = prevHtmlOverflow;
-        document.body.style.overflow = prevBodyOverflow;
+        unlockBodyScroll();
       };
+    } else {
+      unlockBodyScroll();
     }
   }, [isAnyOverlayActive]);
 
@@ -668,7 +680,15 @@ function NusantaraApp() {
 
   const handleScrollToDestinations = () => {
     window.location.hash = '#/home';
-    smoothScrollToSection('destinations-section', 85);
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const heroEl = document.getElementById('hero-section');
+    if (heroEl) {
+      heroEl.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleScrollToAbout = () => {
@@ -876,6 +896,7 @@ function NusantaraApp() {
         <AboutSection
           onOpenBooking={handleScrollToDestinations}
           onOpenAboutUs={handleScrollToAbout}
+          onOpenJurnalBudaya={handleOpenJurnalBudaya}
         />
 
         {/* 4. PINNED 400VH 3D TILT DESTINATIONS WITH FAN-OUT PHOTOS (YOGYAKARTA ICONS) */}

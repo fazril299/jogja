@@ -147,7 +147,7 @@ export default function OfficialSources() {
   return (
     <section
       id="official-sources"
-      className="w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-[#D9CEBA]/60"
+      className="w-full px-4 sm:px-8 pt-3 sm:pt-8 md:pt-10 pb-8 sm:pb-12 bg-[#FAF6EE] text-[#1A1A1A] relative border-b border-[#D9CEBA]/60"
     >
       {/* ========================================================
           MOBILE VIEW (block md:hidden): Opsi A - Ramping & Proporsional
