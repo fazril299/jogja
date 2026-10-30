@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { PassageEngine } from './PassageEngine.js';
 
-export function PassageGallery({
+export const PassageGallery = forwardRef(function PassageGallery({
   slides = [],
   layout = 'ring',
   scrollLength = 5,
@@ -21,10 +21,38 @@ export function PassageGallery({
   tilt = 0.35,
   intro = true,
   className = '',
-  style = {}
-}) {
+  style = {},
+  onEngineReady
+}, ref) {
   const containerRef = useRef(null);
   const engineRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    next: () => {
+      if (engineRef.current?.nextSlide) {
+        engineRef.current.nextSlide();
+      }
+    },
+    prev: () => {
+      if (engineRef.current?.prevSlide) {
+        engineRef.current.prevSlide();
+      }
+    },
+    scrollBy: (delta) => {
+      if (engineRef.current?.scrollBy) {
+        engineRef.current.scrollBy(delta);
+      }
+    },
+    focusImage: (idx) => {
+      if (engineRef.current?.focusImage) {
+        engineRef.current.focusImage(idx);
+      }
+    },
+    getCurrentIndex: () => {
+      return engineRef.current?.currentIndex?.() ?? 0;
+    },
+    getEngine: () => engineRef.current
+  }), []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -56,11 +84,27 @@ export function PassageGallery({
       };
 
       engine.mount(container, opts);
+      if (onEngineReady) {
+        onEngineReady(engine);
+      }
     } catch (err) {
       console.error('[PassageGallery] Mount failed:', err);
     }
 
+    // Direct wheel scroll rotation support on gallery canvas
+    const handleWheel = (e) => {
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      const delta = isHorizontal ? e.deltaX : (e.shiftKey ? e.deltaY : e.deltaY * 0.4);
+      if (Math.abs(delta) > 1.5 && engineRef.current) {
+        e.preventDefault();
+        engineRef.current.scrollBy(delta * 0.0006);
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+
     return () => {
+      container.removeEventListener('wheel', handleWheel);
       if (engine) {
         try {
           engine.destroy();
@@ -118,13 +162,15 @@ export function PassageGallery({
   return (
     <div
       ref={containerRef}
+      tabIndex={0}
       data-fx-pin="true"
-      className={`relative w-full h-full ${className}`}
+      className={`relative w-full h-full cursor-grab active:cursor-grabbing outline-none select-none ${className}`}
       style={{
         width: '100%',
         height: '100%',
         backgroundColor: background,
         overflow: 'hidden',
+        touchAction: 'pan-y pinch-zoom',
         ...style
       }}
     >
@@ -157,4 +203,4 @@ export function PassageGallery({
       </div>
     </div>
   );
-}
+});
