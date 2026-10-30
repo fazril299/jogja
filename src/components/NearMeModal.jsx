@@ -478,9 +478,22 @@ export default function NearMeModal({
         onUpdateUserCoords(pos);
       }
 
-      // Mulai rute langsung dari koordinat sensor pengguna
+      // Validasi Lokasi: Rute GPS HANYA bisa digunakan jika pengguna berada di dalam wilayah Jogja
+      if (!inJogja) {
+        setShowGpsRequiredPrompt(true);
+        setGpsErrorMessage(
+          'Anda berada di luar wilayah Jogja, rute hanya dapat digunakan jika anda berada didalam wilayah jogja.'
+        );
+        return;
+      }
+
+      // Jika berada di dalam wilayah Jogja, mulai rute dari GPS
+      setShowGpsRequiredPrompt(false);
+      setGpsErrorMessage('');
+
       const target = activeItem;
       if (target && target.id) {
+        lastCenteredNavRouteIdRef.current = null;
         setActiveNavRouteId(target.id);
         setIsMobilePopupCollapsed(true);
 
@@ -537,9 +550,21 @@ export default function NearMeModal({
   const handleStartRoute = (item) => {
     if (!item) return;
 
+    lastCenteredNavRouteIdRef.current = null;
+
     // 1. Jika pengguna sudah memiliki sensor GPS aktif
     if (hasUserGps && effectiveUserCoords) {
+      // Validasi Lokasi: Rute GPS HANYA bisa digunakan jika berada di dalam wilayah Jogja
+      if (!isUserInJogja) {
+        setShowGpsRequiredPrompt(true);
+        setGpsErrorMessage(
+          'Anda berada di luar wilayah Jogja, rute hanya dapat digunakan jika anda berada didalam wilayah jogja.'
+        );
+        return;
+      }
+
       setShowGpsRequiredPrompt(false);
+      setGpsErrorMessage('');
       setActiveNavRouteId(item.id);
       setIsMobilePopupCollapsed(true);
 
