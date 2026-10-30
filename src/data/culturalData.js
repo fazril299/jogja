@@ -324,7 +324,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'kopi-klotok-pakem',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/warung-kopi-klotok-kaliurang',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/kopi-klotok-jogja-kelapa-f97ff51d-019e-422c-928c-8f3eed97b976',
         gofoodMerchant: 'Warung Kopi Klotok Pakem',
         gofoodRating: 4.8,
         gofoodReviews: '10k+',
