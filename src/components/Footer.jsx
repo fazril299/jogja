@@ -207,7 +207,7 @@ export default function Footer({
                 className="group inline-flex items-center transition-transform duration-300 hover:rotate-12"
                 aria-label="Kembali ke Beranda Hamemayu"
               >
-                <EastwardMandalaMedallion />
+                <img src="/assets/images/logo.jpg" alt="Hamemayu Logo" className="w-14 h-14 object-contain rounded-full shadow-2xs" />
               </a>
               <div>
                 <span
