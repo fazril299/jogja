@@ -490,37 +490,17 @@ function NusantaraApp() {
     }
   };
 
-  // Memproses hasil pembacaan sensor GPS asli: HANYA MENYALA JIKA DI DALAM WILAYAH D.I. YOGYAKARTA
+  // Memproses hasil pembacaan sensor GPS asli
   const handleRealPositionUpdate = (pos, shouldOpenModal = false) => {
     setIsGpsLoading(false);
+
+    if (!pos || !pos.coords) return;
 
     const { latitude, longitude, accuracy, altitude, speed, heading } = pos.coords;
     const inJogja = isInsideJogjaBounds(latitude, longitude);
     const timeStr = new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID');
 
     fetchRealAddressFromCoords(latitude, longitude);
-
-    // JIKA PENGGUNA BERADA DI LUAR WILAYAH D.I. YOGYAKARTA -> GPS TIDAK DAPAT DIGUNAKAN / MATI
-    if (!inJogja) {
-      setIsOutsideJogja(true);
-      setOutsideJogjaCoords({
-        lat: latitude,
-        lng: longitude,
-        accuracy: Math.round(accuracy || 0),
-        timestamp: timeStr
-      });
-      setUserLiveCoords(null);
-      setShowGpsNotification(false);
-      setGpsErrorMsg(
-        'Lokasi Anda saat ini terdeteksi berada di luar wilayah D.I. Yogyakarta. Sesuai penguncian wilayah, fitur pelacakan GPS tidak dapat digunakan di luar Jogja dan hanya menyala otomatis saat Anda berada di wilayah D.I. Yogyakarta (Radius Rekomendasi 5–10 KM).'
-      );
-      return;
-    }
-
-    // JIKA PENGGUNA BERADA DI DALAM WILAYAH D.I. YOGYAKARTA -> GPS MENYALA AKTIF (RADIUS 5-10 KM)
-    setIsOutsideJogja(false);
-    setOutsideJogjaCoords(null);
-    setGpsErrorMsg('');
 
     const realFix = {
       lat: latitude,
@@ -529,11 +509,33 @@ function NusantaraApp() {
       altitude: altitude ? Math.round(altitude) : null,
       speed: speed ? (speed * 3.6).toFixed(1) : null,
       heading: heading ? Math.round(heading) : null,
-      inJogja: true,
+      inJogja: inJogja,
       timestamp: timeStr
     };
 
+    // Selalu simpan koordinat pengguna agar GPS aktif dan tidak hang
     setUserLiveCoords(realFix);
+
+    // JIKA PENGGUNA BERADA DI LUAR WILAYAH D.I. YOGYAKARTA
+    if (!inJogja) {
+      setIsOutsideJogja(true);
+      setOutsideJogjaCoords({
+        lat: latitude,
+        lng: longitude,
+        accuracy: Math.round(accuracy || 0),
+        timestamp: timeStr
+      });
+      setShowGpsNotification(false);
+      setGpsErrorMsg(
+        'Lokasi Anda terdeteksi berada di luar wilayah D.I. Yogyakarta. Sensor GPS tetap aktif mendeteksi posisi Anda, dan rute kuliner lokal disimulasikan dari Titik Nol KM Yogyakarta.'
+      );
+      return;
+    }
+
+    // JIKA PENGGUNA BERADA DI DALAM WILAYAH D.I. YOGYAKARTA -> GPS MENYALA AKTIF (RADIUS 5-10 KM)
+    setIsOutsideJogja(false);
+    setOutsideJogjaCoords(null);
+    setGpsErrorMsg('');
 
     const { zone: nearestZone } = findNearestJogjaZone(latitude, longitude);
     setAutoDetectedZoneId(nearestZone.id);
@@ -1009,6 +1011,7 @@ function NusantaraApp() {
             userLiveAddress={userLiveAddress}
             gpsErrorMsg={gpsErrorMsg}
             onRefreshDeviceGps={() => triggerDeviceGpsDetection(false)}
+            onUpdateUserCoords={handleRealPositionUpdate}
             isGpsLoading={isGpsLoading}
           />
         )}
