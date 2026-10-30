@@ -405,11 +405,111 @@ export default function NearMeModal({
     };
   }, [activeNavTarget, userLiveCoords]);
 
-  // Fungsi utama ambil rute: Jika belum ada izin lokasi, langsung picu notifikasi izin browser!
+  // Fungsi terpadu & andal untuk meminta izin lokasi GPS dan mengambil rute (Failsafe)
+  const executeLocationRequest = (targetItem) => {
+    const item = targetItem || activeItem;
+    setIsGpsRequesting(true);
+
+    const onLocationSuccess = (pos) => {
+      setIsGpsRequesting(false);
+      setShowGpsRequiredPrompt(false);
+
+      const { latitude, longitude, accuracy } = pos.coords;
+      const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
+
+      const newFix = {
+        lat: latitude,
+        lng: longitude,
+        accuracy: Math.round(accuracy || 0),
+        inJogja: inJogja,
+        timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
+      };
+
+      setLocalUserCoords(newFix);
+
+      if (onUpdateUserCoords) {
+        onUpdateUserCoords(pos);
+      }
+
+      // Langsung buka rute jika ada item yang dituju
+      if (item && item.id) {
+        setActiveNavRouteId(item.id);
+        setIsMobilePopupCollapsed(true);
+
+        const originCoords = inJogja
+          ? [latitude, longitude]
+          : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
+
+        if (mapInstanceRef.current && item.coordinates) {
+          mapInstanceRef.current.fitBounds(
+            [
+              originCoords,
+              [item.coordinates.lat, item.coordinates.lng]
+            ],
+            { padding: [60, 60], maxZoom: 17 }
+          );
+        }
+      }
+    };
+
+    const fallbackToTitikNol = (reason) => {
+      setIsGpsRequesting(false);
+      setShowGpsRequiredPrompt(false);
+      console.warn('[GPS Fallback]:', reason);
+
+      if (item && item.id) {
+        setActiveNavRouteId(item.id);
+        setIsMobilePopupCollapsed(true);
+
+        if (mapInstanceRef.current && item.coordinates) {
+          mapInstanceRef.current.fitBounds(
+            [
+              [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng],
+              [item.coordinates.lat, item.coordinates.lng]
+            ],
+            { padding: [60, 60], maxZoom: 17 }
+          );
+        }
+      }
+    };
+
+    // Jika browser tidak mendukung geolocation
+    if (!('geolocation' in navigator)) {
+      fallbackToTitikNol('Sensor Geolocation tidak didukung atau dibatasi di browser.');
+      return;
+    }
+
+    // Percobaan 1: Cepat & responsif (menggunakan Wi-Fi/Cellular IP, timeout 4 detik)
+    try {
+      navigator.geolocation.getCurrentPosition(
+        onLocationSuccess,
+        (errLow) => {
+          console.warn('Percobaan 1 (low accuracy) gagal/timeout, mencoba high accuracy:', errLow);
+          // Percobaan 2: High accuracy GPS sensor
+          try {
+            navigator.geolocation.getCurrentPosition(
+              onLocationSuccess,
+              (errHigh) => {
+                console.warn('Percobaan 2 (high accuracy) gagal/ditolak:', errHigh);
+                // Langsung fallback ke Titik Nol agar rute tetap tampil tanpa hambatan
+                fallbackToTitikNol(errHigh?.message || 'Izin ditolak atau timeout');
+              },
+              { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+            );
+          } catch (e2) {
+            fallbackToTitikNol(e2?.message);
+          }
+        },
+        { enableHighAccuracy: false, timeout: 4000, maximumAge: 60000 }
+      );
+    } catch (e1) {
+      fallbackToTitikNol(e1?.message);
+    }
+  };
+
   const handleStartRoute = (item) => {
     if (!item) return;
 
-    // 1. Jika koordinat GPS sudah tersedia di perangkat
     if (hasUserGps) {
       setShowGpsRequiredPrompt(false);
       setActiveNavRouteId(item.id);
@@ -425,69 +525,13 @@ export default function NearMeModal({
             originCoords,
             [item.coordinates.lat, item.coordinates.lng]
           ],
-          { padding: [70, 70], maxZoom: 17 }
+          { padding: [60, 60], maxZoom: 17 }
         );
       }
       return;
     }
 
-    // 2. Jika GPS belum aktif: Langsung panggil Geolocation API untuk memunculkan prompt izin browser
-    if (!('geolocation' in navigator)) {
-      alert('Browser perangkat ini tidak mendukung sensor Geolocation GPS. Rute ditampilkan dari Titik Nol Yogyakarta.');
-      setActiveNavRouteId(item.id);
-      setIsMobilePopupCollapsed(true);
-      return;
-    }
-
-    setIsGpsRequesting(true);
-    setShowGpsRequiredPrompt(false);
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setIsGpsRequesting(false);
-        const { latitude, longitude, accuracy } = pos.coords;
-        const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
-
-        const newFix = {
-          lat: latitude,
-          lng: longitude,
-          accuracy: Math.round(accuracy || 0),
-          inJogja: inJogja,
-          timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
-        };
-
-        setLocalUserCoords(newFix);
-
-        if (onUpdateUserCoords) {
-          onUpdateUserCoords(pos);
-        }
-
-        // Langsung aktifkan rute dan gambar jalur di peta!
-        setActiveNavRouteId(item.id);
-        setIsMobilePopupCollapsed(true);
-
-        const originCoords = inJogja
-          ? [latitude, longitude]
-          : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
-
-        if (mapInstanceRef.current && item.coordinates) {
-          mapInstanceRef.current.fitBounds(
-            [
-              originCoords,
-              [item.coordinates.lat, item.coordinates.lng]
-            ],
-            { padding: [70, 70], maxZoom: 17 }
-          );
-        }
-      },
-      (err) => {
-        setIsGpsRequesting(false);
-        console.warn('GPS permission denied or failed:', err);
-        // Tampilkan prompt bantuan jika pengguna menolak atau sensor mati
-        setShowGpsRequiredPrompt(true);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-    );
+    executeLocationRequest(item);
   };
 
   const handleEndRoute = (e) => {
@@ -502,66 +546,8 @@ export default function NearMeModal({
     setIsRouteLoading(false);
   };
 
-  // Handler tombol "Nyalakan GPS Perangkat" di banner
   const handleRequestEnableGps = () => {
-    if (!('geolocation' in navigator)) {
-      alert('Browser perangkat ini tidak mendukung sensor Geolocation GPS.');
-      return;
-    }
-
-    setIsGpsRequesting(true);
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setIsGpsRequesting(false);
-        const { latitude, longitude, accuracy } = pos.coords;
-        const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
-
-        const newFix = {
-          lat: latitude,
-          lng: longitude,
-          accuracy: Math.round(accuracy || 0),
-          inJogja: inJogja,
-          timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
-        };
-
-        setLocalUserCoords(newFix);
-        setShowGpsRequiredPrompt(false);
-
-        if (onUpdateUserCoords) {
-          onUpdateUserCoords(pos);
-        }
-
-        // Jika ada kuliner yang sedang aktif dipilih, langsung mulai rute ke sana!
-        const targetItem = activeItem;
-        if (targetItem && targetItem.coordinates) {
-          setActiveNavRouteId(targetItem.id);
-          setIsMobilePopupCollapsed(true);
-
-          const originCoords = inJogja
-            ? [latitude, longitude]
-            : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
-
-          if (mapInstanceRef.current) {
-            mapInstanceRef.current.fitBounds(
-              [
-                originCoords,
-                [targetItem.coordinates.lat, targetItem.coordinates.lng]
-              ],
-              { padding: [70, 70], maxZoom: 17 }
-            );
-          }
-        }
-      },
-      (err) => {
-        setIsGpsRequesting(false);
-        console.warn('GPS permission error:', err);
-        if (onRefreshDeviceGps) {
-          onRefreshDeviceGps();
-        }
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-    );
+    executeLocationRequest(activeItem);
   };
 
   // Tutup dengan tombol ESC
@@ -1399,10 +1385,18 @@ export default function NearMeModal({
                           <div className="flex items-center gap-2 pt-1">
                             <button
                               type="button"
+                              disabled={isGpsRequesting}
                               onClick={handleRequestEnableGps}
-                              className="flex-1 py-1.5 px-3 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white text-[11px] font-bold transition-colors cursor-pointer shadow-xs text-center"
+                              className="flex-1 py-1.5 px-3 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white text-[11px] font-bold transition-colors cursor-pointer shadow-xs text-center flex items-center justify-center gap-1.5"
                             >
-                              Nyalakan GPS Perangkat
+                              {isGpsRequesting ? (
+                                <>
+                                  <div className="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                                  <span>Menghubungkan GPS...</span>
+                                </>
+                              ) : (
+                                <span>Nyalakan GPS Perangkat</span>
+                              )}
                             </button>
                             <button
                               type="button"
@@ -2453,10 +2447,18 @@ export default function NearMeModal({
                           <div className="flex items-center gap-1.5 pt-0.5">
                             <button
                               type="button"
+                              disabled={isGpsRequesting}
                               onClick={handleRequestEnableGps}
-                              className="flex-1 py-1.5 px-2 rounded-lg bg-[#D97706] hover:bg-[#B45309] text-white text-[10px] font-bold transition-colors cursor-pointer shadow-xs text-center"
+                              className="flex-1 py-1.5 px-2 rounded-lg bg-[#D97706] hover:bg-[#B45309] text-white text-[10px] font-bold transition-colors cursor-pointer shadow-xs text-center flex items-center justify-center gap-1.5"
                             >
-                              Nyalakan GPS
+                              {isGpsRequesting ? (
+                                <>
+                                  <div className="w-2.5 h-2.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                                  <span>Menghubungkan...</span>
+                                </>
+                              ) : (
+                                <span>Nyalakan GPS</span>
+                              )}
                             </button>
                             <button
                               type="button"
