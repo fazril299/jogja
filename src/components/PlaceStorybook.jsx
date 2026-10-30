@@ -666,11 +666,14 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
         zIndex: 99995,
         backgroundColor: '#ffffff',
         overflowY: 'auto',
+        overflowX: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
         WebkitOverflowScrolling: 'touch',
         fontFamily: "'Plus Jakarta Sans', sans-serif"
       }}
       id="storybook-viewport"
-      className="storybook-main-container"
+      className="storybook-main-container w-full max-w-full overflow-x-hidden" 
     >
       {/* =========================================================================
           SECTION 1: HERO VIEW (100VH - FOKUS 100% PADA DESTINASI TERPILIH)
@@ -679,6 +682,8 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
         style={{
           position: 'relative',
           width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
@@ -753,7 +758,9 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           style={{
             position: 'relative',
             zIndex: 20,
-            padding: '0 clamp(2rem, 5vw, 5rem) clamp(3.5rem, 8vh, 6rem) clamp(2rem, 5vw, 5rem)',
+            padding: '0 clamp(1rem, 3.5vw, 4rem) clamp(2.2rem, 5.5vh, 5rem) clamp(1rem, 3.5vw, 4rem)',
+            width: '100%',
+            boxSizing: 'border-box',
             maxWidth: '1080px'
           }}
         >
@@ -761,7 +768,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'flex', alignItems: 'stretch', gap: 'clamp(1.2rem, 2vw, 1.8rem)' }}
+            style={{ display: 'flex', alignItems: 'stretch', gap: 'clamp(0.65rem, 1.8vw, 1.6rem)', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
           >
             {/* Signature Solid White Vertical Bar */}
             <div
@@ -774,7 +781,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
               }}
             />
 
-            <div>
+            <div style={{ minWidth: 0, flex: 1, maxWidth: '100%', boxSizing: 'border-box' }}>
               {/* Badge Kategori Budaya */}
               <div
                 style={{
@@ -787,7 +794,10 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                   border: '1px solid rgba(255, 255, 255, 0.22)',
                   color: '#F4F1EA',
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: '0.7rem',
+                  fontSize: 'clamp(0.62rem, 1.1vw, 0.7rem)',
+                  maxWidth: '100%',
+                  whiteSpace: 'normal',
+                  lineHeight: 1.4,
                   fontWeight: 600,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
@@ -801,7 +811,10 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
               <h1
                 style={{
                   fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif",
-                  fontSize: 'clamp(2.6rem, 5.5vw, 5.2rem)',
+                  fontSize: 'clamp(1.45rem, 5.2vw, 4.2rem)',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  maxWidth: '100%',
                   fontWeight: 800,
                   lineHeight: 1.05,
                   letterSpacing: '0.01em',
@@ -818,7 +831,9 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
               <p
                 style={{
                   fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 'clamp(1.08rem, 1.6vw, 1.35rem)',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 1.35rem)',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
                   fontStyle: 'italic',
                   fontWeight: 400,
                   color: '#ffffff',
@@ -837,7 +852,8 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                   display: 'flex',
                   alignItems: 'center',
                   flexWrap: 'wrap',
-                  gap: '0.85rem',
+                  gap: '0.75rem',
+                  maxWidth: '100%',
                   marginTop: '1.25rem'
                 }}
               >
