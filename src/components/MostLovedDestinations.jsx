@@ -164,14 +164,14 @@ export default function MostLovedDestinations({
     <section
       id="destinations-section"
       ref={sectionRef}
-      className="relative w-full py-16 sm:py-24 bg-[#FAF6EE] border-b border-[#D9CEBA]/60 overflow-hidden"
+      className="relative w-full py-16 sm:py-24 bg-[#FAF6EE] border-b border-[#D9CEBA]/60 overflow-hidden px-4 sm:px-8"
     >
-      <div className="max-w-[1140px] mx-auto w-full px-4 sm:px-8">
+      <div className="max-w-7xl mx-auto w-full">
         {/* =========================================================================
             SYNCED HEADER
             ========================================================================= */}
-        <div className="mb-4 sm:mb-6 max-w-[1040px] mx-auto w-full px-2">
-          <div className="space-y-1 max-w-xl">
+        <div className="mb-4 sm:mb-6 w-full text-center flex flex-col items-center justify-center">
+          <div className="space-y-1 max-w-2xl mx-auto flex flex-col items-center">
             {/* Big Synced Title */}
             <AnimatePresence mode="wait">
               <motion.h2
@@ -180,7 +180,7 @@ export default function MostLovedDestinations({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.22, ease: 'easeOut' }}
-                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#2d180c] font-['Outfit'] m-0 leading-tight"
+                className="font-['Outfit'] text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0 text-center"
               >
                 {activeDest.title}
               </motion.h2>
@@ -194,7 +194,7 @@ export default function MostLovedDestinations({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.22 }}
-                className="text-xs sm:text-[13px] text-[#554E46] m-0 line-clamp-1 max-w-lg"
+                className="text-xs sm:text-sm text-[#2D180C]/70 m-0 line-clamp-1 max-w-xl leading-relaxed mt-1 text-center"
               >
                 {activeDest.tagline}
               </motion.p>

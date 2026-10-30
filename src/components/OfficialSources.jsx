@@ -156,13 +156,10 @@ export default function OfficialSources() {
       <div className="block md:hidden w-full max-w-[390px] mx-auto text-left">
         {/* Section Header Ringkas */}
         <div className="mb-2 px-1">
-          <p className="text-[10px] font-extrabold text-[#8c532b] uppercase tracking-wider mb-0.5">
-            Referensi Resmi
-          </p>
-          <h2 className="font-outfit text-xl font-bold text-[#2d180c] leading-tight m-0 mb-1">
+          <h2 className="font-['Outfit'] text-xl sm:text-2xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0 mb-1">
             Informasi yang dapat diperiksa
           </h2>
-          <p className="text-xs text-[#64766d] font-normal m-0 leading-relaxed">
+          <p className="text-xs text-[#2D180C]/70 font-normal m-0 leading-relaxed">
             Fakta dirujuk langsung ke pengelola atau lembaga resmi terkait.
           </p>
         </div>
@@ -278,23 +275,12 @@ export default function OfficialSources() {
           DESKTOP VIEW (hidden md:block): 100% Desktop Asli Terjaga
           ======================================================== */}
       <div className="hidden md:block">
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '1180px',
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <header style={{ maxWidth: '720px', marginBottom: 'clamp(0.75rem, 1.8vw, 1rem)' }}>
-            <p style={{ margin: '0 0 0.4rem', color: '#8c532b', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>
-              Referensi Resmi
-            </p>
-            <h2 style={{ margin: '0 0 0.45rem', fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(1.5rem, 2.8vw, 2.1rem)', lineHeight: 1.2, color: '#2d180c' }}>
+        <div className="max-w-7xl mx-auto w-full flex flex-col">
+          <header className="max-w-2xl mb-4 sm:mb-6">
+            <h2 className="font-['Outfit'] text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight m-0 mb-2">
               Informasi yang dapat diperiksa
             </h2>
-            <p style={{ margin: 0, color: '#64766d', fontSize: '0.92rem', lineHeight: 1.5 }}>
+            <p className="text-xs sm:text-sm text-[#2D180C]/70 m-0 leading-relaxed font-normal">
               Fakta berikut dirujuk langsung ke pengelola atau lembaga terkait. Periksa sumber resmi untuk pembaruan informasi kunjungan.
             </p>
           </header>

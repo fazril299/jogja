@@ -2,14 +2,14 @@ import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
+  Bot,
+  Camera,
   Landmark,
   Calendar,
   MapPin,
   Radio,
   BookOpen,
   CheckCircle2,
-  Database,
-  Sliders,
   ShieldCheck,
   ChevronDown,
   ChevronRight,
@@ -26,10 +26,11 @@ import Footer from './Footer';
 const DATA_SOURCES = [
   {
     sourceName: 'Kagungan Dalem Karaton Ngayogyakarta Hadiningrat',
-    shortTitle: 'Keraton & Tamansari',
+    shortTitle: 'Karaton Ngayogyakarta',
     authority: 'Tepas Dwarapura & Kawedanan Hageng Punakawan',
-    image: '/assets/images/jogja_tamansari.jpg',
-    photoLabel: 'Situs Tamansari & Keraton Mataram',
+    image: '/assets/images/sumber_keraton.jpg',
+    photoLabel: 'Upacara Adat Bangsal Kencana Karaton Ngayogyakarta',
+    isAiGenerated: true,
     verifiedData: [
       'Paugeran resmi dan jadwal upacara Hajad Dalem (Grebeg, Sekaten, dan Labuhan).',
       'Sistem penanggalan Jawa Sultan Agungan (Tahun Jawa, Windu, dan Wuku).',
@@ -37,11 +38,12 @@ const DATA_SOURCES = [
     ]
   },
   {
-    sourceName: 'Balai Pelestarian Kebudayaan & Pengelola Prambanan',
-    shortTitle: 'Candi Prambanan & Sambisari',
+    sourceName: 'Balai Pelestarian Kebudayaan (BPK Wilayah X)',
+    shortTitle: 'Balai Pelestarian Kebudayaan',
     authority: 'Kementerian Kebudayaan & Unit Warisan Dunia UNESCO',
-    image: '/assets/images/jogja_prambanan.jpg',
-    photoLabel: 'Kompleks Warisan Dunia Candi Prambanan',
+    image: '/assets/images/sumber_bpk_prambanan.jpg',
+    photoLabel: 'Ekskavasi & Pelestarian Cagar Budaya Candi Prambanan',
+    isAiGenerated: true,
     verifiedData: [
       'Inventarisasi zona cagar budaya dan pelestarian candi Hindu-Buddha Prambanan.',
       'Sinkronisasi jadwal pementasan Sendratari Ramayana dan reservasi panggung terbuka resmi.',
@@ -49,27 +51,29 @@ const DATA_SOURCES = [
     ]
   },
   {
-    sourceName: 'Dinas Kebudayaan (Kundha Kabudayan) & Dinas Pariwisata DIY',
-    shortTitle: 'Cagar Budaya Ratu Boko',
+    sourceName: 'Dinas Kebudayaan (Kundha Kabudayan) DIY',
+    shortTitle: 'Dinas Kebudayaan DIY',
     authority: 'Pemerintah Daerah Daerah Istimewa Yogyakarta',
-    image: '/assets/images/jogja_ratuboko.jpg',
-    photoLabel: 'Kawasan Cagar Budaya Ratu Boko & Tebing Breksi',
+    image: '/assets/images/sumber_dinas_kebudayaan.jpg',
+    photoLabel: 'Kantor Resmi Dinas Kebudayaan DIY (Jl. Cendana No. 11)',
+    isAiGenerated: false,
     verifiedData: [
-      'Inventaris cagar budaya terdaftar dan kawasan warisan dunia UNESCO.',
-      'Direktori festival budaya daerah dan agenda kesenian tahunan resmi.',
-      'Regulasi ketertiban, pelestarian, dan keselamatan kawasan cagar wisata sejarah.'
+      'Inventarisasi cagar budaya terdaftar, warisan budaya takbenda (WBTb), dan kawasan pusaka.',
+      'Standarisasi paugeran upacara adat, tata busana tradisional, dan pelestarian bahasa Jawa.',
+      'Regulasi pelindungan dan tata kelola cagar budaya di Daerah Istimewa Yogyakarta.'
     ]
   },
   {
-    sourceName: 'Riset Lapangan & Verifikasi Faktual Komunitas',
-    shortTitle: 'Lorong Pusaka Kotagede',
-    authority: 'Tim Riset Hamemayu, Paguyuban Kuliner & Pegiat Budaya Lokal',
-    image: '/assets/images/jogja_kotagede.jpg',
-    photoLabel: 'Pusaka Kotagede & Sentra Tradisi',
+    sourceName: 'Dinas Pariwisata Daerah Istimewa Yogyakarta',
+    shortTitle: 'Dinas Pariwisata DIY',
+    authority: 'Pemerintah Daerah Daerah Istimewa Yogyakarta',
+    image: '/assets/images/sumber_dinas_pariwisata.jpg',
+    photoLabel: 'Kantor Resmi Dinas Pariwisata Daerah Istimewa Yogyakarta',
+    isAiGenerated: false,
     verifiedData: [
-      'Verifikasi langsung daftar menu fisik guna memastikan transparansi tarif bagi wisatawan.',
-      'Validasi titik koordinat GPS riil menggunakan pencocokan satelit lokasi.',
-      'Konfirmasi berkala dengan pengelola cagar budaya, juru kunci, dan pelaku tradisi.'
+      'Publikasi resmi kalender perhelatan pariwisata daerah (Visiting Jogja Calendar of Events).',
+      'Pedoman keamanan, fasilitas, dan etika kunjungan wisatawan di destinasi wisata Yogyakarta.',
+      'Sinkronisasi informasi tarif resmi, jam operasional, dan direktori destinasi pariwisata.'
     ]
   }
 ];
@@ -82,21 +86,21 @@ const OPTIMIZATION_TIPS = [
   {
     action: 'Aktifkan Layanan Lokasi untuk Rekomendasi Kuliner Terdekat',
     target: 'Radar Kuliner',
-    image: '/assets/images/jogja_malioboro.jpg',
+    image: '/assets/images/feature_radar_kuliner.jpg',
     visualDesc: 'Pusat Kuliner Malioboro',
     tip: 'Akses menu "Kuliner" dan berikan izin penentu lokasi pada perangkat Anda. Hamemayu akan menghitung jarak meter secara presisi menggunakan formula Haversine untuk menampilkan destinasi kuliner legendaris terdekat dengan kepastian daftar menu dan tarif yang transparan.'
   },
   {
     action: 'Selaraskan Rencana Perjalanan dengan Kalender Upacara Adat',
     target: 'Kalender Tradisi',
-    image: '/assets/images/real_gunungan_grebeg.jpg',
+    image: '/assets/images/feature_kalender_tradisi.jpg',
     visualDesc: 'Kirab Gunungan Grebeg',
     tip: 'Pastikan waktu kunjungan Anda selaras dengan agenda kebudayaan daerah. Periksa tab "Kalender" untuk mengetahui jadwal pasti pelaksanaan Grebeg, Sekaten, maupun Sendratari Ramayana bulan purnama sebelum menetapkan tanggal perjalanan.'
   },
   {
     action: 'Pahami Ketentuan Busana dan Etika Sebelum Mengunjungi Situs Sakral',
     target: 'Panduan Adab',
-    image: '/assets/images/jogja_batik.jpg',
+    image: '/assets/images/feature_panduan_adab.jpg',
     visualDesc: 'Batik Tulis Tradisional',
     tip: 'Sebelum melangkah ke kawasan Keraton, Tamansari, atau makam raja-raja, luangkan waktu membaca Jurnal Adab untuk memastikan busana Anda memenuhi standar kepatutan dan tidak mengenakan motif batik larangan kasultanan.'
   }
@@ -260,16 +264,12 @@ export default function TentangKamiPage({
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-neutral-100 text-neutral-700 text-xs font-semibold border border-neutral-200 mb-1">
-                <Database size={13} className="text-[#8c532b]" />
-                <span>Akuntabilitas Informasi &amp; Rujukan Resmi</span>
-              </div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#1C1917] font-['Outfit'] m-0">
-                Transparansi dan Rujukan Resmi Sumber Data
+                Fakta Langsung dari Sumbernya
               </h3>
             </div>
             <p className="text-xs text-neutral-500 m-0 max-w-md">
-              Pilih institusi pada register di bawah untuk menelaah dokumen rujukan dan ruang lingkup verifikasi faktual.
+              Pilih institusi di bawah untuk melihat rujukan resmi dan data yang telah diverifikasi.
             </p>
           </div>
 
@@ -313,8 +313,8 @@ export default function TentangKamiPage({
 
             {/* Right Column (7 Cols): Clean Photographic Showcase Stage (100% Clean: Zero Badges, Zero Text Overlay) */}
             <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-neutral-200 bg-white shadow-2xs flex flex-col">
-              {/* Perfectly Proportioned, 100% Clean Photo Frame */}
-              <div className="relative h-40 sm:h-48 lg:h-52 w-full bg-neutral-900 shrink-0 overflow-hidden">
+              {/* Perfectly Proportioned Photo Frame with AI / Dokumen Badge */}
+              <div className="relative h-44 sm:h-52 lg:h-56 w-full bg-neutral-900 shrink-0 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={DATA_SOURCES[activeSourceIndex].image}
@@ -327,6 +327,21 @@ export default function TentangKamiPage({
                     className="w-full h-full object-cover object-center select-none"
                   />
                 </AnimatePresence>
+
+                {/* Penanda Transparansi Foto: AI vs Dokumentasi Asli */}
+                <div className="absolute bottom-2.5 right-2.5 z-10 pointer-events-none">
+                  {DATA_SOURCES[activeSourceIndex].isAiGenerated ? (
+                    <div className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1.5 border border-white/20 shadow-xs">
+                      <Bot size={12} className="text-white/85" />
+                      <span>Visual Dibuat dengan Bantuan AI</span>
+                    </div>
+                  ) : (
+                    <div className="px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md text-neutral-200 text-[10px] font-semibold flex items-center gap-1.5 border border-white/20 shadow-xs">
+                      <Camera size={11} className="text-emerald-400" />
+                      <span>Foto Dokumentasi Asli</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Verified Points Certificate below the clean photo */}
@@ -359,8 +374,13 @@ export default function TentangKamiPage({
             </div>
           </div>
 
+          {/* Catatan Transparansi AI */}
+          <p className="text-[10.5px] text-neutral-400 m-0 text-center">
+            * Sebagian visual pendukung dibuat menggunakan bantuan kecerdasan buatan (AI) untuk representasi ilustrasi, dengan data yang diverifikasi dari rujukan resmi.
+          </p>
+
           {/* Scroll Hint */}
-          <div className="w-full flex justify-center pt-3 pb-2 mt-auto">
+          <div className="w-full flex justify-center pt-2 pb-1 mt-auto">
             <button
               type="button"
               onClick={() => scrollToSection('section-panduan')}
@@ -382,10 +402,6 @@ export default function TentangKamiPage({
         >
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1 border-b border-neutral-200/80 pb-2">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] mb-1">
-                <Sliders size={13} className="text-[#8c532b]" />
-                <span>Petunjuk Praktis Penggunaan</span>
-              </div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#1C1917] font-['Outfit'] m-0">
                 Alur Panduan Penggunaan Layanan Hamemayu
               </h3>
@@ -418,7 +434,7 @@ export default function TentangKamiPage({
 
           {/* VARIATIVE COMPONENT: Dynamic Split Spotlight Stage (Non-card!) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-[300px] my-3 items-stretch">
-            {/* Left: Cinematic Authentic Photo Stage (100% Clean) */}
+            {/* Left: Cinematic Authentic Photo Stage */}
             <div className="lg:col-span-6 rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-200 shadow-sm relative min-h-[260px] sm:min-h-[300px]">
               <AnimatePresence mode="wait">
                 <motion.img
@@ -432,14 +448,17 @@ export default function TentangKamiPage({
                   className="w-full h-full object-cover object-center select-none"
                 />
               </AnimatePresence>
+              <div className="absolute bottom-2.5 right-2.5 z-10 pointer-events-none">
+                <div className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1.5 border border-white/20 shadow-xs">
+                  <Bot size={12} className="text-white/85" />
+                  <span>Visual Bantuan AI</span>
+                </div>
+              </div>
             </div>
 
             {/* Right: Detailed Action Guidance Panel */}
             <div className="lg:col-span-6 rounded-2xl bg-white border border-neutral-200/90 shadow-2xs p-4 sm:p-5 flex flex-col justify-between">
               <div className="space-y-3">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] w-fit">
-                  <span>Langkah Rekomendasi Wisatawan</span>
-                </div>
                 <h4 className="text-base sm:text-lg font-bold text-[#1C1917] font-['Outfit'] m-0 leading-snug">
                   {OPTIMIZATION_TIPS[activeTipIndex].action}
                 </h4>

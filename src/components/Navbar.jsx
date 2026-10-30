@@ -225,13 +225,7 @@ export default function Navbar({
 
   const activeTab =
     userSelectedTab ??
-    (currentView === 'kalender'
-      ? 'kalender'
-      : currentView === 'kuliner'
-      ? 'kuliner'
-      : currentView === 'tentang' || currentView === 'jurnal'
-      ? 'tentang'
-      : 'destinasi');
+    (NAV_ITEMS.some((item) => item.id === currentView) ? currentView : null);
 
   const setActiveTab = (tab) => {
     setUserSelectedTab(tab);
@@ -595,7 +589,7 @@ export default function Navbar({
               layout
               type="button"
               onClick={() => {
-                setActiveTab('destinasi');
+                setActiveTab(null);
                 closeAll();
                 if (onGoHome) {
                   onGoHome();

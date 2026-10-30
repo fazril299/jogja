@@ -456,184 +456,382 @@ export const CULTURAL_EVENTS = [
 // Lengkap dengan foto asset lokal, aturan Do's & Don'ts, serta adab kearifan lokal
 export const CULTURAL_ETIQUETTE_GUIDE = [
   {
-    id: 'etiquette-clothing-keraton',
-    title: 'Adab Berbusana di Keraton & Makam Raja Mataram',
-    subTitle: 'Unggah-Ungguh Busana Sopan & Pantangan Motif Larangan',
-    category: 'Tata Busana & Adab',
-    image: '/assets/images/jogja_batik.jpg',
-    accentColor: '#C99B52',
-    overview:
-      'Memasuki kompleks kedhaton keraton dan petilasan makam suci raja-raja Mataram (Imogiri dan Kotagede) membutuhkan kepatuhan pada tata busana adat Jawa sebagai bentuk takzim kepada leluhur dan Sultan.',
-    rules: [
+    "id": "etiquette-clothing-keraton",
+    "video": "/assets/videos/adab_busana_keraton.mp4",
+    "title": "Adab Berbusana di Keraton & Makam Raja Mataram",
+    "subTitle": "Busana Sopan & Pantangan Motif Larangan",
+    "category": "Tata Busana & Adab",
+    "image": "/assets/images/thumbnail_adab_busana.jpg",
+    "accentColor": "#C99B52",
+    "overview": "Kawasan Keraton dan Makam Raja Mataram mewajibkan busana sopan dan tertutup sebagai wujud takzim kepada leluhur.",
+    "rules": [
       {
-        type: 'do',
-        title: 'Wajib Berpakaian Rapi & Tertutup',
-        desc: 'Kenakan kemeja berlengan, celana panjang bahan, atau busana peranakan/beskap tradisional bagi pria. Wanita disarankan mengenakan kebaya atau pakaian tertutup dengan kain jarik di bawah lutut.'
+        "type": "do",
+        "title": "Wajib Berpakaian Rapi & Tertutup",
+        "desc": "Pria kenakan kemeja/beskap dan celana panjang bahan. Wanita kenakan kebaya atau pakaian tertutup dengan jarik di bawah lutut."
       },
       {
-        type: 'do',
-        title: 'Lepas Alas Kaki di Area Pelataran Suci',
-        desc: 'Saat berziarah di Makam Raja Imogiri atau memasuki Bangsal Kencono, pengunjung diwajibkan melepas sepatu dan berjalan tanpa alas kaki sebagai simbol kesetaraan derajat di hadapan Sang Khalik.'
+        "type": "do",
+        "title": "Lepas Alas Kaki di Pelataran Suci",
+        "desc": "Wajib lepas alas kaki di Bangsal Kencono dan makam suci sebagai simbol kesetaraan derajat di hadapan Sang Khalik."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Mengenakan Celana Pendek & Singlet',
-        desc: 'Dilarang masuk jika mengenakan celana pendek di atas lutut, rok mini, kaos tanpa lengan, ataupun kacamata hitam di area pelataran dalam kedhaton.'
+        "type": "dont",
+        "title": "Dilarang Celana Pendek & Singlet",
+        "desc": "Dilarang memakai celana/rok di atas lutut, baju tanpa lengan, maupun kacamata hitam di area inti kedhaton."
       },
       {
-        type: 'dont',
-        title: 'Hindari Motif Batik Larangan di Depan Sultan',
-        desc: 'Jangan kenakan motif Batik Larangan Kasultanan (Parang Rusak Barong, Garuda Ageng, Cemukiran, dan Udan Riris) saat menghadiri hajad dalem keraton, karena motif ini hanya diperuntukkan bagi Raja dan Putra Mahkota.'
+        "type": "dont",
+        "title": "Hindari Motif Batik Larangan",
+        "desc": "Jangan kenakan motif Parang Rusak, Garuda Ageng, atau Udan Riris saat menghadiri hajad dalem karena khusus untuk Raja."
       }
     ],
-    proTip:
-      'Jika Anda tidak membawa kain jarik saat berziarah ke Makam Raja Imogiri, Anda dapat menyewa busana adat peranakan resmi di loket abdi dalem juru kunci dengan biaya sukarela.'
+    "proTip": "Tersedia penyewaan kain jarik dan busana adat peranakan resmi di loket abdi dalem juru kunci jika belum membawa."
   },
   {
-    id: 'etiquette-gestures-attitude',
-    title: 'Sikap Tubuh, Bahasa Tubuh & Lampah Dodok',
-    subTitle: 'Menghormati Sesepuh dan Abdi Dalem dengan Santun',
-    category: 'Unggah-Ungguh & Sikap',
-    image: '/assets/images/jogja_tamansari.jpg',
-    accentColor: '#8A5D26',
-    overview:
-      'Karakteristik masyarakat Yogyakarta menjunjung tinggi andhap asor (rendah hati) dan tepa slira (tenggang rasa). Sikap tubuh saat berinteraksi sangat mencerminkan keluhuran budi pekerti seseorang.',
-    rules: [
+    "id": "etiquette-gestures-attitude",
+    "video": "/assets/videos/adab_sikap_andhap_asor.mp4",
+    "title": "Sikap Tubuh, Bahasa Tubuh & Lampah Dodok",
+    "subTitle": "Sopan Santun, Andhap Asor, & Unggah-Ungguh",
+    "category": "Unggah-Ungguh & Sikap",
+    "image": "/assets/images/thumbnail_adab_sikap.jpg",
+    "accentColor": "#8A5D26",
+    "overview": "Masyarakat Jogja menjunjung tinggi andhap asor (rendah hati) dan tepa slira (tenggang rasa) dalam bertutur dan bersikap santun.",
+    "rules": [
       {
-        type: 'do',
-        title: 'Nyuwun Sewu Saat Lewat di Depan Orang Lain',
-        desc: 'Membungkukkan badan sedikit ke depan seraya mengayunkan tangan kanan ke bawah dengan mengucapkan “Nyuwun sewu” (Permisi) saat melintas di hadapan orang yang sedang duduk atau sesepuh.'
+        "type": "do",
+        "title": "Nyuwun Sewu Saat Melintas",
+        "desc": "Bungkukkan badan sedikit dan ayunkan tangan kanan ke bawah sambil berucap \"Nyuwun sewu\" saat melintas di depan orang."
       },
       {
-        type: 'do',
-        title: 'Menunjuk Sesuatu dengan Ibu Jari Kanan',
-        desc: 'Gunakan ibu jari tangan kanan yang ditegakkan seraya empat jari lainnya dilipat untuk menunjukkan arah atau barang. Ini adalah etika tertinggi menunjuk dalam tradisi Jawa.'
+        "type": "do",
+        "title": "Menunjuk dengan Ibu Jari Kanan",
+        "desc": "Gunakan ibu jari tangan kanan tegak dengan jari lain terlipat saat menunjukkan arah atau barang secara sopan."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Menunjuk dengan Jari Telunjuk atau Kaki',
-        desc: 'Menunjuk orang atau pusaka dengan jari telunjuk dianggap arogan dan tidak sopan, terlebih menggunakan ujung kaki yang dianggap sangat menghina.'
+        "type": "dont",
+        "title": "Dilarang Menunjuk dengan Telunjuk/Kaki",
+        "desc": "Menunjuk orang atau pusaka dengan jari telunjuk dinilai tidak sopan, terlebih menggunakan kaki yang dianggap menghina."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Berkacak Pinggang (Malangkerik)',
-        desc: 'Menaruh kedua tangan di pinggang (malangkerik) saat berbicara dengan Abdi Dalem atau sesepuh menandakan sikap menantang, angkuh, dan tidak menghargai lawan bicara.'
+        "type": "dont",
+        "title": "Dilarang Berkacak Pinggang (Malangkerik)",
+        "desc": "Jangan menaruh tangan di pinggang saat bicara karena mengisyaratkan sikap angkuh, menantang, dan tidak menghargai."
       }
     ],
-    proTip:
-      'Saat Abdi Dalem sedang bertugas mengawal upacara atau membawa uborampe keraton, berikan jalan terlebih dahulu dan jangan memotong barisan kirab.'
+    "proTip": "Beri jalan terlebih dahulu dan hindari memotong langkah saat Abdi Dalem sedang mengawal upacara atau membawa uborampe."
   },
   {
-    id: 'etiquette-sacred-rituals',
-    title: 'Etika Menghadiri Upacara Adat & Ritual Sakral',
-    subTitle: 'Tata Tertib saat Sekaten, Grebeg, Labuhan, & Tapa Bisu',
-    category: 'Prosesi Adat Sakral',
-    image: '/assets/images/jogja_keraton.jpg',
-    accentColor: '#2C221E',
-    overview:
-      'Upacara adat di Yogyakarta bukan sekadar tontonan pariwisata, melainkan ritual ibadah spiritual dan permohonan keselamatan kosmis. Kesakralan harus dijaga bersama oleh seluruh pengunjung.',
-    rules: [
+    "id": "etiquette-sacred-rituals",
+    "video": "/assets/videos/adab_ritual_tapa_bisu.mp4",
+    "title": "Etika Menghadiri Upacara Adat & Ritual Sakral",
+    "subTitle": "Tata Tertib Upacara Adat & Tradisi Sakral",
+    "category": "Prosesi Adat Sakral",
+    "image": "/assets/images/thumbnail_adab_ritual.jpg",
+    "accentColor": "#2C221E",
+    "overview": "Upacara adat keraton merupakan prosesi ibadah spiritual dan permohonan keselamatan kosmis yang wajib dihormati kesakralannya.",
+    "rules": [
       {
-        type: 'do',
-        title: 'Hening Total Selama Lampah Tapa Bisu 1 Suro',
-        desc: 'Selama prosesi Mubeng Beteng 1 Suro, ribuan orang berjalan hening tanpa suara. Ikuti keheningan ini tanpa mengobrol, tanpa menyalakan audio gawai, dan tanpa bersuara keras.'
+        "type": "do",
+        "title": "Hening Total Selama Tapa Bisu",
+        "desc": "Jaga keheningan tanpa bicara atau menyalakan audio gawai selama prosesi laku tirakat Mubeng Beteng 1 Suro."
       },
       {
-        type: 'do',
-        title: 'Dukung Ketertiban Rayahan Gunungan Grebeg',
-        desc: 'Tunggu hingga doa yang dipimpin oleh Penghulu Keraton di Masjid Gedhe selesai dibacakan sebelum mendekat dan ikut serta dalam tradisi ngalap berkah rayahan gunungan.'
+        "type": "do",
+        "title": "Tertib Saat Rayahan Gunungan Grebeg",
+        "desc": "Tunggu doa Penghulu Keraton di Masjid Gedhe selesai dibacakan sebelum ikut tradisi ngalap berkah rayahan gunungan."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Melangkah Melompati Alat Musik Gamelan',
-        desc: 'Gamelan Sekati Keraton (Kyai Gunturmadu dan Kyai Nagawilaga) adalah pusaka sakral bertuah. Dilarang keras melangkahi, menduduki, atau menyentuh instrumen gamelan tanpa izin abdi dalem wiyaga.'
+        "type": "dont",
+        "title": "Dilarang Melompati Alat Gamelan",
+        "desc": "Gamelan sekati adalah pusaka sakral bertuah. Dilarang keras melangkahi, menduduki, atau menyentuhnya tanpa izin."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Menyalakan Lampu Kilat (Flash Camera)',
-        desc: 'Saat Abdi Dalem sedang melafalkan doa sakral atau saat prosesi laku hening malam hari, lampu kilat kamera dilarang karena mengganggu kekhusyukan ritual leluhur.'
+        "type": "dont",
+        "title": "Dilarang Menggunakan Lampu Kilat (Flash)",
+        "desc": "Matikan lampu kilat kamera saat prosesi doa sakral dan laku hening malam hari agar tidak mengganggu kekhusyukan ritual."
       }
     ],
-    proTip:
-      'Bila ingin memotret prajurit bregada, lakukan dari jarak yang aman (minimal 2 meter) dan jangan memotong jalur formasi barisan bersenjata pusaka.'
+    "proTip": "Bila memotret prajurit bregada, lakukan dari jarak aman (minimal 2 meter) tanpa memotong jalur formasi barisan."
   },
   {
-    id: 'etiquette-culinary-angkringan',
-    title: 'Tata Krama Santap Kuliner Tradisi & Angkringan',
-    subTitle: 'Adab Lincak Bambu, Menghargai Sesama, & Filosofi Nasi',
-    category: 'Kuliner & Pergaulan',
-    image: '/assets/images/jogja_gudeg.jpg',
-    accentColor: '#9E1C64',
-    overview:
-      'Angkringan dan warung gudeg bukan sekadar tempat makan murah, melainkan ruang perjumpaan sosial yang sarat nilai kesederhanaan, keramahan, dan rasa syukur atas karunia Dewi Sri.',
-    rules: [
+    "id": "etiquette-culinary-angkringan",
+    "video": "/assets/videos/adab_kuliner_angkringan.mp4",
+    "title": "Tata Krama Santap Kuliner Tradisi & Angkringan",
+    "subTitle": "Adab Lincak, Guyub Rukun, & Kejujuran",
+    "category": "Kuliner & Pergaulan",
+    "image": "/assets/images/thumbnail_adab_kuliner.jpg",
+    "accentColor": "#9E1C64",
+    "overview": "Angkringan dan warung gudeg adalah ruang paseduluran sederhana yang menjunjung rasa syukur, keakraban, dan kejujuran.",
+    "rules": [
       {
-        type: 'do',
-        title: 'Menyapa Penjual & Sesama Pembeli di Lincak',
-        desc: 'Ucapkan “Monggo Mas/Pak” saat duduk berdampingan di lincak angkringan. Angkringan adalah panggung keakraban lintas status sosial tanpa sekat kasta.'
+        "type": "do",
+        "title": "Sapa \"Monggo\" di Lincak Angkringan",
+        "desc": "Ucapkan \"Monggo\" saat duduk berdampingan di lincak untuk menghadirkan keakraban lintas status sosial tanpa sekat kasta."
       },
       {
-        type: 'do',
-        title: 'Habiskan Makanan Tanpa Menyisakan Nasi',
-        desc: 'Filosofi masyarakat Jawa mengajarkan bersantap hingga butir nasi terakhir bersih sebagai bentuk rasa syukur atas rezeki dan penghormatan kepada petani serta Dewi Sri.'
+        "type": "do",
+        "title": "Habiskan Makanan Tanpa Bersisa",
+        "desc": "Santap makanan hingga butir nasi terakhir bersih sebagai bentuk rasa syukur atas rezeki dan penghormatan kepada petani."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Mengangkat Kaki ke Atas Bangku Lincak',
-        desc: 'Duduklah bersila rapi atau menjuntaikan kaki ke bawah secara santun. Mengangkat satu kaki ke atas kursi saat makan bersama orang lain dinilai tidak beretika.'
+        "type": "dont",
+        "title": "Dilarang Mengangkat Kaki ke Lincak",
+        "desc": "Duduklah bersila rapi atau turunkan kaki santun; mengangkat kaki ke bangku makan dinilai tidak beretika."
       },
       {
-        type: 'dont',
-        title: 'Dilarang Berbicara Keras dan Bersuara Kasar',
-        desc: 'Hindari tertawa terbahak-bahak secara berlebihan atau menggunakan kata-kata makian kasar saat berada di ruang santap lesehan publik.'
+        "type": "dont",
+        "title": "Dilarang Berbicara Keras & Kasar",
+        "desc": "Hindari tertawa terbahak-bahak berlebihan atau berujar kasar saat berada di ruang santap lesehan bersama."
       }
     ],
-    proTip:
-      'Di angkringan Jogja, Anda cukup menyebutkan secara jujur apa saja gorengan dan sate yang telah disantap saat hendak membayar. Budaya kejujuran ini sangat dihargai oleh warga lokal.'
+    "proTip": "Di angkringan, cukup sebutkan dengan jujur gorengan dan sate yang telah disantap saat hendak membayar di kasir."
   }
 ];
 
 // KAMUS SAKU UNGGAH-UNGGUH BASA JAWA UNTUK WISATAWAN
 export const CULTURAL_DICTIONARY = [
   {
+    id: 'nyuwun-sewu',
     phrase: 'Nyuwun sewu',
-    meaning: 'Permisi / Maaf',
-    context: 'Gunakan saat melintas di depan sesepuh atau hendak bertanya jalan di jalanan Jogja.'
+    lafal: '[nyu·wun sé·wu]',
+    level: 'Krama Alus',
+    category: 'Sapaan & Adab',
+    meaning: 'Permisi / Maaf / Numpang lewat',
+    exampleJawa: 'Nyuwun sewu Pak, badhe nyuwun pirsa margi dhateng Malioboro?',
+    exampleIndo: 'Permisi Pak, mau bertanya jalan menuju Malioboro lewat mana?',
+    context: 'Diucapkan sambil membungkukkan badan sedikit dan mengayunkan tangan kanan ke bawah saat melintas di depan sesepuh atau hendak bertanya arah.'
   },
   {
+    id: 'matur-nuwun-sanget',
     phrase: 'Matur nuwun sanget',
+    lafal: '[ma·tur nu·wun sa·ngêt]',
+    level: 'Krama Alus',
+    category: 'Sapaan & Adab',
     meaning: 'Terima kasih banyak',
-    context: 'Ucapkan setelah menerima bantuan, memesan makanan, atau berbelanja di pasar.'
+    exampleJawa: 'Matur nuwun sanget Mas, sampun dipun biyantu nedahaken margi.',
+    exampleIndo: 'Terima kasih banyak Mas, sudah dibantu menunjukkan jalan.',
+    context: 'Ungkapan terima kasih tulus penuh takzim setelah menerima bantuan, memesan makanan, atau berbelanja di pasar.'
   },
   {
+    id: 'sami-sami',
     phrase: 'Sami-sami',
-    meaning: 'Sama-sama',
+    lafal: '[sa·mi sa·mi]',
+    level: 'Krama Madya',
+    category: 'Sapaan & Adab',
+    meaning: 'Sama-sama / Kembali',
+    exampleJawa: 'Inggih Bu, sami-sami, mugi tansah pinaringan berkah lan lancar.',
+    exampleIndo: 'Iya Bu, sama-sama, semoga selalu diberi berkah dan kelancaran.',
     context: 'Jawaban sopan saat seseorang mengucapkan matur nuwun kepada Anda.'
   },
   {
+    id: 'monggo',
     phrase: 'Monggo',
+    lafal: '[mong·go]',
+    level: 'Krama Alus',
+    category: 'Sapaan & Adab',
     meaning: 'Silakan / Mari',
-    context: 'Kata ramah saat mengajak orang lain lewat, bersantap, atau duduk bersama di lincak.'
+    exampleJawa: 'Monggo Mas, dipun unjuk wedang rondonipun taksih benter.',
+    exampleIndo: 'Silakan Mas, diminum wedang rondenya selagi masih hangat.',
+    context: 'Mempersilakan tamu duduk, makan/minum, atau mendahului jalan dengan senyum ramah.'
   },
   {
+    id: 'ndherek-langkung',
     phrase: 'Ndherek langkung',
-    meaning: 'Numpang lewat',
-    context: 'Ungkapan sangat halus saat berjalan melewati kerumunan orang yang lebih tua.'
+    lafal: '[ndhè·rèk lang·kung]',
+    level: 'Krama Inggil',
+    category: 'Sapaan & Adab',
+    meaning: 'Numpang lewat (sangat halus)',
+    exampleJawa: 'Ndherek langkung Mbah, nyuwun pangapunten ngganggu wedalipun.',
+    exampleIndo: 'Numpang lewat ya Mbah, mohon maaf mengganggu waktunya.',
+    context: 'Ungkapan sangat halus saat berjalan melewati kerumunan sesepuh yang sedang duduk di pelataran.'
   },
   {
-    phrase: 'Inggih / Sendika dawuh',
-    meaning: 'Iya / Siap laksanakan',
-    context: 'Jawaban penuh hormat untuk mengiyakan arahan dari sesepuh atau petugas adat.'
-  },
-  {
+    id: 'pinten-nggih',
     phrase: 'Pinten nggih?',
+    lafal: '[pin·tên nggih]',
+    level: 'Krama Alus',
+    category: 'Transaksi & Belanja',
     meaning: 'Berapa ya (harganya)?',
-    context: 'Pertanyaan sopan saat menanyakan tarif becak, andong, atau harga kuliner lokal.'
+    exampleJawa: 'Bakpia pathuk kaliyan gudeg kendhil punika sedanten pinten nggih Bu?',
+    exampleIndo: 'Bakpia pathuk dan gudeg kendil ini semuanya berapa ya Bu?',
+    context: 'Pertanyaan sopan saat menanyakan tarif becak, andong, atau harga kuliner dan suvenir lokal.'
   },
   {
+    id: 'mboten-matur-nuwun',
     phrase: 'Mboten, matur nuwun',
-    meaning: 'Tidak, terima kasih',
-    context: 'Cara menolak tawaran dagangan di Malioboro secara halus tanpa menyinggung perasaan penjual.'
+    lafal: '[mbo·tên · ma·tur nu·wun]',
+    level: 'Krama Alus',
+    category: 'Transaksi & Belanja',
+    meaning: 'Tidak, terima kasih (menolak halus)',
+    exampleJawa: 'Mboten Mas, sampun cekap, matur nuwun sanget tawaranipun.',
+    exampleIndo: 'Tidak Mas, sudah cukup, terima kasih banyak atas tawarannya.',
+    context: 'Cara menolak tawaran dagangan suvenir di Malioboro secara santun tanpa menyinggung penjual.'
+  },
+  {
+    id: 'pareng-ngenyang',
+    phrase: 'Pareng dipun enyang?',
+    lafal: '[pa·rêng di·pun ê·nyang]',
+    level: 'Krama Alus',
+    category: 'Transaksi & Belanja',
+    meaning: 'Boleh ditawar?',
+    exampleJawa: 'Menawi blangkon jogja punika pareng dipun enyang sekedhik mboten Pak?',
+    exampleIndo: 'Kalau blangkon jogja ini boleh ditawar sedikit tidak ya Pak?',
+    context: 'Etika menawar santun di Pasar Beringharjo agar penjual merasa dihargai.'
+  },
+  {
+    id: 'kersa-napa',
+    phrase: 'Kersa napa?',
+    lafal: '[kêr·sa na·pa]',
+    level: 'Krama Inggil',
+    category: 'Transaksi & Belanja',
+    meaning: 'Mau pesan / cari apa?',
+    exampleJawa: 'Sugeng rawuh Mbak, badhe kersa batik tulis motif ingkang pundi?',
+    exampleIndo: 'Selamat datang Mbak, mau cari batik tulis motif yang mana?',
+    context: 'Sapaan ramah penjual toko batik tradisional saat menyambut pembeli.'
+  },
+  {
+    id: 'sampun-telas',
+    phrase: 'Sampun telas',
+    lafal: '[sam·pun tê·las]',
+    level: 'Krama Alus',
+    category: 'Kuliner & Santap',
+    meaning: 'Sudah habis',
+    exampleJawa: 'Nyuwun sewu Mas, krecek kaliyan ayam suwiripun sampun telas wau siang.',
+    exampleIndo: 'Mohon maaf Mas, krecek dan ayam suwirnya sudah habis tadi siang.',
+    context: 'Pemberitahuan santun dari penjual saat menu favorit di warung makan sudah habis terjual.'
+  },
+  {
+    id: 'kula-badhe-nedha',
+    phrase: 'Kula badhe nedha',
+    lafal: '[ku·la ba·dhé nê·dha]',
+    level: 'Krama Andhap',
+    category: 'Kuliner & Santap',
+    meaning: 'Saya mau makan / pesan makan',
+    exampleJawa: 'Kula badhe nedha sega kucing sambel teri kaliyan sate puyuh kalih.',
+    exampleIndo: 'Saya mau makan nasi kucing sambal teri dan sate telur puyuh dua tusuk.',
+    context: 'Memesan menu makanan secara sopan di warung angkringan atau lesehan.'
+  },
+  {
+    id: 'dipun-bungkus-kemawon',
+    phrase: 'Dipun bungkus kemawon',
+    lafal: '[di·pun bung·kus kê·ma·won]',
+    level: 'Krama Alus',
+    category: 'Kuliner & Santap',
+    meaning: 'Dibungkus saja (bawa pulang)',
+    exampleJawa: 'Jadah tempe kaliyan geplakipun dipun bungkus kemawon nggih Mbak.',
+    exampleIndo: 'Jadah tempe dan geplaknya dibungkus untuk dibawa pulang saja ya Mbak.',
+    context: 'Meminta pesanan makanan dibungkus untuk oleh-oleh atau dimakan nanti.'
+  },
+  {
+    id: 'ngersakaken-napa',
+    phrase: 'Ngersakaken unjukan punapa?',
+    lafal: '[ngêr·sa·ka·kên un·ju·kan pu·na·pa]',
+    level: 'Krama Inggil',
+    category: 'Kuliner & Santap',
+    meaning: 'Ingin minum apa?',
+    exampleJawa: 'Kopi joss areng punapa teh nasgitel ingkang dipun kersakaken Mas?',
+    exampleIndo: 'Kopi joss arang atau teh nasgitel yang Anda inginkan Mas?',
+    context: 'Pertanyaan ramah pelayan angkringan saat mencatat pesanan minuman tradisional.'
+  },
+  {
+    id: 'sugeng-enjang',
+    phrase: 'Sugeng enjang',
+    lafal: '[su·gêng èn·jang]',
+    level: 'Krama Alus',
+    category: 'Sapaan & Adab',
+    meaning: 'Selamat pagi',
+    exampleJawa: 'Sugeng enjang Bapak, dinten punika hawa udara Jogja seger sanget.',
+    exampleIndo: 'Selamat pagi Bapak, hari ini udara Jogja sangat segar.',
+    context: 'Menyapa warga lokal, staf hotel, atau Abdi Dalem di pagi hari.'
+  },
+  {
+    id: 'sugeng-rawuh',
+    phrase: 'Sugeng rawuh',
+    lafal: '[su·gêng ra·wuh]',
+    level: 'Krama Inggil',
+    category: 'Sapaan & Adab',
+    meaning: 'Selamat datang',
+    exampleJawa: 'Sugeng rawuh wonten ing tlatah Ngayogyakarta Hadiningrat.',
+    exampleIndo: 'Selamat datang di wilayah Daerah Istimewa Yogyakarta.',
+    context: 'Ucapan penghormatan resmi menyambut kedatangan wisatawan dan tamu daerah.'
+  },
+  {
+    id: 'sugeng-tindak',
+    phrase: 'Sugeng tindak',
+    lafal: '[su·gêng tin·dak]',
+    level: 'Krama Inggil',
+    category: 'Arah & Perjalanan',
+    meaning: 'Selamat jalan',
+    exampleJawa: 'Matur nuwun sampun kersa rawuh, sugeng tindak mugi wilujeng dumugi ing dalem.',
+    exampleIndo: 'Terima kasih sudah berkenan hadir, selamat jalan semoga selamat sampai rumah.',
+    context: 'Ucapan perpisahan hangat saat tamu atau wisatawan hendak berpamitan pulang.'
+  },
+  {
+    id: 'wonten-pundi',
+    phrase: 'Wonten pundi?',
+    lafal: '[won·tên pun·di]',
+    level: 'Krama Alus',
+    category: 'Arah & Perjalanan',
+    meaning: 'Ada di mana?',
+    exampleJawa: 'Nyuwun sewu Pak, papan pungkasan halte Trans Jogja wonten pundi nggih?',
+    exampleIndo: 'Permisi Pak, letak halte terakhir Trans Jogja ada di sebelah mana ya?',
+    context: 'Menanyakan letak fasilitas umum, halte, toilet, atau tempat ibadah.'
+  },
+  {
+    id: 'tebih-mboten',
+    phrase: 'Tebih mboten nggih?',
+    lafal: '[tê·bih mbo·tên nggih]',
+    level: 'Krama Alus',
+    category: 'Arah & Perjalanan',
+    meaning: 'Jauh tidak ya?',
+    exampleJawa: 'Menawi mlampah saking Malioboro tumuju Benteng Vredeburg tebih mboten nggih?',
+    exampleIndo: 'Kalau jalan kaki dari Malioboro menuju Benteng Vredeburg jauh tidak ya?',
+    context: 'Meminta perkiraan jarak jalan kaki kepada warga sekitar.'
+  },
+  {
+    id: 'leres-mboten',
+    phrase: 'Leres mboten?',
+    lafal: '[lê·rês mbo·tên]',
+    level: 'Krama Alus',
+    category: 'Arah & Perjalanan',
+    meaning: 'Benar tidak?',
+    exampleJawa: 'Margi punika leres tumuju candi Prambanan mboten nggih Mas?',
+    exampleIndo: 'Jalan raya ini benar menuju ke arah Candi Prambanan tidak ya Mas?',
+    context: 'Memastikan arah navigasi perjalanan agar tidak tersesat di persimpangan jalan.'
+  },
+  {
+    id: 'inggih-sendika-dawuh',
+    phrase: 'Inggih / Sendika dawuh',
+    lafal: '[ing·gih · sên·di·ka da·wuh]',
+    level: 'Krama Inggil',
+    category: 'Sapaan & Adab',
+    meaning: 'Iya / Siap laksanakan',
+    exampleJawa: 'Inggih Kanjeng, sendika dawuh, sedaya paugeran kedhaton badhe dipun tuhu.',
+    exampleIndo: 'Iya Kanjeng, siap laksanakan, semua aturan keraton akan ditaati.',
+    context: 'Jawaban penuh takzim untuk menyetujui petunjuk atau arahan juru kunci makam suci.'
+  },
+  {
+    id: 'pangapunten',
+    phrase: 'Nyuwun pangapunten',
+    lafal: '[nyu·wun pa·nga·pun·tên]',
+    level: 'Krama Alus',
+    category: 'Sapaan & Adab',
+    meaning: 'Mohon maaf sebesar-besarnya',
+    exampleJawa: 'Nyuwun pangapunten sanget, kula mboten mangertos aturan motif batik punika.',
+    exampleIndo: 'Mohon maaf yang sebesar-besarnya, saya tadi belum tahu aturan motif batik tersebut.',
+    context: 'Permohonan maaf santun saat melakukan kekeliruan atau ketidaksengajaan.'
+  },
+  {
+    id: 'monggo-pinarak',
+    phrase: 'Monggo pinarak',
+    lafal: '[mong·go pi·na·rak]',
+    level: 'Krama Inggil',
+    category: 'Sapaan & Adab',
+    meaning: 'Silakan duduk / mampir sejenak',
+    exampleJawa: 'Monggo pinarak rumiyin Mas, ngaso wonten lincak pendhapa ngajeng.',
+    exampleIndo: 'Silakan duduk mampir dulu Mas, istirahat di bangku teras pendopo depan.',
+    context: 'Ajakan ramah tuan rumah kepada tamu agar merasa nyaman berkunjung.'
   }
 ];
 

@@ -799,10 +799,6 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
         }}
       >
         <div className="text-center mb-12 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF6EE] text-[#8c532b] text-xs font-semibold border border-[#E8DFC9] mb-3">
-            <MapPin size={12} className="text-[#8c532b]" />
-            <span>Peta Wilayah Budaya Yogyakarta</span>
-          </div>
           <h2 className="font-['Outfit'] text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#2D180C] leading-tight tracking-tight mb-3">
             Jelajahi Sudut Budaya Jogja Lainnya
           </h2>
