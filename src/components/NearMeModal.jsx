@@ -206,6 +206,8 @@ export default function NearMeModal({
     );
   };
   const initialCameraSetRef = useRef(false);
+  const lastCenteredNavRouteIdRef = useRef(null);
+  const lastCenteredCardIdRef = useRef(null);
 
   // Status ketersediaan sensor GPS pengguna
   const effectiveUserCoords = localUserCoords || userLiveCoords;
@@ -974,39 +976,39 @@ export default function NearMeModal({
       group.addLayer(marker);
     });
 
-    // 3. KAMERA POV BERPINDAH SESUAI PILIHAN USER
+    // 3. KAMERA POV BERPINDAH: Hanya fokuskan SATU KALI saat rute/item berubah,
+    // JANGAN panggil fitBounds berulang-ulang setiap kali sensor GPS bergetar agar user bebas menggeser peta!
     if (activeNavTarget?.coordinates) {
-      // Rute aktif: fokus pada seluruh lekukan jalur rute jalan raya
-      if (routeCoordinates && routeCoordinates.length > 1) {
-        const bounds = L.latLngBounds(routeCoordinates);
-        map.fitBounds(bounds, { padding: [80, 80], maxZoom: 17 });
-      } else {
+      if (lastCenteredNavRouteIdRef.current !== activeNavTarget.id) {
+        lastCenteredNavRouteIdRef.current = activeNavTarget.id;
         const origin = (hasUserGps && isUserInJogja) ? effectiveUserCoords : TITIK_NOL_YOGYAKARTA;
-        map.fitBounds(
-          [
-            [origin.lat, origin.lng],
-            [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
-          ],
-          { padding: [70, 70], maxZoom: 17 }
-        );
+        const pts = (routeCoordinates && routeCoordinates.length > 1)
+          ? routeCoordinates
+          : [
+              [origin.lat, origin.lng],
+              [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
+            ];
+        map.fitBounds(L.latLngBounds(pts), { padding: [70, 70], maxZoom: 17 });
       }
     } else if (activeItem?.coordinates) {
-      map.flyTo(
-        [activeItem.coordinates.lat, activeItem.coordinates.lng],
-        16.5,
-        { duration: 0.6 }
-      );
-    } else if (eventTarget?.coordinates && !activeNavTarget) {
-      map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16, { duration: 0.7 });
-    } else if (activeZone?.coordinates) {
-      if (!initialCameraSetRef.current) {
-        initialCameraSetRef.current = true;
-      } else {
+      lastCenteredNavRouteIdRef.current = null;
+      if (lastCenteredCardIdRef.current !== activeItem.id) {
+        lastCenteredCardIdRef.current = activeItem.id;
         map.flyTo(
-          [activeZone.coordinates.lat, activeZone.coordinates.lng],
-          15.5,
+          [activeItem.coordinates.lat, activeItem.coordinates.lng],
+          16.5,
           { duration: 0.6 }
         );
+      }
+    } else if (eventTarget?.coordinates && !activeNavTarget) {
+      lastCenteredNavRouteIdRef.current = null;
+      lastCenteredCardIdRef.current = null;
+      map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16, { duration: 0.7 });
+    } else if (activeZone?.coordinates) {
+      lastCenteredNavRouteIdRef.current = null;
+      lastCenteredCardIdRef.current = null;
+      if (!initialCameraSetRef.current) {
+        initialCameraSetRef.current = true;
       }
     }
   }, [
