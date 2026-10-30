@@ -57,8 +57,8 @@ const DEFAULT_GOOGLE_ACCOUNTS = [
 // Sesi Default Tamu (Unauthenticated Guest)
 export const GUEST_SESSION = {
   id: 'guest-user',
-  name: 'Gabriel Fazriel',
-  email: 'fazrilkece258@gmail.com',
+  name: 'Tamu Penjelajah',
+  email: 'guest@hamemayu.id',
   avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
   role: 'guest',
   isGuest: true,
@@ -100,11 +100,7 @@ export function AuthProvider({ children }) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           const filtered = parsed.filter(
-            (a) =>
-              a.email?.toLowerCase() !== 'admin@hamemayu.id' &&
-              a.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
-              a.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
-              a.email?.toLowerCase() !== 'zrealyael@gmail.com'
+            (a) => a.email?.toLowerCase() !== 'admin@hamemayu.id'
           );
           const hasPrimary = filtered.some(
             (a) => a.email?.toLowerCase() === 'fazriel@admin.com'
@@ -149,11 +145,7 @@ export function AuthProvider({ children }) {
         if (Array.isArray(parsed) && parsed.length > 0) {
           // Bersihkan akun demo dan lama yang tidak diinginkan
           const filtered = parsed.filter(
-            (u) =>
-              u.email?.toLowerCase() !== 'admin@hamemayu.id' &&
-              u.email?.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
-              u.email?.toLowerCase() !== 'fazrilkece258@gmail.com' &&
-              u.email?.toLowerCase() !== 'zrealyael@gmail.com'
+            (u) => u.email?.toLowerCase() !== 'admin@hamemayu.id'
           );
           const cleaned = filtered.map((u) =>
             u.email?.toLowerCase() === 'fazriel@admin.com'
@@ -190,12 +182,7 @@ export function AuthProvider({ children }) {
           parsed.authenticated === true &&
           !parsed.isGuest &&
           parsed.email &&
-          parsed.email.toLowerCase() !== 'guest@hamemayu.id' &&
-          parsed.email.toLowerCase() !== 'fazrielmuliyael@gmail.com' &&
-          parsed.email.toLowerCase() !== 'fazrilkece258@gmail.com' &&
-          parsed.email.toLowerCase() !== 'zrealyael@gmail.com' &&
-          parsed.name !== 'Fazriel Muliyawan' &&
-          parsed.name !== 'Fazriel Nadirat Radinka'
+          parsed.email.toLowerCase() !== 'guest@hamemayu.id'
         ) {
           if (parsed.email.toLowerCase() === 'fazriel@admin.com') {
             parsed.name = 'Admin';
@@ -304,7 +291,11 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         syncSupabaseProfile(session.user);
       } else if (_event === 'SIGNED_OUT') {
-        setCurrentUser(GUEST_SESSION);
+        setCurrentUser((curr) => {
+          // Hanya reset ke guest jika sesi saat ini terikat Supabase native
+          if (curr?.provider === 'supabase') return GUEST_SESSION;
+          return curr;
+        });
       }
     });
 
@@ -875,9 +866,10 @@ export function AuthProvider({ children }) {
     [users, pendingBenefitAction]
   );
 
-  // Official Google OAuth 2.0 Sign-In
+  // Official Google OAuth 2.0 Sign-In (Supabase Cloud + Google Identity Services)
   const loginWithGoogle = useCallback(
     async (overrideClientId) => {
+      // Login resmi via Google Identity Services
       const activeClientId = (overrideClientId || googleClientId || '').trim();
       if (!activeClientId) throw new Error('GOOGLE_CLIENT_ID_MISSING');
 

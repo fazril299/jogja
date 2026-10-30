@@ -1289,29 +1289,78 @@ export default function NearMeModal({
                       )}
                     </AnimatePresence>
 
-                    {/* Tombol Pembayaran Voucher Kuliner */}
+                    {/* Tombol Pembayaran Voucher Kuliner & GoFood Direct Warung */}
                     <div className="flex items-center gap-2">
-                      {isItemPaid(activeItem.id) ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const t = getPaidTicketByItemId(activeItem.id);
-                            if (t) setSelectedTicketToView(t);
-                          }}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
-                        >
-                          <CheckCircle2 size={15} />
-                          <span>✓ Voucher Aktif (Buka Boarding Pass)</span>
-                        </button>
+                      {activeItem?.hasGofood && activeItem?.gofoodUrl ? (
+                        <>
+                          <a
+                            href={activeItem.gofoodUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 py-2.5 px-3.5 rounded-xl bg-[#EE2737] hover:bg-[#D91B2A] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-none no-underline cursor-pointer select-none"
+                            title={`Buka Warung ${activeItem.name} langsung di GoFood`}
+                          >
+                            <span className="w-4 h-4 rounded-full bg-white flex items-center justify-center shrink-0">
+                              <svg viewBox="0 0 24 24" fill="none" className="w-2.5 h-2.5">
+                                <path d="M9 4V10C9 10.55 8.55 11 8 11C7.45 11 7 10.55 7 10V4C7 3.45 7.45 3 8 3C8.55 3 9 3.45 9 4ZM6 4V8C6 8.55 5.55 9 5 9C4.45 9 4 8.55 4 8V4C4 3.45 4.45 3 5 3C5.55 3 6 3.45 6 4ZM10 4V8C10 8.55 9.55 9 9 9C8.45 9 8 8.55 8 8V4C8 3.45 8.45 3 9 3C9.55 3 10 3.45 10 4ZM7 11V20C7 20.55 6.55 21 6 21C5.45 21 5 20.55 5 20V11C4.4 10.6 4 10 4 9.3V4H10V9.3C10 10 9.6 10.6 9 11V20C9 20.55 8.55 21 8 21C7.45 21 7 20.55 7 20Z" fill="#EE2737" />
+                                <path d="M16 3C14.34 3 13 4.79 13 7C13 8.78 13.9 10.28 15.17 10.77V20C15.17 20.55 15.62 21 16.17 21C16.72 21 17.17 20.55 17.17 20V10.77C18.44 10.28 19.34 8.78 19.34 7C19.34 4.79 18 3 16 3Z" fill="#EE2737" />
+                              </svg>
+                            </span>
+                            <span className="font-extrabold tracking-tight">Pesan di GoFood</span>
+                            {activeItem.gofoodRating && (
+                              <span className="text-[11px] font-black opacity-95">★ {Number(activeItem.gofoodRating).toFixed(1)}</span>
+                            )}
+                            <ExternalLink size={13} className="shrink-0 opacity-90" />
+                          </a>
+
+                          {isItemPaid(activeItem.id) ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const t = getPaidTicketByItemId(activeItem.id);
+                                if (t) setSelectedTicketToView(t);
+                              }}
+                              className="px-3 py-2.5 rounded-xl bg-[#8A5D26] hover:bg-[#734816] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-none cursor-pointer shrink-0"
+                              title="Buka Boarding Pass E-Voucher Lunas"
+                            >
+                              <CheckCircle2 size={14} />
+                              <span className="hidden sm:inline">E-Voucher</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => initiatePayment(activeItem)}
+                              className="px-3 py-2.5 rounded-xl bg-white border border-[#2C221E] hover:bg-[#FAF8F5] text-[#2C221E] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-none cursor-pointer shrink-0"
+                              title={`Beli Voucher Dine-in Rp ${parseItemPrice(activeItem).toLocaleString('id-ID')} untuk makan di lokasi`}
+                            >
+                              <Ticket size={13} />
+                              <span className="hidden sm:inline">Voucher Dine-in</span>
+                            </button>
+                          )}
+                        </>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => initiatePayment(activeItem)}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#C99B52] hover:bg-[#D4A75E] text-[#2C221E] text-xs font-black flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
-                        >
-                          <Ticket size={15} />
-                          <span>Pesan Voucher • Rp {parseItemPrice(activeItem).toLocaleString('id-ID')}</span>
-                        </button>
+                        isItemPaid(activeItem.id) ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const t = getPaidTicketByItemId(activeItem.id);
+                              if (t) setSelectedTicketToView(t);
+                            }}
+                            className="flex-1 py-2.5 px-4 rounded-xl bg-[#8A5D26] hover:bg-[#734816] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-none cursor-pointer"
+                          >
+                            <CheckCircle2 size={15} />
+                            <span>✓ Voucher Aktif (Buka Boarding Pass)</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => initiatePayment(activeItem)}
+                            className="flex-1 py-2.5 px-4 rounded-xl bg-white border border-[#2C221E] hover:bg-[#FAF8F5] text-[#2C221E] text-xs font-bold flex items-center justify-center gap-2 transition-colors shadow-none cursor-pointer"
+                          >
+                            <Ticket size={15} />
+                            <span>Pesan Voucher Dine-in • Rp {parseItemPrice(activeItem).toLocaleString('id-ID')}</span>
+                          </button>
+                        )
                       )}
 
                       <button

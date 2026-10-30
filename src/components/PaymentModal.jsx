@@ -873,8 +873,8 @@ export default function PaymentModal() {
                       </div>
                     </div>
                     {orderReceipt.status === 'REDEEMED' || orderReceipt.ticketState === 'used' ? (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-200 flex items-center gap-1">
-                        <Check size={11} className="text-emerald-400" />
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FAF6EE] text-[#8A5D26] border border-[#E5D7BE] flex items-center gap-1">
+                        <Check size={11} className="text-[#8A5D26]" />
                         <span>SUDAH DIGUNAKAN</span>
                       </span>
                     ) : (
