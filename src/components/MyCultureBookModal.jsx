@@ -947,7 +947,7 @@ export default function MyCultureBookModal({
                         type="button"
                         onClick={() => setTicketStatusFilter('active')}
                         className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
-                          ticketStatusFilter === 'active' ? 'bg-[#15803D] text-white shadow-2xs' : 'text-neutral-600'
+                          ticketStatusFilter === 'active' ? 'bg-[#8A5D26] text-white shadow-2xs' : 'text-neutral-600'
                         }`}
                       >
                         Siap Pakai ({activeTicketsCount})
