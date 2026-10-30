@@ -878,7 +878,7 @@ export default function PaymentModal() {
                         <span>SUDAH DIGUNAKAN</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#064E3B] text-[#34D399] border border-[#059669] flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#8A5D26] text-white flex items-center gap-1.5">
                         <CheckCircle2 size={11} className="text-emerald-600" />
                         <span>AKTIF & SIAP PAKAI</span>
                       </span>

@@ -997,7 +997,7 @@ export default function MyCultureBookModal({
                               <span>SUDAH DIPAKAI</span>
                             </span>
                           ) : (
-                            <span className="text-[9px] font-bold text-[#34D399] bg-[#064E3B] border border-[#059669] px-2 py-0.5 rounded-full flex items-center gap-1.5">
+                            <span className="text-[9px] font-bold text-white bg-[#8A5D26] px-2 py-0.5 rounded-full flex items-center gap-1.5">
                               <CheckCircle2 size={10} />
                               <span>SIAP PAKAI</span>
                             </span>
@@ -1027,7 +1027,7 @@ export default function MyCultureBookModal({
                           <button
                             type="button"
                             onClick={() => setSelectedTicketToView(order)}
-                            className="px-3.5 py-1.5 rounded-lg bg-[#1A1412] hover:bg-black text-white text-[11px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                            className="px-3.5 py-1.5 rounded-lg bg-[#8A5D26] hover:bg-[#734816] text-white text-[11px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                           >
                             <Ticket size={12} />
                             <span>Buka E-Tiket</span>
@@ -2803,15 +2803,14 @@ export default function MyCultureBookModal({
                                   fontWeight: 800,
                                   padding: '0.2rem 0.65rem',
                                   borderRadius: '999px',
-                                  backgroundColor: '#064E3B',
-                                  color: '#34D399',
-                                  border: '1px solid #059669',
+                                  backgroundColor: '#8A5D26',
+                                  color: '#FFFFFF',
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '0.35rem'
                                 }}
                               >
-                                <span style={{ width: '6px', height: '6px', borderRadius: '999px', backgroundColor: '#34D399', display: 'inline-block' }} />
+                                <span style={{ width: '6px', height: '6px', borderRadius: '999px', backgroundColor: '#FDFBF7', display: 'inline-block' }} />
                                 <span>SIAP PAKAI</span>
                               </span>
                             )}
@@ -2857,9 +2856,9 @@ export default function MyCultureBookModal({
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '0.45rem',
-                                  backgroundColor: '#1A1412',
+                                  backgroundColor: '#8A5D26',
                                   color: '#FFFFFF',
-                                  border: '1px solid #1A1412',
+                                  border: '1px solid #754B1B',
                                   borderRadius: '8px',
                                   padding: '0.5rem 0.95rem',
                                   fontSize: '0.78rem',
