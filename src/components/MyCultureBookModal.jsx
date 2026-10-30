@@ -772,7 +772,7 @@ export default function MyCultureBookModal({
                                   {item.isCulinary ? 'Kuliner Khas' : 'Wisata Budaya'}
                                 </span>
                                 {paid && (
-                                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 flex items-center gap-0.5">
+                                  <span className="text-[9px] font-bold text-white bg-[#8A5D26] px-1.5 py-0.5 rounded flex items-center gap-0.5">
                                     <CheckCircle2 size={9} />
                                     <span>Lunas</span>
                                   </span>
@@ -839,7 +839,7 @@ export default function MyCultureBookModal({
                                     setSelectedTicketToView(paidTicket);
                                   }
                                 }}
-                                className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                                className="px-3 py-1 rounded-xl bg-[#8A5D26] hover:bg-[#734816] text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-none"
                               >
                                 <Ticket size={11} />
                                 <span>Buka E-Tiket</span>
@@ -2393,12 +2393,12 @@ export default function MyCultureBookModal({
                                         fontWeight: 800,
                                         padding: '0.25rem 0.6rem',
                                         borderRadius: '6px',
-                                        backgroundColor: '#15803D',
+                                        backgroundColor: '#8A5D26',
                                         color: '#FFFFFF',
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '0.25rem',
-                                        boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+                                        boxShadow: 'none'
                                       }}
                                     >
                                       <CheckCircle2 size={11} />
@@ -2482,13 +2482,14 @@ export default function MyCultureBookModal({
                                         alignItems: 'center',
                                         gap: '0.35rem',
                                         padding: '0.45rem 0.85rem',
-                                        borderRadius: '10px',
-                                        backgroundColor: '#16A34A',
+                                        backgroundColor: '#8A5D26',
                                         color: '#FFFFFF',
-                                        border: 'none',
+                                        border: '1px solid #754B1B',
+                                        borderRadius: '8px',
                                         fontSize: '0.75rem',
                                         fontWeight: 800,
-                                        cursor: 'pointer'
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.15s ease'
                                       }}
                                     >
                                       <Ticket size={12} />
@@ -2503,7 +2504,6 @@ export default function MyCultureBookModal({
                                         alignItems: 'center',
                                         gap: '0.35rem',
                                         padding: '0.45rem 0.85rem',
-                                        borderRadius: '10px',
                                         backgroundColor: '#2C221E',
                                         color: '#FAF8F5',
                                         border: 'none',
