@@ -47,6 +47,7 @@ const MONTH_NAMES = [
 
 // Weekday abbreviations
 const DAY_HEADERS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const FULL_DAY_NAMES = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
 // Pasaran Jawa (5-Day Cycle of Weton: Wage, Kliwon, Legi, Pahing, Pon)
 const PASARAN_NAMES = ['Wage', 'Kliwon', 'Legi', 'Pahing', 'Pon'];
@@ -263,6 +264,19 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
   const [selectedDay, setSelectedDay] = useState(() => new Date().getDate());
 
+  // Mobile view mode toggle: 'grid' (Month + Agenda) | 'list' (Chronological month list)
+  const [mobileViewMode, setMobileViewMode] = useState('grid');
+
+  const handleJumpToToday = () => {
+    const now = new Date();
+    const y = Math.max(2026, now.getFullYear());
+    const m = now.getMonth();
+    const d = now.getDate();
+    setActiveYear(y);
+    setActiveMonth(m);
+    setSelectedDay(d);
+  };
+
   // Active view toggle: 'Bulan' | 'Minggu' | 'Hari' | 'Daftar'
   const [viewTab, setViewTab] = useState('Bulan');
 
@@ -363,54 +377,144 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [modalTab, setModalTab] = useState('ringkasan');
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [shareCopiedToast, setShareCopiedToast] = useState(false);
 
-  const getShareUrl = (ev) => {
-    if (typeof window === 'undefined') return '';
-    return `${window.location.origin}${window.location.pathname}#/kalender?event=${ev?.id || ''}`;
+  // Helper penyalinan ke clipboard universal
+  const copyToClipboard = async (text) => {
+    if (!text) return false;
+    if (typeof navigator !== 'undefined' && navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.warn('Clipboard writeText gagal/diblokir, mencoba fallback:', err);
+      }
+    }
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      textarea.style.left = '-9999px';
+      textarea.style.opacity = '0';
+      textarea.setAttribute('readonly', '');
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (successful) return true;
+    } catch (fallbackErr) {
+      console.warn('Fallback copy error:', fallbackErr);
+    }
+    return true; // Tetap aktifkan status tersalin pada interaksi klik pengguna
   };
 
-  const getShareText = (ev) => {
+  // Deep-link URL generator langsung ke ID acara database / kalender
+  const getEventShareUrl = (ev) => {
+    if (!ev) return typeof window !== 'undefined' ? window.location.href : '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+    return `${origin}${pathname}#/kalender-acara/${ev.id}`;
+  };
+
+  // Format teks lengkap untuk dibagikan ke WhatsApp, X, IG, dan media sosial
+  const getEventShareText = (ev) => {
     if (!ev) return '';
-    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2026}`;
-    return `Saksikan acara budaya Jogja: *${ev.name}*\n📅 Tanggal: ${dateStr}\n⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}\n📍 Lokasi: ${ev.location || ''}, ${ev.district || 'D.I. Yogyakarta'}\n\nSelengkapnya di Hamemayu:\n`;
+    const yearStr = ev.year || activeYear || '2026';
+    const shareUrl = getEventShareUrl(ev);
+
+    const lines = [
+      `🏛️ [AGENDA BUDAYA YOGYAKARTA]`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `📌 ${ev.name}`,
+      `🏷️ Kategori: ${ev.category || 'Upacara & Tradisi'}`,
+      `🗓️ Tanggal: ${ev.dayDate} ${ev.monthName} ${yearStr}${ev.jawaCalendar ? ` (${ev.jawaCalendar})` : ''}`,
+      `⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}`,
+      `📍 Lokasi: ${ev.location || 'Yogyakarta'}${ev.district ? `, ${ev.district}` : ''}`,
+      ev.tips ? `\n💡 Tata Krama / Adab:\n${ev.tips}` : '',
+      ev.shortDesc ? `\n📖 Sekilas Tradisi:\n${ev.shortDesc}` : '',
+      `\n🔗 Buka Jadwal & Panduan Lengkap:\n${shareUrl}`,
+      `\n🏛️ Rujukan Resmi: ${ev.source || 'Kasultanan Ngayogyakarta Hadiningrat'}`
+    ].filter(Boolean);
+
+    return lines.join('\n');
   };
 
+  // 1. Share ke WhatsApp
   const handleShareWhatsApp = (ev) => {
     if (!ev) return;
-    const url = getShareUrl(ev);
-    const text = encodeURIComponent(`${getShareText(ev)}${url}`);
+    const url = getEventShareUrl(ev);
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || activeYear || 2026}`;
+    const text = encodeURIComponent(
+      `🏛️ *${ev.name}*\n` +
+      `📅 ${dateStr} • ${ev.time || 'Sesuai Jadwal'}\n` +
+      `📍 ${ev.location}, ${ev.district}\n\n` +
+      `Saksikan dan ketahui panduan tata krama agenda budaya ini di Hamemayu:\n${url}`
+    );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
-  const handleShareTwitter = (ev) => {
+  // 2. Share ke Instagram (Salin info & link + buka Instagram)
+  const handleShareInstagram = async (ev) => {
     if (!ev) return;
-    const url = encodeURIComponent(getShareUrl(ev));
-    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2026})`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Hamemayu,BudayaJogja,WisataJogja`, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleShareInstagram = (ev) => {
-    if (!ev) return;
-    handleCopyEventLink(ev);
+    const url = getEventShareUrl(ev);
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || activeYear || 2026}`;
+    const text = `Saksikan agenda budaya Yogyakarta: ${ev.name} (${dateStr}) di ${ev.location}, ${ev.district}.\n\nPanduan lengkap: ${url}`;
+    await copyToClipboard(text);
+    setShareCopiedToast('Info & tautan disalin! Membuka Instagram...');
+    setTimeout(() => setShareCopiedToast(false), 3000);
     window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
   };
 
-  const handleCopyEventLink = (ev) => {
+  // 3. Share ke X (Twitter)
+  const handleShareX = (ev) => {
     if (!ev) return;
-    const url = getShareUrl(ev);
-    navigator.clipboard?.writeText?.(url);
-    setShareCopiedToast(true);
-    setTimeout(() => {
-      setShareCopiedToast(false);
-    }, 3000);
+    const url = encodeURIComponent(getEventShareUrl(ev));
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || activeYear || 2026}`;
+    const text = encodeURIComponent(
+      `Saksikan agenda budaya Yogyakarta: ${ev.name} (${dateStr}) di ${ev.location} #Hamemayu #BudayaJogja #Jogja`
+    );
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
+  };
+
+  // 4. Salin Link Saja
+  const handleCopyLinkOnly = async (ev) => {
+    if (!ev) return;
+    const shareUrl = getEventShareUrl(ev);
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      setCopiedLink(true);
+      setShareCopiedToast('Tautan berhasil disalin ke clipboard!');
+      setTimeout(() => {
+        setCopiedLink(false);
+        setShareCopiedToast(false);
+      }, 3000);
+    }
+  };
+
+  // Salin rincian jadwal + link URL asli ke clipboard
+  const handleCopySchedule = async (ev) => {
+    if (!ev) return;
+    const formattedText = getEventShareText(ev);
+    const success = await copyToClipboard(formattedText);
+
+    if (success) {
+      setCopiedId(ev.id);
+      setShareCopiedToast('Rincian jadwal lengkap disalin!');
+      setTimeout(() => {
+        setCopiedId(null);
+        setShareCopiedToast(false);
+      }, 3000);
+    }
   };
 
   const handleOpenModal = (ev) => {
     setModalTab('ringkasan');
     setActiveModalEvent(ev);
-    setIsShareModalOpen(false);
+    setIsShareMenuOpen(false);
     setShareCopiedToast(false);
     onPopupChange?.(true);
     // Sinkronkan URL hash browser untuk deep linking
@@ -419,7 +523,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   const handleCloseModal = () => {
     setActiveModalEvent(null);
-    setIsShareModalOpen(false);
+    setIsShareMenuOpen(false);
     setShareCopiedToast(false);
     onPopupChange?.(false);
     // Kembalikan URL hash ke halaman kalender umum
@@ -463,6 +567,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeModalEvent]);
+
+  // Safeguard: Pastikan selectedDay tidak melebihi jumlah hari dalam activeMonth
+  useEffect(() => {
+    const daysInCurrentMonth = new Date(activeYear, activeMonth + 1, 0).getDate();
+    if (selectedDay > daysInCurrentMonth) {
+      setSelectedDay(daysInCurrentMonth);
+    }
+  }, [activeYear, activeMonth, selectedDay]);
 
   const handleCopyAddress = (address) => {
     if (!address) return;
@@ -642,6 +754,22 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     return inMonth.length > 0 ? inMonth.slice(0, 2) : filteredEvents.slice(0, 2);
   }, [selectedDayEvents, filteredEvents, activeMonth]);
 
+  // Sorted events for active month (for list view and upcoming jump)
+  const monthEventsSorted = useMemo(() => {
+    return filteredEvents
+      .filter((ev) => ev.monthIndex === activeMonth)
+      .sort((a, b) => parseInt(a.dayDate, 10) - parseInt(b.dayDate, 10));
+  }, [filteredEvents, activeMonth]);
+
+  // Next upcoming event in active month if selected day has no events
+  const nextUpcomingInMonth = useMemo(() => {
+    return (
+      monthEventsSorted.find((ev) => parseInt(ev.dayDate, 10) >= selectedDay) ||
+      monthEventsSorted[0] ||
+      null
+    );
+  }, [monthEventsSorted, selectedDay]);
+
   // Top popular events for left sidebar
   const popularEvents = useMemo(() => {
     return [
@@ -650,117 +778,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     ].filter(Boolean);
   }, []);
 
-  const copyToClipboard = async (text) => {
-    if (!text) return false;
-    // 1. Coba Clipboard API modern (HTTPS / browser modern)
-    if (navigator?.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch (err) {
-        console.warn('Clipboard writeText gagal/diblokir, mencoba fallback execCommand:', err);
-      }
-    }
-
-    // 2. Fallback universal (bekerja di HTTP, localhost IP, mobile webview, iframe)
-    try {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.top = '-9999px';
-      textarea.style.left = '-9999px';
-      textarea.style.opacity = '0';
-      textarea.setAttribute('readonly', '');
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      textarea.setSelectionRange(0, textarea.value.length);
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textarea);
-      if (successful) return true;
-    } catch (fallbackErr) {
-      console.error('Semua metode copy gagal:', fallbackErr);
-    }
-
-    return false;
-  };
-
-  // Deep-link URL generator langsung ke ID acara database / katalog
-  const getEventShareUrl = (ev) => {
-    if (!ev) return window.location.href;
-    const origin = window.location.origin || '';
-    const pathname = window.location.pathname || '/';
-    return `${origin}${pathname}#/kalender-acara/${ev.id}`;
-  };
-
-  // Format teks lengkap untuk dibagikan ke WhatsApp, FB, dan media sosial
-  const getEventShareText = (ev) => {
-    if (!ev) return '';
-    const yearStr = ev.year || activeYear || '2026';
-    const shareUrl = getEventShareUrl(ev);
-
-    const lines = [
-      `🏛️ [AGENDA BUDAYA YOGYAKARTA]`,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      `📌 ${ev.name}`,
-      `🏷️ Kategori: ${ev.category || 'Upacara & Tradisi'}`,
-      `🗓️ Tanggal: ${ev.dayDate} ${ev.monthName} ${yearStr}${ev.jawaCalendar ? ` (${ev.jawaCalendar})` : ''}`,
-      `⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}`,
-      `📍 Lokasi: ${ev.location || 'Yogyakarta'}${ev.district ? `, ${ev.district}` : ''}`,
-      ev.tips ? `\n💡 Tata Krama / Adab:\n${ev.tips}` : '',
-      ev.shortDesc ? `\n📖 Sekilas Tradisi:\n${ev.shortDesc}` : '',
-      `\n🔗 Buka Jadwal & Panduan Lengkap:\n${shareUrl}`,
-      `\n🏛️ Rujukan Resmi: ${ev.source || 'Kasultanan Ngayogyakarta Hadiningrat'}`
-    ].filter(Boolean);
-
-    return lines.join('\n');
-  };
-
-  // Salin rincian jadwal + link URL asli ke clipboard
-  const handleCopySchedule = async (ev) => {
-    if (!ev) return;
-    const formattedText = getEventShareText(ev);
-    const success = await copyToClipboard(formattedText);
-
-    if (success) {
-      setCopiedId(ev.id);
-      setTimeout(() => setCopiedId(null), 3000);
-    }
-  };
-
-  // Salin hanya tautan link URL acara
-  const handleCopyLinkOnly = async (ev) => {
-    if (!ev) return;
-    const shareUrl = getEventShareUrl(ev);
-    const success = await copyToClipboard(shareUrl);
-    if (success) {
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-    }
-  };
-
-  // Bagikan via Web Share API (Langsung ke Instagram, WhatsApp, Stories, Medsos)
-  const handleShareNative = async (ev) => {
-    if (!ev) return;
-    const shareUrl = getEventShareUrl(ev);
-    const text = `Agenda Budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName} ${ev.year || activeYear})`;
-    if (navigator?.share) {
-      try {
-        await navigator.share({
-          title: ev.name,
-          text: text,
-          url: shareUrl
-        });
-        return;
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.warn('Native share gagal, beralih ke salin link:', err);
-        }
-      }
-    }
-    // Fallback jika Web Share API tidak didukung di desktop
-    handleCopyLinkOnly(ev);
-  };
 
   const getAssociatedPlace = (ev) => {
     if (!ev) return null;
@@ -2210,30 +2227,183 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
                 {/* ── STICKY FOOTER ACTIONS ROW ── */}
                 <div className="p-3.5 sm:p-4 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-2.5 shrink-0 z-30">
-                  {/* Left Action Button: Salin Jadwal Sahaja */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  {/* Left Action Button: Share Jadwal dengan Dropdown Menu */}
+                  <div className="relative">
                     <button
                       type="button"
-                      onClick={() => handleCopySchedule(activeModalEvent)}
-                      className={`py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-xl border text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs ${
-                        copiedId === activeModalEvent.id
-                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                      onClick={() => setIsShareMenuOpen((prev) => !prev)}
+                      className={`py-2.5 px-3.5 sm:px-4 rounded-xl border text-xs font-bold inline-flex items-center gap-2 cursor-pointer transition-all active:scale-95 shadow-2xs ${
+                        isShareMenuOpen
+                          ? 'bg-[#2d180c] border-[#2d180c] text-white shadow-md'
                           : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] border-[#E8DFC9] text-[#2d180c]'
                       }`}
-                      title="Salin rincian jadwal dan link deep-link ke clipboard"
+                      title="Bagikan jadwal acara budaya ini ke media sosial"
                     >
-                      {copiedId === activeModalEvent.id ? (
-                        <>
-                          <Check size={14} className="text-emerald-600" />
-                          <span className="text-emerald-700 font-bold">Jadwal & Link Tersalin!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={14} className="text-[#8c532b]" />
-                          <span>Salin Jadwal</span>
-                        </>
-                      )}
+                      <Share2 size={15} className={isShareMenuOpen ? 'text-amber-300' : 'text-[#8c532b]'} />
+                      <span>Share Jadwal</span>
                     </button>
+
+                    {/* Backdrop to close share popover on outside click */}
+                    {isShareMenuOpen && (
+                      <div
+                        className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[1px]"
+                        onClick={() => setIsShareMenuOpen(false)}
+                      />
+                    )}
+
+                    {/* Floating Share Popover Menu */}
+                    <AnimatePresence>
+                      {isShareMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                          transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                          className="absolute bottom-full mb-3 left-0 z-50 w-72 sm:w-80 max-w-[calc(100vw-2.5rem)] bg-white rounded-2xl border border-[#E8DFC9] shadow-[0_20px_50px_rgba(45,24,12,0.25)] p-3.5 space-y-3"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {/* Popover Header */}
+                          <div className="flex items-center justify-between pb-2 border-b border-[#E8DFC9]/70">
+                            <div className="flex items-center gap-1.5">
+                              <Share2 size={14} className="text-[#8c532b]" />
+                              <span className="text-xs font-bold text-[#2d180c]">Bagikan Jadwal Acara</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setIsShareMenuOpen(false)}
+                              className="w-6 h-6 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-500 hover:text-stone-800 transition-colors cursor-pointer"
+                              aria-label="Tutup menu share"
+                            >
+                              <X size={13} />
+                            </button>
+                          </div>
+
+                          {/* 4 Opsi Share: WhatsApp, Instagram, X, Salin Link */}
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {/* 1. WhatsApp */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleShareWhatsApp(activeModalEvent);
+                                setIsShareMenuOpen(false);
+                              }}
+                              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-[#FAF6EE] border border-transparent hover:border-[#25D366]/30 transition-all cursor-pointer group active:scale-95"
+                              title="Bagikan ke WhatsApp"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-[#25D366] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                </svg>
+                              </div>
+                              <span className="text-[10.5px] font-bold text-[#2d180c] leading-tight">WhatsApp</span>
+                            </button>
+
+                            {/* 2. Instagram */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleShareInstagram(activeModalEvent);
+                              }}
+                              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-[#FAF6EE] border border-transparent hover:border-[#d6249f]/30 transition-all cursor-pointer group active:scale-95"
+                              title="Bagikan ke Instagram"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#fdf497] via-[#fd5949] to-[#d6249f] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                              </div>
+                              <span className="text-[10.5px] font-bold text-[#2d180c] leading-tight">Instagram</span>
+                            </button>
+
+                            {/* 3. X */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleShareX(activeModalEvent);
+                                setIsShareMenuOpen(false);
+                              }}
+                              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-[#FAF6EE] border border-transparent hover:border-black/30 transition-all cursor-pointer group active:scale-95"
+                              title="Bagikan ke X"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                              </div>
+                              <span className="text-[10.5px] font-bold text-[#2d180c] leading-tight">X</span>
+                            </button>
+
+                            {/* 4. Salin Link */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleCopyLinkOnly(activeModalEvent);
+                              }}
+                              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-[#FAF6EE] border border-transparent hover:border-[#8c532b]/30 transition-all cursor-pointer group active:scale-95"
+                              title="Salin Link Agenda"
+                            >
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform ${
+                                copiedLink ? 'bg-emerald-600 text-white' : 'bg-[#8c532b] text-white'
+                              }`}>
+                                {copiedLink ? <Check size={17} /> : <Link2 size={17} />}
+                              </div>
+                              <span className="text-[10.5px] font-bold text-[#2d180c] leading-tight">
+                                {copiedLink ? 'Tersalin!' : 'Salin Link'}
+                              </span>
+                            </button>
+                          </div>
+
+                          {/* Preview Link box & Copy Button */}
+                          <div className="p-2.5 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9] flex items-center justify-between gap-2 text-xs">
+                            <span className="font-mono text-[10.5px] text-[#786154] truncate select-all">
+                              {getEventShareUrl(activeModalEvent)}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyLinkOnly(activeModalEvent)}
+                              className={`py-1 px-2.5 rounded-lg text-[10.5px] font-bold shrink-0 transition-all cursor-pointer ${
+                                copiedLink
+                                  ? 'bg-emerald-600 text-white shadow-2xs'
+                                  : 'bg-[#2d180c] hover:bg-[#432311] text-white'
+                              }`}
+                            >
+                              {copiedLink ? 'Tersalin!' : 'Salin'}
+                            </button>
+                          </div>
+
+                          {/* Quick Secondary Button: Salin Teks Jadwal Lengkap */}
+                          <button
+                            type="button"
+                            onClick={() => handleCopySchedule(activeModalEvent)}
+                            className="w-full py-2 px-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-700 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            {copiedId === activeModalEvent.id ? (
+                              <>
+                                <Check size={13} className="text-emerald-600" />
+                                <span className="text-emerald-700 font-bold">Rincian Lengkap Tersalin!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={13} className="text-stone-500" />
+                                <span>Salin Rincian Teks Lengkap</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Toast Feedback */}
+                          {shareCopiedToast && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 3 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="py-1.5 px-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-semibold flex items-center justify-center gap-1.5"
+                            >
+                              <Check size={13} className="text-emerald-600" />
+                              <span>{shareCopiedToast}</span>
+                            </motion.div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   {/* Right Action Buttons: Tutup & Tunjukkan Lokasi / Peringatan Adat */}
