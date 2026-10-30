@@ -823,7 +823,7 @@ export default function MyCultureBookModal({
                                   href={item.gofoodUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                                  className="inline-flex cursor-pointer"
                                   title={`Pesan ${item.name} via GoFood`}
                                 >
                                   <GoFoodBadge size="sm" showExternalIcon={true} rating={item.gofoodRating} reviews={item.gofoodReviews} tier={item.gofoodTier} />

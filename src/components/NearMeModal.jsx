@@ -1582,7 +1582,7 @@ export default function NearMeModal({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="cursor-pointer transition-transform hover:scale-105 active:scale-95 inline-flex"
+                                    className="cursor-pointer inline-flex"
                                     title={`Pesan ${item.name} langsung di GoFood`}
                                   >
                                     <GoFoodBadge size="sm" showExternalIcon={true} rating={item.gofoodRating} reviews={item.gofoodReviews} tier={item.gofoodTier} />
@@ -1728,7 +1728,7 @@ export default function NearMeModal({
                     href={activeItem.gofoodUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-pointer transition-transform hover:scale-[1.03] active:scale-95 shrink-0 inline-flex"
+                    className="cursor-pointer shrink-0 inline-flex"
                     title={`Pesan ${activeItem.name} di GoFood Resmi`}
                   >
                     <GoFoodBadge size="md" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />

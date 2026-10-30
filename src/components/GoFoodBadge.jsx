@@ -2,9 +2,10 @@ import React from 'react';
 
 /**
  * Official GoFood Brand Badge Component with Verified Merchant Rating
- * Sesuai Brand Guidelines Resmi GoFood / Gojek:
- * - Warna Primer GoFood Red: #EE2737
- * - Icon Piring Merah Bulat dengan Siluet Garpu & Sendok Putih Resmi
+ * Solid Flat Design - No Glow, No Shadow, No Cursor Hover Effect
+ * Sesuai Preferensi:
+ * - Warna solid GoFood Red: #EE2737 murni tanpa bayangan/glow
+ * - Tanpa efek transformasi/perubahan warna saat disentuh kursor
  * - Typography modern sans-serif bold "gofood"
  * - Official Rating Bintang Kuning & Jumlah Ulasan Riil Terverifikasi
  */
@@ -25,16 +26,13 @@ export default function GoFoodBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-bold tracking-tight rounded-full transition-all shadow-xs select-none ${
+      className={`inline-flex items-center gap-1.5 font-bold tracking-tight rounded-full select-none bg-[#EE2737] text-white ${
         isXs
-          ? 'px-2 py-0.5 text-[9px] bg-[#EE2737] text-white'
+          ? 'px-2 py-0.5 text-[9px]'
           : isSm
-          ? 'px-2.5 py-1 text-[11px] bg-[#EE2737] hover:bg-[#D61E2D] text-white'
-          : 'px-3.5 py-1.5 text-xs bg-[#EE2737] hover:bg-[#D61E2D] text-white'
+          ? 'px-2.5 py-1 text-[11px]'
+          : 'px-3.5 py-1.5 text-xs'
       } ${className}`}
-      style={{
-        boxShadow: '0 2px 8px rgba(238, 39, 55, 0.28)'
-      }}
     >
       {/* Official GoFood Red Disc + Fork & Spoon Silhouette */}
       <span className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center shrink-0">
@@ -74,7 +72,7 @@ export default function GoFoodBadge({
           </svg>
           <span className="leading-none text-[11px] font-black">{Number(rating).toFixed(1)}</span>
           {reviews && (
-            <span className="text-[9.5px] opacity-85 font-normal leading-none hidden sm:inline">
+            <span className="text-[9.5px] opacity-90 font-normal leading-none hidden sm:inline">
               ({reviews})
             </span>
           )}
@@ -83,7 +81,7 @@ export default function GoFoodBadge({
 
       {/* Tier Label (Optional, e.g. Super Partner) */}
       {tier && isLg && (
-        <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-[9px] font-medium leading-none tracking-normal">
+        <span className="px-1.5 py-0.5 rounded-full bg-black/15 text-[9px] font-medium leading-none tracking-normal">
           {tier}
         </span>
       )}
