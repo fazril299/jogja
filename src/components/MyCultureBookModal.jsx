@@ -826,7 +826,7 @@ export default function MyCultureBookModal({
                                   className="inline-flex cursor-pointer transition-transform hover:scale-105 active:scale-95"
                                   title={`Pesan ${item.name} via GoFood`}
                                 >
-                                  <GoFoodBadge size="sm" showExternalIcon={true} />
+                                  <GoFoodBadge size="sm" showExternalIcon={true} rating={item.gofoodRating} reviews={item.gofoodReviews} tier={item.gofoodTier} />
                                 </a>
                               ) : (
                                 <span className="text-[10px] text-neutral-500 font-medium">Kunjungan Kuliner Langsung</span>
@@ -2462,7 +2462,7 @@ export default function MyCultureBookModal({
                                         style={{ textDecoration: 'none' }}
                                         title={`Pesan ${item.name} langsung di GoFood`}
                                       >
-                                        <GoFoodBadge size="sm" showExternalIcon={true} />
+                                        <GoFoodBadge size="sm" showExternalIcon={true} rating={item.gofoodRating} reviews={item.gofoodReviews} tier={item.gofoodTier} />
                                       </a>
                                     ) : (
                                       <span style={{ fontSize: '0.75rem', color: '#786B5E', fontWeight: 600 }}>

@@ -37,9 +37,9 @@ const ETIQUETTE_TABS = [
 ];
 
 export default function JurnalBudayaPage({ isOpen, onClose }) {
-  if (!isOpen) return null;
-
   const [activeTabId, setActiveTabId] = useState(ETIQUETTE_TABS[0].id);
+
+  if (!isOpen) return null;
   const activeGuide =
     CULTURAL_ETIQUETTE_GUIDE.find((g) => g.id === activeTabId) ||
     CULTURAL_ETIQUETTE_GUIDE[0];

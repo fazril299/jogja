@@ -1445,7 +1445,7 @@ export default function NearMeModal({
                                   />
                                   {item.hasGofood && (
                                     <div className="absolute top-1 left-1 z-10 scale-90 origin-top-left">
-                                      <GoFoodBadge size="xs" showExternalIcon={false} />
+                                      <GoFoodBadge size="xs" showExternalIcon={false} rating={item.gofoodRating} />
                                     </div>
                                   )}
                                 </div>
@@ -1585,7 +1585,7 @@ export default function NearMeModal({
                                     className="cursor-pointer transition-transform hover:scale-105 active:scale-95 inline-flex"
                                     title={`Pesan ${item.name} langsung di GoFood`}
                                   >
-                                    <GoFoodBadge size="sm" showExternalIcon={true} />
+                                    <GoFoodBadge size="sm" showExternalIcon={true} rating={item.gofoodRating} reviews={item.gofoodReviews} tier={item.gofoodTier} />
                                   </a>
                                 ) : (
                                   <span className="text-[10px] text-[#786B5E] bg-[#FAF6EE] border border-[#EFE6D6] px-2 py-0.5 rounded-full font-medium">
@@ -1658,7 +1658,7 @@ export default function NearMeModal({
                     />
                     {activeItem.hasGofood && (
                       <div className="absolute top-1.5 left-1.5 z-10 scale-90 origin-top-left">
-                        <GoFoodBadge size="xs" showExternalIcon={false} />
+                        <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
                       </div>
                     )}
                   </div>
@@ -1731,7 +1731,7 @@ export default function NearMeModal({
                     className="cursor-pointer transition-transform hover:scale-[1.03] active:scale-95 shrink-0 inline-flex"
                     title={`Pesan ${activeItem.name} di GoFood Resmi`}
                   >
-                    <GoFoodBadge size="md" showExternalIcon={true} />
+                    <GoFoodBadge size="md" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
                   </a>
                 )}
                 <button

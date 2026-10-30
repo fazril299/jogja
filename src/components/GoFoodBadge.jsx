@@ -1,27 +1,39 @@
 import React from 'react';
 
 /**
- * Official GoFood Brand Badge Component
+ * Official GoFood Brand Badge Component with Verified Merchant Rating
  * Sesuai Brand Guidelines Resmi GoFood / Gojek:
  * - Warna Primer GoFood Red: #EE2737
  * - Icon Piring Merah Bulat dengan Siluet Garpu & Sendok Putih Resmi
  * - Typography modern sans-serif bold "gofood"
+ * - Official Rating Bintang Kuning & Jumlah Ulasan Riil Terverifikasi
  */
-export default function GoFoodBadge({ size = 'sm', className = '', showExternalIcon = true }) {
+export default function GoFoodBadge({
+  size = 'sm',
+  className = '',
+  showExternalIcon = true,
+  rating,
+  reviews,
+  tier,
+  showRating = true
+}) {
   const isSm = size === 'sm';
   const isXs = size === 'xs';
+  const isLg = size === 'md' || size === 'lg';
+
+  const hasRating = Boolean(rating && showRating);
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-bold tracking-tight rounded-full transition-all shadow-sm select-none ${
+      className={`inline-flex items-center gap-1.5 font-bold tracking-tight rounded-full transition-all shadow-xs select-none ${
         isXs
-          ? 'px-1.5 py-0.5 text-[9px] bg-[#EE2737] text-white'
+          ? 'px-2 py-0.5 text-[9px] bg-[#EE2737] text-white'
           : isSm
           ? 'px-2.5 py-1 text-[11px] bg-[#EE2737] hover:bg-[#D61E2D] text-white'
           : 'px-3.5 py-1.5 text-xs bg-[#EE2737] hover:bg-[#D61E2D] text-white'
       } ${className}`}
       style={{
-        boxShadow: '0 2px 6px rgba(238, 39, 55, 0.28)'
+        boxShadow: '0 2px 8px rgba(238, 39, 55, 0.28)'
       }}
     >
       {/* Official GoFood Red Disc + Fork & Spoon Silhouette */}
@@ -50,6 +62,32 @@ export default function GoFoodBadge({ size = 'sm', className = '', showExternalI
         <span className="opacity-95">food</span>
       </span>
 
+      {/* Official Verified Rating Badge */}
+      {hasRating && (
+        <span className="inline-flex items-center gap-1 pl-1 border-l border-white/30 text-white font-semibold">
+          <svg
+            viewBox="0 0 24 24"
+            fill="#FACC15"
+            className="w-3 h-3 shrink-0 text-amber-300"
+          >
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+          </svg>
+          <span className="leading-none text-[11px] font-black">{Number(rating).toFixed(1)}</span>
+          {reviews && (
+            <span className="text-[9.5px] opacity-85 font-normal leading-none hidden sm:inline">
+              ({reviews})
+            </span>
+          )}
+        </span>
+      )}
+
+      {/* Tier Label (Optional, e.g. Super Partner) */}
+      {tier && isLg && (
+        <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-[9px] font-medium leading-none tracking-normal">
+          {tier}
+        </span>
+      )}
+
       {showExternalIcon && (
         <svg
           viewBox="0 0 24 24"
@@ -58,11 +96,11 @@ export default function GoFoodBadge({ size = 'sm', className = '', showExternalI
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-2.5 h-2.5 opacity-90 ml-0.5"
+          className="w-2.5 h-2.5 opacity-90 ml-0.5 shrink-0"
         >
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
         </svg>
       )}
     </span>
