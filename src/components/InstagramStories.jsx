@@ -101,9 +101,6 @@ export default function InstagramStories() {
           Potret Keindahan Budaya, Alam &<br className="hidden sm:block" /> Kuliner Asli Yogyakarta
         </h2>
 
-        <p className="text-xs sm:text-sm text-[#6e5849] font-sans max-w-xl mx-auto">
-          Jelajahi keagungan visual candi, keraton, kriya batik, dan alam Jogja dalam galeri 3D interaktif berbasis WebGL.
-        </p>
       </div>
 
       {/* 3D WEBGL CURVED RING GALLERY - SINGLE ROW PORTRAIT LIKE GAMBAR 2 */}

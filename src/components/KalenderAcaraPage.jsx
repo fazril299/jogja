@@ -6,8 +6,9 @@ import {
   Link2,
   Clock,
   MapPin,
-  Sparkles,
+  ShieldAlert,
   Share2,
+  Copy,
   Check,
   ShieldCheck,
   AlertCircle,
@@ -22,7 +23,8 @@ import {
   Compass,
   ArrowRight,
   Info,
-  Award
+  Award,
+  CheckCircle2
 } from 'lucide-react';
 import { CULTURAL_EVENTS } from '../data/culturalEventsData';
 import { CULTURAL_PLACES } from '../data/culturalData';
@@ -135,139 +137,131 @@ const LOCATIONS_LIST = [
   { id: 'Semua', label: 'Semua Wilayah' },
   { id: 'Kota Yogyakarta', label: 'Kota Yogyakarta' },
   { id: 'Sleman', label: 'Kabupaten Sleman' },
-  { id: 'Bantul', label: 'Kabupaten Bantul' }
+  { id: 'Bantul', label: 'Kabupaten Bantul' },
+  { id: 'Kulon Progo', label: 'Kabupaten Kulon Progo' },
+  { id: 'Gunungkidul', label: 'Kabupaten Gunungkidul' }
 ];
 
-// Cultural Burst 3D Out-of-Bounds Icon (Opsi 3 - Wayang / Topeng / Gunungan Miring)
-function CulturalBurstIcon({ category }) {
-  if (category === 'Pertunjukan Seni') {
-    return (
-      <svg
-        viewBox="0 0 100 130"
-        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(146,64,14,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
-        fill="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="crestGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FDE047" />
-            <stop offset="50%" stopColor="#D97706" />
-            <stop offset="100%" stopColor="#78350F" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M50 8 C24 8, 8 28, 12 60 C16 88, 35 118, 50 124 C65 118, 84 88, 88 60 C92 28, 76 8, 50 8 Z"
-          fill="url(#crestGoldGrad)"
-          stroke="#FFFFFF"
-          strokeWidth="2.5"
-        />
-        <path
-          d="M28 46 C35 50, 44 50, 48 46 M52 46 C56 50, 65 50, 72 46"
-          stroke="#FEF3C7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M50 52 L50 78 L42 86 L58 86"
-          stroke="#FEF3C7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M36 98 C44 102, 56 102, 64 98"
-          stroke="#FEF3C7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28"
-          fill="#FDE047"
-          stroke="#92400E"
-          strokeWidth="1.8"
-        />
-      </svg>
-    );
-  }
+// Cultural Burst 3D Out-of-Bounds Icon (4 Kategori Budaya Berbeda: Wayang, Gunungan, Canting, Grebeg)
+function CulturalBurstIcon({ category, isMobile = false }) {
+  const gradId = React.useId().replace(/:/g, '');
+  const sizeClasses = isMobile
+    ? "w-6 h-8 absolute -top-3.5 -right-2 rotate-12 pointer-events-none z-30 drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]"
+    : "w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300";
 
+  // 1. UPACARA KERATON: Songsong Kebesaran & Surya Gunungan Ageng
   if (category === 'Upacara Keraton') {
     return (
-      <svg
-        viewBox="0 0 100 140"
-        className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.45)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
-        fill="none"
-        aria-hidden="true"
-      >
+      <svg viewBox="0 0 100 140" className={sizeClasses} fill="none" aria-hidden="true">
         <defs>
-          <linearGradient id="gununganGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={`keraton-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FEF08A" />
             <stop offset="25%" stopColor="#F59E0B" />
             <stop offset="65%" stopColor="#B45309" />
             <stop offset="100%" stopColor="#78350F" />
           </linearGradient>
+          <linearGradient id={`gold-${gradId}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="100%" stopColor="#D97706" />
+          </linearGradient>
         </defs>
         <path
           d="M50 4 C36 28, 12 56, 5 90 C-2 110, 6 135, 50 137 C94 135, 102 110, 95 90 C88 56, 64 28, 50 4 Z"
-          fill="url(#gununganGoldGrad)"
+          fill={`url(#keraton-${gradId})`}
           stroke="#FFFFFF"
-          strokeWidth="2.5"
-        />
-        <path
-          d="M50 18 L50 120"
-          stroke="#FFFFFF"
-          strokeOpacity="0.85"
           strokeWidth="3"
-          strokeLinecap="round"
         />
-        <path
-          d="M26 68 C40 82, 60 82, 74 68 M20 96 C40 110, 60 110, 80 96 M14 120 C34 132, 66 132, 86 120"
-          stroke="#FEF3C7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <circle cx="50" cy="45" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+        <path d="M50 16 L50 125" stroke="#FFFFFF" strokeOpacity="0.9" strokeWidth="3.5" strokeLinecap="round" />
+        <path d="M24 64 C38 78, 62 78, 76 64 M18 92 C38 106, 62 106, 82 92 M12 118 C34 130, 66 130, 88 118" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="50" cy="42" r="8.5" fill={`url(#gold-${gradId})`} stroke="#B45309" strokeWidth="2" />
+        <path d="M50 28 L50 34 M50 50 L50 56 M36 42 L42 42 M58 42 L64 42" stroke="#FFFBEB" strokeWidth="2" strokeLinecap="round" />
       </svg>
     );
   }
 
-  // Default (Festival Rakyat, Pameran Seni, dll.)
+  // 2. PERTUNJUKAN SENI: Topeng Tari Panji & Sunggingan Wayang
+  if (category === 'Pertunjukan Seni') {
+    return (
+      <svg viewBox="0 0 100 130" className={sizeClasses} fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={`tari-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="30%" stopColor="#F59E0B" />
+            <stop offset="70%" stopColor="#C2410C" />
+            <stop offset="100%" stopColor="#7C2D12" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 6 C24 6, 8 26, 12 58 C16 86, 35 118, 50 124 C65 118, 84 86, 88 58 C92 26, 76 6, 50 6 Z"
+          fill={`url(#tari-${gradId})`}
+          stroke="#FFFFFF"
+          strokeWidth="3"
+        />
+        <path d="M50 0 L56 12 L68 6 L64 18 L76 18 L68 28 M50 0 L44 12 L32 6 L36 18 L24 18 L32 28" fill="#FDE047" stroke="#78350F" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M26 44 C34 40, 44 48, 47 48 M74 44 C66 40, 56 48, 53 48" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+        <path d="M50 48 L50 76 L43 83 L57 83" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M36 96 C44 103, 56 103, 64 96" stroke="#FEF3C7" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 3. FESTIVAL RAKYAT: Gunungan Grebeg & Panji Bregada
+  if (category === 'Festival Rakyat') {
+    return (
+      <svg viewBox="0 0 100 135" className={sizeClasses} fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={`rakyat-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FED7AA" />
+            <stop offset="30%" stopColor="#FB923C" />
+            <stop offset="70%" stopColor="#EA580C" />
+            <stop offset="100%" stopColor="#9A3412" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M50 6 L78 52 C86 68, 88 95, 84 122 C84 128, 16 128, 16 122 C12 95, 14 68, 22 52 Z"
+          fill={`url(#rakyat-${gradId})`}
+          stroke="#FFFFFF"
+          strokeWidth="3"
+        />
+        <path d="M50 6 L50 0 L66 6 L50 12" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M30 55 C42 62, 58 62, 70 55 M24 80 C40 90, 60 90, 76 80 M18 105 C38 116, 62 116, 82 105" stroke="#FFF7ED" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="50" cy="38" r="5.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+        <circle cx="36" cy="68" r="4.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+        <circle cx="64" cy="68" r="4.5" fill="#FEF08A" stroke="#C2410C" strokeWidth="1.5" />
+      </svg>
+    );
+  }
+
+  // 4. PAMERAN SENI: Canting Kriya & Sulur Batik Morosanto
   return (
-    <svg
-      viewBox="0 0 100 130"
-      className="w-10 h-14 sm:w-14 sm:h-18 absolute -top-4 sm:-top-5.5 -right-2 sm:-right-2.5 rotate-12 pointer-events-none z-10 drop-shadow-[0_8px_14px_rgba(180,83,9,0.4)] group-hover:-translate-y-1 group-hover:scale-105 group-hover:rotate-6 transition-transform duration-300"
-      fill="none"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 100 135" className={sizeClasses} fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="crestPusakaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FEF08A" />
-          <stop offset="35%" stopColor="#F59E0B" />
+        <linearGradient id={`kriya-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDE68A" />
+          <stop offset="35%" stopColor="#D97706" />
           <stop offset="70%" stopColor="#B45309" />
-          <stop offset="100%" stopColor="#78350F" />
+          <stop offset="100%" stopColor="#451A03" />
         </linearGradient>
       </defs>
       <path
         d="M50 6 C28 10, 14 34, 18 64 C22 92, 40 118, 50 124 C60 118, 78 92, 82 64 C86 34, 72 10, 50 6 Z"
-        fill="url(#crestPusakaGrad)"
+        fill={`url(#kriya-${gradId})`}
         stroke="#FFFFFF"
-        strokeWidth="2.5"
+        strokeWidth="3"
       />
-      <path
-        d="M50 20 L50 115 M32 60 L68 60 M28 82 L72 82"
-        stroke="#FEF3C7"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <circle cx="50" cy="40" r="7" fill="#FEF3C7" stroke="#B45309" strokeWidth="1.5" />
+      <path d="M38 32 C38 22, 52 18, 62 26 C68 32, 66 42, 56 46 L38 32 Z" fill="#FDE047" stroke="#78350F" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M38 32 C30 36, 26 44, 28 50 C32 58, 48 56, 52 68 C56 80, 42 88, 46 98 C50 108, 68 104, 72 114" stroke="#FFFBEB" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="62" cy="72" r="6" fill="#FDE047" stroke="#78350F" strokeWidth="2" />
+      <circle cx="48" cy="88" r="4.5" fill="#FDE047" stroke="#78350F" strokeWidth="1.5" />
     </svg>
   );
 }
 
-export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange }) {
+export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPopupChange, initialEventId = null, onShowEventLocation }) {
   // Calendar time state
-  const [activeYear, setActiveYear] = useState(2025);
-  const [activeMonth, setActiveMonth] = useState(2); // Default to Maret (Bulan awal tahun agenda budaya)
-  const [selectedDay, setSelectedDay] = useState(18);
+  const [activeYear, setActiveYear] = useState(() => Math.max(2026, new Date().getFullYear()));
+  const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
+  const [selectedDay, setSelectedDay] = useState(() => new Date().getDate());
 
   // Active view toggle: 'Bulan' | 'Minggu' | 'Hari' | 'Daftar'
   const [viewTab, setViewTab] = useState('Bulan');
@@ -315,11 +309,11 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       semua: CULTURAL_EVENTS.length,
       sakral: CULTURAL_EVENTS.filter((e) => e.category === 'Upacara Keraton').length,
       weekend: CULTURAL_EVENTS.filter((e) => {
-        const d = new Date(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10)).getDay();
+        const d = new Date(e.year || 2026, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10)).getDay();
         return d === 0 || d === 6 || e.category === 'Pertunjukan Seni';
       }).length,
       kliwon: CULTURAL_EVENTS.filter((e) => {
-        const p = getPasaranJawa(e.year || 2025, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10));
+        const p = getPasaranJawa(e.year || 2026, e.monthIndex !== undefined ? e.monthIndex : 2, parseInt(e.dayDate, 10));
         return p === 'Kliwon' || e.jawaCalendar?.toLowerCase().includes('kliwon') || e.name?.toLowerCase().includes('tapa bisu');
       }).length,
       terbuka: CULTURAL_EVENTS.filter((e) => e.category !== 'Upacara Keraton' || !e.name?.toLowerCase().includes('jamasan')).length
@@ -350,6 +344,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       ).length,
       Bantul: CULTURAL_EVENTS.filter(
         (e) => e.district && e.district.toLowerCase().includes('bantul')
+      ).length,
+      'Kulon Progo': CULTURAL_EVENTS.filter(
+        (e) => e.district && e.district.toLowerCase().includes('kulon progo')
+      ).length,
+      Gunungkidul: CULTURAL_EVENTS.filter(
+        (e) =>
+          e.district &&
+          (e.district.toLowerCase().includes('gunungkidul') ||
+            e.district.toLowerCase().includes('gunung kidul'))
       ).length
     };
   }, []);
@@ -357,6 +360,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   // Detail Modal state
   const [activeModalEvent, setActiveModalEvent] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [modalTab, setModalTab] = useState('ringkasan');
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -369,7 +373,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   const getShareText = (ev) => {
     if (!ev) return '';
-    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2025}`;
+    const dateStr = `${ev.dayDate || ''} ${ev.monthName || ''} ${ev.year || 2026}`;
     return `Saksikan acara budaya Jogja: *${ev.name}*\n📅 Tanggal: ${dateStr}\n⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}\n📍 Lokasi: ${ev.location || ''}, ${ev.district || 'D.I. Yogyakarta'}\n\nSelengkapnya di Hamemayu:\n`;
   };
 
@@ -383,7 +387,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
   const handleShareTwitter = (ev) => {
     if (!ev) return;
     const url = encodeURIComponent(getShareUrl(ev));
-    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2025})`);
+    const text = encodeURIComponent(`Saksikan agenda budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName || ''} ${ev.year || 2026})`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Hamemayu,BudayaJogja,WisataJogja`, '_blank', 'noopener,noreferrer');
   };
 
@@ -409,6 +413,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     setIsShareModalOpen(false);
     setShareCopiedToast(false);
     onPopupChange?.(true);
+    // Sinkronkan URL hash browser untuk deep linking
+    window.history.replaceState(null, '', `#/kalender-acara/${ev.id}`);
   };
 
   const handleCloseModal = () => {
@@ -416,7 +422,29 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     setIsShareModalOpen(false);
     setShareCopiedToast(false);
     onPopupChange?.(false);
+    // Kembalikan URL hash ke halaman kalender umum
+    window.history.replaceState(null, '', '#/kalender-acara');
   };
+
+  // Buka otomatis detail acara jika URL memiliki deep link event ID (misal dari share WA/FB/IG)
+  useEffect(() => {
+    if (initialEventId && isOpen) {
+      const target = initialEventId.toLowerCase().trim();
+      const found = CULTURAL_EVENTS.find(
+        (e) => e.id.toLowerCase() === target || e.id.toLowerCase().includes(target)
+      );
+      if (found) {
+        handleOpenModal(found);
+        if (typeof found.monthIndex === 'number') {
+          setActiveMonth(found.monthIndex);
+        }
+        if (found.dayDate) {
+          const dayNum = parseInt(found.dayDate, 10);
+          if (!isNaN(dayNum)) setSelectedDay(dayNum);
+        }
+      }
+    }
+  }, [initialEventId, isOpen]);
 
   useEffect(() => {
     return () => {
@@ -505,7 +533,8 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
         matchVibe = ev.category !== 'Upacara Keraton' || !ev.name?.toLowerCase().includes('jamasan');
       }
 
-      return matchCategory && matchLocation && matchQuery && matchVibe;
+      const matchYear = parseInt(ev.year || 2026, 10) === activeYear;
+      return matchCategory && matchLocation && matchQuery && matchVibe && matchYear;
     });
   }, [selectedCategories, selectedLocation, searchQuery, activeVibe, activeYear]);
 
@@ -568,7 +597,10 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
       const key = `${cell.year}-${cell.month}-${cell.day}`;
       if (!map[key]) {
         map[key] = filteredEvents.filter(
-          (ev) => ev.monthIndex === cell.month && parseInt(ev.dayDate, 10) === cell.day
+          (ev) =>
+            parseInt(ev.year || 2026, 10) === cell.year &&
+            ev.monthIndex === cell.month &&
+            parseInt(ev.dayDate, 10) === cell.day
         );
       }
     });
@@ -577,9 +609,12 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
   // Navigation handlers
   const handlePrevMonth = () => {
+    if (activeYear <= 2026 && activeMonth === 0) {
+      return; // Dibatasi: tidak bisa navigasi sebelum Januari 2026
+    }
     if (activeMonth === 0) {
       setActiveMonth(11);
-      setActiveYear((y) => y - 1);
+      setActiveYear((y) => Math.max(2026, y - 1));
     } else {
       setActiveMonth((m) => m - 1);
     }
@@ -615,11 +650,116 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
     ].filter(Boolean);
   }, []);
 
-  const handleCopySchedule = (ev) => {
-    const text = `[Agenda Budaya Yogyakarta]\n${ev.name}\nTanggal: ${ev.dayDate} ${ev.monthName} ${ev.year || activeYear} (${ev.jawaCalendar})\nWaktu: ${ev.time}\nLokasi: ${ev.location} (${ev.district})\nAdab & Tata Krama: ${ev.tips}\nSumber: ${ev.source}`;
-    navigator.clipboard?.writeText(text);
-    setCopiedId(ev.id);
-    setTimeout(() => setCopiedId(null), 2500);
+  const copyToClipboard = async (text) => {
+    if (!text) return false;
+    // 1. Coba Clipboard API modern (HTTPS / browser modern)
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.warn('Clipboard writeText gagal/diblokir, mencoba fallback execCommand:', err);
+      }
+    }
+
+    // 2. Fallback universal (bekerja di HTTP, localhost IP, mobile webview, iframe)
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      textarea.style.left = '-9999px';
+      textarea.style.opacity = '0';
+      textarea.setAttribute('readonly', '');
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (successful) return true;
+    } catch (fallbackErr) {
+      console.error('Semua metode copy gagal:', fallbackErr);
+    }
+
+    return false;
+  };
+
+  // Deep-link URL generator langsung ke ID acara database / katalog
+  const getEventShareUrl = (ev) => {
+    if (!ev) return window.location.href;
+    const origin = window.location.origin || '';
+    const pathname = window.location.pathname || '/';
+    return `${origin}${pathname}#/kalender-acara/${ev.id}`;
+  };
+
+  // Format teks lengkap untuk dibagikan ke WhatsApp, FB, dan media sosial
+  const getEventShareText = (ev) => {
+    if (!ev) return '';
+    const yearStr = ev.year || activeYear || '2026';
+    const shareUrl = getEventShareUrl(ev);
+
+    const lines = [
+      `🏛️ [AGENDA BUDAYA YOGYAKARTA]`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `📌 ${ev.name}`,
+      `🏷️ Kategori: ${ev.category || 'Upacara & Tradisi'}`,
+      `🗓️ Tanggal: ${ev.dayDate} ${ev.monthName} ${yearStr}${ev.jawaCalendar ? ` (${ev.jawaCalendar})` : ''}`,
+      `⏰ Waktu: ${ev.time || 'Sesuai Jadwal'}`,
+      `📍 Lokasi: ${ev.location || 'Yogyakarta'}${ev.district ? `, ${ev.district}` : ''}`,
+      ev.tips ? `\n💡 Tata Krama / Adab:\n${ev.tips}` : '',
+      ev.shortDesc ? `\n📖 Sekilas Tradisi:\n${ev.shortDesc}` : '',
+      `\n🔗 Buka Jadwal & Panduan Lengkap:\n${shareUrl}`,
+      `\n🏛️ Rujukan Resmi: ${ev.source || 'Kasultanan Ngayogyakarta Hadiningrat'}`
+    ].filter(Boolean);
+
+    return lines.join('\n');
+  };
+
+  // Salin rincian jadwal + link URL asli ke clipboard
+  const handleCopySchedule = async (ev) => {
+    if (!ev) return;
+    const formattedText = getEventShareText(ev);
+    const success = await copyToClipboard(formattedText);
+
+    if (success) {
+      setCopiedId(ev.id);
+      setTimeout(() => setCopiedId(null), 3000);
+    }
+  };
+
+  // Salin hanya tautan link URL acara
+  const handleCopyLinkOnly = async (ev) => {
+    if (!ev) return;
+    const shareUrl = getEventShareUrl(ev);
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    }
+  };
+
+  // Bagikan via Web Share API (Langsung ke Instagram, WhatsApp, Stories, Medsos)
+  const handleShareNative = async (ev) => {
+    if (!ev) return;
+    const shareUrl = getEventShareUrl(ev);
+    const text = `Agenda Budaya Jogja: ${ev.name} (${ev.dayDate} ${ev.monthName} ${ev.year || activeYear})`;
+    if (navigator?.share) {
+      try {
+        await navigator.share({
+          title: ev.name,
+          text: text,
+          url: shareUrl
+        });
+        return;
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.warn('Native share gagal, beralih ke salin link:', err);
+        }
+      }
+    }
+    // Fallback jika Web Share API tidak didukung di desktop
+    handleCopyLinkOnly(ev);
   };
 
   const getAssociatedPlace = (ev) => {
@@ -894,7 +1034,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     >
                       {MONTH_NAMES.map((m, idx) => {
                         const monthEventsCount = CULTURAL_EVENTS.filter(
-                          (e) => e.monthIndex === idx
+                          (e) => parseInt(e.year || 2026, 10) === activeYear && e.monthIndex === idx
                         ).length;
                         return (
                           <option key={m} value={idx}>
@@ -936,11 +1076,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           alt={ev.name}
                           className="w-12 h-12 rounded-xl object-cover border border-[#E8DFC9]"
                         />
-                        {ev.isAiGenerated && (
-                          <span className="absolute -bottom-1 -right-1 px-1 py-0.2 bg-amber-950 text-amber-200 text-[8px] font-bold rounded-sm border border-amber-400/40">
-                            AI
-                          </span>
-                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <strong className="text-xs font-bold text-[#2d180c] block truncate group-hover:text-[#8c532b] leading-snug">
@@ -970,8 +1105,13 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   <button
                     type="button"
                     onClick={handlePrevMonth}
+                    disabled={activeYear <= 2026 && activeMonth === 0}
                     aria-label="Bulan Sebelumnya"
-                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] border border-[#E8DFC9] flex items-center justify-center transition-colors cursor-pointer active:scale-95"
+                    className={`w-8 h-8 rounded-lg border border-[#E8DFC9] flex items-center justify-center transition-colors ${
+                      activeYear <= 2026 && activeMonth === 0
+                        ? 'bg-stone-100 text-stone-300 cursor-not-allowed opacity-40'
+                        : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] text-[#2d180c] cursor-pointer active:scale-95'
+                    }`}
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -1088,7 +1228,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           }`}
                         >
                           {/* Opsi 3: Cultural Burst 3D Out-of-Bounds Icon */}
-                          {cell.isCurrentMonth && hasEvents && (
+                          {hasEvents && (
                             <CulturalBurstIcon category={cellEvents[0]?.category} />
                           )}
 
@@ -1117,13 +1257,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                               <span className="w-5 h-5 rounded-full bg-[#8c532b] text-white text-[11px] font-bold flex items-center justify-center shadow-xs shrink-0">
                                 {cell.day}
                               </span>
+                            ) : hasEvents && cell.isCurrentMonth ? (
+                              <span className="w-5 h-5 rounded-full bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B]/70 text-[11px] font-bold flex items-center justify-center shadow-2xs shrink-0">
+                                {cell.day}
+                              </span>
                             ) : (
                               <span
                                 className={`text-xs font-semibold shrink-0 ${
                                   !cell.isCurrentMonth
                                     ? 'text-neutral-300'
-                                    : hasEvents
-                                    ? 'text-[#2d180c] font-bold'
                                     : 'text-[#2d180c]'
                                 }`}
                               >
@@ -1253,14 +1395,6 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                           alt={ev.name}
                           className="w-full h-full object-cover"
                         />
-                        {ev.isAiGenerated && (
-                          <div className="absolute top-2 left-2">
-                            <span className="px-2 py-0.5 rounded-full bg-black/65 backdrop-blur-md text-amber-200 text-[9px] font-semibold border border-amber-400/30 flex items-center gap-1">
-                              <Sparkles size={9} className="text-amber-300" />
-                              <span>Ilustrasi AI</span>
-                            </span>
-                          </div>
-                        )}
                       </div>
 
                       {/* Event Title & Category */}
@@ -1318,7 +1452,12 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                 <button
                   type="button"
                   onClick={handlePrevMonth}
-                  className="w-8 h-8 rounded-xl bg-white border border-[#E8DFC9] text-[#2d180c] flex items-center justify-center hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95 transition-transform"
+                  disabled={activeYear <= 2026 && activeMonth === 0}
+                  className={`w-8 h-8 rounded-xl border border-[#E8DFC9] flex items-center justify-center transition-transform ${
+                    activeYear <= 2026 && activeMonth === 0
+                      ? 'bg-stone-100 text-stone-300 cursor-not-allowed opacity-40'
+                      : 'bg-white text-[#2d180c] hover:bg-[#FAF6EE] cursor-pointer shadow-2xs active:scale-95'
+                  }`}
                   aria-label="Bulan sebelumnya"
                 >
                   <ChevronLeft size={16} />
@@ -1379,7 +1518,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
             </div>
 
             {/* 3. Native Mobile Calendar Table Grid (Bulat, Titik Warna & Teks Mini) */}
-            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] overflow-hidden p-2.5 shadow-xs">
+            <div className="bg-[#FCFBF7] rounded-2xl border border-[#E8DFC9] relative p-2.5 shadow-xs">
               {/* Day Headers */}
               <div className="grid grid-cols-7 text-center pb-2 border-b border-[#E8DFC9]/70 mb-1">
                 {DAY_HEADERS.map((day, idx) => (
@@ -1409,21 +1548,26 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       onClick={() => {
                         if (cell.isCurrentMonth) setSelectedDay(cell.day);
                       }}
-                      className="h-[52px] sm:h-[58px] flex flex-col items-center justify-start py-0.5 cursor-pointer relative select-none"
+                      className="h-[52px] sm:h-[58px] flex flex-col items-center justify-start py-0.5 cursor-pointer relative select-none overflow-visible group"
                     >
-                      {/* Tanggal Bulat (rounded-full) */}
-                      <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all ${
-                          !cell.isCurrentMonth
-                            ? 'text-neutral-300 font-normal'
-                            : isSelected
-                            ? 'bg-[#2d180c] text-white font-bold shadow-xs scale-105'
-                            : hasEvents
-                            ? 'text-[#2d180c] font-bold bg-amber-500/15 hover:bg-amber-500/25 ring-1 ring-amber-500/30'
-                            : 'text-[#2d180c] font-medium hover:bg-[#FAF6EE]'
-                        }`}
-                      >
-                        {cell.day}
+                      {/* Tanggal Bulat dengan Ikon Pop-out di Pundak Lingkaran */}
+                      <div className="relative">
+                        {hasEvents && (
+                          <CulturalBurstIcon category={cellEvents[0]?.category} isMobile={true} />
+                        )}
+                        <div
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs transition-all relative z-20 ${
+                            !cell.isCurrentMonth
+                              ? 'text-neutral-300 font-normal'
+                              : isSelected
+                              ? 'bg-[#2d180c] text-white font-bold shadow-xs scale-105'
+                              : hasEvents
+                              ? 'text-[#92400E] font-bold bg-[#FEF3C7] ring-1.5 ring-[#F59E0B] shadow-2xs'
+                              : 'text-[#2d180c] font-medium hover:bg-[#FAF6EE]'
+                          }`}
+                        >
+                          {cell.day}
+                        </div>
                       </div>
 
                       {/* Indikator Titik Warna Event Sesuai Kategori */}
@@ -1520,7 +1664,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     Tidak ada jadwal agenda khusus pada {selectedDay} {MONTH_NAMES[activeMonth]}.
                   </p>
                   <span className="text-[10px] font-semibold text-[#8c532b]">
-                    Ketuk tanggal bertitik warna pada kalender di atas untuk melihat acara.
+                    Ketuk tanggal berikon pada kalender di atas untuk melihat acara.
                   </span>
                 </div>
               )}
@@ -1721,7 +1865,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                 </button>
 
                 {/* UNIFIED SCROLL CONTAINER (Membuat teks deskripsi meluncur ke atas menutupi foto hero saat di-scroll) */}
-                <div className="flex-1 overflow-y-auto relative no-scrollbar">
+                <div className="flex-1 overflow-y-auto overscroll-contain relative scroll-smooth no-scrollbar">
                   {/* ── HERO BANNER SECTION ── */}
                   <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 select-none">
                     <img
@@ -1731,8 +1875,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1f1107] via-[#1f1107]/45 to-black/20" />
 
-                    {/* Top Tag: AI Badge if applicable */}
-                    <div className="absolute top-4 left-4 z-10">
+                    {/* Top Tags: Official Certification Badges & AI Badge */}
+                    <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
+                      {activeModalEvent.isCoE && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 backdrop-blur-md text-white text-xs font-semibold border border-emerald-400/40 shadow-md">
+                          <CheckCircle2 size={11} className="text-emerald-200" />
+                          <span>Agenda Resmi CoE DIY 2026</span>
+                        </span>
+                      )}
                       {activeModalEvent.isAiGenerated && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-200 text-xs font-semibold border border-amber-400/40 shadow-xs">
                           <Tag size={11} className="text-amber-300" />
@@ -1749,15 +1899,15 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     </div>
                   </div>
 
-                  {/* ── CONTENT SHEET (Meluncur ke atas menutupi foto saat di-scroll) ── */}
-                  <div className="relative z-10 bg-[#FCFBF7] rounded-t-[28px] -mt-6 border-t border-[#E8DFC9] shadow-[0_-12px_28px_rgba(45,24,12,0.12)] min-h-[460px]">
-                    {/* ── STICKY SEGMENTED TAB SWITCHER (Docking di atas saat konten meluncur) ── */}
-                    <div className="sticky top-0 z-20 px-5 sm:px-6 pt-3 pb-2.5 bg-[#FCFBF7]/95 backdrop-blur-md border-b border-[#E8DFC9]/90 rounded-t-[28px]">
+                  {/* ── CONTENT SHEET (Slides over the hero banner on scroll) ── */}
+                  <div className="relative z-10 -mt-5 bg-[#FCFBF7] rounded-t-[28px] shadow-[0_-12px_28px_rgba(0,0,0,0.12)] border-t border-[#E8DFC9]/70">
+                    {/* ── STICKY CLEAN SEGMENTED TAB SWITCHER ── */}
+                    <div className="sticky top-0 z-20 px-4 sm:px-6 pr-14 sm:pr-16 pt-3.5 pb-2.5 bg-[#FCFBF7]/95 backdrop-blur-md border-b border-[#E8DFC9] rounded-t-[28px]">
                       <div className="flex items-center gap-1.5 p-1 bg-[#F5EEDC] rounded-xl border border-[#E8DFC9]">
                         {[
-                          { id: 'ringkasan', label: 'Ringkasan & Makna', icon: Info },
-                          { id: 'adab', label: 'Adab & Tata Krama', icon: ShieldCheck },
-                          { id: 'lokasi', label: 'Lokasi & Akses', icon: MapPin }
+                          { id: 'ringkasan', label: 'Ringkasan & Makna', shortLabel: 'Ringkasan', icon: Info },
+                          { id: 'adab', label: 'Adab & Tata Krama', shortLabel: 'Adab', icon: ShieldCheck },
+                          { id: 'lokasi', label: 'Lokasi & Akses', shortLabel: 'Lokasi', icon: MapPin }
                         ].map((tab) => {
                           const isActive = modalTab === tab.id;
                           const Icon = tab.icon;
@@ -1766,14 +1916,14 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                               key={tab.id}
                               type="button"
                               onClick={() => setModalTab(tab.id)}
-                              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                                isActive
+                              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${isActive
                                   ? 'bg-white text-[#2d180c] shadow-xs'
                                   : 'text-[#786154] hover:text-[#2d180c] hover:bg-white/40'
-                              }`}
+                                }`}
                             >
                               <Icon size={13} className={isActive ? 'text-[#8c532b]' : 'opacity-70'} />
-                              <span className="truncate">{tab.label}</span>
+                              <span className="hidden sm:inline truncate">{tab.label}</span>
+                              <span className="sm:hidden truncate">{tab.shortLabel}</span>
                             </button>
                           );
                         })}
@@ -2060,180 +2210,68 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
 
                 {/* ── STICKY FOOTER ACTIONS ROW ── */}
                 <div className="p-3.5 sm:p-4 bg-white border-t border-[#E8DFC9] flex flex-wrap items-center justify-between gap-2.5 shrink-0 z-30">
-                  {/* Left Action Buttons */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  {/* Left Action Button: Salin Jadwal Sahaja */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsShareModalOpen(true);
-                        setShareCopiedToast(false);
-                      }}
-                      className="py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs"
-                      title="Bagikan agenda acara ini ke media sosial"
+                      onClick={() => handleCopySchedule(activeModalEvent)}
+                      className={`py-2 px-3 sm:py-2.5 sm:px-3.5 rounded-xl border text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 shadow-2xs ${
+                        copiedId === activeModalEvent.id
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                          : 'bg-[#FAF6EE] hover:bg-[#F2ECE0] border-[#E8DFC9] text-[#2d180c]'
+                      }`}
+                      title="Salin rincian jadwal dan link deep-link ke clipboard"
                     >
-                      <Share2 size={14} className="text-[#8c532b]" />
-                      <span>Share Acara</span>
+                      {copiedId === activeModalEvent.id ? (
+                        <>
+                          <Check size={14} className="text-emerald-600" />
+                          <span className="text-emerald-700 font-bold">Jadwal & Link Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} className="text-[#8c532b]" />
+                          <span>Salin Jadwal</span>
+                        </>
+                      )}
                     </button>
-
-                    <a
-                      href={getGoogleCalendarUrl(activeModalEvent)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hidden sm:inline-flex py-2.5 px-3.5 rounded-xl bg-[#FAF6EE] hover:bg-[#F2ECE0] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold items-center gap-1.5 no-underline transition-all active:scale-95 shadow-2xs cursor-pointer"
-                      title="Tambahkan ke Google Calendar"
-                    >
-                      <CalendarPlus size={14} className="text-[#8c532b]" />
-                      <span>Simpan Kalender</span>
-                    </a>
                   </div>
 
-                  {/* Right Action Buttons */}
+                  {/* Right Action Buttons: Tutup & Tunjukkan Lokasi / Peringatan Adat */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      className="py-2.5 px-4 rounded-xl bg-white hover:bg-[#FAF6EE] border border-[#E8DFC9] text-[#2d180c] text-xs font-bold cursor-pointer transition-all active:scale-95"
+                      className="py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold cursor-pointer transition-colors"
                     >
                       Tutup
                     </button>
 
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${activeModalEvent.name} ${activeModalEvent.location} Yogyakarta`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#432311] text-white text-xs font-bold inline-flex items-center gap-1.5 no-underline shadow-xs transition-all active:scale-95 cursor-pointer"
-                    >
-                      <MapPin size={13} />
-                      <span>Buka Maps</span>
-                      <ExternalLink size={11} className="text-white/70" />
-                    </a>
+                    {activeModalEvent.isRestricted ? (
+                      <div
+                        className="py-2.5 px-4 rounded-xl bg-amber-950/10 border border-amber-800/30 text-amber-950 text-xs font-bold inline-flex items-center gap-2 select-none"
+                        title="Upacara sakral tertutup kasultanan"
+                      >
+                        <ShieldAlert size={15} className="text-amber-800 shrink-0" />
+                        <span>Tidak diperkenankan dikunjungi orang luar</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleCloseModal();
+                          if (onShowEventLocation) {
+                            onShowEventLocation(activeModalEvent);
+                          }
+                        }}
+                        className="py-2.5 px-4 rounded-xl bg-[#2d180c] hover:bg-[#432311] text-white text-xs font-bold inline-flex items-center gap-1.5 no-underline shadow-xs transition-all active:scale-95 cursor-pointer"
+                        title="Tampilkan lokasi dan rute ke event ini di peta radar"
+                      >
+                        <MapPin size={14} className="text-amber-400" />
+                        <span>Tunjukkan Lokasi</span>
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                {/* ── POP-UP SHEET SHARE ACARA ── */}
-                <AnimatePresence>
-                  {isShareModalOpen && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.18 }}
-                      className="absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end"
-                      onClick={() => setIsShareModalOpen(false)}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 40 }}
-                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-t-[28px] border-t border-[#E8DFC9] p-5 sm:p-6 shadow-[0_-20px_50px_rgba(45,24,12,0.25)] space-y-4"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-outfit font-extrabold text-base text-[#2d180c] m-0">
-                              Bagikan Acara Budaya
-                            </h4>
-                            <p className="text-xs text-[#786154] m-0 mt-0.5">
-                              Ajak kerabat dan teman untuk menyaksikan tradisi sakral ini
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setIsShareModalOpen(false)}
-                            className="w-8 h-8 rounded-full bg-[#FAF6EE] hover:bg-[#EAE1D2] text-[#786154] hover:text-[#2d180c] flex items-center justify-center transition-colors cursor-pointer"
-                          >
-                            <X size={15} />
-                          </button>
-                        </div>
-
-                        {/* 4 Social Platforms */}
-                        <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-                          {/* WhatsApp */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareWhatsApp(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#25D366]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.072-2.18-.544-1.9-1.282-3.125-3.23-3.22-3.359-.096-.13-.772-1.026-.772-1.956 0-.93.488-1.385.662-1.574.174-.189.379-.236.505-.236.127 0 .253.001.364.007.117.006.273-.044.426.326.158.384.538 1.313.585 1.409.048.096.08.208.016.335-.064.127-.096.206-.191.317-.096.111-.202.248-.288.333-.096.096-.196.2-.084.392.112.192.499.824 1.07 1.334.736.657 1.357.861 1.55.957.192.096.304.08.416-.048.112-.128.48-.559.608-.751.127-.192.255-.16.432-.096.176.064 1.116.526 1.308.622.192.096.32.144.367.224.048.08.048.464-.096.869z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">WhatsApp</span>
-                          </button>
-
-                          {/* X / Twitter */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareTwitter(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-black/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-black text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">X (Twitter)</span>
-                          </button>
-
-                          {/* Instagram */}
-                          <button
-                            type="button"
-                            onClick={() => handleShareInstagram(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#d6249f]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#fdf497] via-[#fd5949] to-[#d6249f] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                              </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">Instagram</span>
-                          </button>
-
-                          {/* Salin Link */}
-                          <button
-                            type="button"
-                            onClick={() => handleCopyEventLink(activeModalEvent)}
-                            className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] hover:bg-[#F3ECE0] border border-[#EFEAE1] hover:border-[#8c532b]/40 transition-all cursor-pointer group shadow-2xs active:scale-95"
-                          >
-                            <div className="w-11 h-11 rounded-full bg-[#8c532b] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                              <Link2 size={19} />
-                            </div>
-                            <span className="text-[11px] font-bold text-[#2d180c]">Salin Link</span>
-                          </button>
-                        </div>
-
-                        {/* Copy Link Feedback & Preview */}
-                        <div className="p-3 rounded-xl bg-[#FAF6EE] border border-[#E8DFC9] flex items-center justify-between gap-3 text-xs">
-                          <span className="font-mono text-[11px] text-[#786154] truncate">
-                            {typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}#/kalender?event=${activeModalEvent.id}` : ''}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleCopyEventLink(activeModalEvent)}
-                            className="py-1.5 px-3 rounded-lg bg-[#2d180c] hover:bg-[#432311] text-white text-[11px] font-bold shrink-0 transition-all cursor-pointer"
-                          >
-                            {shareCopiedToast ? 'Tersalin!' : 'Salin'}
-                          </button>
-                        </div>
-
-                        {shareCopiedToast && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold text-center flex items-center justify-center gap-1.5"
-                          >
-                            <Check size={14} className="text-emerald-600" />
-                            <span>Tautan agenda berhasil disalin ke papan klip!</span>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </motion.div>
             </motion.div>
           )}

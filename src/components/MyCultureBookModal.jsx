@@ -25,10 +25,16 @@ import {
   ExternalLink,
   Clock,
   Search,
-  Filter
+  Filter,
+  Ticket,
+  Receipt,
+  ShoppingBag,
+  CreditCard
 } from 'lucide-react';
 import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
+import { usePayment } from '../context/PaymentContext';
+import { JOGJA_GPS_ZONES } from '../data/culturalData';
 import { CULTURAL_BADGES, CULTURAL_QUESTS, BADGE_TIERS } from '../data/badgeQuestData';
 import { CULTURAL_EVENTS, CULTURAL_JOURNALS } from '../data/culturalEventsData';
 import { getHaversineDistance } from '../utils/gpsSecurity';
@@ -52,16 +58,10 @@ export default function MyCultureBookModal({
   const [noteInput, setNoteInput] = useState('');
   const [noteSavedToast, setNoteSavedToast] = useState(false);
   const [mobileSectionTab, setMobileSectionTab] = useState(
-    initialTab === 'events'
-      ? 'events'
-      : initialTab === 'jurnal'
-      ? 'jurnal'
-      : initialTab === 'background'
-      ? 'destinasi'
-      : initialTab === 'wishlist'
+    initialTab === 'wishlist'
       ? 'wishlist'
-      : initialTab === 'notes'
-      ? 'catatan'
+      : initialTab === 'tickets'
+      ? 'tickets'
       : 'badges'
   );
 
@@ -75,24 +75,22 @@ export default function MyCultureBookModal({
   const [verificationFeedback, setVerificationFeedback] = useState(null);
   const [verifyingPlaceId, setVerifyingPlaceId] = useState(null);
   const [showGuideDetail, setShowGuideDetail] = useState(false);
-  const [badgeFilterType, setBadgeFilterType] = useState('all'); // 'all' | 'quests' | 'badges'
+  const [badgeFilterType, setBadgeFilterType] = useState('all');
+  const [ticketCategoryFilter, setTicketCategoryFilter] = useState('all'); // 'all' | 'wisata' | 'kuliner'
+  const [isDestinasiExpanded, setIsDestinasiExpanded] = useState(true);
 
   // Sync tab saat initialTab berubah atau modal dibuka
   useEffect(() => {
     if (initialTab) {
-      setActiveTab(initialTab);
-      if (initialTab === 'events') {
-        setMobileSectionTab('events');
-      } else if (initialTab === 'jurnal') {
-        setMobileSectionTab('jurnal');
-      } else if (initialTab === 'badges-quests') {
-        setMobileSectionTab('badges');
-      } else if (initialTab === 'background') {
-        setMobileSectionTab('destinasi');
-      } else if (initialTab === 'wishlist') {
+      if (initialTab === 'wishlist') {
+        setActiveTab('wishlist');
         setMobileSectionTab('wishlist');
-      } else if (initialTab === 'notes') {
-        setMobileSectionTab('catatan');
+      } else if (initialTab === 'tickets') {
+        setActiveTab('tickets');
+        setMobileSectionTab('tickets');
+      } else {
+        setActiveTab('badges-quests');
+        setMobileSectionTab('badges');
       }
     }
   }, [initialTab, isOpen]);
@@ -110,6 +108,83 @@ export default function MyCultureBookModal({
     resetAllBadges
   } = useCultureBook();
   const { currentUser, openLogin } = useAuth();
+  const {
+    initiatePayment,
+    checkoutWishlist,
+    isItemPaid,
+    getPaidTicketByItemId,
+    setSelectedTicketToView,
+    paymentHistory = [],
+    parseItemPrice
+  } = usePayment();
+
+  // Extract all culinary items from JOGJA_GPS_ZONES for Wishlist resolving
+  const allCulinaryItems = React.useMemo(() => {
+    const list = [];
+    (JOGJA_GPS_ZONES || []).forEach((zone) => {
+      if (zone.kulinerList) {
+        zone.kulinerList.forEach((k) => {
+          list.push({ ...k, isCulinary: true, zoneName: zone.wilayahName });
+        });
+      }
+    });
+    return list;
+  }, []);
+
+  const resolveFavoriteItem = React.useCallback(
+    (favId) => {
+      const place = places.find((p) => p.id === favId);
+      if (place) return { ...place, isCulinary: false };
+      const cul = allCulinaryItems.find((k) => k.id === favId);
+      if (cul) return { ...cul, isCulinary: true };
+      return null;
+    },
+    [places, allCulinaryItems]
+  );
+
+  const resolvedWishlistItems = React.useMemo(() => {
+    if (!cultureBook?.favorites) return [];
+    return cultureBook.favorites
+      .map((id) => resolveFavoriteItem(id))
+      .filter(Boolean);
+  }, [cultureBook?.favorites, resolveFavoriteItem]);
+
+  const unpaidWishlistItems = React.useMemo(() => {
+    return resolvedWishlistItems.filter((item) => !isItemPaid(item.id));
+  }, [resolvedWishlistItems, isItemPaid]);
+
+  const totalWishlistUnpaidAmount = React.useMemo(() => {
+    return unpaidWishlistItems.reduce((acc, itm) => acc + parseItemPrice(itm), 0);
+  }, [unpaidWishlistItems, parseItemPrice]);
+
+  const totalSpendAmount = React.useMemo(() => {
+    return (paymentHistory || []).reduce((acc, order) => acc + (order.totalAmount || 0), 0);
+  }, [paymentHistory]);
+
+  const totalTicketsIssued = React.useMemo(() => {
+    return (paymentHistory || []).reduce(
+      (acc, order) => acc + (order.items || []).reduce((sum, itm) => sum + (itm.quantity || 1), 0),
+      0
+    );
+  }, [paymentHistory]);
+
+  const wisataTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type)).length;
+  }, [paymentHistory]);
+
+  const kulinerTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner')).length;
+  }, [paymentHistory]);
+
+  const filteredPaymentHistory = React.useMemo(() => {
+    if (ticketCategoryFilter === 'wisata') {
+      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type));
+    }
+    if (ticketCategoryFilter === 'kuliner') {
+      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner'));
+    }
+    return paymentHistory || [];
+  }, [paymentHistory, ticketCategoryFilter]);
 
   const isGuest = !currentUser || currentUser.isGuest;
 
@@ -145,7 +220,17 @@ export default function MyCultureBookModal({
     }
   }, [currentUser]);
 
-  if (!isOpen) return null;
+  // Tutup dan redirect jika user berstatus tamu/guest (UI tamu dihapus, wajib login)
+  useEffect(() => {
+    if (isOpen && isGuest) {
+      if (onClose) onClose();
+      try {
+        window.location.hash = '#/home';
+      } catch (e) {}
+    }
+  }, [isOpen, isGuest, onClose]);
+
+  if (!isOpen || isGuest) return null;
 
   const totalPlaces = places.length || 6;
   const stats = getStats(totalPlaces);
@@ -165,14 +250,7 @@ export default function MyCultureBookModal({
   ];
   const headerMiniBadges = portfolioBadges;
 
-  const skillTags = [
-    'Sumbu Filosofis UNESCO',
-    'Warisan Mataram Islam',
-    'Sentra Gudeg Wijilan',
-    'Kerajinan Perak Kotagede',
-    'Gerabah Kasongan',
-    'Lereng Merapi'
-  ];
+  
 
   const filteredEvents = CULTURAL_EVENTS.filter((ev) => {
     const matchCat =
@@ -410,15 +488,21 @@ export default function MyCultureBookModal({
               </div>
             </div>
 
-            {/* Segmented Tab Switcher */}
+            {/* Segmented Tab Switcher: Misi Quest & Badge, Wishlist, Tiket Saya */}
             <div className="flex items-center bg-[#EFE9DF] p-1 rounded-2xl mb-3 gap-1 overflow-x-auto scrollbar-none">
               {[
-                { id: 'badges', label: 'Badge' },
-                { id: 'events', label: 'Kalender Acara' },
-                { id: 'jurnal', label: 'Jurnal' },
-                { id: 'destinasi', label: `Destinasi (${stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/${totalPlaces})` },
-                { id: 'wishlist', label: `Wishlist (${cultureBook.favorites?.length || 0})` },
-                { id: 'catatan', label: `Catatan (${Object.keys(cultureBook.userNotes || {}).length})` }
+                {
+                  id: 'badges',
+                  label: `Misi Quest & Badge (${(cultureBook.unlockedBadgeIds || []).length}/${CULTURAL_BADGES.length})`
+                },
+                {
+                  id: 'wishlist',
+                  label: `Wishlist (${cultureBook.favorites?.length || 0})`
+                },
+                {
+                  id: 'tickets',
+                  label: `Tiket Saya (${paymentHistory?.length || 0})`
+                }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -618,39 +702,273 @@ export default function MyCultureBookModal({
 
             {/* TAB CONTENT 3: WISHLIST */}
             {mobileSectionTab === 'wishlist' && (
-              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm space-y-2">
-                <div className="text-xs font-bold text-[#2C221E] pb-2 border-b border-[#F2EDE4]">
-                  Wishlist Favorit ({cultureBook.favorites?.length || 0})
+              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-[#F2EDE4]">
+                  <div>
+                    <h3 className="text-xs font-bold text-[#2C221E] m-0">
+                      Wishlist Impian ({resolvedWishlistItems.length})
+                    </h3>
+                    <p className="text-[10px] text-neutral-500 m-0">
+                      {unpaidWishlistItems.length} belum dibayar • Wisata & Kuliner
+                    </p>
+                  </div>
+                  {unpaidWishlistItems.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => checkoutWishlist(unpaidWishlistItems)}
+                      className="px-2.5 py-1 rounded-xl bg-[#2C221E] text-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 cursor-pointer hover:bg-[#C99B52] transition-colors"
+                    >
+                      <CreditCard size={11} className="text-[#C99B52]" />
+                      <span>Bayar Semua</span>
+                    </button>
+                  )}
                 </div>
 
-                {(!cultureBook.favorites || cultureBook.favorites.length === 0) ? (
-                  <div className="text-center py-6 text-neutral-400 text-xs">
-                    <Heart size={24} className="mx-auto mb-1 opacity-40 text-rose-500" />
-                    <span>Belum ada destinasi favorit yang disimpan.</span>
+                {resolvedWishlistItems.length === 0 ? (
+                  <div className="text-center py-7 text-neutral-400 text-xs">
+                    <Heart size={26} className="mx-auto mb-1.5 opacity-40 text-rose-500" />
+                    <p className="font-semibold text-neutral-600 mb-0.5">Belum ada item di Wishlist</p>
+                    <span className="text-[11px]">Tambahkan destinasi atau kuliner favorit Anda untuk membayar tiket/voucher langsung di sini.</span>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    {cultureBook.favorites.map((placeId) => {
-                      const pl = places.find((p) => p.id === placeId);
-                      if (!pl) return null;
+                  <div className="space-y-2.5">
+                    {resolvedWishlistItems.map((item) => {
+                      const paid = isItemPaid(item.id);
+                      const price = parseItemPrice(item);
+                      const paidTicket = paid ? getPaidTicketByItemId(item.id) : null;
+                      const imgSrc = item.thumbnail || item.coverImage || item.image || '/assets/images/jogja_keraton.jpg';
+
                       return (
                         <div
-                          key={placeId}
-                          onClick={() => {
-                            if (onSelectPlace) {
-                              onClose();
-                              onSelectPlace(pl);
-                            }
-                          }}
-                          className="flex items-center justify-between p-2 rounded-xl bg-neutral-50 hover:bg-neutral-100 cursor-pointer border border-neutral-100"
+                          key={item.id}
+                          className="p-2.5 rounded-2xl bg-[#FCFAF8] border border-[#EAE4DC] space-y-2"
                         >
-                          <span className="text-xs font-bold text-neutral-900 truncate">
-                            {pl.name}
-                          </span>
-                          <ChevronRight size={14} className="text-neutral-400 flex-shrink-0" />
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-neutral-200">
+                              <img
+                                src={imgSrc}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                                  item.isCulinary
+                                    ? 'bg-amber-100 text-amber-800'
+                                    : 'bg-emerald-100 text-emerald-800'
+                                }`}>
+                                  {item.isCulinary ? 'Kuliner Khas' : 'Wisata Budaya'}
+                                </span>
+                                {paid && (
+                                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 flex items-center gap-0.5">
+                                    <CheckCircle2 size={9} />
+                                    <span>Lunas</span>
+                                  </span>
+                                )}
+                              </div>
+                              <h4 className="text-xs font-bold text-[#2C221E] truncate m-0">
+                                {item.name}
+                              </h4>
+                              <p className="text-[11px] font-bold text-[#8A5D26] m-0">
+                                Rp {price.toLocaleString('id-ID')}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggleFavorite(item.id)}
+                              className="text-neutral-400 hover:text-rose-500 p-1.5 rounded-lg cursor-pointer"
+                              title="Hapus dari wishlist"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+
+                          {/* Tombol Aksi Pembayaran */}
+                          <div className="pt-2 border-t border-[#F0EBE1] flex items-center justify-between gap-2">
+                            {item.isCulinary ? (
+                              <span className="text-[10px] text-neutral-500 truncate">
+                                {item.spotName || 'Sentra Kuliner Jogja'}
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (onSelectPlace) {
+                                    onClose();
+                                    onSelectPlace(item);
+                                  }
+                                }}
+                                className="text-[10px] font-bold text-neutral-600 hover:text-[#2C221E] flex items-center gap-0.5 cursor-pointer"
+                              >
+                                <span>Detail</span>
+                                <ChevronRight size={11} />
+                              </button>
+                            )}
+
+                            {paid ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (paidTicket) {
+                                    setSelectedTicketToView(paidTicket);
+                                  }
+                                }}
+                                className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                              >
+                                <Ticket size={11} />
+                                <span>Buka E-Tiket</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => initiatePayment(item, { fromWishlist: true })}
+                                className="px-3 py-1 rounded-xl bg-[#2C221E] hover:bg-[#C99B52] text-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                              >
+                                <CreditCard size={11} className="text-[#C99B52]" />
+                                <span>Bayar Sekarang</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
+
+                    {/* Ringkasan Checkout Bawah Mobile */}
+                    {unpaidWishlistItems.length > 0 && (
+                      <div className="p-3 rounded-2xl bg-[#2C221E] text-white flex items-center justify-between gap-2 shadow-md">
+                        <div>
+                          <p className="text-[9px] text-[#C99B52] font-semibold m-0 uppercase tracking-wider">
+                            Total Belum Lunas
+                          </p>
+                          <p className="text-xs font-black text-white m-0">
+                            Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => checkoutWishlist(unpaidWishlistItems)}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#C99B52] hover:bg-[#D4A75E] text-[#2C221E] text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all"
+                        >
+                          <ShoppingBag size={13} />
+                          <span>Bayar Semua</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB CONTENT: TIKET SAYA (MOBILE) */}
+            {mobileSectionTab === 'tickets' && (
+              <div className="bg-white rounded-2xl border border-[#EAE4DC] p-3.5 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-[#F2EDE4]">
+                  <div>
+                    <h3 className="text-xs font-bold text-[#2C221E] m-0">
+                      Tiket & Voucher Aktif ({paymentHistory.length})
+                    </h3>
+                    <p className="text-[10px] text-neutral-500 m-0">
+                      E-Tiket resmi dengan QR Code siap scan
+                    </p>
+                  </div>
+                  {paymentHistory.length > 0 && (
+                    <span className="text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF6EE] border border-[#E5D7BE] px-2 py-0.5 rounded-full">
+                      Rp {totalSpendAmount.toLocaleString('id-ID')}
+                    </span>
+                  )}
+                </div>
+
+                {/* Mobile Filter Pills */}
+                {paymentHistory.length > 0 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+                    {[
+                      { id: 'all', label: `Semua (${paymentHistory.length})` },
+                      { id: 'wisata', label: `Wisata (${wisataTicketsCount})` },
+                      { id: 'kuliner', label: `Kuliner (${kulinerTicketsCount})` }
+                    ].map((f) => {
+                      const isSel = ticketCategoryFilter === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setTicketCategoryFilter(f.id)}
+                          className={`px-2.5 py-1 rounded-full font-bold whitespace-nowrap cursor-pointer transition-colors ${
+                            isSel
+                              ? 'bg-[#2C221E] text-white'
+                              : 'bg-[#FAF6EE] text-[#786B5E] border border-[#E5D7BE]'
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {paymentHistory.length === 0 ? (
+                  <div className="text-center py-8 text-neutral-400 text-xs">
+                    <Ticket size={28} className="mx-auto mb-1.5 opacity-40 text-[#C99B52]" />
+                    <p className="font-semibold text-neutral-600 mb-0.5">Belum Ada Tiket yang Dibeli</p>
+                    <span className="text-[11px] block max-w-xs mx-auto text-neutral-400 mb-3">
+                      Lakukan pembayaran dummy tiket wisata atau kuliner dari Wishlist atau halaman destinasi.
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setMobileSectionTab('wishlist')}
+                      className="px-3 py-1.5 rounded-xl bg-[#2C221E] text-[#FAF8F5] text-[11px] font-bold cursor-pointer"
+                    >
+                      Buka Wishlist Saya
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredPaymentHistory.map((order) => (
+                      <div
+                        key={order.id}
+                        className="p-3 rounded-2xl bg-[#FCFAF8] border border-[#EAE4DC] shadow-2xs space-y-2.5"
+                      >
+                        <div className="flex items-center justify-between pb-2 border-b border-[#F0EBE1]">
+                          <span className="font-mono text-[11px] font-bold text-[#2C221E] bg-[#F2ECE1] px-2 py-0.5 rounded-md">
+                            {order.bookingCode}
+                          </span>
+                          <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                            <CheckCircle2 size={10} />
+                            <span>LUNAS</span>
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+                          {order.items.map((itm, idx) => (
+                            <div key={idx} className="flex items-center justify-between text-xs">
+                              <span className="font-semibold text-[#2C221E] truncate max-w-[190px]">
+                                {itm.name}
+                              </span>
+                              <span className="text-[11px] text-neutral-500 font-medium">
+                                {itm.quantity}x • Rp {(itm.price * itm.quantity).toLocaleString('id-ID')}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-[#F0EBE1]">
+                          <div>
+                            <p className="text-[9px] text-neutral-400 m-0">Total Pembayaran</p>
+                            <p className="text-xs font-black text-[#8A5D26] m-0">
+                              Rp {order.totalAmount.toLocaleString('id-ID')}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedTicketToView(order)}
+                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                          >
+                            <Ticket size={12} />
+                            <span>Buka E-Tiket</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -1317,7 +1635,7 @@ export default function MyCultureBookModal({
                 </button>
               </div>
 
-              {/* KARTU 2: CHECKLIST TEMPAT DIKUNJUNGI (GPS CHECK-IN) */}
+              {/* KARTU 2: CHECKLIST TEMPAT DIKUNJUNGI (GPS CHECK-IN) - ACCORDION DROPDOWN */}
               <div
                 style={{
                   backgroundColor: '#FFFFFF',
@@ -1330,207 +1648,204 @@ export default function MyCultureBookModal({
                 }}
               >
                 <div
+                  onClick={() => setIsDestinasiExpanded((prev) => !prev)}
                   style={{
                     fontSize: '0.86rem',
                     fontWeight: 800,
                     color: '#2C221E',
-                    paddingBottom: '0.75rem',
-                    marginBottom: '0.65rem',
-                    borderBottom: '1px solid #F2EDE4',
+                    paddingBottom: isDestinasiExpanded ? '0.75rem' : '0',
+                    marginBottom: isDestinasiExpanded ? '0.65rem' : '0',
+                    borderBottom: isDestinasiExpanded ? '1px solid #F2EDE4' : 'none',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    userSelect: 'none'
                   }}
+                  title={isDestinasiExpanded ? 'Tutup daftar destinasi' : 'Buka daftar destinasi'}
                 >
-                  <span>Destinasi Warisan Budaya</span>
-                  <span
-                    style={{
-                      padding: '0.18rem 0.6rem',
-                      borderRadius: '999px',
-                      backgroundColor: '#F4EFE6',
-                      color: '#2C221E',
-                      fontSize: '0.74rem',
-                      fontWeight: 700
-                    }}
-                  >
-                    {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {places.map((place, index) => {
-                    const isGpsDone = isGpsVerified(place.id);
-                    const distNow = userLiveCoords && place.coordinates
-                      ? getHaversineDistance(userLiveCoords, place.coordinates)
-                      : null;
-
-                    return (
-                      <div
-                        key={place.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '0.5rem',
-                          padding: '0.65rem 0',
-                          borderBottom:
-                            index < places.length - 1 ? '1px solid #F5F1EA' : 'none'
-                        }}
-                      >
-                        <div
-                          onClick={() => onSelectPlace && onSelectPlace(place)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            minWidth: 0,
-                            flex: 1,
-                            cursor: 'pointer'
-                          }}
-                          title={`Buka Cerita & Informasi ${place.name}`}
-                        >
-                          <div
-                            style={{
-                              width: '20px',
-                              height: '20px',
-                              borderRadius: '50%',
-                              backgroundColor: isGpsDone ? '#2C221E' : '#F4EFE6',
-                              color: isGpsDone ? '#FFFFFF' : '#786B5E',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '0.65rem',
-                              fontWeight: 700,
-                              flexShrink: 0
-                            }}
-                          >
-                            {index + 1}
-                          </div>
-                          <span
-                            style={{
-                              fontSize: '0.76rem',
-                              fontWeight: 600,
-                              color: '#3D312A',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              transition: 'color 0.15s ease'
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = '#8A5D26')}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = '#3D312A')}
-                          >
-                            {place.name.split('&')[0]}
-                          </span>
-                        </div>
-
-                        {isGpsDone ? (
-                          <div
-                            title="Telah Dikunjungi"
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '50%',
-                              backgroundColor: '#DCFCE7',
-                              border: '1px solid #BBF7D0',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0
-                            }}
-                          >
-                            <Check size={14} color="#15803D" strokeWidth={3} />
-                          </div>
-                        ) : distNow !== null && distNow <= 1500 ? (
-                          <button
-                            type="button"
-                            onClick={() => handleClaimBadgeViaGps(place)}
-                            disabled={verifyingPlaceId === place.id}
-                            style={{
-                              padding: '0.26rem 0.65rem',
-                              borderRadius: '6px',
-                              backgroundColor: '#2C221E',
-                              border: '1px solid #C99B52',
-                              color: '#FAF8F5',
-                              fontSize: '0.68rem',
-                              fontWeight: 700,
-                              cursor: 'pointer',
-                              flexShrink: 0,
-                              whiteSpace: 'nowrap'
-                            }}
-                          >
-                            {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim Badge'}
-                          </button>
-                        ) : (
-                          <div
-                            onClick={() => onSelectPlace && onSelectPlace(place)}
-                            style={{
-                              padding: '0.22rem 0.55rem',
-                              borderRadius: '6px',
-                              backgroundColor: '#FAF8F5',
-                              border: '1px solid #ECE4D8',
-                              color: '#8A7B6E',
-                              fontSize: '0.67rem',
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              flexShrink: 0,
-                              whiteSpace: 'nowrap',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem'
-                            }}
-                            title={`Buka info & cerita ${place.name}`}
-                          >
-                            <Lock size={10} color="#A89A8D" />
-                            <span>Terkunci</span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* KARTU 3: KATEGORI BUDAYA */}
-              <div
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '16px',
-                  border: '1px solid #EAE4DC',
-                  padding: '1.25rem'
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '0.86rem',
-                    fontWeight: 700,
-                    color: '#2C221E',
-                    paddingBottom: '0.75rem',
-                    marginBottom: '0.85rem',
-                    borderBottom: '1px solid #F2EDE4'
-                  }}
-                >
-                  Kategori Budaya
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                  {skillTags.map((tag) => (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <MapPin size={15} color="#8A5D26" />
+                    <span>Destinasi Warisan Budaya</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                     <span
-                      key={tag}
                       style={{
-                        padding: '0.35rem 0.65rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #DCD3C6',
-                        color: '#3D312A',
-                        fontSize: '0.72rem',
-                        fontWeight: 600
+                        padding: '0.18rem 0.6rem',
+                        borderRadius: '999px',
+                        backgroundColor: '#F4EFE6',
+                        color: '#2C221E',
+                        fontSize: '0.74rem',
+                        fontWeight: 700
                       }}
                     >
-                      {tag}
+                      {stats.gpsVerifiedCount || cultureBook.visitedPlaces.length}/{totalPlaces} Terbuka
                     </span>
-                  ))}
+                    <motion.div
+                      animate={{ rotate: isDestinasiExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ display: 'flex', alignItems: 'center', color: '#8A7B6E' }}
+                    >
+                      <ChevronDown size={16} />
+                    </motion.div>
+                  </div>
                 </div>
+
+                <AnimatePresence initial={false}>
+                  {isDestinasiExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          maxHeight: '260px',
+                          overflowY: 'auto',
+                          paddingRight: '0.25rem'
+                        }}
+                      >
+                        {places.map((place, index) => {
+                          const isGpsDone = isGpsVerified(place.id);
+                          const distNow =
+                            userLiveCoords && place.coordinates
+                              ? getHaversineDistance(userLiveCoords, place.coordinates)
+                              : null;
+
+                          return (
+                            <div
+                              key={place.id}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '0.5rem',
+                                padding: '0.65rem 0',
+                                borderBottom:
+                                  index < places.length - 1 ? '1px solid #F5F1EA' : 'none'
+                              }}
+                            >
+                              <div
+                                onClick={() => onSelectPlace && onSelectPlace(place)}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  minWidth: 0,
+                                  flex: 1,
+                                  cursor: 'pointer'
+                                }}
+                                title={`Buka Cerita & Informasi ${place.name}`}
+                              >
+                                <div
+                                  style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    backgroundColor: isGpsDone ? '#2C221E' : '#F4EFE6',
+                                    color: isGpsDone ? '#FFFFFF' : '#786B5E',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.65rem',
+                                    fontWeight: 700,
+                                    flexShrink: 0
+                                  }}
+                                >
+                                  {index + 1}
+                                </div>
+                                <span
+                                  style={{
+                                    fontSize: '0.76rem',
+                                    fontWeight: 600,
+                                    color: '#3D312A',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    transition: 'color 0.15s ease'
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.color = '#8A5D26')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.color = '#3D312A')}
+                                >
+                                  {place.name.split('&')[0]}
+                                </span>
+                              </div>
+
+                              {isGpsDone ? (
+                                <div
+                                  title="Telah Dikunjungi"
+                                  style={{
+                                    width: '24px',
+                                    height: '24px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#DCFCE7',
+                                    border: '1px solid #BBF7D0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0
+                                  }}
+                                >
+                                  <Check size={14} color="#15803D" strokeWidth={3} />
+                                </div>
+                              ) : distNow !== null && distNow <= 1500 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleClaimBadgeViaGps(place)}
+                                  disabled={verifyingPlaceId === place.id}
+                                  style={{
+                                    padding: '0.26rem 0.65rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#2C221E',
+                                    border: '1px solid #C99B52',
+                                    color: '#FAF8F5',
+                                    fontSize: '0.68rem',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                >
+                                  {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim Badge'}
+                                </button>
+                              ) : (
+                                <div
+                                  onClick={() => onSelectPlace && onSelectPlace(place)}
+                                  style={{
+                                    padding: '0.22rem 0.55rem',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#FAF8F5',
+                                    border: '1px solid #ECE4D8',
+                                    color: '#8A7B6E',
+                                    fontSize: '0.67rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    whiteSpace: 'nowrap',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem'
+                                  }}
+                                  title={`Buka info & cerita ${place.name}`}
+                                >
+                                  <Lock size={10} color="#A89A8D" />
+                                  <span>Terkunci</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
+
+              </div>
 
             {/* =================================================================
                 KOLOM KANAN: TAB CONTENT & PANDUAN CARA DAPAT BADGE
@@ -1567,16 +1882,13 @@ export default function MyCultureBookModal({
                     id: 'badges-quests',
                     label: `Misi Quest & Badge (${(cultureBook.unlockedBadgeIds || []).length}/${CULTURAL_BADGES.length})`
                   },
-                  { id: 'events', label: 'Kalender Acara Budaya' },
-                  { id: 'jurnal', label: 'Jurnal & Panduan Budaya' },
-                  { id: 'background', label: 'Ringkasan Profil' },
                   {
                     id: 'wishlist',
                     label: `Wishlist (${cultureBook.favorites?.length || 0})`
                   },
                   {
-                    id: 'notes',
-                    label: `Catatan (${Object.keys(cultureBook.userNotes || {}).length})`
+                    id: 'tickets',
+                    label: `Tiket Saya (${paymentHistory?.length || 0})`
                   }
                 ].map((tab) => {
                   const isAct = activeTab === tab.id;
@@ -1926,48 +2238,546 @@ export default function MyCultureBookModal({
                 </div>
               )}
 
-              {/* TAB 3: WISHLIST */}
+              {/* TAB 3: WISHLIST (DESKTOP) */}
               {activeTab === 'wishlist' && (
-                <div>
-                  <h3 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#2C221E', margin: '0 0 0.85rem 0' }}>
-                    Destinasi Impian ({cultureBook.favorites?.length || 0})
-                  </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#2C221E', margin: '0 0 0.25rem 0' }}>
+                        Daftar Impian & Keranjang Tiket ({resolvedWishlistItems.length})
+                      </h3>
+                      <p style={{ fontSize: '0.82rem', color: '#786B5E', margin: 0 }}>
+                        {unpaidWishlistItems.length} item belum dibayar • Anda dapat membayar tiket satu per satu atau checkout sekaligus.
+                      </p>
+                    </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem' }}>
-                    {cultureBook.favorites.map((favId) => {
-                      const place = places.find((p) => p.id === favId);
-                      if (!place) return null;
-                      return (
+                    {unpaidWishlistItems.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => checkoutWishlist(unpaidWishlistItems)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          backgroundColor: '#2C221E',
+                          color: '#FAF8F5',
+                          border: 'none',
+                          borderRadius: '12px',
+                          padding: '0.65rem 1.25rem',
+                          fontSize: '0.84rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 14px rgba(44, 34, 30, 0.18)',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <CreditCard size={15} color="#C99B52" />
+                        <span>Bayar Semua Wishlist ({unpaidWishlistItems.length} Item)</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {resolvedWishlistItems.length === 0 ? (
+                    <div
+                      style={{
+                        padding: '3.5rem 1.5rem',
+                        textAlign: 'center',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: '16px',
+                        border: '1px dashed #DDD4C7'
+                      }}
+                    >
+                      <Heart size={36} color="#e11d48" style={{ margin: '0 auto 0.75rem auto', opacity: 0.5 }} />
+                      <h4 style={{ fontSize: '0.96rem', fontWeight: 800, color: '#2C221E', margin: '0 0 0.35rem 0' }}>
+                        Wishlist Masih Kosong
+                      </h4>
+                      <p style={{ fontSize: '0.82rem', color: '#786B5E', margin: '0 auto', maxWidth: '420px', lineHeight: 1.5 }}>
+                        Simpan tempat wisata budaya atau kuliner khas Jogja yang ingin Anda kunjungi. Anda bisa langsung memesan tiket dan voucher lunas dari sini.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                          gap: '1rem'
+                        }}
+                      >
+                        {resolvedWishlistItems.map((item) => {
+                          const paid = isItemPaid(item.id);
+                          const price = parseItemPrice(item);
+                          const paidTicket = paid ? getPaidTicketByItemId(item.id) : null;
+                          const imgSrc =
+                            item.thumbnail ||
+                            item.coverImage ||
+                            item.image ||
+                            '/assets/images/jogja_keraton.jpg';
+
+                          return (
+                            <div
+                              key={item.id}
+                              style={{
+                                borderRadius: '16px',
+                                border: paid ? '1.5px solid #BBF7D0' : '1px solid #EAE4DC',
+                                overflow: 'hidden',
+                                backgroundColor: '#FFFFFF',
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                transition: 'all 0.2s'
+                              }}
+                            >
+                              <div style={{ height: '140px', position: 'relative' }}>
+                                <img
+                                  src={imgSrc}
+                                  alt={item.name}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    top: '0.65rem',
+                                    left: '0.65rem',
+                                    display: 'flex',
+                                    gap: '0.35rem'
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: '0.68rem',
+                                      fontWeight: 800,
+                                      padding: '0.25rem 0.6rem',
+                                      borderRadius: '6px',
+                                      backgroundColor: item.isCulinary ? '#FEF3C7' : '#DCFCE7',
+                                      color: item.isCulinary ? '#92400E' : '#166534',
+                                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                                    }}
+                                  >
+                                    {item.isCulinary ? 'Kuliner Khas' : 'Wisata Budaya'}
+                                  </span>
+                                  {paid && (
+                                    <span
+                                      style={{
+                                        fontSize: '0.68rem',
+                                        fontWeight: 800,
+                                        padding: '0.25rem 0.6rem',
+                                        borderRadius: '6px',
+                                        backgroundColor: '#15803D',
+                                        color: '#FFFFFF',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem',
+                                        boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+                                      }}
+                                    >
+                                      <CheckCircle2 size={11} />
+                                      <span>Lunas</span>
+                                    </span>
+                                  )}
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(item.id);
+                                  }}
+                                  title="Hapus dari wishlist"
+                                  style={{
+                                    position: 'absolute',
+                                    top: '0.65rem',
+                                    right: '0.65rem',
+                                    width: '30px',
+                                    height: '30px',
+                                    borderRadius: '50%',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                                    border: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#e11d48',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
+                                  }}
+                                >
+                                  <Heart size={15} fill="#e11d48" />
+                                </button>
+                              </div>
+
+                              <div style={{ padding: '0.95rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#2C221E', marginBottom: '0.25rem' }}>
+                                  {item.name}
+                                </div>
+                                <div style={{ fontSize: '0.74rem', color: '#786B5E', marginBottom: '0.85rem' }}>
+                                  {item.subtitle || item.spotName || item.province || 'D.I. Yogyakarta'}
+                                </div>
+
+                                <div style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px solid #F3EEE7', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                                  <div>
+                                    <div style={{ fontSize: '0.68rem', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 700 }}>
+                                      Harga Tiket / Voucher
+                                    </div>
+                                    <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#8A5D26' }}>
+                                      Rp {price.toLocaleString('id-ID')}
+                                    </div>
+                                  </div>
+
+                                  {paid ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (paidTicket) {
+                                          setSelectedTicketToView(paidTicket);
+                                        }
+                                      }}
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.35rem',
+                                        padding: '0.45rem 0.85rem',
+                                        borderRadius: '10px',
+                                        backgroundColor: '#16A34A',
+                                        color: '#FFFFFF',
+                                        border: 'none',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 800,
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      <Ticket size={12} />
+                                      <span>Lihat E-Tiket</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => initiatePayment(item, { fromWishlist: true })}
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.35rem',
+                                        padding: '0.45rem 0.85rem',
+                                        borderRadius: '10px',
+                                        backgroundColor: '#2C221E',
+                                        color: '#FAF8F5',
+                                        border: 'none',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 800,
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.2s'
+                                      }}
+                                    >
+                                      <CreditCard size={12} color="#C99B52" />
+                                      <span>Bayar Sekarang</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Sticky / Floating Bottom Summary Bar */}
+                      {unpaidWishlistItems.length > 0 && (
                         <div
-                          key={favId}
-                          onClick={() => onSelectPlace(place)}
                           style={{
-                            borderRadius: '12px',
-                            border: '1px solid #EAE4DC',
-                            overflow: 'hidden',
-                            backgroundColor: '#FFFFFF',
-                            cursor: 'pointer'
+                            padding: '1.25rem 1.5rem',
+                            backgroundColor: '#2C221E',
+                            color: '#FFFFFF',
+                            borderRadius: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            boxShadow: '0 8px 24px rgba(44, 34, 30, 0.22)',
+                            marginTop: '0.5rem'
                           }}
                         >
-                          <div style={{ height: '110px', position: 'relative' }}>
-                            <img
-                              src={place.thumbnail || place.coverImage}
-                              alt={place.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          </div>
-                          <div style={{ padding: '0.75rem' }}>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2C221E', margin: '0 0 0.2rem 0' }}>
-                              {place.name}
+                          <div>
+                            <span style={{ fontSize: '0.75rem', color: '#C99B52', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                              Ringkasan Pembayaran Wishlist
+                            </span>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF', marginTop: '0.15rem' }}>
+                              Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}{' '}
+                              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: '#D4C9BD' }}>
+                                ({unpaidWishlistItems.length} destinasi & voucher belum lunas)
+                              </span>
                             </div>
-                            <div style={{ fontSize: '0.72rem', color: '#786B5E' }}>
-                              {place.province}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => checkoutWishlist(unpaidWishlistItems)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.65rem',
+                              backgroundColor: '#C99B52',
+                              color: '#2C221E',
+                              border: 'none',
+                              borderRadius: '12px',
+                              padding: '0.75rem 1.6rem',
+                              fontSize: '0.9rem',
+                              fontWeight: 900,
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 16px rgba(201, 155, 82, 0.35)',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            <ShoppingBag size={17} />
+                            <span>Checkout & Bayar Semua Sekaligus</span>
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* TAB CONTENT: TIKET SAYA (DESKTOP) */}
+              {activeTab === 'tickets' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#2C221E', margin: '0 0 0.25rem 0' }}>
+                        Koleksi E-Tiket & Voucher Budaya ({paymentHistory.length})
+                      </h3>
+                      <p style={{ fontSize: '0.82rem', color: '#786B5E', margin: 0 }}>
+                        E-Tiket resmi dengan QR Code dan nomor booking unik untuk ditunjukkan saat tiba di lokasi.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 1. RINGKASAN FINANSIAL & TIKET AKTIF */}
+                  {paymentHistory.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#8A5D26', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <CreditCard size={14} />
+                          <span>Total Transaksi</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#2C221E' }}>
+                          Rp {totalSpendAmount.toLocaleString('id-ID')}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#786B5E', marginTop: '0.15rem' }}>
+                          {paymentHistory.length} pesanan terverifikasi lunas
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#8A5D26', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <Ticket size={14} />
+                          <span>Tiket & Voucher</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#2C221E' }}>
+                          {totalTicketsIssued} Lembar
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#786B5E', marginTop: '0.15rem' }}>
+                          {wisataTicketsCount} Tiket Wisata • {kulinerTicketsCount} Voucher Kuliner
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '0.95rem 1.15rem', borderRadius: '14px', backgroundColor: '#FFFFFF', border: '1px solid #EAE4DC', boxShadow: '0 2px 8px rgba(44,34,30,0.03)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: '#15803D', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                          <ShieldCheck size={14} />
+                          <span>Status E-Tiket</span>
+                        </div>
+                        <div style={{ fontSize: '1.18rem', fontWeight: 900, color: '#15803D' }}>
+                          100% Aktif
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#166534', marginTop: '0.15rem' }}>
+                          Siap di-scan di gate cagar budaya
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 2. FILTER KATEGORI TIKET PILLS */}
+                  {paymentHistory.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {[
+                        { id: 'all', label: `Semua Tiket (${paymentHistory.length})` },
+                        { id: 'wisata', label: `Tiket Wisata (${wisataTicketsCount})` },
+                        { id: 'kuliner', label: `Voucher Kuliner (${kulinerTicketsCount})` }
+                      ].map((f) => {
+                        const isSelected = ticketCategoryFilter === f.id;
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setTicketCategoryFilter(f.id)}
+                            style={{
+                              padding: '0.4rem 0.95rem',
+                              borderRadius: '999px',
+                              border: isSelected ? '1.5px solid #2C221E' : '1px solid #E5D7BE',
+                              backgroundColor: isSelected ? '#2C221E' : '#FAF6EE',
+                              color: isSelected ? '#FAF8F5' : '#786B5E',
+                              fontSize: '0.75rem',
+                              fontWeight: isSelected ? 800 : 600,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {f.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {paymentHistory.length === 0 ? (
+                    <div
+                      style={{
+                        padding: '3.5rem 1.5rem',
+                        textAlign: 'center',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: '16px',
+                        border: '1px dashed #DDD4C7'
+                      }}
+                    >
+                      <Ticket size={40} color="#C99B52" style={{ margin: '0 auto 0.75rem auto', opacity: 0.6 }} />
+                      <h4 style={{ fontSize: '0.96rem', fontWeight: 800, color: '#2C221E', margin: '0 0 0.35rem 0' }}>
+                        Belum Ada Tiket yang Dibeli
+                      </h4>
+                      <p style={{ fontSize: '0.82rem', color: '#786B5E', margin: '0 auto 1.25rem auto', maxWidth: '420px', lineHeight: 1.5 }}>
+                        Tiket atau voucher kuliner yang Anda bayar akan otomatis muncul di sini sebagai boarding pass dengan QR Code aktif.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('wishlist')}
+                        style={{
+                          backgroundColor: '#2C221E',
+                          color: '#FAF8F5',
+                          border: 'none',
+                          borderRadius: '10px',
+                          padding: '0.6rem 1.25rem',
+                          fontSize: '0.82rem',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Lihat Wishlist & Bayar Tiket
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                        gap: '1.25rem'
+                      }}
+                    >
+                      {filteredPaymentHistory.map((order) => (
+                        <div
+                          key={order.id}
+                          style={{
+                            backgroundColor: '#FFFFFF',
+                            borderRadius: '18px',
+                            border: '1.5px solid #EAE4DC',
+                            overflow: 'hidden',
+                            boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
+                            display: 'flex',
+                            flexDirection: 'column'
+                          }}
+                        >
+                          {/* Boarding pass top ribbon */}
+                          <div
+                            style={{
+                              padding: '0.9rem 1.15rem',
+                              backgroundColor: '#2C221E',
+                              color: '#FAF8F5',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <Ticket size={16} color="#C99B52" />
+                              <span style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: '0.86rem', letterSpacing: '0.04em' }}>
+                                {order.bookingCode}
+                              </span>
+                            </div>
+                            <span
+                              style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                padding: '0.2rem 0.6rem',
+                                borderRadius: '999px',
+                                backgroundColor: '#15803D',
+                                color: '#FFFFFF',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
+                              }}
+                            >
+                              <CheckCircle2 size={11} />
+                              <span>LUNAS</span>
+                            </span>
+                          </div>
+
+                          {/* Body items */}
+                          <div style={{ padding: '1.15rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem', color: '#786B5E' }}>
+                              <span>Metode: {order.methodLabel}</span>
+                              <span>Kunjungan: {order.visitDate}</span>
+                            </div>
+
+                            <div style={{ borderTop: '1px dashed #E5DDD1', borderBottom: '1px dashed #E5DDD1', padding: '0.75rem 0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                              {order.items.map((item, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.84rem' }}>
+                                  <div style={{ fontWeight: 700, color: '#2C221E' }}>
+                                    {item.name}
+                                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF', marginLeft: '0.35rem', fontWeight: 500 }}>
+                                      x{item.quantity}
+                                    </span>
+                                  </div>
+                                  <div style={{ fontWeight: 800, color: '#8A5D26' }}>
+                                    Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.35rem' }}>
+                              <div>
+                                <span style={{ fontSize: '0.7rem', color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 700 }}>
+                                  Total Transaksi
+                                </span>
+                                <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#2C221E' }}>
+                                  Rp {order.totalAmount.toLocaleString('id-ID')}
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => setSelectedTicketToView(order)}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.45rem',
+                                  backgroundColor: '#16A34A',
+                                  color: '#FFFFFF',
+                                  border: 'none',
+                                  borderRadius: '10px',
+                                  padding: '0.55rem 1rem',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 800,
+                                  cursor: 'pointer',
+                                  transition: 'background-color 0.2s',
+                                  boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)'
+                                }}
+                              >
+                                <Receipt size={13} />
+                                <span>Buka E-Tiket & QR</span>
+                              </button>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 

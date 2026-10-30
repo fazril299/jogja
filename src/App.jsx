@@ -4,6 +4,8 @@ import { MapPin } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CommunityProvider } from './context/CommunityContext';
 import { CultureBookProvider } from './context/CultureBookContext';
+import { PaymentProvider } from './context/PaymentContext';
+import PaymentModal from './components/PaymentModal';
 import { CULTURAL_PLACES, JOGJA_GPS_ZONES } from './data/culturalData';
 import { isSupabaseConfigured, fetchPlacesFromSupabase } from './lib/supabase';
 
@@ -88,7 +90,7 @@ function findNearestJogjaZone(lat, lng) {
 }
 
 function NusantaraApp() {
-  const { isAuthModalOpen, openLogin, openRegister, closeAuthModal, setAuthModalMode } = useAuth();
+  const { currentUser, isAuthModalOpen, openLogin, openRegister, closeAuthModal, setAuthModalMode } = useAuth();
   const [places, setPlaces] = useState(() => {
     try {
       const saved = localStorage.getItem('hamemayu_places_v1');
@@ -143,18 +145,29 @@ function NusantaraApp() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [quickViewLandmark, setQuickViewLandmark] = useState(null);
 
+  const handleShowEventLocation = (ev) => {
+    setIsKalenderAcaraOpen(false);
+    setIsKalenderPopupOpen(false);
+    setInitialEventId(null);
+    setEventMapTarget(ev);
+    setIsNearMeOpen(true);
+    window.location.hash = '#/kuliner';
+  };
+
   // Modals & Dedicated GPS Page States
   const [isNearMeOpen, setIsNearMeOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isCultureBookOpen, setIsCultureBookOpen] = useState(false);
   const [cultureBookInitialTab, setCultureBookInitialTab] = useState('badges-quests');
   const [isKalenderAcaraOpen, setIsKalenderAcaraOpen] = useState(false);
+  const [initialEventId, setInitialEventId] = useState(null);
   const [isKalenderPopupOpen, setIsKalenderPopupOpen] = useState(false);
   const [isJurnalBudayaOpen, setIsJurnalBudayaOpen] = useState(false);
   const [isAboutPageOpen, setIsAboutPageOpen] = useState(false);
   const [isQuestBadgePageOpen, setIsQuestBadgePageOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isGlobalShareOpen, setIsGlobalShareOpen] = useState(false);
+  const [eventMapTarget, setEventMapTarget] = useState(null);
 
   // Deep-linking & Browser Back/Forward URL Routing Sync
   useEffect(() => {
@@ -169,6 +182,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -190,13 +204,14 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
         setIsMapOpen(false);
         setIsQuestBadgePageOpen(true);
         document.title = 'Katalog Misi & Lencana Budaya - Hamemayu';
-      } else if (route === 'kalender-acara' || route === 'kalender' || route === 'events') {
+      } else if (route === 'kalender-acara' || route === 'kalender' || route === 'events' || route === 'acara') {
         setIsNearMeOpen(false);
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
@@ -205,6 +220,7 @@ function NusantaraApp() {
         setIsQuestBadgePageOpen(false);
         setIsKalenderPopupOpen(false);
         setIsMapOpen(false);
+        setInitialEventId(param || null);
         setIsKalenderAcaraOpen(true);
         document.title = 'Kalender Acara Budaya DIY - Hamemayu';
       } else if (route === 'jurnal-budaya' || route === 'jurnal') {
@@ -212,6 +228,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsAboutPageOpen(false);
         setIsQuestBadgePageOpen(false);
@@ -223,6 +240,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsQuestBadgePageOpen(false);
@@ -238,6 +256,20 @@ function NusantaraApp() {
         setIsAboutPageOpen(false);
         setIsQuestBadgePageOpen(false);
         setIsMapOpen(false);
+
+        // Akses profil hanya untuk pengguna yang sudah login (hilangkan UI tamu)
+        const isUserLoggedIn = Boolean(currentUser && !currentUser.isGuest);
+        if (!isUserLoggedIn) {
+          setIsCultureBookOpen(false);
+          window.location.hash = '#/home';
+          openLogin({
+            benefitType: 'general',
+            title: 'Masuk Akun Diperlukan',
+            description: 'Silakan masuk terlebih dahulu untuk mengakses Paspor Budaya, Wishlist, dan Tiket Anda.'
+          });
+          return;
+        }
+
         if (param) setCultureBookInitialTab(param);
         setIsCultureBookOpen(true);
         document.title = 'Buku Budaya & Paspor Budaya - Hamemayu';
@@ -246,6 +278,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -256,6 +289,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -268,6 +302,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -282,6 +317,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -296,6 +332,7 @@ function NusantaraApp() {
         setIsCultureBookOpen(false);
         setSelectedPlace(null);
         setIsKalenderAcaraOpen(false);
+        setInitialEventId(null);
         setIsKalenderPopupOpen(false);
         setIsJurnalBudayaOpen(false);
         setIsAboutPageOpen(false);
@@ -317,6 +354,8 @@ function NusantaraApp() {
           setSelectedPlace(found);
           document.title = `${found.name} - Hamemayu`;
         }
+      } else if (route === 'pembayaran' || route === 'checkout' || route === 'payment') {
+        document.title = 'Pembayaran & Checkout E-Tiket - Hamemayu';
       }
     };
 
@@ -327,16 +366,25 @@ function NusantaraApp() {
       window.removeEventListener('hashchange', handleUrlRoute);
       window.removeEventListener('popstate', handleUrlRoute);
     };
-  }, [places]);
+  }, [places, currentUser, openLogin]);
 
 
   // Close all modal/pages and sync URL back to home
   const handleCloseToHome = () => {
+    setEventMapTarget(null);
     window.location.hash = '#/home';
   };
 
   // URL Hash-based lightweight navigation handlers
   const handleOpenCultureBookWithTab = (tab = 'badges-quests') => {
+    if (!currentUser || currentUser.isGuest) {
+      openLogin({
+        benefitType: 'general',
+        title: 'Masuk Akun Diperlukan',
+        description: 'Silakan masuk terlebih dahulu untuk mengakses Paspor Budaya, Wishlist, dan Tiket Anda.'
+      });
+      return;
+    }
     window.location.hash = `#/buku-budaya/${tab}`;
   };
 
@@ -925,8 +973,13 @@ function NusantaraApp() {
         {isNearMeOpen && (
           <NearMeModal
             isOpen={isNearMeOpen}
-            onClose={handleCloseToHome}
+            onClose={() => {
+              setEventMapTarget(null);
+              handleCloseToHome();
+            }}
             places={places}
+            eventTarget={eventMapTarget}
+            onClearEventTarget={() => setEventMapTarget(null)}
             onSelectPlace={(place) => { window.location.hash = `#/destinasi/${place.id}`; }}
             autoDetectedZoneId={autoDetectedZoneId}
             userLiveCoords={userLiveCoords}
@@ -961,11 +1014,14 @@ function NusantaraApp() {
         {isKalenderAcaraOpen && (
           <KalenderAcaraPage
             isOpen={isKalenderAcaraOpen}
+            initialEventId={initialEventId}
             onClose={() => {
               setIsKalenderPopupOpen(false);
+              setInitialEventId(null);
               handleCloseToHome();
             }}
             onPopupChange={setIsKalenderPopupOpen}
+            onShowEventLocation={handleShowEventLocation}
             onSelectPlace={(place) => {
               setIsKalenderPopupOpen(false);
               window.location.hash = `#/destinasi/${place.id}`;
@@ -1044,6 +1100,9 @@ function NusantaraApp() {
             }}
           />
         )}
+
+        {/* Modal Pembayaran Dummy & E-Tiket Resmi */}
+        <PaymentModal />
     </div>
   );
 }
@@ -1054,7 +1113,9 @@ export default function App() {
       <AuthProvider>
         <CultureBookProvider>
           <CommunityProvider>
-            <NusantaraApp />
+            <PaymentProvider>
+              <NusantaraApp />
+            </PaymentProvider>
           </CommunityProvider>
         </CultureBookProvider>
       </AuthProvider>
