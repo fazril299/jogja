@@ -176,7 +176,7 @@ export default function NearMeModal({
 
   const [activeMapLayer, setActiveMapLayer] = useState('google-streets'); // Default: Google Maps HD Super Cepat
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true); // Panel floating drawer di dalam peta
-  const [isMobilePopupCollapsed, setIsMobilePopupCollapsed] = useState(false); // Mobile: popup sisi atas (bisa ditutup/buka)
+  const [isMobilePopupCollapsed, setIsMobilePopupCollapsed] = useState(true); // Mobile: popup sisi atas (bisa ditutup/buka)
   const [localUserCoords, setLocalUserCoords] = useState(null); // Lokasi live instan dari browser
   const [isGpsRequesting, setIsGpsRequesting] = useState(false); // Status loading saat dialog izin browser muncul
   const [gpsErrorMessage, setGpsErrorMessage] = useState(''); // Pesan error verifikasi GPS
@@ -234,8 +234,11 @@ export default function NearMeModal({
       setSelectedCardId(eventTarget.id);
       setShowGpsRequiredPrompt(false);
       setIsSidePanelOpen(true);
+      setIsMobilePopupCollapsed(false);
+    } else {
+      setIsMobilePopupCollapsed(true);
     }
-  }, [eventTarget]);
+  }, [eventTarget, isOpen]);
 
   // Sinkronisasi saat GPS mendeteksi wilayah terdekat di dalam D.I. Yogyakarta
   useEffect(() => {
@@ -2544,26 +2547,28 @@ export default function NearMeModal({
                   exit={{ y: -12, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   onClick={() => setIsMobilePopupCollapsed(false)}
-                  className="bg-white/95 backdrop-blur-md rounded-2xl border border-[#E8DFC9] shadow-md p-2 flex items-center justify-between gap-2 cursor-pointer active:scale-[0.99] select-none"
+                  className="bg-white/95 backdrop-blur-md rounded-2xl border border-[#E8DFC9] shadow-[0_4px_20px_rgba(45,24,12,0.12)] p-2.5 flex items-center justify-between gap-2.5 cursor-pointer active:scale-[0.99] select-none group hover:border-[#8c532b]/40 transition-all"
                   title="Ketuk untuk mencari atau melihat daftar kuliner"
                 >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="w-7 h-7 rounded-lg bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center shrink-0">
-                      <Search size={14} />
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-xl bg-[#8c532b]/10 text-[#8c532b] flex items-center justify-center shrink-0 group-hover:bg-[#8c532b]/15 transition-colors">
+                      <Search size={15} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-['Outfit'] font-bold text-xs text-[#2d180c] truncate m-0 leading-tight">
-                        {searchQuery ? `Cari: "${searchQuery}"` : `Radar Kuliner ${activeZone.wilayahName.split(',')[0]}`}
+                      <h3 className="font-['Outfit'] font-bold text-[12.5px] text-[#2d180c] truncate m-0 leading-tight">
+                        {searchQuery ? `Cari: "${searchQuery}"` : `Cari kuliner di ${activeZone.wilayahName.split(',')[0]}...`}
                       </h3>
-                      <p className="text-[10px] text-[#786154] truncate m-0 leading-none mt-0.5">
-                        {filteredItems.length} Tempat • Ketuk untuk buka daftar
+                      <p className="text-[10px] text-[#786154] truncate m-0 leading-none mt-1 flex items-center gap-1.5">
+                        <span className="font-semibold text-[#8c532b]">{filteredItems.length} Tempat</span>
+                        <span>•</span>
+                        <span>Ketuk untuk buka daftar</span>
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-bold text-[#8c532b] bg-[#FAF6EE] px-2 py-0.5 rounded-lg border border-[#E8DFC9] flex items-center gap-0.5 shrink-0">
+                  <span className="text-[11px] font-bold text-[#8c532b] bg-[#FAF6EE] px-2.5 py-1 rounded-xl border border-[#E8DFC9] flex items-center gap-1 shrink-0 shadow-2xs group-hover:bg-[#F2ECE1] transition-colors">
                     <span>Daftar</span>
-                    <ChevronDown size={12} />
+                    <ChevronDown size={13} />
                   </span>
                 </motion.div>
               ) : (
