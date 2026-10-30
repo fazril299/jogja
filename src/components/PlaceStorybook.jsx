@@ -75,10 +75,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'malioboro-tugu') {
     return {
       photos: [
-        '/assets/images/jogja_tugu.jpg',
-        '/assets/images/jogja_malioboro.jpg',
-        '/assets/images/jogja_tugu.jpg',
-        '/assets/images/jogja_malioboro.jpg'
+        '/assets/images/jogja_tugu.webp',
+        '/assets/images/jogja_malioboro.webp',
+        '/assets/images/jogja_tugu.webp',
+        '/assets/images/jogja_malioboro.webp'
       ],
       reviews: [
         {
@@ -87,7 +87,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Pesona Malam Tugu Pal Putih',
-          photoUrl: '/assets/images/jogja_tugu.jpg',
+          photoUrl: '/assets/images/jogja_tugu.webp',
           comment: 'Menikmati malam di sekitar Tugu Pal Putih sambil menyeruput Kopi Joss Lik Man adalah pengalaman yang sangat otentik. Atmosfer poros utara Sumbu Filosofis terasa sangat magis.',
           date: '2026-03-05T20:10:00.000Z'
         },
@@ -97,7 +97,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Menyusuri Trotoar Malioboro & Titik Nol',
-          photoUrl: '/assets/images/jogja_malioboro.jpg',
+          photoUrl: '/assets/images/jogja_malioboro.webp',
           comment: 'Pedestrian Malioboro sekarang sangat tertata dan bersih. Berjalan kaki dari stasiun hingga Titik Nol Kilometer, mampir ke Pasar Beringharjo untuk belanja batik tradisional.',
           date: '2026-03-04T18:30:00.000Z'
         },
@@ -107,7 +107,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Kudapan Lumpia Samijaya & Angkringan',
-          photoUrl: '/assets/images/jogja_malioboro.jpg',
+          photoUrl: '/assets/images/jogja_malioboro.webp',
           comment: 'Lumpia Samijaya isi telur puyuh yang disajikan panas-panas tidak pernah mengecewakan. Ditutup wedang jahe di angkringan, sempurna untuk melepas lelah.',
           date: '2026-03-02T21:15:00.000Z'
         },
@@ -117,7 +117,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Harmoni Lampu Klasik & Musisi Jalanan',
-          photoUrl: '/assets/images/jogja_tugu.jpg',
+          photoUrl: '/assets/images/jogja_tugu.webp',
           comment: 'Lampu gantung temaram Malioboro dan lantunan musik akustik seniman jalanan selalu menghadirkan kerinduan mendalam untuk selalu kembali ke Jogja.',
           date: '2026-02-28T19:40:00.000Z'
         }
@@ -128,10 +128,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'kotagede') {
     return {
       photos: [
-        '/assets/images/jogja_kotagede.jpg',
-        '/assets/images/jogja_batik.jpg',
-        '/assets/images/jogja_kotagede.jpg',
-        '/assets/images/jogja_batik.jpg'
+        '/assets/images/jogja_kotagede.webp',
+        '/assets/images/jogja_batik.webp',
+        '/assets/images/jogja_kotagede.webp',
+        '/assets/images/jogja_batik.webp'
       ],
       reviews: [
         {
@@ -140,7 +140,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Lorong Bata Merah Masjid Gedhe Mataram 1586',
-          photoUrl: '/assets/images/jogja_kotagede.jpg',
+          photoUrl: '/assets/images/jogja_kotagede.webp',
           comment: 'Menelusuri lorong kuno berdinding bata merah tanpa semen dan berziarah ke Makam Raja-Raja Mataram Islam membawa rasa takjub akan kejayaan peradaban abad ke-16.',
           date: '2026-03-06T10:15:00.000Z'
         },
@@ -150,7 +150,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Kehalusan Perak Filigri Jl. Kemasan',
-          photoUrl: '/assets/images/jogja_kotagede.jpg',
+          photoUrl: '/assets/images/jogja_kotagede.webp',
           comment: 'Keahlian para empu perak Kotagede merajut benang perak tipis menjadi cincin dan miniatur candi sangat mengagumkan. Wajib membawa pulang cendera mata karya lokal.',
           date: '2026-03-03T15:00:00.000Z'
         },
@@ -160,7 +160,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Kudapan Manis Kipo & Bakmi Mbah Gito',
-          photoUrl: '/assets/images/jogja_batik.jpg',
+          photoUrl: '/assets/images/jogja_batik.webp',
           comment: 'Kue Kipo legit khas Kotagede berbahan ketan hijau dan kelapa parut manis sangat lezat. Malamnya ditutup Bakmi Jawa anglo arang di Mbah Gito.',
           date: '2026-03-01T17:20:00.000Z'
         },
@@ -170,7 +170,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Arsitektur Eksotis Rumah Kalang',
-          photoUrl: '/assets/images/jogja_kotagede.jpg',
+          photoUrl: '/assets/images/jogja_kotagede.webp',
           comment: 'Kemegahan fasad Rumah Kalang perpaduan Art Deco Eropa dan ornamen ukir kayu Jawa memperlihatkan sejarah kejayaan saudagar perak masa lampau.',
           date: '2026-02-27T13:45:00.000Z'
         }
@@ -181,10 +181,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'merapi-kaliurang') {
     return {
       photos: [
-        '/assets/images/jogja_merapi.jpg',
-        '/assets/images/jogja_merapi.jpg',
-        '/assets/images/jogja_merapi.jpg',
-        '/assets/images/jogja_merapi.jpg'
+        '/assets/images/jogja_merapi.webp',
+        '/assets/images/jogja_merapi.webp',
+        '/assets/images/jogja_merapi.webp',
+        '/assets/images/jogja_merapi.webp'
       ],
       reviews: [
         {
@@ -193,7 +193,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Adrenalin Lava Tour Jeep Kaliadem',
-          photoUrl: '/assets/images/jogja_merapi.jpg',
+          photoUrl: '/assets/images/jogja_merapi.webp',
           comment: 'Menembus jalur bebatuan lahar dingin Merapi dengan Jeep terbuka dan menyaksikan Bunker Kaliadem dari dekat memberikan rasa hormat mendalam pada kekuatan alam.',
           date: '2026-03-07T08:30:00.000Z'
         },
@@ -203,7 +203,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Romantisme Sejarah di Museum Ullen Sentalu',
-          photoUrl: '/assets/images/jogja_merapi.jpg',
+          photoUrl: '/assets/images/jogja_merapi.webp',
           comment: 'Tur berpemandu di Ullen Sentalu membuka wawasan mendalam tentang surat cinta putri kraton dan filosofi hidup bangsawan Mataram. Suasananya sejuk dan tenteram.',
           date: '2026-03-04T11:20:00.000Z'
         },
@@ -213,7 +213,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Kabut Pagi & Jembatan Gantung Plunyon',
-          photoUrl: '/assets/images/jogja_merapi.jpg',
+          photoUrl: '/assets/images/jogja_merapi.webp',
           comment: 'Pemandangan puncak Gunung Merapi yang gagah dengan latar hutan pinus dan aliran Kalikuning sangat spektakuler. Datanglah sebelum pukul 07.00 pagi.',
           date: '2026-03-02T06:45:00.000Z'
         },
@@ -223,7 +223,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Legit Hangat Jadah Tempe Mbok Carik',
-          photoUrl: '/assets/images/jogja_merapi.jpg',
+          photoUrl: '/assets/images/jogja_merapi.webp',
           comment: 'Kombinasi ketan putih gurih dan tempe bacem manis hangat kegemaran Sri Sultan HB IX adalah santapan wajib saat berhawa dingin di Kaliurang.',
           date: '2026-02-26T16:10:00.000Z'
         }
@@ -234,10 +234,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'prambanan-ratuboko') {
     return {
       photos: [
-        '/assets/images/jogja_prambanan.jpg',
-        '/assets/images/jogja_ratuboko.jpg',
-        '/assets/images/jogja_prambanan.jpg',
-        '/assets/images/jogja_ratuboko.jpg'
+        '/assets/images/jogja_prambanan.webp',
+        '/assets/images/jogja_ratuboko.webp',
+        '/assets/images/jogja_prambanan.webp',
+        '/assets/images/jogja_ratuboko.webp'
       ],
       reviews: [
         {
@@ -246,7 +246,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Magis Sendratari Ramayana Panggung Terbuka',
-          photoUrl: '/assets/images/jogja_prambanan.jpg',
+          photoUrl: '/assets/images/jogja_prambanan.webp',
           comment: 'Menyaksikan Hanoman Obong dengan lingkaran api nyata berlatar Candi Siwa yang disorot lampu malam adalah salah satu pertunjukan terbaik di Asia Tenggara.',
           date: '2026-03-06T19:30:00.000Z'
         },
@@ -256,7 +256,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Senja Emas Gerbang Keraton Ratu Boko',
-          photoUrl: '/assets/images/jogja_ratuboko.jpg',
+          photoUrl: '/assets/images/jogja_ratuboko.webp',
           comment: 'Matahari terbenam tepat di bingkai gerbang batu paduraksa Ratu Boko menghadap dataran Prambanan adalah momen fotografi yang luar biasa indah.',
           date: '2026-03-03T17:45:00.000Z'
         },
@@ -266,7 +266,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Relief Epos Ramayana Candi Siwa 47 Meter',
-          photoUrl: '/assets/images/jogja_prambanan.jpg',
+          photoUrl: '/assets/images/jogja_prambanan.webp',
           comment: 'Detail pahatan relief batu andesit abad ke-9 pada dinding Candi Siwa sangat presisi. Menyusuri lorong pradaksina memberikan penghormatan mendalam pada leluhur.',
           date: '2026-03-01T09:20:00.000Z'
         },
@@ -276,7 +276,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Ayam Goreng Kremes Kalasan Mbok Berek',
-          photoUrl: '/assets/images/jogja_prambanan.jpg',
+          photoUrl: '/assets/images/jogja_prambanan.webp',
           comment: 'Setelah menjelajahi Prambanan, santap siang dengan ayam goreng kalasan bercita rasa manis gurih dan sambal terasi menjadi pelengkap sempurna.',
           date: '2026-02-28T12:40:00.000Z'
         }
@@ -287,10 +287,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'wijilan-prawirotaman') {
     return {
       photos: [
-        '/assets/images/jogja_gudeg.jpg',
-        '/assets/images/jogja_batik.jpg',
-        '/assets/images/jogja_gudeg.jpg',
-        '/assets/images/jogja_keraton.jpg'
+        '/assets/images/jogja_gudeg.webp',
+        '/assets/images/jogja_batik.webp',
+        '/assets/images/jogja_gudeg.webp',
+        '/assets/images/jogja_keraton.webp'
       ],
       reviews: [
         {
@@ -299,7 +299,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Gudeg Kering Khas Wijilan Harum Kayu Bakar',
-          photoUrl: '/assets/images/jogja_gudeg.jpg',
+          photoUrl: '/assets/images/jogja_gudeg.webp',
           comment: 'Kelezatan gudeg kering Wijilan dengan areh santan kental gurih dan sambal krecek pedas manis sangat otentik. Beli dalam kendil tanah liat sangat awet untuk oleh-oleh.',
           date: '2026-03-05T11:30:00.000Z'
         },
@@ -309,7 +309,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Kafe Seni & Gelato Dingin di Prawirotaman',
-          photoUrl: '/assets/images/jogja_gudeg.jpg',
+          photoUrl: '/assets/images/jogja_gudeg.webp',
           comment: 'Kawasan Prawirotaman memiliki atmosfer bohemian yang unik. Menikmati gelato sore hari setelah berjalan kaki keliling kampung seni sangat menyegarkan.',
           date: '2026-03-02T16:45:00.000Z'
         }
@@ -320,10 +320,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'kasongan-imogiri') {
     return {
       photos: [
-        '/assets/images/jogja_batik.jpg',
-        '/assets/images/jogja_keraton.jpg',
-        '/assets/images/jogja_batik.jpg',
-        '/assets/images/jogja_kotagede.jpg'
+        '/assets/images/jogja_batik.webp',
+        '/assets/images/jogja_keraton.webp',
+        '/assets/images/jogja_batik.webp',
+        '/assets/images/jogja_kotagede.webp'
       ],
       reviews: [
         {
@@ -332,7 +332,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Seni Gerabah Tanah Liat Kasongan yang Mendunia',
-          photoUrl: '/assets/images/jogja_batik.jpg',
+          photoUrl: '/assets/images/jogja_batik.webp',
           comment: 'Melihat langsung tangan terampil para perajin Kasongan memutar tanah liat menjadi guci artistik dan terakota dekoratif adalah bukti luhurnya tradisi seni rupa Bantul.',
           date: '2026-03-04T13:15:00.000Z'
         },
@@ -342,7 +342,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Keheningan Ratusan Anak Tangga Makam Imogiri',
-          photoUrl: '/assets/images/jogja_keraton.jpg',
+          photoUrl: '/assets/images/jogja_keraton.webp',
           comment: 'Menaiki ratusan anak tangga batu andesit menuju pusara Sultan Agung di puncak Bukit Pajimatan memberikan getaran spiritual dan rasa khidmat yang mendalam.',
           date: '2026-03-01T15:20:00.000Z'
         }
@@ -353,10 +353,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   if (pId === 'parangtritis-gunungkidul') {
     return {
       photos: [
-        '/assets/images/jogja_parangtritis.jpg',
-        '/assets/images/jogja_tamansari.jpg',
-        '/assets/images/jogja_parangtritis.jpg',
-        '/assets/images/jogja_merapi.jpg'
+        '/assets/images/jogja_parangtritis.webp',
+        '/assets/images/jogja_tamansari.webp',
+        '/assets/images/jogja_parangtritis.webp',
+        '/assets/images/jogja_merapi.webp'
       ],
       reviews: [
         {
@@ -365,7 +365,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Ombak Samudra Hindia & Sunset Paralayang Watugupit',
-          photoUrl: '/assets/images/jogja_parangtritis.jpg',
+          photoUrl: '/assets/images/jogja_parangtritis.webp',
           comment: 'Menatap luasnya cakrawala Samudra Hindia dari atas bukit tebing karst saat senja tiba adalah salah satu pemandangan matahari terbenam paling spektakuler di tanah Jawa.',
           date: '2026-03-06T18:00:00.000Z'
         },
@@ -375,7 +375,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
           userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
           rating: 5,
           headline: 'Pesona Gurun Pasir Gumuk Pasir Barchan',
-          photoUrl: '/assets/images/jogja_parangtritis.jpg',
+          photoUrl: '/assets/images/jogja_parangtritis.webp',
           comment: 'Fenomena langka gumuk pasir barchan satu-satunya di Asia Tenggara. Sangat mengesankan untuk fotografi dan merasakan keunikan bentang alam selatan Jogja.',
           date: '2026-03-03T16:30:00.000Z'
         }
@@ -386,10 +386,10 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
   // DEFAULT: KERATON NGAYOGYAKARTA & TAMANSARI
   return {
     photos: [
-      '/assets/images/jogja_keraton.jpg',
-      '/assets/images/jogja_tamansari.jpg',
-      '/assets/images/jogja_batik.jpg',
-      '/assets/images/jogja_gudeg.jpg'
+      '/assets/images/jogja_keraton.webp',
+      '/assets/images/jogja_tamansari.webp',
+      '/assets/images/jogja_batik.webp',
+      '/assets/images/jogja_gudeg.webp'
     ],
     reviews: [
       {
@@ -398,7 +398,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
         userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop',
         rating: 5,
         headline: 'Ketenangan Pelataran Kedhaton & Bangsal Kencono',
-        photoUrl: '/assets/images/jogja_keraton.jpg',
+        photoUrl: '/assets/images/jogja_keraton.webp',
         comment: 'Menyaksikan langsung ketenangan para Abdi Dalem dan orkestrasi Gamelan Sekaten membawa kedamaian batin luar biasa. Falsafah Hamemayu Hayuning Bawana benar-benar terasa di setiap jengkal pelataran pasir halus.',
         date: '2026-03-06T09:20:00.000Z'
       },
@@ -408,7 +408,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
         userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop',
         rating: 5,
         headline: 'Akustik Magis Sumur Gumuling Tamansari',
-        photoUrl: '/assets/images/jogja_tamansari.jpg',
+        photoUrl: '/assets/images/jogja_tamansari.webp',
         comment: 'Arsitektur Sumur Gumuling di Tamansari sangat memukau secara akustik. Pastikan menyewa jasa pemandu lokal agar memahami lorong bawah tanah dan makna simbolis kanal air zaman Sri Sultan Hamengkubuwono I.',
         date: '2026-03-04T14:45:00.000Z'
       },
@@ -418,7 +418,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
         userAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
         rating: 5,
         headline: 'Filosofi Canting & Batik Tulis Jeron Beteng',
-        photoUrl: '/assets/images/jogja_batik.jpg',
+        photoUrl: '/assets/images/jogja_batik.webp',
         comment: 'Menyelami filosofi motif Parang dan Kawung langsung dari para pembatik sepuh di Jeron Beteng memberikan perspektif baru tentang kesabaran, tata krama, dan kehalusan budi krama Yogyakarta.',
         date: '2026-03-02T16:15:00.000Z'
       },
@@ -428,7 +428,7 @@ const getDestinationReviewsAndPhotos = (targetPlace) => {
         userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop',
         rating: 5,
         headline: 'Gastronomi Pusaka Bale Raos & Gudeg Wijilan',
-        photoUrl: '/assets/images/jogja_gudeg.jpg',
+        photoUrl: '/assets/images/jogja_gudeg.webp',
         comment: 'Mencicipi Bebek Suwar-Suwir dan Bir Jawa di Bale Raos di Magangan Kulon, lalu ditutup Gudeg Yu Djum Wijilan yang dimasak kayu bakar 12 jam. Cita rasa sejati warisan raja Mataram.',
         date: '2026-02-28T13:10:00.000Z'
       }
@@ -618,7 +618,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
   const heroImage =
     activeMapPlace?.coverImage ||
     place?.coverImage ||
-    '/assets/images/jogja_keraton.jpg';
+    '/assets/images/jogja_keraton.webp';
 
   const handleInquireSubmit = (e) => {
     e.preventDefault();
@@ -3362,9 +3362,9 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
 
                       // Fallback photos array for review cards like screenshot (Haka Dimsum, etc.)
                       const sampleReviewPhotos = [
-                        ['/assets/images/jogja_gudeg.jpg', '/assets/images/jogja_malioboro.jpg'],
-                        ['/assets/images/jogja_keraton.jpg', '/assets/images/jogja_batik.jpg'],
-                        ['/assets/images/jogja_tamansari.jpg', '/assets/images/jogja_prambanan.jpg']
+                        ['/assets/images/jogja_gudeg.webp', '/assets/images/jogja_malioboro.webp'],
+                        ['/assets/images/jogja_keraton.webp', '/assets/images/jogja_batik.webp'],
+                        ['/assets/images/jogja_tamansari.webp', '/assets/images/jogja_prambanan.webp']
                       ];
 
                       return displayList.map((revItem, idx) => {
@@ -3508,12 +3508,12 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                       }}
                     >
                       {[
-                        { src: '/assets/images/jogja_gudeg.jpg', title: 'Gudeg Yu Djum' },
-                        { src: '/assets/images/jogja_keraton.jpg', title: 'Keraton Yogyakarta' },
-                        { src: '/assets/images/jogja_malioboro.jpg', title: 'Malioboro' },
-                        { src: '/assets/images/jogja_tamansari.jpg', title: 'Sumur Gumuling' },
-                        { src: '/assets/images/jogja_batik.jpg', title: 'Batik Giriloyo' },
-                        { src: '/assets/images/jogja_prambanan.jpg', title: 'Candi Prambanan' }
+                        { src: '/assets/images/jogja_gudeg.webp', title: 'Gudeg Yu Djum' },
+                        { src: '/assets/images/jogja_keraton.webp', title: 'Keraton Yogyakarta' },
+                        { src: '/assets/images/jogja_malioboro.webp', title: 'Malioboro' },
+                        { src: '/assets/images/jogja_tamansari.webp', title: 'Sumur Gumuling' },
+                        { src: '/assets/images/jogja_batik.webp', title: 'Batik Giriloyo' },
+                        { src: '/assets/images/jogja_prambanan.webp', title: 'Candi Prambanan' }
                       ].map((item, i) => (
                         <div
                           key={i}

@@ -345,7 +345,7 @@ export default function AuthModalMobile({
               }}
             >
               <img
-                src="/assets/images/mascot_login.jpg"
+                src="/assets/images/mascot_login.webp"
                 alt="Jojo Pemandu Budaya"
                 style={{
                   width: '34px',

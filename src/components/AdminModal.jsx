@@ -106,8 +106,8 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
       province: formProvince,
       region: formRegion,
       regionLabel: formProvince.includes('Yogyakarta') ? 'Yogyakarta' : formProvince,
-      coverImage: formCoverImage || '/assets/images/jogja_keraton.jpg',
-      thumbnail: formCoverImage || '/assets/images/jogja_keraton.jpg',
+      coverImage: formCoverImage || '/assets/images/jogja_keraton.webp',
+      thumbnail: formCoverImage || '/assets/images/jogja_keraton.webp',
       soundType: 'wind',
       coordinates: {
         lat: parseFloat(formLat) || -7.8053,
@@ -145,7 +145,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
           {
             category: 'Tradisi',
             name: `Upacara Adat ${formName}`,
-            image: formCoverImage || '/assets/images/jogja_upacara_adat.jpg',
+            image: formCoverImage || '/assets/images/jogja_upacara_adat.webp',
             detail: 'Ritual rasa syukur masyarakat kepada Sang Pencipta dan alam semesta.'
           }
         ]
@@ -164,7 +164,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
           {
             name: `Pusat Budaya ${formName}`,
             type: 'Situs Pusaka',
-            image: formCoverImage || '/assets/images/jogja_tamansari.jpg',
+            image: formCoverImage || '/assets/images/jogja_tamansari.webp',
             desc: 'Pusat bertemunya masyarakat dalam perayaan budaya.'
           }
         ]
@@ -445,7 +445,7 @@ export default function AdminModal({ isOpen, onClose, places = [], onAddNewPlace
                   type="url"
                   value={formCoverImage}
                   onChange={(e) => setFormCoverImage(e.target.value)}
-                  placeholder="/assets/images/jogja_keraton.jpg atau URL gambar"
+                  placeholder="/assets/images/jogja_keraton.webp atau URL gambar"
                   className="w-full p-2.5 rounded-xl bg-neutral-900 border border-white/10 text-xs text-white focus:outline-none focus:border-amber-400"
                 />
               </div>

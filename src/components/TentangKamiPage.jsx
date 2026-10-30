@@ -28,7 +28,7 @@ const DATA_SOURCES = [
     sourceName: 'Kagungan Dalem Karaton Ngayogyakarta Hadiningrat',
     shortTitle: 'Karaton Ngayogyakarta',
     authority: 'Tepas Dwarapura & Kawedanan Hageng Punakawan',
-    image: '/assets/images/sumber_keraton.jpg',
+    image: '/assets/images/sumber_keraton.webp',
     photoLabel: 'Upacara Adat Bangsal Kencana Karaton Ngayogyakarta',
     isAiGenerated: true,
     verifiedData: [
@@ -41,7 +41,7 @@ const DATA_SOURCES = [
     sourceName: 'Balai Pelestarian Kebudayaan (BPK Wilayah X)',
     shortTitle: 'Balai Pelestarian Kebudayaan',
     authority: 'Kementerian Kebudayaan & Unit Warisan Dunia UNESCO',
-    image: '/assets/images/sumber_bpk_prambanan.jpg',
+    image: '/assets/images/sumber_bpk_prambanan.webp',
     photoLabel: 'Ekskavasi & Pelestarian Cagar Budaya Candi Prambanan',
     isAiGenerated: true,
     verifiedData: [
@@ -54,7 +54,7 @@ const DATA_SOURCES = [
     sourceName: 'Dinas Kebudayaan (Kundha Kabudayan) DIY',
     shortTitle: 'Dinas Kebudayaan DIY',
     authority: 'Pemerintah Daerah Daerah Istimewa Yogyakarta',
-    image: '/assets/images/sumber_dinas_kebudayaan.jpg',
+    image: '/assets/images/sumber_dinas_kebudayaan.webp',
     photoLabel: 'Kantor Resmi Dinas Kebudayaan DIY (Jl. Cendana No. 11)',
     isAiGenerated: false,
     verifiedData: [
@@ -67,7 +67,7 @@ const DATA_SOURCES = [
     sourceName: 'Dinas Pariwisata Daerah Istimewa Yogyakarta',
     shortTitle: 'Dinas Pariwisata DIY',
     authority: 'Pemerintah Daerah Daerah Istimewa Yogyakarta',
-    image: '/assets/images/sumber_dinas_pariwisata.jpg',
+    image: '/assets/images/sumber_dinas_pariwisata.webp',
     photoLabel: 'Kantor Resmi Dinas Pariwisata Daerah Istimewa Yogyakarta',
     isAiGenerated: false,
     verifiedData: [
@@ -86,21 +86,21 @@ const OPTIMIZATION_TIPS = [
   {
     action: 'Aktifkan Layanan Lokasi untuk Rekomendasi Kuliner Terdekat',
     target: 'Radar Kuliner',
-    image: '/assets/images/feature_radar_kuliner.jpg',
+    image: '/assets/images/feature_radar_kuliner.webp',
     visualDesc: 'Pusat Kuliner Malioboro',
     tip: 'Akses menu "Kuliner" dan berikan izin penentu lokasi pada perangkat Anda. Hamemayu akan menghitung jarak meter secara presisi menggunakan formula Haversine untuk menampilkan destinasi kuliner legendaris terdekat dengan kepastian daftar menu dan tarif yang transparan.'
   },
   {
     action: 'Selaraskan Rencana Perjalanan dengan Kalender Upacara Adat',
     target: 'Kalender Tradisi',
-    image: '/assets/images/feature_kalender_tradisi.jpg',
+    image: '/assets/images/feature_kalender_tradisi.webp',
     visualDesc: 'Kirab Gunungan Grebeg',
     tip: 'Pastikan waktu kunjungan Anda selaras dengan agenda kebudayaan daerah. Periksa tab "Kalender" untuk mengetahui jadwal pasti pelaksanaan Grebeg, Sekaten, maupun Sendratari Ramayana bulan purnama sebelum menetapkan tanggal perjalanan.'
   },
   {
     action: 'Pahami Ketentuan Busana dan Etika Sebelum Mengunjungi Situs Sakral',
     target: 'Panduan Adab',
-    image: '/assets/images/feature_panduan_adab.jpg',
+    image: '/assets/images/feature_panduan_adab.webp',
     visualDesc: 'Batik Tulis Tradisional',
     tip: 'Sebelum melangkah ke kawasan Keraton, Tamansari, atau makam raja-raja, luangkan waktu membaca Jurnal Adab untuk memastikan busana Anda memenuhi standar kepatutan dan tidak mengenakan motif batik larangan kasultanan.'
   }
@@ -211,7 +211,7 @@ export default function TentangKamiPage({
             <div className="lg:col-span-5 h-full max-h-[380px] sm:max-h-[440px] flex items-center justify-center">
               <div className="relative w-full h-full rounded-t-[100px] rounded-b-3xl overflow-hidden border-2 border-[#E8DFC9] shadow-xl bg-neutral-900 flex flex-col justify-end p-5 sm:p-7">
                 <img
-                  src="/assets/images/jogja_keraton.jpg"
+                  src="/assets/images/jogja_keraton.webp"
                   alt="Kagungan Dalem Keraton Ngayogyakarta Hadiningrat"
                   className="absolute inset-0 w-full h-full object-cover object-center"
                 />

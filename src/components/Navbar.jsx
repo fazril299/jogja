@@ -1215,18 +1215,35 @@ export default function Navbar({
             <span className="text-[10px] tracking-tight">Kuliner</span>
           </motion.button>
 
-          {/* 5. Menu / Akun */}
+          {/* 5. Profil / Akun */}
           <motion.button
             whileTap={{ scale: 0.92 }}
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              closeAll();
+              if (currentUser && !currentUser.isGuest) {
+                if (onOpenCultureBook) {
+                  onOpenCultureBook();
+                } else {
+                  window.location.hash = '#/buku-budaya/badges-quests';
+                }
+              } else {
+                openLogin({
+                  benefitType: 'profile',
+                  title: 'Masuk ke Profil & Paspor Budaya',
+                  description: 'Masuk dengan akun Google untuk membuka profil, koleksi lencana, dan riwayat penjelajahan Jogja Anda.'
+                });
+              }
+            }}
             className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-colors cursor-pointer ${
-              mobileMenuOpen
+              currentView === 'profil' || currentView === 'buku-budaya'
                 ? 'text-[#8c532b] font-bold'
                 : 'text-[#786154] hover:text-[#2d180c] font-medium'
             }`}
           >
-            <div className={`p-1 rounded-xl transition-all ${mobileMenuOpen ? 'bg-[#8c532b]/12 shadow-2xs' : ''}`}>
+            <div className={`p-1 rounded-xl transition-all ${
+              currentView === 'profil' || currentView === 'buku-budaya' ? 'bg-[#8c532b]/12 shadow-2xs' : ''
+            }`}>
               {currentUser && !currentUser.isGuest ? (
                 <img
                   src={currentUser.avatar}
@@ -1234,11 +1251,11 @@ export default function Navbar({
                   className="w-5 h-5 rounded-full object-cover border border-[#8c532b]"
                 />
               ) : (
-                <User size={19} strokeWidth={mobileMenuOpen ? 2.5 : 1.9} />
+                <User size={19} strokeWidth={currentView === 'profil' || currentView === 'buku-budaya' ? 2.5 : 1.9} />
               )}
             </div>
             <span className="text-[10px] tracking-tight">
-              {currentUser && !currentUser.isGuest ? 'Profil' : 'Menu'}
+              {currentUser && !currentUser.isGuest ? 'Profil' : 'Masuk'}
             </span>
           </motion.button>
         </div>

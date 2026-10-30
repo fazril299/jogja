@@ -171,7 +171,7 @@ export function PaymentProvider({ children }) {
                   item.thumbnail ||
                   item.coverImage ||
                   item.image ||
-                  '/assets/images/jogja_keraton.jpg',
+                  '/assets/images/jogja_keraton.webp',
                 price: itemPrice,
                 quantity: options.quantity || 1,
                 date: options.date || new Date().toISOString().split('T')[0]
@@ -230,7 +230,7 @@ export function PaymentProvider({ children }) {
                 item.thumbnail ||
                 item.coverImage ||
                 item.image ||
-                '/assets/images/jogja_keraton.jpg',
+                '/assets/images/jogja_keraton.webp',
               price: price,
               quantity: 1,
               date: new Date().toISOString().split('T')[0]

@@ -6,22 +6,22 @@ export default function AboutSection({ onOpenBooking, onOpenAboutUs, onOpenJurna
   // Pure photographic images of iconic Yogyakarta landmarks with custom focus positions
   const slideshowImages = [
     {
-      src: "/assets/images/jogja_prambanan.jpg",
+      src: "/assets/images/jogja_prambanan.webp",
       alt: "Candi Prambanan Yogyakarta",
       position: "center center"
     },
     {
-      src: "/assets/images/jogja_keraton.jpg",
+      src: "/assets/images/jogja_keraton.webp",
       alt: "Regol Danapratapa Keraton Yogyakarta",
       position: "center 45%"
     },
     {
-      src: "/assets/images/jogja_merapi.jpg",
+      src: "/assets/images/jogja_merapi.webp",
       alt: "Gunung Merapi Yogyakarta",
       position: "center 38%"
     },
     {
-      src: "/assets/images/jogja_tugu.jpg",
+      src: "/assets/images/jogja_tugu.webp",
       alt: "Tugu Pal Putih Yogyakarta",
       position: "center 12%" // Preserves the golden pinnacle / spire of Tugu Pal Putih without cropping
     }

@@ -484,16 +484,17 @@ export default function NearMeModal({
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // Layer Tile Basemap HD
+        // Layer Tile Basemap HD (Terkunci hanya unduh tile area Yogyakarta, hemat data & memori)
         const tileCfg = getTileLayerConfig(activeMapLayer);
         const tileLyr = L.tileLayer(tileCfg.url, {
+          bounds: JOGJA_MAX_BOUNDS,
           maxZoom: tileCfg.maxZoom,
           maxNativeZoom: tileCfg.maxNativeZoom,
           subdomains: tileCfg.subdomains,
           attribution: tileCfg.attribution,
-          updateWhenIdle: false,
+          updateWhenIdle: true,
           updateWhenZooming: false,
-          keepBuffer: 6
+          keepBuffer: 2
         });
 
         tileLyr.addTo(map);
@@ -575,13 +576,14 @@ export default function NearMeModal({
     }
     const tileCfg = getTileLayerConfig(activeMapLayer);
     const newTile = L.tileLayer(tileCfg.url, {
+      bounds: JOGJA_MAX_BOUNDS,
       maxZoom: tileCfg.maxZoom,
       maxNativeZoom: tileCfg.maxNativeZoom,
       subdomains: tileCfg.subdomains,
       attribution: tileCfg.attribution,
-      updateWhenIdle: false,
+      updateWhenIdle: true,
       updateWhenZooming: false,
-      keepBuffer: 6
+      keepBuffer: 2
     });
 
     newTile.addTo(mapInstanceRef.current);

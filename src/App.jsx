@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -26,17 +26,17 @@ import Footer from './components/Footer';
 import QuickViewModal from './components/QuickViewModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Cultural Platform Dedicated Modules (Direct imports for instant, seamless zero-latency switching)
-import PlaceStorybook from './components/PlaceStorybook';
-import NearMeModal from './components/NearMeModal';
-import MyCultureBookModal from './components/MyCultureBookModal';
-import KalenderAcaraPage from './components/KalenderAcaraPage';
-import JurnalBudayaPage from './components/JurnalBudayaPage';
-import TentangKamiPage from './components/TentangKamiPage';
-import KatalogQuestBadgePage from './components/KatalogQuestBadgePage';
-import AdminModal from './components/AdminModal';
-import ShareExperienceModal from './components/ShareExperienceModal';
-import InteractiveMapModal from './components/InteractiveMapModal';
+// Cultural Platform Dedicated Modules (Code-split on demand for ultra-fast initial load)
+const PlaceStorybook = lazy(() => import('./components/PlaceStorybook'));
+const NearMeModal = lazy(() => import('./components/NearMeModal'));
+const MyCultureBookModal = lazy(() => import('./components/MyCultureBookModal'));
+const KalenderAcaraPage = lazy(() => import('./components/KalenderAcaraPage'));
+const JurnalBudayaPage = lazy(() => import('./components/JurnalBudayaPage'));
+const TentangKamiPage = lazy(() => import('./components/TentangKamiPage'));
+const KatalogQuestBadgePage = lazy(() => import('./components/KatalogQuestBadgePage'));
+const AdminModal = lazy(() => import('./components/AdminModal'));
+const ShareExperienceModal = lazy(() => import('./components/ShareExperienceModal'));
+const InteractiveMapModal = lazy(() => import('./components/InteractiveMapModal'));
 
 // Menghitung jarak geodetik nyata (Haversine Formula) dalam satuan meter
 export function calculateRealDistanceMeters(lat1, lng1, lat2, lng2) {
@@ -95,7 +95,8 @@ function NusantaraApp() {
     try {
       const saved = localStorage.getItem('hamemayu_places_v1');
       if (saved) {
-        const parsed = JSON.parse(saved);
+        const sanitized = saved.replace(/\.jpe?g/gi, '.webp');
+        const parsed = JSON.parse(sanitized);
         if (Array.isArray(parsed) && parsed.length > 0) {
           // Merge with master CULTURAL_PLACES so no chapters or fields are missing
           const defaultMap = new Map(CULTURAL_PLACES.map((p) => [p.id, p]));
@@ -854,6 +855,8 @@ function NusantaraApp() {
               ? 'tentang'
               : isNearMeOpen
               ? 'kuliner'
+              : isCultureBookOpen
+              ? 'profil'
               : 'home'
           }
           onOpenBooking={() => handleSelectPlaceById('keraton-yogyakarta')}
@@ -952,7 +955,8 @@ function NusantaraApp() {
           MODALS & DEDICATED FULL-SCREEN PAGES
           ========================================================================= */}
 
-      {/* Dedicated Modals & Full-Screen Pages */}
+      {/* Dedicated Modals & Full-Screen Pages (Lazy Suspense Protected) */}
+      <Suspense fallback={null}>
         {/* Interactive Yogyakarta Destinations & Place Storybook Page */}
         <AnimatePresence>
           {selectedPlace && (
@@ -1121,6 +1125,7 @@ function NusantaraApp() {
             }}
           />
         )}
+      </Suspense>
 
         {/* Modal Pembayaran Dummy & E-Tiket Resmi */}
         <PaymentModal />

@@ -35,7 +35,7 @@ export default function MostLovedDestinations({
       category: 'Poros Sumbu Filosofis UNESCO',
       tagline: 'Pusat kosmologi Kasultanan Mataram Islam, istana air sakral Tamansari, dan keluhuran tradisi warisan dunia.',
       cardDesc: 'Pusat kosmologi Kasultanan Mataram dan istana air sakral Tamansari.',
-      bgImage: '/assets/images/jogja_keraton.jpg',
+      bgImage: '/assets/images/jogja_keraton.webp',
       imagePosition: 'center 45%',
       cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
       textColor: '#2D180C',
@@ -51,7 +51,7 @@ export default function MostLovedDestinations({
       category: 'Denyut Kehidupan & Kota Pusaka',
       tagline: 'Simbol garis kosmologis utara, denyut malam legendaris Pasar Beringharjo, sentra batik, dan aroma arang Kopi Joss.',
       cardDesc: 'Simbol garis kosmologis utara, pasar Beringharjo, dan Kopi Joss.',
-      bgImage: '/assets/images/jogja_malioboro.jpg',
+      bgImage: '/assets/images/jogja_malioboro.webp',
       imagePosition: 'center 50%',
       cardBg: '#FFFFFF', // Putih Bersih
       textColor: '#2D180C',
@@ -67,7 +67,7 @@ export default function MostLovedDestinations({
       category: 'Ibu Kota Awal Mataram 1586',
       tagline: 'Lorong bersejarah arsitektur Rumah Kalang, makam pendiri Mataram Islam, serta kriya perak yang mendunia.',
       cardDesc: 'Arsitektur Rumah Kalang, makam Mataram, dan kriya perak dunia.',
-      bgImage: '/assets/images/jogja_kotagede.jpg',
+      bgImage: '/assets/images/jogja_kotagede.webp',
       imagePosition: 'center 72%',
       cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
       textColor: '#2D180C',
@@ -83,7 +83,7 @@ export default function MostLovedDestinations({
       category: 'Warisan Dunia UNESCO Abad ke-9',
       tagline: 'Candi Hindu tertinggi di Indonesia berpadu dengan pesona matahari terbenam di gerbang batu Keraton Ratu Boko.',
       cardDesc: 'Candi Hindu tertinggi berpadu pesona senja Keraton Ratu Boko.',
-      bgImage: '/assets/images/jogja_prambanan.jpg',
+      bgImage: '/assets/images/jogja_prambanan.webp',
       imagePosition: 'center 40%',
       cardBg: '#FFFFFF', // Putih Bersih
       textColor: '#2D180C',
@@ -99,7 +99,7 @@ export default function MostLovedDestinations({
       category: 'Poros Kosmis Utara & Sejarah Keraton',
       tagline: 'Kemegahan gunung sakral Mataram, pesona koleksi seni budaya Museum Ullen Sentalu, dan kesejukan lereng utara.',
       cardDesc: 'Gunung sakral Mataram, Museum Ullen Sentalu, dan lereng sejuk.',
-      bgImage: '/assets/images/jogja_merapi.jpg',
+      bgImage: '/assets/images/jogja_merapi.webp',
       imagePosition: 'center 38%',
       cardBg: '#E8CAAC', // Coksu Lurik Si Jojo
       textColor: '#2D180C',

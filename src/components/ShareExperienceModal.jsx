@@ -17,51 +17,51 @@ import { useCommunity } from '../context/CommunityContext';
 const PRESET_PHOTOS = [
   {
     label: 'Tamansari & Sumur Gumuling',
-    url: '/assets/images/jogja_tamansari.jpg'
+    url: '/assets/images/jogja_tamansari.webp'
   },
   {
     label: 'Bangsal Keraton Ngayogyakarta',
-    url: '/assets/images/jogja_keraton.jpg'
+    url: '/assets/images/jogja_keraton.webp'
   },
   {
     label: 'Suasana Malam Malioboro',
-    url: '/assets/images/jogja_malioboro.jpg'
+    url: '/assets/images/jogja_malioboro.webp'
   },
   {
     label: 'Panorama Gunung Merapi',
-    url: '/assets/images/jogja_merapi.jpg'
+    url: '/assets/images/jogja_merapi.webp'
   },
   {
     label: 'Hajad Dalem Gunungan Grebeg',
-    url: '/assets/images/real_gunungan_grebeg.jpg'
+    url: '/assets/images/real_gunungan_grebeg.webp'
   },
   {
     label: 'Sendratari Ramayana Prambanan',
-    url: '/assets/images/real_ramayana_stage.jpg'
+    url: '/assets/images/real_ramayana_stage.webp'
   },
   {
     label: 'Bregada Prajurit Keraton',
-    url: '/assets/images/real_bregada_keraton.jpg'
+    url: '/assets/images/real_bregada_keraton.webp'
   },
   {
     label: 'Tari Tradisional Srimanganti',
-    url: '/assets/images/real_tari_srimanganti.jpg'
+    url: '/assets/images/real_tari_srimanganti.webp'
   },
   {
     label: 'Batik Tulis Pusaka Giriloyo',
-    url: '/assets/images/real_batik_keraton.jpg'
+    url: '/assets/images/real_batik_keraton.webp'
   },
   {
     label: 'Senja Candi Ratu Boko',
-    url: '/assets/images/jogja_ratuboko.jpg'
+    url: '/assets/images/jogja_ratuboko.webp'
   },
   {
     label: 'Seni Kriya Gerabah Kasongan',
-    url: '/assets/images/jogja_kasongan.jpg'
+    url: '/assets/images/jogja_kasongan.webp'
   },
   {
     label: 'Kuliner Gudeg Wijilan',
-    url: '/assets/images/jogja_gudeg.jpg'
+    url: '/assets/images/jogja_gudeg.webp'
   }
 ];
 

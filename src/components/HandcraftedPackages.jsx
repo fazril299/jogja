@@ -10,7 +10,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
       badge: 'Prambanan & Ratu Boko',
       subtitle: 'Sleman • Candi & Senja Bukit Boko',
       summary: 'Kemegahan candi Hindu abad ke-9 & panorama senja bukit Mataram Kuno.',
-      image: '/assets/images/jogja_prambanan.jpg'
+      image: '/assets/images/jogja_prambanan.webp'
     },
     {
       id: 'wijilan-prawirotaman',
@@ -18,7 +18,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
       badge: 'Kuliner Wijilan & Jejeran',
       subtitle: 'Kota Yogyakarta • Gudeg Pusaka & Sate Klathak',
       summary: 'Gudeg resep pusaka kuali tanah liat & sate klathak otentik dengan kepastian tarif.',
-      image: '/assets/images/jogja_gudeg.jpg'
+      image: '/assets/images/jogja_gudeg.webp'
     },
     {
       id: 'kasongan-imogiri',
@@ -26,7 +26,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
       badge: 'Kasongan & Imogiri',
       subtitle: 'Bantul • Gerabah & Batik Tulis',
       summary: 'Sentra kerajinan gerabah tanah liat & batik tulis warisan leluhur Yogyakarta.',
-      image: '/assets/images/jogja_batik.jpg'
+      image: '/assets/images/jogja_batik.webp'
     },
     {
       id: 'parangtritis-gunungkidul',
@@ -34,7 +34,7 @@ export default function HandcraftedPackages({ id, onOpenBooking, onOpenTourDetai
       badge: 'Parangtritis & Geopark',
       subtitle: 'Gunungkidul • Gumuk Pasir & Geopark',
       summary: 'Fenomena gumuk pasir langka & gugusan tebing karang samudra pesisir selatan.',
-      image: '/assets/images/jogja_parangtritis.jpg'
+      image: '/assets/images/jogja_parangtritis.webp'
     }
   ];
 

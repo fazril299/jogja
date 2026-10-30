@@ -28,7 +28,7 @@ export default function CTAHeroBanner({ onOpenBooking }) {
       >
         {/* Background Image (Yogyakarta Ratu Boko & Prambanan Heritage Landscape) */}
         <img
-          src="/assets/images/jogja_ratuboko.jpg"
+          src="/assets/images/jogja_ratuboko.webp"
           alt="Keraton Ratu Boko Yogyakarta"
           style={{
             position: 'absolute',

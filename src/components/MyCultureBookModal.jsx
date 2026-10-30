@@ -19,6 +19,7 @@ import {
   ChevronDown,
   RefreshCw,
   LogIn,
+  LogOut,
   Calendar,
   BookOpen,
   ExternalLink,
@@ -108,7 +109,7 @@ export default function MyCultureBookModal({
     getBadgeTierStats,
     resetAllBadges
   } = useCultureBook();
-  const { currentUser, openLogin } = useAuth();
+  const { currentUser, openLogin, logout } = useAuth();
   const {
     initiatePayment,
     checkoutWishlist,
@@ -221,7 +222,7 @@ export default function MyCultureBookModal({
         : `${currentUser?.email || 'Member'} • Penjelajah Budaya @ Hamemayu`);
 
   const displayAvatar =
-    currentUser?.avatar || (isGuest ? 'https://api.dicebear.com/7.x/initials/svg?seed=Guest' : '/assets/images/jogja_batik.jpg');
+    currentUser?.avatar || (isGuest ? 'https://api.dicebear.com/7.x/initials/svg?seed=Guest' : '/assets/images/jogja_batik.webp');
 
   useEffect(() => {
     if (
@@ -412,7 +413,7 @@ export default function MyCultureBookModal({
               {/* Banner Keraton Tamansari */}
               <div className="relative h-28 bg-[#2C221E] overflow-hidden">
                 <img
-                  src="/assets/images/jogja_tamansari.jpg"
+                  src="/assets/images/jogja_tamansari.webp"
                   alt="Yogyakarta Heritage Banner"
                   className="w-full h-full object-cover opacity-85"
                 />
@@ -424,7 +425,7 @@ export default function MyCultureBookModal({
 
               {/* Profile Details */}
               <div className="px-4 pb-4 pt-1 relative">
-                {/* Avatar */}
+                {/* Avatar & Action Button */}
                 <div className="flex items-end justify-between -mt-9 mb-2.5">
                   <div className="w-16 h-16 rounded-full bg-white border-2 border-white shadow-md overflow-hidden flex-shrink-0">
                     <img
@@ -433,6 +434,20 @@ export default function MyCultureBookModal({
                       className="w-full h-full object-cover"
                     />
                   </div>
+                  {currentUser && !currentUser.isGuest && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (logout) logout();
+                        if (onClose) onClose();
+                      }}
+                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-rose-50 text-neutral-600 hover:text-rose-600 border border-neutral-200/80 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                      title="Keluar dari Akun"
+                    >
+                      <LogOut size={12} />
+                      <span>Keluar</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Name & Role */}
@@ -595,30 +610,61 @@ export default function MyCultureBookModal({
                     const completedCount = quest.requiredPlaceIds.filter((pId) =>
                       cultureBook.visitedPlaces.includes(pId) || isGpsVerified(pId)
                     ).length;
-                    const isDone = completedCount === quest.requiredPlaceIds.length;
+                    const totalRequired = quest.requiredPlaceIds.length;
+                    const isDone = completedCount === totalRequired;
+                    const progressPercent = Math.round((completedCount / totalRequired) * 100);
+
                     return (
                       <div
                         key={quest.id}
                         onClick={() => onOpenQuestCatalog && onOpenQuestCatalog()}
-                        className={`p-3 rounded-2xl border transition-all cursor-pointer ${
-                          isDone ? 'bg-emerald-50/60 border-emerald-200' : 'bg-white border-[#EAE4DC]'
+                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none active:scale-[0.99] group ${
+                          isDone
+                            ? 'bg-emerald-50/70 border-emerald-200 shadow-2xs'
+                            : 'bg-white hover:bg-[#FAF8F5] border-[#EAE4DC] hover:border-[#D6C7B2] shadow-2xs'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#2C221E] truncate max-w-[200px]">
-                            {quest.title}
-                          </span>
+                        {/* Header: Judul Misi Utuh & Status Badge */}
+                        <div className="flex items-start justify-between gap-2.5 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[12.5px] font-bold text-[#2C221E] leading-snug group-hover:text-[#8A5D26] transition-colors block">
+                              {quest.title}
+                            </span>
+                          </div>
                           <span
-                            className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
-                              isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-[#FAF6EE] text-[#8A5D26] border border-[#E5DEC9]'
+                            className={`shrink-0 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                              isDone
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                : 'bg-[#FAF6EE] text-[#8A5D26] border border-[#E5DEC9]'
                             }`}
                           >
-                            {isDone ? 'Selesai' : `${completedCount}/${quest.requiredPlaceIds.length}`}
+                            {isDone ? '✓ Selesai' : `${completedCount}/${totalRequired}`}
                           </span>
                         </div>
-                        <p className="text-[11px] text-neutral-500 leading-tight">
-                          {quest.description}
-                        </p>
+
+
+
+                        {/* Gamified Mini Progress Bar & Action Cue */}
+                        <div className="pt-2 border-t border-[#F2ECE1] flex items-center justify-between gap-3">
+                          <div className="flex-1 flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-[#EFE9DF] rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-300 ${
+                                  isDone ? 'bg-emerald-500' : 'bg-[#C99B52]'
+                                }`}
+                                style={{ width: `${progressPercent}%` }}
+                              />
+                            </div>
+                            <span className="text-[9.5px] font-bold text-[#8A5D26] shrink-0">
+                              {progressPercent}%
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-0.5 text-[10px] font-bold text-[#8A5D26] group-hover:translate-x-0.5 transition-transform shrink-0">
+                            <span>Buka Misi</span>
+                            <ChevronRight size={11} />
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -746,7 +792,7 @@ export default function MyCultureBookModal({
                       const paid = isItemPaid(item.id);
                       const price = parseItemPrice(item);
                       const paidTicket = paid ? getPaidTicketByItemId(item.id) : null;
-                      const imgSrc = item.thumbnail || item.coverImage || item.image || '/assets/images/jogja_keraton.jpg';
+                      const imgSrc = item.thumbnail || item.coverImage || item.image || '/assets/images/jogja_keraton.webp';
 
                       return (
                         <div
@@ -1317,7 +1363,7 @@ export default function MyCultureBookModal({
               }}
             >
               <img
-                src="/assets/images/jogja_tamansari.jpg"
+                src="/assets/images/jogja_tamansari.webp"
                 alt="Yogyakarta Heritage Banner"
                 style={{
                   width: '100%',
@@ -2324,7 +2370,7 @@ export default function MyCultureBookModal({
                             item.thumbnail ||
                             item.coverImage ||
                             item.image ||
-                            '/assets/images/jogja_keraton.jpg';
+                            '/assets/images/jogja_keraton.webp';
 
                           return (
                             <div

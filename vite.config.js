@@ -19,6 +19,9 @@ export default defineConfig({
             if (id.includes('framer-motion')) {
               return 'vendor-motion';
             }
+            if (id.includes('leaflet')) {
+              return 'vendor-leaflet';
+            }
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }

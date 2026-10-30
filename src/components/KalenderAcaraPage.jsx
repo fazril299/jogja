@@ -1087,7 +1087,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                     >
                       <div className="relative shrink-0">
                         <img
-                          src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                          src={ev.image || '/assets/images/real_grebeg_prajurit.webp'}
                           alt={ev.name}
                           className="w-12 h-12 rounded-xl object-cover border border-[#E8DFC9]"
                         />
@@ -1450,7 +1450,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                       {/* Event Banner Image */}
                       <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-neutral-100">
                         <img
-                          src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                          src={ev.image || '/assets/images/real_grebeg_prajurit.webp'}
                           alt={ev.name}
                           className="w-full h-full object-cover"
                         />
@@ -1766,7 +1766,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                             {/* Thumbnail Foto */}
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden shrink-0 bg-neutral-100">
                               <img
-                                src={ev.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                                src={ev.image || '/assets/images/real_grebeg_prajurit.webp'}
                                 alt={ev.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                               />
@@ -2080,7 +2080,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                   {/* ── HERO BANNER SECTION ── */}
                   <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-neutral-950 select-none">
                     <img
-                      src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.jpg'}
+                      src={activeModalEvent.image || '/assets/images/real_grebeg_prajurit.webp'}
                       alt={activeModalEvent.name}
                       className="w-full h-full object-cover object-center"
                     />
@@ -2381,7 +2381,7 @@ export default function KalenderAcaraPage({ isOpen, onClose, onSelectPlace, onPo
                               <div className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] flex items-center justify-between gap-3 shadow-2xs">
                                 <div className="flex items-center gap-3 min-w-0">
                                   <img
-                                    src={associatedPlace.image || '/assets/images/jogja_keraton.jpg'}
+                                    src={associatedPlace.image || '/assets/images/jogja_keraton.webp'}
                                     alt={associatedPlace.name}
                                     className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#E8DFC9]"
                                   />

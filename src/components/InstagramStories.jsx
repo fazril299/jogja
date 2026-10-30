@@ -6,84 +6,84 @@ export default function InstagramStories() {
   const jogjaSlides = [
     {
       id: 1,
-      src: '/assets/images/jogja_merapi.jpg',
+      src: '/assets/images/jogja_merapi.webp',
       alt: 'Gunung Merapi - Poros Kosmis Utara',
       title: 'Gunung Merapi',
       category: 'Poros Kosmis Utara'
     },
     {
       id: 2,
-      src: '/assets/images/jogja_keraton.jpg',
+      src: '/assets/images/jogja_keraton.webp',
       alt: 'Keraton Ngayogyakarta - Warisan UNESCO',
       title: 'Keraton Ngayogyakarta',
       category: 'Warisan UNESCO'
     },
     {
       id: 3,
-      src: '/assets/images/jogja_tamansari.jpg',
+      src: '/assets/images/jogja_tamansari.webp',
       alt: 'Istana Air Tamansari - Cagar Budaya',
       title: 'Istana Air Tamansari',
       category: 'Cagar Budaya'
     },
     {
       id: 4,
-      src: '/assets/images/jogja_prambanan.jpg',
+      src: '/assets/images/jogja_prambanan.webp',
       alt: 'Candi Prambanan - Mahakarya Abad ke-9',
       title: 'Candi Prambanan',
       category: 'Mahakarya Abad ke-9'
     },
     {
       id: 5,
-      src: '/assets/images/jogja_ratuboko.jpg',
+      src: '/assets/images/jogja_ratuboko.webp',
       alt: 'Senja Ratu Boko - Arkeologi Mataram',
       title: 'Senja Ratu Boko',
       category: 'Arkeologi Mataram'
     },
     {
       id: 6,
-      src: '/assets/images/jogja_kotagede.jpg',
+      src: '/assets/images/jogja_kotagede.webp',
       alt: 'Warisan Kotagede - Ibu Kota Mataram',
       title: 'Warisan Kotagede',
       category: 'Ibu Kota Mataram'
     },
     {
       id: 7,
-      src: '/assets/images/jogja_batik.jpg',
+      src: '/assets/images/jogja_batik.webp',
       alt: 'Kampung Batik Giriloyo - Sentra Batik Tulis',
       title: 'Kampung Batik Giriloyo',
       category: 'Sentra Batik Tulis'
     },
     {
       id: 8,
-      src: '/assets/images/jogja_malioboro.jpg',
+      src: '/assets/images/jogja_malioboro.webp',
       alt: 'Malam Malioboro - Denyut Kota',
       title: 'Malam Malioboro',
       category: 'Denyut Kota'
     },
     {
       id: 9,
-      src: '/assets/images/jogja_gudeg.jpg',
+      src: '/assets/images/jogja_gudeg.webp',
       alt: 'Gudeg Kering Wijilan - Kuliner Legendaris',
       title: 'Gudeg Kering Wijilan',
       category: 'Kuliner Legendaris'
     },
     {
       id: 10,
-      src: '/assets/images/jogja_kasongan.jpg',
+      src: '/assets/images/jogja_kasongan.webp',
       alt: 'Gerabah Kasongan - Kriya Tanah Liat',
       title: 'Gerabah Kasongan',
       category: 'Kriya Tanah Liat'
     },
     {
       id: 11,
-      src: '/assets/images/jogja_parangtritis.jpg',
+      src: '/assets/images/jogja_parangtritis.webp',
       alt: 'Pantai Parangtritis - Poros Segara Kidul',
       title: 'Pantai Parangtritis',
       category: 'Poros Segara Kidul'
     },
     {
       id: 12,
-      src: '/assets/images/jogja_tugu.jpg',
+      src: '/assets/images/jogja_tugu.webp',
       alt: 'Tugu Pal Putih - Sumbu Filosofis',
       title: 'Tugu Pal Putih',
       category: 'Sumbu Filosofis'

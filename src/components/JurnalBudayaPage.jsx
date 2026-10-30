@@ -69,7 +69,7 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
         <section className="relative overflow-hidden bg-black text-white pt-24 sm:pt-28 pb-10 sm:pb-12 px-4 sm:px-8 border-b border-neutral-800">
           <div className="absolute inset-0 opacity-25 pointer-events-none">
             <img
-              src="/assets/images/jogja_keraton.jpg"
+              src="/assets/images/jogja_keraton.webp"
               alt="Keraton Yogyakarta"
               className="w-full h-full object-cover"
             />

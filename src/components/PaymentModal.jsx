@@ -989,7 +989,7 @@ export default function PaymentModal() {
                   item.image ||
                   item.thumbnail ||
                   item.coverImage ||
-                  '/assets/images/jogja_keraton.jpg';
+                  '/assets/images/jogja_keraton.webp';
 
                 return (
                   <div
