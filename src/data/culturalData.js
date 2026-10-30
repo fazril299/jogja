@@ -51,7 +51,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'lumpia-samijaya',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/lumpia-samijaya-malioboro',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/lumpia-samijaya-malioboro-pringgokusuman-e891ec0d-854e-42a3-adb0-490f8f9f6890',
         gofoodMerchant: 'Lumpia Samijaya Malioboro',
         gofoodRating: 4.8,
         gofoodReviews: '3.2k+',
@@ -89,7 +89,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'oseng-mercon-bu-narti',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/oseng-mercon-bu-narti-kh-ahmad-dahlan',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/oseng-oseng-mercon-bu-narti-condongcatur-1cfdd6d2-95de-47bf-ad17-f0e5d8899ec9',
         gofoodMerchant: 'Oseng-Oseng Mercon Bu Narti',
         gofoodRating: 4.7,
         gofoodReviews: '4.8k+',
@@ -128,7 +128,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'gudeg-yu-djum-wijilan',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/gudeg-yu-djum-pusat-wijilan-167',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/gudeg-yu-djum-167-wijilan-ddb027ec-59e1-42c2-bfe8-c8f29b6ca3d5',
         gofoodMerchant: 'Gudeg Yu Djum Pusat Wijilan 167',
         gofoodRating: 4.8,
         gofoodReviews: '7.5k+',
@@ -215,7 +215,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'bakmi-jawa-mbah-gito',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/bakmi-jawa-mbah-gito-rejwangan',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/bakmi-mbah-gito-jl-gito-gati-4099e0b9-c7c4-4498-b18b-be4aea10a77e',
         gofoodMerchant: 'Bakmi Jawa Mbah Gito',
         gofoodRating: 4.9,
         gofoodReviews: '12k+',
@@ -253,7 +253,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'tempo-gelato-prawirotaman',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/tempo-gelato-prawirotaman',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/the-original-gelato-kaliurang-2ddb1901-90bf-432b-b387-88c83a356801',
         gofoodMerchant: 'Tempo Gelato Prawirotaman',
         gofoodRating: 4.9,
         gofoodReviews: '15k+',
@@ -324,7 +324,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'kopi-klotok-pakem',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/warung-kopi-klotok-kaliurang',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/kopi-klotok-jogja-kelapa-f97ff51d-019e-422c-928c-8f3eed97b976',
         gofoodMerchant: 'Warung Kopi Klotok Pakem',
         gofoodRating: 4.8,
         gofoodReviews: '10k+',
@@ -346,7 +346,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'jejamuran-sleman',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/jejamuran-pandowoharjo',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/jejamuran-pandowoharjo-97dd3b04-72ec-484b-8d3f-ea4ae7188dd8',
         gofoodMerchant: 'Jejamuran Resto Sleman',
         gofoodRating: 4.7,
         gofoodReviews: '6.4k+',
@@ -401,7 +401,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'sate-klathak-pak-pong',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/sate-klathak-pak-pong-pusat',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/sate-pak-pong-1-pusat-jejeran-de331feb-7eb2-44ee-b4d9-770d126de123',
         gofoodMerchant: 'Sate Klathak Pak Pong Pusat',
         gofoodRating: 4.8,
         gofoodReviews: '9k+',
@@ -423,7 +423,7 @@ export const JOGJA_GPS_ZONES = [
       {
         id: 'mangut-lele-mbah-marto',
         hasGofood: true,
-        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/mangut-lele-mbok-marto-sewon',
+        gofoodUrl: 'https://gofood.co.id/yogyakarta/restaurant/mangut-lele-dapur-asli-mbok-marto-ijoyo-jl-sewon-indah-598c5a11-1106-4dcb-a3c2-c6344100f67c',
         gofoodMerchant: 'Mangut Lele Mbok Marto Ijoyo',
         gofoodRating: 4.7,
         gofoodReviews: '2.1k+',

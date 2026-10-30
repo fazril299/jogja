@@ -155,6 +155,7 @@ export default function NearMeModal({
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [radiusLimitKm, setRadiusLimitKm] = useState(10); // Radius rekomendasi: 5 KM atau 10 KM
+  const [onlyGofoodFilter, setOnlyGofoodFilter] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [expandedCards, setExpandedCards] = useState({});
   const [activeNavRouteId, setActiveNavRouteId] = useState(null);
@@ -264,6 +265,7 @@ export default function NearMeModal({
         };
       })
       .filter((item) => {
+        if (onlyGofoodFilter && !item.hasGofood) return false;
         const matchesSearch =
           !searchQuery.trim() ||
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -278,8 +280,14 @@ export default function NearMeModal({
 
         return matchesSearch && matchesRadius;
       })
-      .sort((a, b) => (a.realDistanceMeters || 0) - (b.realDistanceMeters || 0));
-  }, [activeZone, currentReferenceCoord, hasUserGps, searchQuery, radiusLimitKm]);
+      .sort((a, b) => {
+        // 1. Prioritas Utama: Tempat yang punya GoFood otomatis muncul di urutan paling atas
+        if (a.hasGofood && !b.hasGofood) return -1;
+        if (!a.hasGofood && b.hasGofood) return 1;
+        // 2. Dalam kelompok yang sama, urutkan berdasarkan jarak terdekat
+        return (a.realDistanceMeters || 0) - (b.realDistanceMeters || 0);
+      });
+  }, [activeZone, currentReferenceCoord, hasUserGps, searchQuery, radiusLimitKm, onlyGofoodFilter]);
 
   const activeItem = useMemo(() => {
     if (eventTarget && selectedCardId === eventTarget.id) {
@@ -1306,7 +1314,7 @@ export default function NearMeModal({
                       )}
                     </AnimatePresence>
 
-                    {/* Tombol Pemesanan GoFood Resmi (Hanya untuk destinasi kuliner, bukan agenda budaya) */}
+{/* Tombol Pemesanan GoFood Resmi (Hanya untuk destinasi kuliner, bukan agenda budaya) */}
                     {!activeItem.isCulturalEvent && (
                       <div className="flex items-center gap-2">
                         <a
@@ -1512,6 +1520,115 @@ export default function NearMeModal({
                             </button>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Filter Chip Cepat: Semua vs GoFood Partner Resmi (Solid Luxury Look) */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#F0EAE1]">
+                        <button
+                          type="button"
+                          onClick={() => setOnlyGofoodFilter(false)}
+                          style={{
+                            flex: 1,
+                            padding: '0.45rem 0.75rem',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.4rem',
+                            cursor: 'pointer',
+                            boxShadow: 'none',
+                            backgroundColor: !onlyGofoodFilter ? '#2C221E' : '#FFFFFF',
+                            color: !onlyGofoodFilter ? '#FFFFFF' : '#2C221E',
+                            border: '1.5px solid #2C221E',
+                            transition: 'background-color 0.15s ease'
+                          }}
+                        >
+                          <span>Semua Kuliner</span>
+                          <span
+                            style={{
+                              fontSize: '0.65rem',
+                              fontWeight: 900,
+                              padding: '0.15rem 0.45rem',
+                              borderRadius: '999px',
+                              backgroundColor: !onlyGofoodFilter ? '#FFFFFF' : '#2C221E',
+                              color: !onlyGofoodFilter ? '#2C221E' : '#FFFFFF',
+                              lineHeight: 1
+                            }}
+                          >
+                            {activeZone.kulinerList.length}
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setOnlyGofoodFilter((prev) => !prev)}
+                          title="Tampilkan hanya kuliner mitra resmi GoFood"
+                          style={{
+                            flex: 1,
+                            padding: '0.45rem 0.75rem',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.45rem',
+                            cursor: 'pointer',
+                            boxShadow: 'none',
+                            backgroundColor: onlyGofoodFilter ? '#EE2737' : '#FFFFFF',
+                            color: onlyGofoodFilter ? '#FFFFFF' : '#EE2737',
+                            border: '1.5px solid #EE2737',
+                            transition: 'background-color 0.15s ease'
+                          }}
+                        >
+                          {/* Official GoFood Logo Disc (Spoon & Fork) */}
+                          <span
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              borderRadius: '999px',
+                              backgroundColor: onlyGofoodFilter ? '#FFFFFF' : '#EE2737',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" style={{ width: '10px', height: '10px' }}>
+                              <path
+                                d="M9 4V10C9 10.55 8.55 11 8 11C7.45 11 7 10.55 7 10V4C7 3.45 7.45 3 8 3C8.55 3 9 3.45 9 4ZM6 4V8C6 8.55 5.55 9 5 9C4.45 9 4 8.55 4 8V4C4 3.45 4.45 3 5 3C5.55 3 6 3.45 6 4ZM10 4V8C10 8.55 9.55 9 9 9C8.45 9 8 8.55 8 8V4C8 3.45 8.45 3 9 3C9.55 3 10 3.45 10 4ZM7 11V20C7 20.55 6.55 21 6 21C5.45 21 5 20.55 5 20V11C4.4 10.6 4 10 4 9.3V4H10V9.3C10 10 9.6 10.6 9 11V20C9 20.55 8.55 21 8 21C7.45 21 7 20.55 7 20Z"
+                                fill={onlyGofoodFilter ? '#EE2737' : '#FFFFFF'}
+                              />
+                              <path
+                                d="M16 3C14.34 3 13 4.79 13 7C13 8.78 13.9 10.28 15.17 10.77V20C15.17 20.55 15.62 21 16.17 21C16.72 21 17.17 20.55 17.17 20V10.77C18.44 10.28 19.34 8.78 19.34 7C19.34 4.79 18 3 16 3Z"
+                                fill={onlyGofoodFilter ? '#EE2737' : '#FFFFFF'}
+                              />
+                            </svg>
+                          </span>
+
+                          {/* Official Typography "gofood" */}
+                          <span style={{ letterSpacing: '-0.02em', fontSize: '0.78rem' }}>
+                            <strong style={{ fontWeight: 900 }}>go</strong>
+                            <span style={{ fontWeight: 700 }}>food</span>
+                          </span>
+
+                          {/* Counter Badge Solid */}
+                          <span
+                            style={{
+                              fontSize: '0.65rem',
+                              fontWeight: 900,
+                              padding: '0.15rem 0.45rem',
+                              borderRadius: '999px',
+                              backgroundColor: onlyGofoodFilter ? '#FFFFFF' : '#EE2737',
+                              color: onlyGofoodFilter ? '#EE2737' : '#FFFFFF',
+                              lineHeight: 1
+                            }}
+                          >
+                            {activeZone.kulinerList.filter((k) => k.hasGofood).length}
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>

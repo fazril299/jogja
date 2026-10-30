@@ -447,7 +447,7 @@ export default function MyCultureBookModal({
                 </p>
 
                 <div className="flex items-center gap-1.5 text-[11px] text-neutral-600 mb-3">
-                  <MapPin size={11} className="text-[#9E1C64] flex-shrink-0" />
+                  <MapPin size={11} className="text-[#8A5D26] flex-shrink-0" />
                   <span className="truncate">
                     {userLiveAddress || 'Daerah Istimewa Yogyakarta, Indonesia'}
                   </span>
@@ -547,7 +547,7 @@ export default function MyCultureBookModal({
                   {/* Progress Bar */}
                   <div className="w-full h-2 bg-[#F4EFE6] rounded-full overflow-hidden mb-3">
                     <div
-                      className="h-full bg-[#2C221E] rounded-full transition-all duration-300"
+                      className="h-full bg-[#8A5D26] rounded-full transition-all duration-300"
                       style={{
                         width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`
                       }}
@@ -684,7 +684,7 @@ export default function MyCultureBookModal({
                               type="button"
                               onClick={() => handleClaimBadgeViaGps(place)}
                               disabled={verifyingPlaceId === place.id}
-                              className="px-2.5 py-1 rounded-lg bg-[#2C221E] text-[#FAF8F5] text-[10px] font-bold border border-[#C99B52] cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg bg-[#8A5D26] hover:bg-[#734816] text-white text-[10px] font-bold border border-[#754B1B] cursor-pointer"
                             >
                               {verifyingPlaceId === place.id ? 'Memproses...' : 'Klaim'}
                             </button>
@@ -858,19 +858,7 @@ export default function MyCultureBookModal({
                       );
                     })}
 
-                    {/* Ringkasan Checkout Bawah Mobile */}
-                    {unpaidWishlistItems.length > 0 && (
-                      <div className="pt-1">
-                        <button
-                          type="button"
-                          onClick={() => checkoutWishlist(unpaidWishlistItems)}
-                          className="w-full py-2.5 px-3 rounded-xl bg-white border border-[#2C221E] text-[#2C221E] text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-none transition-colors hover:bg-[#FAF8F5]"
-                        >
-                          <ShoppingBag size={14} className="text-[#2C221E]" />
-                          <span>Bayar Semua Wishlist ({unpaidWishlistItems.length}) • Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}</span>
-                        </button>
-                      </div>
-                    )}
+
                   </div>
                 )}
               </div>
@@ -904,7 +892,7 @@ export default function MyCultureBookModal({
                         type="button"
                         onClick={() => setTicketStatusFilter('all')}
                         className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
-                          ticketStatusFilter === 'all' ? 'bg-[#2C221E] text-white shadow-2xs' : 'text-neutral-600'
+                          ticketStatusFilter === 'all' ? 'bg-[#8A5D26] text-white shadow-2xs' : 'text-neutral-600'
                         }`}
                       >
                         Semua Status ({paymentHistory.length})
@@ -922,7 +910,7 @@ export default function MyCultureBookModal({
                         type="button"
                         onClick={() => setTicketStatusFilter('used')}
                         className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
-                          ticketStatusFilter === 'used' ? 'bg-neutral-800 text-white shadow-2xs' : 'text-neutral-600'
+                          ticketStatusFilter === 'used' ? 'bg-[#8A5D26] text-white shadow-2xs' : 'text-neutral-600'
                         }`}
                       >
                         Riwayat ({usedTicketsCount})
@@ -944,7 +932,7 @@ export default function MyCultureBookModal({
                             onClick={() => setTicketCategoryFilter(f.id)}
                             className={`px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap cursor-pointer transition-colors text-[10px] ${
                               isSel
-                                ? 'bg-[#2C221E] text-white'
+                                ? 'bg-[#8A5D26] text-white'
                                 : 'bg-[#FAF6EE] text-[#786B5E] border border-[#E5D7BE]'
                             }`}
                           >
@@ -983,8 +971,8 @@ export default function MyCultureBookModal({
                             {order.bookingCode}
                           </span>
                           {order.status === 'REDEEMED' || order.ticketState === 'used' ? (
-                            <span className="text-[9px] font-extrabold text-neutral-300 bg-neutral-800 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                              <Check size={10} className="text-emerald-400" />
+                            <span className="text-[9px] font-extrabold text-[#8A5D26] bg-[#FAF6EE] border border-[#E5D7BE] px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                              <Check size={10} className="text-[#8A5D26]" />
                               <span>SUDAH DIPAKAI</span>
                             </span>
                           ) : (
@@ -1480,7 +1468,7 @@ export default function MyCultureBookModal({
                 <span style={{ fontWeight: 500 }}>{displayRole}</span>
                 <span style={{ color: '#D9CEBA' }}>•</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#786B5E' }}>
-                  <MapPin size={12} color="#9E1C64" />
+                  <MapPin size={12} color="#8A5D26" />
                   <span>
                     {userLiveAddress
                       ? `Lokasi: ${userLiveAddress}`
@@ -1567,7 +1555,7 @@ export default function MyCultureBookModal({
                     style={{
                       height: '100%',
                       width: `${Math.round(((cultureBook.unlockedBadgeIds || []).length / CULTURAL_BADGES.length) * 100)}%`,
-                      backgroundColor: '#2C221E',
+                      backgroundColor: '#8A5D26',
                       borderRadius: '999px'
                     }}
                   />
@@ -1639,17 +1627,20 @@ export default function MyCultureBookModal({
                     width: '100%',
                     padding: '0.55rem',
                     borderRadius: '8px',
-                    backgroundColor: '#2C221E',
-                    color: '#FAF8F5',
-                    border: 'none',
+                    backgroundColor: '#8A5D26',
+                    color: '#FFFFFF',
+                    border: '1px solid #754B1B',
                     fontSize: '0.74rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.35rem'
+                    gap: '0.35rem',
+                    transition: 'background-color 0.15s ease'
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#734816')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#8A5D26')}
                 >
                   <span>Cara Klaim Badge Lengkap</span>
                   <ChevronRight size={13} />
@@ -1821,8 +1812,8 @@ export default function MyCultureBookModal({
                                   style={{
                                     padding: '0.26rem 0.65rem',
                                     borderRadius: '6px',
-                                    backgroundColor: '#2C221E',
-                                    border: '1px solid #C99B52',
+                                    backgroundColor: '#8A5D26',
+                                    border: '1px solid #754B1B',
                                     color: '#FAF8F5',
                                     fontSize: '0.68rem',
                                     fontWeight: 700,
@@ -2517,35 +2508,7 @@ export default function MyCultureBookModal({
                         })}
                       </div>
 
-                      {/* Tombol Checkout Wishlist Bawah Desktop - Simpel Putih Solid */}
-                      {unpaidWishlistItems.length > 0 && (
-                        <div style={{ marginTop: '1.25rem' }}>
-                          <button
-                            type="button"
-                            onClick={() => checkoutWishlist(unpaidWishlistItems)}
-                            style={{
-                              width: '100%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '0.65rem',
-                              backgroundColor: '#FFFFFF',
-                              color: '#2C221E',
-                              border: '1.5px solid #2C221E',
-                              borderRadius: '12px',
-                              padding: '0.85rem 1.5rem',
-                              fontSize: '0.9rem',
-                              fontWeight: 800,
-                              cursor: 'pointer',
-                              boxShadow: 'none',
-                              transition: 'background-color 0.15s ease'
-                            }}
-                          >
-                            <ShoppingBag size={18} color="#2C221E" />
-                            <span>Checkout & Bayar Semua Sekaligus ({unpaidWishlistItems.length} Item) • Rp {totalWishlistUnpaidAmount.toLocaleString('id-ID')}</span>
-                          </button>
-                        </div>
-                      )}
+
                     </>
                   )}
                 </div>
@@ -2629,7 +2592,7 @@ export default function MyCultureBookModal({
                                 padding: '0.35rem 0.85rem',
                                 borderRadius: '999px',
                                 border: 'none',
-                                backgroundColor: isSel ? '#2C221E' : 'transparent',
+                                backgroundColor: isSel ? '#8A5D26' : 'transparent',
                                 color: isSel ? '#FFFFFF' : '#6B5E54',
                                 fontSize: '0.74rem',
                                 fontWeight: isSel ? 800 : 600,
@@ -2659,9 +2622,9 @@ export default function MyCultureBookModal({
                               style={{
                                 padding: '0.35rem 0.85rem',
                                 borderRadius: '999px',
-                                border: isSelected ? '1.5px solid #2C221E' : '1px solid #E5D7BE',
+                                border: isSelected ? '1.5px solid #8A5D26' : '1px solid #E5D7BE',
                                 backgroundColor: isSelected ? '#FAF6EE' : '#FFFFFF',
-                                color: isSelected ? '#2C221E' : '#786B5E',
+                                color: isSelected ? '#8A5D26' : '#786B5E',
                                 fontSize: '0.73rem',
                                 fontWeight: isSelected ? 800 : 600,
                                 cursor: 'pointer',
@@ -2697,7 +2660,7 @@ export default function MyCultureBookModal({
                         type="button"
                         onClick={() => setActiveTab('wishlist')}
                         style={{
-                          backgroundColor: '#2C221E',
+                          backgroundColor: '#8A5D26',
                           color: '#FAF8F5',
                           border: 'none',
                           borderRadius: '10px',
@@ -2735,7 +2698,7 @@ export default function MyCultureBookModal({
                           <div
                             style={{
                               padding: '0.9rem 1.15rem',
-                              backgroundColor: '#2C221E',
+                              backgroundColor: '#8A5D26',
                               color: '#FAF8F5',
                               display: 'flex',
                               alignItems: 'center',
@@ -2755,14 +2718,15 @@ export default function MyCultureBookModal({
                                   fontWeight: 800,
                                   padding: '0.2rem 0.65rem',
                                   borderRadius: '999px',
-                                  backgroundColor: '#1F2937',
-                                  color: '#E5E7EB',
+                                  backgroundColor: 'rgba(255, 255, 255, 0.16)',
+                                  border: '1px solid rgba(255, 255, 255, 0.4)',
+                                  color: '#FFFFFF',
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '0.25rem'
                                 }}
                               >
-                                <Check size={11} color="#34D399" />
+                                <Check size={11} color="#FFFFFF" />
                                 <span>SUDAH DIPAKAI</span>
                               </span>
                             ) : (
@@ -2772,14 +2736,14 @@ export default function MyCultureBookModal({
                                   fontWeight: 800,
                                   padding: '0.2rem 0.65rem',
                                   borderRadius: '999px',
-                                  backgroundColor: '#8A5D26',
-                                  color: '#FFFFFF',
+                                  backgroundColor: '#FFFFFF',
+                                  color: '#8A5D26',
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '0.35rem'
                                 }}
                               >
-                                <span style={{ width: '6px', height: '6px', borderRadius: '999px', backgroundColor: '#FDFBF7', display: 'inline-block' }} />
+                                <span style={{ width: '6px', height: '6px', borderRadius: '999px', backgroundColor: '#8A5D26', display: 'inline-block' }} />
                                 <span>SIAP PAKAI</span>
                               </span>
                             )}
