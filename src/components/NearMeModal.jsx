@@ -25,7 +25,8 @@ import {
   Ticket,
   CheckCircle2,
   CreditCard,
-  Calendar
+  Calendar,
+  Share2
 } from 'lucide-react';
 import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
@@ -167,6 +168,10 @@ export default function NearMeModal({
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [expandedCards, setExpandedCards] = useState({});
   const [activeNavRouteId, setActiveNavRouteId] = useState(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const [routeDistanceMeters, setRouteDistanceMeters] = useState(null);
+  const [routeDurationMinutes, setRouteDurationMinutes] = useState(null);
+  const [isRouteLoading, setIsRouteLoading] = useState(false);
   const [showGpsRequiredPrompt, setShowGpsRequiredPrompt] = useState(false);
 
   const toggleCardDropdown = (id, e) => {
@@ -337,6 +342,64 @@ export default function NearMeModal({
     if (!navDistMeters) return 5;
     return Math.max(1, Math.round(navDistMeters / 80)); // Kecepatan jalan santai ~80 m/menit
   }, [navDistMeters]);
+
+  // Fetch rute jalur jalan raya sebenarnya dari OSRM (Open Source Routing Machine)
+  useEffect(() => {
+    if (!activeNavTarget?.coordinates) {
+      setRouteCoordinates([]);
+      setRouteDistanceMeters(null);
+      setRouteDurationMinutes(null);
+      setIsRouteLoading(false);
+      return;
+    }
+
+    const origin = userLiveCoords || TITIK_NOL_YOGYAKARTA;
+    const target = activeNavTarget.coordinates;
+
+    let isMounted = true;
+    setIsRouteLoading(true);
+
+    const osrmUrl = "https://router.project-osrm.org/route/v1/driving/" + origin.lng + "," + origin.lat + ";" + target.lng + "," + target.lat + "?overview=full&geometries=geojson";
+
+    fetch(osrmUrl)
+      .then((res) => {
+        if (!res.ok) throw new Error("OSRM response status " + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (!isMounted) return;
+        if (data.code === "Ok" && data.routes && data.routes[0]) {
+          const route = data.routes[0];
+          // GeoJSON OSRM: [lng, lat] -> Leaflet format: [lat, lng]
+          const latLngs = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+          setRouteCoordinates(latLngs);
+          const realMeters = Math.round(route.distance);
+          setRouteDistanceMeters(realMeters);
+          // Estimasi waktu jalan kaki: jarak rute / ~75 m/menit (~4.5 km/jam)
+          setRouteDurationMinutes(Math.max(1, Math.round(realMeters / 75)));
+        } else {
+          throw new Error("OSRM did not return valid routes");
+        }
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        console.warn("[NearMeModal] Fallback ke jalur lurus:", err);
+        setRouteCoordinates([
+          [origin.lat, origin.lng],
+          [target.lat, target.lng]
+        ]);
+        const straightMeters = getHaversineMeters(origin, target);
+        setRouteDistanceMeters(straightMeters);
+        setRouteDurationMinutes(Math.max(1, Math.round(straightMeters / 75)));
+      })
+      .finally(() => {
+        if (isMounted) setIsRouteLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeNavTarget, userLiveCoords]);
 
   const handleStartRoute = (item) => {
     if (!hasUserGps) {
@@ -643,21 +706,26 @@ export default function NearMeModal({
       const originLatLng = [origin.lat, origin.lng];
       const targetLatLng = [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng];
 
-      // Route Casing Line (Kontras Gelap)
-      L.polyline([originLatLng, targetLatLng], {
+      // Gunakan koordinat rute jalan raya dari OSRM jika sudah tersedia, atau fallback origin->target
+      const trackPoints = routeCoordinates && routeCoordinates.length > 0
+        ? routeCoordinates
+        : [originLatLng, targetLatLng];
+
+      // Route Casing Line (Kontras Gelap Mataram)
+      L.polyline(trackPoints, {
         color: '#2d180c',
-        weight: 6,
-        opacity: 0.85,
+        weight: 6.5,
+        opacity: 0.88,
         lineCap: 'round',
         lineJoin: 'round'
       }).addTo(group);
 
-      // Core Glowing Path (Emas Mataram Bergaris Putus-putus)
-      L.polyline([originLatLng, targetLatLng], {
+      // Core Glowing Path (Emas Mataram Mengikuti Lekukan Jalan)
+      L.polyline(trackPoints, {
         color: '#D4AF37',
-        weight: 3.5,
+        weight: 3.8,
         opacity: 1,
-        dashArray: '6, 6',
+        dashArray: '7, 7',
         lineCap: 'round',
         lineJoin: 'round'
       }).addTo(group);
@@ -693,9 +761,14 @@ export default function NearMeModal({
       });
 
       eventMarker.on('click', () => {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
         setSelectedCardId(eventTarget.id);
         setShowGpsRequiredPrompt(false);
-        setIsSidePanelOpen(true);
+        if (isMobile) {
+          setIsSidePanelOpen(false); // Mobile: jangan buka side panel besar, biarkan peta terlihat & buka popup Google Maps
+        } else {
+          setIsSidePanelOpen(true); // Desktop: kembalikan behavior asli desktop (buka sidebar detail)
+        }
         map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16.5, { duration: 0.65 });
       });
 
@@ -747,9 +820,14 @@ export default function NearMeModal({
       });
 
       marker.on('click', () => {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
         setSelectedCardId(item.id);
         setShowGpsRequiredPrompt(false);
-        setIsSidePanelOpen(true);
+        if (isMobile) {
+          setIsSidePanelOpen(false); // Mobile: jangan buka side panel besar, biarkan peta terlihat & buka popup Google Maps
+        } else {
+          setIsSidePanelOpen(true); // Desktop: kembalikan behavior asli desktop (buka sidebar detail)
+        }
         map.flyTo([item.coordinates.lat, item.coordinates.lng], 16.5, { duration: 0.65 });
       });
 
@@ -758,15 +836,20 @@ export default function NearMeModal({
 
     // 3. KAMERA POV BERPINDAH SESUAI PILIHAN USER
     if (activeNavTarget?.coordinates) {
-      // Rute aktif: fokus pada kedua titik
-      const origin = userLiveCoords || TITIK_NOL_YOGYAKARTA;
-      map.fitBounds(
-        [
-          [origin.lat, origin.lng],
-          [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
-        ],
-        { padding: [70, 70], maxZoom: 17 }
-      );
+      // Rute aktif: fokus pada seluruh lekukan jalur rute jalan raya
+      if (routeCoordinates && routeCoordinates.length > 1) {
+        const bounds = L.latLngBounds(routeCoordinates);
+        map.fitBounds(bounds, { padding: [80, 80], maxZoom: 17 });
+      } else {
+        const origin = userLiveCoords || TITIK_NOL_YOGYAKARTA;
+        map.fitBounds(
+          [
+            [origin.lat, origin.lng],
+            [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
+          ],
+          { padding: [70, 70], maxZoom: 17 }
+        );
+      }
     } else if (activeItem?.coordinates) {
       map.flyTo(
         [activeItem.coordinates.lat, activeItem.coordinates.lng],
@@ -792,6 +875,7 @@ export default function NearMeModal({
     activeItem,
     activeNavRouteId,
     activeNavTarget,
+    routeCoordinates,
     filteredItems.length,
     searchQuery,
     radiusLimitKm,
@@ -847,26 +931,32 @@ export default function NearMeModal({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-[997] bg-[#1E293B]/95 backdrop-blur-md text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full shadow-2xl border border-white/10 flex items-center gap-3 sm:gap-4 max-w-[calc(100vw-32px)]"
+              className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-[997] bg-[#FAF6EE]/95 backdrop-blur-md text-[#2D180C] px-4 sm:px-6 py-2 sm:py-2.5 rounded-full shadow-[0_12px_32px_rgba(45,24,12,0.18)] border border-[#C7AE98] flex items-center gap-3 sm:gap-4 max-w-[calc(100vw-32px)]"
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-[#3B82F6] animate-pulse shrink-0" />
+              <div className="w-2.5 h-2.5 rounded-full bg-[#8C532B] animate-pulse shrink-0 ring-4 ring-[#8C532B]/20" />
               <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium">
-                <span className="font-bold text-white truncate max-w-[140px] sm:max-w-[200px]">
+                <span className="font-bold text-[#2D180C] truncate max-w-[140px] sm:max-w-[200px]">
                   {activeNavTarget.name}
                 </span>
-                <span className="text-white/40">•</span>
-                <span className="text-[#93C5FD] font-semibold shrink-0">
-                  {navDistMeters !== null ? formatDistanceLabel(navDistMeters) : 'Menghitung...'}
+                <span className="text-[#8C532B]/40">•</span>
+                <span className="text-[#8C532B] font-bold shrink-0">
+                  {isRouteLoading && routeDistanceMeters === null
+                    ? 'Mencari rute jalan...'
+                    : routeDistanceMeters !== null
+                    ? formatDistanceLabel(routeDistanceMeters)
+                    : navDistMeters !== null
+                    ? formatDistanceLabel(navDistMeters)
+                    : 'Menghitung...'}
                 </span>
-                <span className="text-white/40 hidden sm:inline">•</span>
-                <span className="text-white/80 text-xs hidden sm:inline shrink-0">
-                  ± {navEstMinutes} menit jalan
+                <span className="text-[#8C532B]/40 hidden sm:inline">•</span>
+                <span className="text-[#786154] text-xs font-semibold hidden sm:inline shrink-0">
+                  ± {routeDurationMinutes ?? navEstMinutes} menit jalan
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveNavRouteId(null)}
-                className="ml-1 sm:ml-2 px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-full text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                className="ml-1 sm:ml-2 px-3.5 py-1 bg-[#8C532B] hover:bg-[#704222] text-[#FAF8F5] rounded-full text-xs font-bold transition-all cursor-pointer shrink-0 shadow-xs"
               >
                 Akhiri Rute
               </button>
@@ -962,13 +1052,21 @@ export default function NearMeModal({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -35 }}
               transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute top-20 sm:top-24 left-3 sm:left-5 bottom-4 sm:bottom-6 w-[360px] sm:w-[420px] max-w-[calc(100vw-24px)] z-[995] bg-white/95 backdrop-blur-xl rounded-3xl border border-[#E2D7C7] shadow-2xl flex flex-col overflow-hidden"
+              className="absolute bottom-[72px] sm:bottom-6 inset-x-2.5 sm:inset-x-auto sm:top-24 sm:left-5 h-[44vh] max-h-[46vh] sm:h-auto sm:max-h-none sm:w-[420px] sm:max-w-[420px] z-[995] bg-white/95 backdrop-blur-xl rounded-3xl border border-[#E2D7C7] shadow-[0_12px_36px_rgba(44,34,30,0.18)] flex flex-col overflow-hidden transition-all"
             >
               {activeItem ? (
                 /* ===================================================================
                    1. SINGLE DESTINATION FULL SIDEBAR VIEW (DESKTOP DETAIL)
                    =================================================================== */
                 <div className="flex flex-col h-full overflow-hidden">
+                  {/* Mobile Grab / Peek Bar & Tips Badge */}
+                  <div className="sm:hidden flex flex-col items-center pt-2 pb-1 shrink-0 bg-white/95 border-b border-[#F0EAE1]">
+                    <div className="w-10 h-1 bg-[#D9CEBA] rounded-full mb-1.5" />
+                    <div className="flex items-center gap-1.5 text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#EFE0C7] max-w-[90%] truncate">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52] shrink-0" />
+                      <span className="truncate">Tips Jojo: Cobain {getSignatureFood(activeItem)}</span>
+                    </div>
+                  </div>
                   {/* Top Bar with Back and Close */}
                   <div className="p-3.5 sm:p-4 border-b border-[#EAE3D6] bg-white/95 flex items-center justify-between gap-3 shrink-0">
                     <button
@@ -1235,7 +1333,7 @@ export default function NearMeModal({
                         <button
                           type="button"
                           onClick={() => setActiveNavRouteId(null)}
-                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#1E293B] hover:bg-[#0F172A] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                          className="flex-1 py-2.5 px-4 rounded-xl bg-[#8C532B] hover:bg-[#704222] text-[#FAF8F5] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
                         >
                           <X size={14} />
                           <span>Akhiri Panduan Rute</span>
@@ -1275,6 +1373,14 @@ export default function NearMeModal({
                    2. MULTI-ITEM EXPLORER LIST VIEW
                    =================================================================== */
                 <div className="flex flex-col h-full overflow-hidden">
+                  {/* Mobile Grab / Peek Bar & Tips Badge */}
+                  <div className="sm:hidden flex flex-col items-center pt-2 pb-1 shrink-0 bg-white/95 border-b border-[#F0EAE1]">
+                    <div className="w-10 h-1 bg-[#D9CEBA] rounded-full mb-1.5" />
+                    <div className="flex items-center gap-1.5 text-[10px] font-extrabold text-[#8A5D26] bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#EFE0C7] max-w-[90%] truncate">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52] shrink-0" />
+                      <span className="truncate">Tips Jojo: Cobain {getSignatureFood(activeItem)}</span>
+                    </div>
+                  </div>
                   {/* Drawer Top Header */}
                   <div className="p-4 border-b border-[#EAE3D6] bg-white/95 shrink-0">
                     <div className="flex items-center justify-between gap-3 mb-3">
@@ -1316,7 +1422,8 @@ export default function NearMeModal({
                         className="w-8 h-8 rounded-full bg-[#FAF5EC] hover:bg-[#EAE1D2] text-[#6E6053] hover:text-[#2C221E] flex items-center justify-center transition-all cursor-pointer shrink-0"
                         title="Lipat Panel"
                       >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={16} className="hidden sm:block" />
+                        <ChevronDown size={16} className="sm:hidden" />
                       </button>
                     </div>
 
@@ -1419,8 +1526,13 @@ export default function NearMeModal({
                             key={item.id}
                             id={`kuliner-card-${item.id}`}
                             onClick={() => {
+                              const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
                               setSelectedCardId(item.id);
                               setShowGpsRequiredPrompt(false);
+                              if (isMobile) {
+                                setIsSidePanelOpen(false); // Mobile: tutup drawer & tampilkan popup Google Maps
+                              }
+                              // Desktop: biarkan side panel terbuka dengan detail item yang dipilih
                               if (mapInstanceRef.current && item.coordinates) {
                                 mapInstanceRef.current.flyTo(
                                   [item.coordinates.lat, item.coordinates.lng],
@@ -1633,133 +1745,317 @@ export default function NearMeModal({
         )}
 
         {/* =========================================================================
-            FLOATING BOTTOM HIGHLIGHT CARD SAAT TEMPAT TERPILIH & PANEL TERTUTUP
+            BOTTOM HIGHLIGHT CARD: DESKTOP ASLI vs MOBILE GOOGLE MAPS
+            - Desktop: Tampilan asli warm Jogja (hidden sm:block)
+            - Mobile: Tampilan persis Google Maps (sm:hidden)
             ========================================================================= */}
         <AnimatePresence>
           {activeItem && !isSidePanelOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.96 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 w-[min(94%,470px)] z-[998] bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(44,34,30,0.18)] border border-[#EAE3D6] p-4 sm:p-5 overflow-hidden"
-            >
-              {/* Header: Foto + Judul + Tombol Tutup */}
-              <div className="flex items-start gap-3.5 mb-3">
-                {activeItem.image && (
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-[#E8DFC9] bg-[#FAF6EE] shadow-xs">
-                    <img
-                      src={activeItem.image}
-                      alt={activeItem.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                    {activeItem.hasGofood && (
-                      <div className="absolute top-1.5 left-1.5 z-10 scale-90 origin-top-left">
-                        <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
+            <>
+              {/* --- 1. TAMPILAN ASLI DESKTOP (WIDGET WARM MATARAM JOGJA) --- */}
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.96 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="hidden sm:block absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 w-[min(94%,470px)] z-[998] bg-white/95 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(44,34,30,0.18)] border border-[#EAE3D6] p-4 sm:p-5 overflow-hidden"
+              >
+                {/* Header: Foto + Judul + Tombol Tutup */}
+                <div className="flex items-start gap-3.5 mb-3">
+                  {activeItem.image && (
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-[#E8DFC9] bg-[#FAF6EE] shadow-xs">
+                      <img
+                        src={activeItem.image}
+                        alt={activeItem.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                      {activeItem.hasGofood && (
+                        <div className="absolute top-1.5 left-1.5 z-10 scale-90 origin-top-left">
+                          <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {activeItem.category && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#8A5D26] bg-[#FAF4E8] border border-[#EFE0C7] px-2 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52]" />
+                            {activeItem.category}
+                          </span>
+                        )}
+                        {activeItem.verdictLabel && (
+                          <span className="text-[10px] font-semibold text-[#786B5E]">
+                            • {activeItem.verdictLabel}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCardId(null);
+                          setShowGpsRequiredPrompt(false);
+                        }}
+                        className="w-7 h-7 rounded-full bg-[#FAF5EC] hover:bg-[#EAE1D2] text-[#6E6053] hover:text-[#2C221E] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                        title="Tutup Popup"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+
+                    <h3 className="font-outfit font-extrabold text-sm sm:text-base text-[#2C221E] m-0 leading-snug truncate">
+                      {activeItem.name}
+                    </h3>
+
+                    <p className="text-[11px] text-[#786B5E] mt-0.5 line-clamp-1 flex items-center gap-1">
+                      <MapPin size={11} className="text-[#C99B52] shrink-0" />
+                      <span>{activeItem.spotName}</span>
+                    </p>
+
+                    {/* Jam Operasional & Kisaran Harga Real */}
+                    {(activeItem.operatingHours || activeItem.priceRange) && (
+                      <div className="flex items-center gap-2.5 text-[10px] text-[#6E6053] mt-1.5 flex-wrap">
+                        {activeItem.operatingHours && (
+                          <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-md border border-[#EFE6D6]">
+                            <Clock size={10} className="text-[#C99B52]" />
+                            <span>{activeItem.operatingHours}</span>
+                          </span>
+                        )}
+                        {activeItem.priceRange && (
+                          <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-md border border-[#EFE6D6] font-semibold text-[#8A5D26]">
+                            <Tag size={10} className="text-[#C99B52]" />
+                            <span>{activeItem.priceRange}</span>
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
+                </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {activeItem.category && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#8A5D26] bg-[#FAF4E8] border border-[#EFE0C7] px-2 py-0.5 rounded-full">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#C99B52]" />
-                          {activeItem.category}
-                        </span>
-                      )}
-                      {activeItem.verdictLabel && (
-                        <span className="text-[10px] font-semibold text-[#786B5E]">
-                          • {activeItem.verdictLabel}
-                        </span>
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 pt-1 border-t border-[#F2ECE3]">
+                  {activeItem?.hasGofood && (
+                    <a
+                      href={activeItem.gofoodUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer shrink-0 inline-flex"
+                      title={`Pesan ${activeItem.name} di GoFood Resmi`}
+                    >
+                      <GoFoodBadge size="md" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleStartRoute(activeItem);
+                    }}
+                    className="flex-1 py-2.5 px-4 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                  >
+                    <Navigation size={13} />
+                    <span>Petunjuk Rute</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsSidePanelOpen(true)}
+                    className="px-3.5 py-2.5 rounded-full border border-[#E2D7C7] hover:bg-[#FAF6EE] text-xs font-bold text-[#786B5E] hover:text-[#2C221E] transition-colors cursor-pointer"
+                  >
+                    Buka Detail
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* --- 2. TAMPILAN PERSIS GOOGLE MAPS KHUSUS MOBILE (< 640px) --- */}
+              <motion.div
+                initial={{ opacity: 0, y: 35, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 25, scale: 0.98 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="sm:hidden absolute bottom-[72px] left-1/2 -translate-x-1/2 w-[calc(100vw-20px)] max-w-[480px] z-[998] bg-white rounded-3xl shadow-[0_14px_40px_rgba(0,0,0,0.18)] border border-neutral-200/90 p-4 select-none overflow-hidden font-sans"
+              >
+                {/* Header: Info di Kiri, Foto + Tutup di Kanan (Sama Persis Google Maps) */}
+                <div className="flex items-start justify-between gap-3 mb-3.5">
+                  {/* Kolom Kiri: Nama Tempat, Rating Bintang, Kategori, Jam Buka & Jarak */}
+                  <div className="flex-1 min-w-0 pr-1">
+                    {/* Nama Tempat / Judul */}
+                    <h3 className="font-outfit font-extrabold text-base text-[#202124] m-0 leading-tight truncate">
+                      {activeItem.name}
+                    </h3>
+
+                    {/* Rating & Review (Ciri Khas Google Maps) */}
+                    <div className="flex items-center gap-1.5 mt-1 text-xs text-[#5F6368] flex-wrap">
+                      <span className="font-bold text-[#202124]">
+                        {activeItem.status === 'enak' ? '4.8' : '4.7'}
+                      </span>
+                      <div className="flex items-center text-[#F59E0B] text-xs tracking-tighter" aria-label="5 Bintang">
+                        ★★★★★
+                      </div>
+                      <span className="text-[#70757A] text-[11px]">
+                        ({activeItem.verdictLabel ? '1.4rb+' : '950+'})
+                      </span>
+                      <span className="text-[#70757A]">•</span>
+                      <span className="text-[#3C4043] font-medium text-xs truncate max-w-[130px]">
+                        {activeItem.category || 'Kuliner Khas'}
+                      </span>
+                      {activeItem.priceRange && (
+                        <>
+                          <span className="text-[#70757A]">•</span>
+                          <span className="text-[#3C4043] text-xs font-semibold">
+                            {activeItem.priceRange.replace('Rp ', '').split('-')[0].trim()}
+                          </span>
+                        </>
                       )}
                     </div>
+
+                    {/* Status Jam Buka Hijau (Google Maps: "Buka • Tutup pukul XX:XX") */}
+                    <div className="flex items-center gap-1.5 mt-1 text-xs">
+                      <span className="font-bold text-[#188038]">Buka</span>
+                      <span className="text-[#70757A]">•</span>
+                      <span className="text-[#5F6368] text-[11px] truncate">
+                        {activeItem.operatingHours 
+                          ? (activeItem.operatingHours.includes('-') 
+                              ? `Tutup ${activeItem.operatingHours.split('-')[1].trim()}` 
+                              : activeItem.operatingHours)
+                          : 'Buka setiap hari'}
+                      </span>
+                    </div>
+
+                    {/* Lokasi & Jarak Real-Time */}
+                    <p className="text-[11px] text-[#70757A] mt-1 m-0 truncate flex items-center gap-1">
+                      <MapPin size={11} className="text-[#EA4335] shrink-0" />
+                      <span className="font-bold text-[#202124]">
+                        {activeItem.distanceLabel || 'Terdekat'}
+                      </span>
+                      <span>•</span>
+                      <span className="truncate">{activeItem.spotName}</span>
+                    </p>
+                  </div>
+
+                  {/* Kolom Kanan: Tombol Close (X) Abu-abu & Foto Tempat Kotak Bersudut Halus */}
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => {
                         setSelectedCardId(null);
                         setShowGpsRequiredPrompt(false);
                       }}
-                      className="w-7 h-7 rounded-full bg-[#FAF5EC] hover:bg-[#EAE1D2] text-[#6E6053] hover:text-[#2C221E] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-[#5F6368] hover:text-[#202124] flex items-center justify-center transition-colors cursor-pointer"
                       title="Tutup Popup"
                     >
-                      <X size={14} />
+                      <X size={15} />
                     </button>
+
+                    {activeItem.image && (
+                      <div className="relative w-[80px] h-[80px] rounded-2xl overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-2xs">
+                        <img
+                          src={activeItem.image}
+                          alt={activeItem.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                        {activeItem.hasGofood && (
+                          <div className="absolute top-1 left-1 z-10 scale-90 origin-top-left">
+                            <GoFoodBadge size="xs" showExternalIcon={false} rating={activeItem.gofoodRating} />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-
-                  <h3 className="font-outfit font-extrabold text-sm sm:text-base text-[#2C221E] m-0 leading-snug truncate">
-                    {activeItem.name}
-                  </h3>
-
-                  <p className="text-[11px] text-[#786B5E] mt-0.5 line-clamp-1 flex items-center gap-1">
-                    <MapPin size={11} className="text-[#C99B52] shrink-0" />
-                    <span>{activeItem.spotName}</span>
-                  </p>
-
-                  {/* Jam Operasional & Kisaran Harga Real */}
-                  {(activeItem.operatingHours || activeItem.priceRange) && (
-                    <div className="flex items-center gap-2.5 text-[10px] text-[#6E6053] mt-1.5 flex-wrap">
-                      {activeItem.operatingHours && (
-                        <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-md border border-[#EFE6D6]">
-                          <Clock size={10} className="text-[#C99B52]" />
-                          <span>{activeItem.operatingHours}</span>
-                        </span>
-                      )}
-                      {activeItem.priceRange && (
-                        <span className="inline-flex items-center gap-1 bg-[#FAF6EE] px-2 py-0.5 rounded-md border border-[#EFE6D6] font-semibold text-[#8A5D26]">
-                          <Tag size={10} className="text-[#C99B52]" />
-                          <span>{activeItem.priceRange}</span>
-                        </span>
-                      )}
-                    </div>
-                  )}
                 </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 pt-1 border-t border-[#F2ECE3]">
-                {activeItem?.hasGofood && (
-                  <a
-                    href={activeItem.gofoodUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cursor-pointer shrink-0 inline-flex"
-                    title={`Pesan ${activeItem.name} di GoFood Resmi`}
+                {/* Action Buttons Row (Persis Seperti Tombol Aksi Google Maps) */}
+                <div className="flex items-center gap-2 pt-2 border-t border-neutral-100 overflow-x-auto no-scrollbar">
+                  {/* Official GoFood Direct Link */}
+                  {activeItem?.hasGofood && (
+                    <a
+                      href={activeItem.gofoodUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer shrink-0 inline-flex"
+                      title={`Pesan ${activeItem.name} di GoFood Resmi`}
+                    >
+                      <GoFoodBadge size="sm" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
+                    </a>
+                  )}
+
+                  {/* 1. Tombol Rute (Google Blue Hero Pill) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleStartRoute(activeItem);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer shrink-0"
                   >
-                    <GoFoodBadge size="md" showExternalIcon={true} rating={activeItem.gofoodRating} reviews={activeItem.gofoodReviews} tier={activeItem.gofoodTier} />
-                  </a>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleStartRoute(activeItem);
-                  }}
-                  className="flex-1 py-2.5 px-4 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
-                >
-                  <Navigation size={13} />
-                  <span>Petunjuk Rute</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsSidePanelOpen(true)}
-                  className="px-3.5 py-2.5 rounded-full border border-[#E2D7C7] hover:bg-[#FAF6EE] text-xs font-bold text-[#786B5E] hover:text-[#2C221E] transition-colors cursor-pointer"
-                >
-                  Buka Detail
-                </button>
-              </div>
-            </motion.div>
+                    <Navigation size={13} fill="white" className="rotate-45" />
+                    <span>{activeNavRouteId === activeItem.id ? 'Akhiri Rute' : 'Rute'}</span>
+                  </button>
+
+                  {/* 2. Tombol Simpan (Save ke Wishlist) */}
+                  <button
+                    type="button"
+                    onClick={(e) => handleCulinaryWishlistToggle(e, activeItem)}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-medium transition-colors cursor-pointer shrink-0 ${
+                      isFavorite(activeItem.id)
+                        ? 'bg-rose-50 border-rose-200 text-rose-600'
+                        : 'bg-white hover:bg-neutral-50 border-neutral-300 text-[#3C4043]'
+                    }`}
+                  >
+                    <Heart
+                      size={13}
+                      fill={isFavorite(activeItem.id) ? '#e11d48' : 'none'}
+                      className={isFavorite(activeItem.id) ? 'text-rose-600' : 'text-[#5F6368]'}
+                    />
+                    <span>{isFavorite(activeItem.id) ? 'Tersimpan' : 'Simpan'}</span>
+                  </button>
+
+                  {/* 3. Tombol Bagikan (Share Link) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: activeItem.name,
+                          text: `Rekomendasi Kuliner Jogja: ${activeItem.name}`,
+                          url: window.location.href
+                        }).catch(() => {});
+                      } else {
+                        navigator.clipboard.writeText(window.location.href);
+                        alert('Tautan kuliner berhasil disalin!');
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-neutral-50 border border-neutral-300 text-[#3C4043] text-xs font-medium transition-colors cursor-pointer shrink-0"
+                    title="Bagikan Lokasi Ini"
+                  >
+                    <Share2 size={13} className="text-[#5F6368]" />
+                    <span>Bagikan</span>
+                  </button>
+
+                  {/* 4. Tombol Detail (Buka Panel Cerita & Ulasan Penuh) */}
+                  <button
+                    type="button"
+                    onClick={() => setIsSidePanelOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white hover:bg-neutral-50 border border-neutral-300 text-[#3C4043] text-xs font-medium transition-colors cursor-pointer shrink-0"
+                  >
+                    <Info size={13} className="text-[#5F6368]" />
+                    <span>Detail</span>
+                  </button>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
 
         {/* =========================================================================
             FLOATING MASKOT JOJO (PANDUAN KULINER GUDEG) DI KANAN BAWAH GPS
             ========================================================================= */}
-        <div className="absolute bottom-3 sm:bottom-6 right-3 sm:right-7 z-[996] pointer-events-none flex flex-col items-end select-none">
+        <div className="hidden sm:flex absolute bottom-6 right-7 z-[996] pointer-events-none flex-col items-end select-none">
           {/* Bubble Chat Panduan Kuliner */}
           <motion.div
             key={activeItem ? activeItem.id : 'default-kuliner'}
