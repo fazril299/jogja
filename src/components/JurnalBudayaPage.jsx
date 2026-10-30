@@ -103,10 +103,10 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTabId(tab.id)}
-                      className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-center border ${
+                      className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-center border active:scale-[0.99] ${
                         isActive
-                          ? 'bg-[#2D180C] text-white border-[#2D180C] shadow-sm ring-1 ring-[#2D180C]'
-                          : 'bg-white hover:bg-neutral-50/80 text-[#554E46] border-[#D9CEBA]/60 hover:border-[#8C532B]/50'
+                          ? 'bg-[#AE5E40] text-white border-[#AE5E40] shadow-sm ring-1 ring-[#AE5E40]'
+                          : 'bg-white hover:bg-neutral-50/80 text-[#554E46] border-[#D9CEBA]/60 hover:border-[#AE5E40]/50'
                       }`}
                     >
                       <h4
@@ -118,7 +118,7 @@ export default function JurnalBudayaPage({ isOpen, onClose }) {
                       </h4>
                       <p
                         className={`text-[11px] m-0 truncate mt-1 ${
-                          isActive ? 'text-neutral-300' : 'text-[#786B5E]'
+                          isActive ? 'text-amber-50/90' : 'text-[#786B5E]'
                         }`}
                       >
                         {tab.hint}

@@ -149,18 +149,18 @@ export function EtiquetteCard({ guide, isReversed = false }) {
               return (
                 <div
                   key={rule.title || rIdx}
-                  className="p-3.5 rounded-2xl border border-[#D9CEBA] bg-[#FAF6EE] text-xs space-y-1.5 hover:border-[#2D180C]/40 hover:-translate-y-0.5 transition-all shadow-[0_2px_8px_rgba(45,24,12,0.04)]"
+                  className="p-3.5 rounded-2xl border border-[#D9CEBA] bg-[#FAF6EE] text-xs space-y-1.5 hover:border-[#AE5E40]/40 hover:-translate-y-0.5 transition-all shadow-[0_2px_8px_rgba(45,24,12,0.04)]"
                 >
                   <div className="flex items-center gap-1.5 font-bold text-xs">
                     {isDo ? (
                       <>
-                        <CheckCircle2 size={15} className="text-[#2D180C] shrink-0" />
-                        <span className="text-[#2D180C] font-extrabold">Dianjurkan (DO):</span>
+                        <CheckCircle2 size={15} className="text-[#AE5E40] shrink-0" />
+                        <span className="text-[#AE5E40] font-extrabold">Dianjurkan (DO):</span>
                       </>
                     ) : (
                       <>
-                        <XCircle size={15} className="text-[#2D180C] shrink-0" />
-                        <span className="text-[#2D180C] font-extrabold">Pantangan (DON'T):</span>
+                        <XCircle size={15} className="text-[#AE5E40] shrink-0" />
+                        <span className="text-[#AE5E40] font-extrabold">Pantangan (DON'T):</span>
                       </>
                     )}
                   </div>
@@ -178,10 +178,10 @@ export function EtiquetteCard({ guide, isReversed = false }) {
           </div>
 
           {/* Box Tips Kearifan Lokal Jogja */}
-          <div className="p-3.5 rounded-2xl bg-[#F5EFEB] border border-[#D9CEBA] border-l-4 border-l-[#2D180C] text-xs flex items-start gap-2.5 shadow-xs">
-            <Lightbulb size={16} className="text-[#2D180C] shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#F5EFEB] border border-[#D9CEBA] border-l-4 border-l-[#AE5E40] text-xs flex items-start gap-2.5 shadow-xs">
+            <Lightbulb size={16} className="text-[#AE5E40] shrink-0 mt-0.5" />
             <div>
-              <strong className="text-[#2D180C] block text-[11px] font-extrabold mb-0.5">
+              <strong className="text-[#AE5E40] block text-[11px] font-extrabold mb-0.5">
                 Tips Kearifan Lokal Jogja:
               </strong>
               <span className="text-[#554E46] leading-relaxed font-normal">

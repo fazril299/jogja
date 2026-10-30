@@ -79,10 +79,10 @@ export default function KamusBudayaOnline() {
       </div>
 
       {/* Kotak Petunjuk Khusus Kosakata Dasar Sehari-hari */}
-      <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#F5EFEB] border border-[#D9CEBA] border-l-4 border-l-[#8C532B] text-xs shadow-xs text-left">
-        <Info size={17} className="text-[#8C532B] shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#F5EFEB] border border-[#D9CEBA] border-l-4 border-l-[#AE5E40] text-xs shadow-xs text-left">
+        <Info size={17} className="text-[#AE5E40] shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <strong className="text-[#2D180C] block font-extrabold text-xs">
+          <strong className="text-[#AE5E40] block font-extrabold text-xs">
             Petunjuk Penggunaan Kamus:
           </strong>
           <p className="text-[#554E46] m-0 leading-relaxed font-normal text-[11px] sm:text-xs">
@@ -136,7 +136,7 @@ export default function KamusBudayaOnline() {
               }}
               className={`px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
                 searchQuery.toLowerCase() === kw.toLowerCase()
-                  ? 'bg-[#2D180C] text-[#FAF6EE] border-[#2D180C] font-bold shadow-xs'
+                  ? 'bg-[#AE5E40] text-white border-[#AE5E40] font-bold shadow-xs'
                   : 'bg-[#FAF6EE] border-[#D9CEBA] text-[#2D180C] hover:border-[#8C532B] hover:text-black hover:font-bold'
               }`}
             >
@@ -195,7 +195,7 @@ export default function KamusBudayaOnline() {
                     onClick={() => setActiveWordId(item.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer border ${
                       isSelected
-                        ? 'bg-[#2D180C] text-[#FAF6EE] border-[#2D180C] font-bold shadow-xs'
+                        ? 'bg-[#AE5E40] text-white border-[#AE5E40] font-bold shadow-xs'
                         : 'bg-[#FAF6EE] text-[#554E46] border-[#D9CEBA] hover:border-[#8C532B] hover:text-black hover:font-bold'
                     }`}
                   >
