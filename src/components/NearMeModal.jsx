@@ -179,6 +179,7 @@ export default function NearMeModal({
   const [isMobilePopupCollapsed, setIsMobilePopupCollapsed] = useState(false); // Mobile: popup sisi atas (bisa ditutup/buka)
   const [localUserCoords, setLocalUserCoords] = useState(null); // Lokasi live instan dari browser
   const [isGpsRequesting, setIsGpsRequesting] = useState(false); // Status loading saat dialog izin browser muncul
+  const [gpsErrorMessage, setGpsErrorMessage] = useState(''); // Pesan error verifikasi GPS
 
   // Otomatis buka popup mobile saat marker atau item kuliner dipilih
   useEffect(() => {
@@ -405,111 +406,82 @@ export default function NearMeModal({
     };
   }, [activeNavTarget, userLiveCoords]);
 
-  // Fungsi terpadu & andal untuk meminta izin lokasi GPS dan mengambil rute (Failsafe)
-  const executeLocationRequest = (targetItem) => {
-    const item = targetItem || activeItem;
-    setIsGpsRequesting(true);
-
-    const onLocationSuccess = (pos) => {
-      setIsGpsRequesting(false);
-      setShowGpsRequiredPrompt(false);
-
-      const { latitude, longitude, accuracy } = pos.coords;
-      const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
-
-      const newFix = {
-        lat: latitude,
-        lng: longitude,
-        accuracy: Math.round(accuracy || 0),
-        inJogja: inJogja,
-        timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
-      };
-
-      setLocalUserCoords(newFix);
-
-      if (onUpdateUserCoords) {
-        onUpdateUserCoords(pos);
-      }
-
-      // Langsung buka rute jika ada item yang dituju
-      if (item && item.id) {
-        setActiveNavRouteId(item.id);
-        setIsMobilePopupCollapsed(true);
-
-        const originCoords = inJogja
-          ? [latitude, longitude]
-          : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
-
-        if (mapInstanceRef.current && item.coordinates) {
-          mapInstanceRef.current.fitBounds(
-            [
-              originCoords,
-              [item.coordinates.lat, item.coordinates.lng]
-            ],
-            { padding: [60, 60], maxZoom: 17 }
-          );
-        }
-      }
-    };
-
-    const fallbackToTitikNol = (reason) => {
-      setIsGpsRequesting(false);
-      setShowGpsRequiredPrompt(false);
-      console.warn('[GPS Fallback]:', reason);
-
-      if (item && item.id) {
-        setActiveNavRouteId(item.id);
-        setIsMobilePopupCollapsed(true);
-
-        if (mapInstanceRef.current && item.coordinates) {
-          mapInstanceRef.current.fitBounds(
-            [
-              [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng],
-              [item.coordinates.lat, item.coordinates.lng]
-            ],
-            { padding: [60, 60], maxZoom: 17 }
-          );
-        }
-      }
-    };
-
-    // Jika browser tidak mendukung geolocation
+  // Handler tombol "Nyalakan GPS": Meminta persetujuan izin akses lokasi resmi dari browser
+  const handleRequestEnableGps = () => {
     if (!('geolocation' in navigator)) {
-      fallbackToTitikNol('Sensor Geolocation tidak didukung atau dibatasi di browser.');
+      setGpsErrorMessage('Sensor lokasi GPS tidak didukung di browser ini.');
       return;
     }
 
-    // Percobaan 1: Cepat & responsif (menggunakan Wi-Fi/Cellular IP, timeout 4 detik)
-    try {
-      navigator.geolocation.getCurrentPosition(
-        onLocationSuccess,
-        (errLow) => {
-          console.warn('Percobaan 1 (low accuracy) gagal/timeout, mencoba high accuracy:', errLow);
-          // Percobaan 2: High accuracy GPS sensor
-          try {
-            navigator.geolocation.getCurrentPosition(
-              onLocationSuccess,
-              (errHigh) => {
-                console.warn('Percobaan 2 (high accuracy) gagal/ditolak:', errHigh);
-                // Langsung fallback ke Titik Nol agar rute tetap tampil tanpa hambatan
-                fallbackToTitikNol(errHigh?.message || 'Izin ditolak atau timeout');
-              },
-              { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+    setIsGpsRequesting(true);
+    setGpsErrorMessage('');
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setIsGpsRequesting(false);
+        setShowGpsRequiredPrompt(false);
+        setGpsErrorMessage('');
+
+        const { latitude, longitude, accuracy } = pos.coords;
+        const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
+
+        const newFix = {
+          lat: latitude,
+          lng: longitude,
+          accuracy: Math.round(accuracy || 0),
+          inJogja: inJogja,
+          timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
+        };
+
+        setLocalUserCoords(newFix);
+
+        if (onUpdateUserCoords) {
+          onUpdateUserCoords(pos);
+        }
+
+        // Mulai rute dari GPS pengguna
+        const target = activeItem;
+        if (target && target.id) {
+          setActiveNavRouteId(target.id);
+          setIsMobilePopupCollapsed(true);
+
+          const originCoords = inJogja
+            ? [latitude, longitude]
+            : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
+
+          if (mapInstanceRef.current && target.coordinates) {
+            mapInstanceRef.current.fitBounds(
+              [
+                originCoords,
+                [target.coordinates.lat, target.coordinates.lng]
+              ],
+              { padding: [60, 60], maxZoom: 17 }
             );
-          } catch (e2) {
-            fallbackToTitikNol(e2?.message);
           }
-        },
-        { enableHighAccuracy: false, timeout: 4000, maximumAge: 60000 }
-      );
-    } catch (e1) {
-      fallbackToTitikNol(e1?.message);
-    }
+        }
+      },
+      (err) => {
+        setIsGpsRequesting(false);
+        console.warn('GPS Request error:', err);
+        let msg = 'Izin lokasi belum diberikan di browser.';
+        if (err.code === 1) {
+          msg = 'Izin lokasi ditolak di browser. Silakan izinkan akses lokasi di ikon gembok browser, atau pilih Rute dari Titik Nol.';
+        } else if (err.code === 2) {
+          msg = 'Sensor lokasi perangkat tidak aktif. Pastikan GPS HP Anda menyala.';
+        } else if (err.code === 3) {
+          msg = 'Waktu tunggu GPS habis. Coba lagi atau gunakan Rute dari Titik Nol.';
+        }
+        setGpsErrorMessage(msg);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+    );
   };
 
+  // Handler klik Petunjuk Rute: Jika belum ada GPS, munculkan verifikasi pilihan GPS vs Titik 0
   const handleStartRoute = (item) => {
     if (!item) return;
 
+    // 1. Jika pengguna sudah memiliki sensor GPS aktif
     if (hasUserGps) {
       setShowGpsRequiredPrompt(false);
       setActiveNavRouteId(item.id);
@@ -531,7 +503,9 @@ export default function NearMeModal({
       return;
     }
 
-    executeLocationRequest(item);
+    // 2. Jika GPS belum aktif: Selalu tampilkan opsi verifikasi (Nyalakan GPS atau Titik Nol)
+    setGpsErrorMessage('');
+    setShowGpsRequiredPrompt(true);
   };
 
   const handleEndRoute = (e) => {
@@ -544,10 +518,6 @@ export default function NearMeModal({
     setRouteDistanceMeters(null);
     setRouteDurationMinutes(null);
     setIsRouteLoading(false);
-  };
-
-  const handleRequestEnableGps = () => {
-    executeLocationRequest(activeItem);
   };
 
   // Tutup dengan tombol ESC
@@ -1380,8 +1350,13 @@ export default function NearMeModal({
                             </button>
                           </div>
                           <p className="text-[11px] leading-relaxed m-0 text-[#78350F]">
-                            Aktifkan sensor lokasi perangkat Anda untuk menampilkan garis rute real-time dan melacak pergerakan pin Anda di peta.
+                            Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.
                           </p>
+                          {gpsErrorMessage && (
+                            <div className="p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[11px] text-amber-900 leading-snug">
+                              {gpsErrorMessage}
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 pt-1">
                             <button
                               type="button"
@@ -2442,8 +2417,13 @@ export default function NearMeModal({
                             </button>
                           </div>
                           <p className="text-[10px] leading-relaxed m-0 text-[#78350F]">
-                            Aktifkan sensor lokasi perangkat Anda untuk rute real-time, atau mulai rute dari Titik Nol KM Yogyakarta.
+                            Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.
                           </p>
+                          {gpsErrorMessage && (
+                            <div className="p-1.5 rounded-lg bg-amber-100/90 border border-amber-300 text-[10px] text-amber-900 leading-snug">
+                              {gpsErrorMessage}
+                            </div>
+                          )}
                           <div className="flex items-center gap-1.5 pt-0.5">
                             <button
                               type="button"
