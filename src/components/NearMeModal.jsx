@@ -206,6 +206,8 @@ export default function NearMeModal({
     );
   };
   const initialCameraSetRef = useRef(false);
+  const lastCenteredNavRouteIdRef = useRef(null);
+  const lastCenteredCardIdRef = useRef(null);
 
   // Status ketersediaan sensor GPS pengguna
   const effectiveUserCoords = localUserCoords || userLiveCoords;
@@ -479,9 +481,22 @@ export default function NearMeModal({
         onUpdateUserCoords(pos);
       }
 
-      // Mulai rute langsung dari koordinat sensor pengguna
+      // Validasi Lokasi: Rute GPS HANYA bisa digunakan jika pengguna berada di dalam wilayah Jogja
+      if (!inJogja) {
+        setShowGpsRequiredPrompt(true);
+        setGpsErrorMessage(
+          'Anda berada di luar wilayah Jogja, rute hanya dapat digunakan jika anda berada didalam wilayah jogja.'
+        );
+        return;
+      }
+
+      // Jika berada di dalam wilayah Jogja, mulai rute dari GPS
+      setShowGpsRequiredPrompt(false);
+      setGpsErrorMessage('');
+
       const target = activeItem;
       if (target && target.id) {
+        lastCenteredNavRouteIdRef.current = null;
         setActiveNavRouteId(target.id);
         setIsMobilePopupCollapsed(true);
 
@@ -538,9 +553,22 @@ export default function NearMeModal({
   const handleStartRoute = (item) => {
     if (!item) return;
 
+    lastCenteredNavRouteIdRef.current = null;
+    setIsMobilePopupCollapsed(false);
+
     // 1. Jika pengguna sudah memiliki sensor GPS aktif
     if (hasUserGps && effectiveUserCoords) {
+      // Validasi Lokasi: Rute GPS HANYA bisa digunakan jika berada di dalam wilayah Jogja
+      if (!isUserInJogja) {
+        setShowGpsRequiredPrompt(true);
+        setGpsErrorMessage(
+          'Anda berada di luar wilayah Jogja, rute hanya dapat digunakan jika anda berada didalam wilayah jogja.'
+        );
+        return;
+      }
+
       setShowGpsRequiredPrompt(false);
+      setGpsErrorMessage('');
       setActiveNavRouteId(item.id);
       setIsMobilePopupCollapsed(true);
 
@@ -977,39 +1005,39 @@ export default function NearMeModal({
       group.addLayer(marker);
     });
 
-    // 3. KAMERA POV BERPINDAH SESUAI PILIHAN USER
+    // 3. KAMERA POV BERPINDAH: Hanya fokuskan SATU KALI saat rute/item berubah,
+    // JANGAN panggil fitBounds berulang-ulang setiap kali sensor GPS bergetar agar user bebas menggeser peta!
     if (activeNavTarget?.coordinates) {
-      // Rute aktif: fokus pada seluruh lekukan jalur rute jalan raya
-      if (routeCoordinates && routeCoordinates.length > 1) {
-        const bounds = L.latLngBounds(routeCoordinates);
-        map.fitBounds(bounds, { padding: [80, 80], maxZoom: 17 });
-      } else {
+      if (lastCenteredNavRouteIdRef.current !== activeNavTarget.id) {
+        lastCenteredNavRouteIdRef.current = activeNavTarget.id;
         const origin = (hasUserGps && isUserInJogja) ? effectiveUserCoords : TITIK_NOL_YOGYAKARTA;
-        map.fitBounds(
-          [
-            [origin.lat, origin.lng],
-            [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
-          ],
-          { padding: [70, 70], maxZoom: 17 }
-        );
+        const pts = (routeCoordinates && routeCoordinates.length > 1)
+          ? routeCoordinates
+          : [
+              [origin.lat, origin.lng],
+              [activeNavTarget.coordinates.lat, activeNavTarget.coordinates.lng]
+            ];
+        map.fitBounds(L.latLngBounds(pts), { padding: [70, 70], maxZoom: 17 });
       }
     } else if (activeItem?.coordinates) {
-      map.flyTo(
-        [activeItem.coordinates.lat, activeItem.coordinates.lng],
-        16.5,
-        { duration: 0.6 }
-      );
-    } else if (eventTarget?.coordinates && !activeNavTarget) {
-      map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16, { duration: 0.7 });
-    } else if (activeZone?.coordinates) {
-      if (!initialCameraSetRef.current) {
-        initialCameraSetRef.current = true;
-      } else {
+      lastCenteredNavRouteIdRef.current = null;
+      if (lastCenteredCardIdRef.current !== activeItem.id) {
+        lastCenteredCardIdRef.current = activeItem.id;
         map.flyTo(
-          [activeZone.coordinates.lat, activeZone.coordinates.lng],
-          15.5,
+          [activeItem.coordinates.lat, activeItem.coordinates.lng],
+          16.5,
           { duration: 0.6 }
         );
+      }
+    } else if (eventTarget?.coordinates && !activeNavTarget) {
+      lastCenteredNavRouteIdRef.current = null;
+      lastCenteredCardIdRef.current = null;
+      map.flyTo([eventTarget.coordinates.lat, eventTarget.coordinates.lng], 16, { duration: 0.7 });
+    } else if (activeZone?.coordinates) {
+      lastCenteredNavRouteIdRef.current = null;
+      lastCenteredCardIdRef.current = null;
+      if (!initialCameraSetRef.current) {
+        initialCameraSetRef.current = true;
       }
     }
   }, [
@@ -1388,7 +1416,7 @@ export default function NearMeModal({
                   <div className="p-3.5 sm:p-4 border-t border-[#EAE3D6] bg-white/95 shrink-0 flex flex-col gap-2.5">
                     {/* In-Card GPS Alert (Tampil seketika di atas tombol rute) */}
                     <AnimatePresence>
-                      {showGpsRequiredPrompt && !hasUserGps && (
+                      {showGpsRequiredPrompt && (
                         <motion.div
                           initial={{ opacity: 0, y: 10, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1399,7 +1427,7 @@ export default function NearMeModal({
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5 font-bold text-xs text-[#92400E]">
                               <AlertCircle size={14} className="text-[#D97706] shrink-0" />
-                              <span>Akses GPS Diperlukan untuk Navigasi Rute</span>
+                              <span>{hasUserGps && !isUserInJogja ? 'Lokasi di Luar Wilayah Jogja' : 'Akses GPS Diperlukan untuk Navigasi Rute'}</span>
                             </div>
                             <button
                               type="button"
@@ -1410,7 +1438,9 @@ export default function NearMeModal({
                             </button>
                           </div>
                           <p className="text-[11px] leading-relaxed m-0 text-[#78350F]">
-                            Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.
+                            {hasUserGps && !isUserInJogja
+                              ? 'Sensor GPS aktif namun terdeteksi di luar D.I. Yogyakarta. Anda dapat melihat simulasi rute mulai dari Titik Nol KM Yogyakarta.'
+                              : 'Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.'}
                           </p>
                           {gpsErrorMessage && (
                             <div className="p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[11px] text-amber-900 leading-snug space-y-1.5">
@@ -2102,7 +2132,7 @@ export default function NearMeModal({
                 <div className="flex flex-col gap-2 pt-1 border-t border-[#F2ECE3]">
                   {/* In-Card GPS Alert (Desktop Bottom Card) */}
                   <AnimatePresence>
-                    {showGpsRequiredPrompt && !hasUserGps && (
+                    {showGpsRequiredPrompt && (
                       <motion.div
                         initial={{ opacity: 0, y: 8, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -2124,7 +2154,9 @@ export default function NearMeModal({
                           </button>
                         </div>
                         <p className="text-[11px] leading-relaxed m-0 text-[#78350F]">
-                          Aktifkan sensor lokasi perangkat Anda, atau tampilkan rute mulai dari Titik Nol KM Yogyakarta.
+                          {hasUserGps && !isUserInJogja
+                            ? 'Sensor GPS aktif namun terdeteksi di luar D.I. Yogyakarta. Anda dapat melihat simulasi rute mulai dari Titik Nol KM Yogyakarta.'
+                            : 'Aktifkan sensor lokasi perangkat Anda, atau tampilkan rute mulai dari Titik Nol KM Yogyakarta.'}
                         </p>
                         {gpsErrorMessage && (
                           <div className="p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[11px] text-amber-900 leading-snug space-y-1.5">
@@ -2457,7 +2489,7 @@ export default function NearMeModal({
                   <div className="p-2.5 border-t border-[#F0EAE1] bg-white flex flex-col gap-2 shrink-0">
                     {/* In-Card GPS Alert untuk Mobile (Nyalakan GPS & Rute dari Titik Nol) */}
                     <AnimatePresence>
-                      {showGpsRequiredPrompt && !hasUserGps && (
+                      {showGpsRequiredPrompt && (
                         <motion.div
                           initial={{ opacity: 0, y: 8, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -2468,7 +2500,7 @@ export default function NearMeModal({
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5 font-bold text-[11px] text-[#92400E]">
                               <AlertCircle size={13} className="text-[#D97706] shrink-0" />
-                              <span>Akses GPS Diperlukan untuk Navigasi Rute</span>
+                              <span>{hasUserGps && !isUserInJogja ? 'Lokasi di Luar Wilayah Jogja' : 'Akses GPS Diperlukan untuk Navigasi Rute'}</span>
                             </div>
                             <button
                               type="button"
@@ -2480,11 +2512,20 @@ export default function NearMeModal({
                             </button>
                           </div>
                           <p className="text-[10px] leading-relaxed m-0 text-[#78350F]">
-                            Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.
+                            {hasUserGps && !isUserInJogja
+                              ? 'Sensor GPS aktif namun terdeteksi di luar D.I. Yogyakarta. Anda dapat melihat simulasi rute mulai dari Titik Nol KM Yogyakarta.'
+                              : 'Pilih titik awal rute: nyalakan sensor GPS Anda untuk rute real-time, atau mulai dari Titik Nol KM Yogyakarta.'}
                           </p>
                           {gpsErrorMessage && (
-                            <div className="p-1.5 rounded-lg bg-amber-100/90 border border-amber-300 text-[10px] text-amber-900 leading-snug">
-                              {gpsErrorMessage}
+                            <div className="p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[10px] text-amber-900 leading-snug space-y-1.5">
+                              <div>{gpsErrorMessage}</div>
+                              <button
+                                type="button"
+                                onClick={() => handleStartRouteFromTitikNol(activeItem)}
+                                className="w-full py-1 px-2 rounded-md bg-[#92400E] hover:bg-[#78350F] text-white text-[10px] font-bold transition-colors cursor-pointer text-center"
+                              >
+                                Gunakan Rute Titik Nol Sekarang
+                              </button>
                             </div>
                           )}
                           <div className="flex items-center gap-1.5 pt-0.5">
@@ -2500,7 +2541,7 @@ export default function NearMeModal({
                                   <span>Menghubungkan...</span>
                                 </>
                               ) : (
-                                <span>Nyalakan GPS</span>
+                                <span>{hasUserGps ? 'Cek Ulang GPS' : 'Nyalakan GPS'}</span>
                               )}
                             </button>
                             <button

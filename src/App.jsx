@@ -528,7 +528,7 @@ function NusantaraApp() {
       });
       setShowGpsNotification(false);
       setGpsErrorMsg(
-        'Lokasi Anda terdeteksi berada di luar wilayah D.I. Yogyakarta. Sensor GPS tetap aktif mendeteksi posisi Anda, dan rute kuliner lokal disimulasikan dari Titik Nol KM Yogyakarta.'
+        'Anda berada di luar wilayah Jogja, rute hanya dapat digunakan jika anda berada didalam wilayah jogja.'
       );
       return;
     }
