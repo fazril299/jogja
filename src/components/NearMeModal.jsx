@@ -416,64 +416,77 @@ export default function NearMeModal({
     setIsGpsRequesting(true);
     setGpsErrorMessage('');
 
+    const handlePosSuccess = (pos) => {
+      setIsGpsRequesting(false);
+      setShowGpsRequiredPrompt(false);
+      setGpsErrorMessage('');
+
+      const { latitude, longitude, accuracy } = pos.coords;
+      const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
+
+      const newFix = {
+        lat: latitude,
+        lng: longitude,
+        accuracy: Math.round(accuracy || 0),
+        inJogja: inJogja,
+        timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
+      };
+
+      setLocalUserCoords(newFix);
+
+      if (onUpdateUserCoords) {
+        onUpdateUserCoords(pos);
+      }
+
+      // Mulai rute dari GPS pengguna
+      const target = activeItem;
+      if (target && target.id) {
+        setActiveNavRouteId(target.id);
+        setIsMobilePopupCollapsed(true);
+
+        const originCoords = inJogja
+          ? [latitude, longitude]
+          : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
+
+        if (mapInstanceRef.current && target.coordinates) {
+          mapInstanceRef.current.fitBounds(
+            [
+              originCoords,
+              [target.coordinates.lat, target.coordinates.lng]
+            ],
+            { padding: [60, 60], maxZoom: 17 }
+          );
+        }
+      }
+    };
+
+    const handlePosError = (err) => {
+      setIsGpsRequesting(false);
+      console.warn('GPS Request error:', err);
+      let msg = 'Lokasi GPS belum dapat dibaca.';
+      if (err.code === 1) {
+        msg = 'Izin lokasi belum aktif. Pastikan Anda menekan "Izinkan" dan toggle Lokasi/GPS di bar HP Anda dalam posisi MENYALA.';
+      } else if (err.code === 2) {
+        msg = 'Sensor lokasi perangkat tidak aktif. Pastikan toggle GPS di bar notifikasi HP Anda sudah menyala.';
+      } else if (err.code === 3) {
+        msg = 'Waktu tunggu GPS habis (sinyal satelit lemah). Silakan coba lagi atau gunakan Rute dari Titik Nol.';
+      }
+      setGpsErrorMessage(msg);
+    };
+
+    // Langkah 1: Coba mode low accuracy terlebih dahulu (sangat cepat, mengandalkan Wi-Fi/Seluler, bekerja di dalam ruangan)
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setIsGpsRequesting(false);
-        setShowGpsRequiredPrompt(false);
-        setGpsErrorMessage('');
-
-        const { latitude, longitude, accuracy } = pos.coords;
-        const inJogja = latitude >= -8.22 && latitude <= -7.52 && longitude >= 110.00 && longitude <= 110.86;
-
-        const newFix = {
-          lat: latitude,
-          lng: longitude,
-          accuracy: Math.round(accuracy || 0),
-          inJogja: inJogja,
-          timestamp: new Date(pos.timestamp || Date.now()).toLocaleTimeString('id-ID')
-        };
-
-        setLocalUserCoords(newFix);
-
-        if (onUpdateUserCoords) {
-          onUpdateUserCoords(pos);
-        }
-
-        // Mulai rute dari GPS pengguna
-        const target = activeItem;
-        if (target && target.id) {
-          setActiveNavRouteId(target.id);
-          setIsMobilePopupCollapsed(true);
-
-          const originCoords = inJogja
-            ? [latitude, longitude]
-            : [TITIK_NOL_YOGYAKARTA.lat, TITIK_NOL_YOGYAKARTA.lng];
-
-          if (mapInstanceRef.current && target.coordinates) {
-            mapInstanceRef.current.fitBounds(
-              [
-                originCoords,
-                [target.coordinates.lat, target.coordinates.lng]
-              ],
-              { padding: [60, 60], maxZoom: 17 }
-            );
-          }
-        }
+      handlePosSuccess,
+      (errLow) => {
+        console.warn('Percobaan 1 (low accuracy) gagal/timeout, mencoba high accuracy:', errLow);
+        // Langkah 2: Coba high accuracy jika langkah 1 gagal
+        navigator.geolocation.getCurrentPosition(
+          handlePosSuccess,
+          handlePosError,
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+        );
       },
-      (err) => {
-        setIsGpsRequesting(false);
-        console.warn('GPS Request error:', err);
-        let msg = 'Izin lokasi belum diberikan di browser.';
-        if (err.code === 1) {
-          msg = 'Izin lokasi ditolak di browser. Silakan izinkan akses lokasi di ikon gembok browser, atau pilih Rute dari Titik Nol.';
-        } else if (err.code === 2) {
-          msg = 'Sensor lokasi perangkat tidak aktif. Pastikan GPS HP Anda menyala.';
-        } else if (err.code === 3) {
-          msg = 'Waktu tunggu GPS habis. Coba lagi atau gunakan Rute dari Titik Nol.';
-        }
-        setGpsErrorMessage(msg);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
     );
   };
 
