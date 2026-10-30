@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { usePayment } from '../context/PaymentContext';
 import { useAuth } from '../context/AuthContext';
+import PrintableReceiptTicket from './PrintableReceiptTicket';
 
 export default function PaymentModal() {
   const {
@@ -40,13 +41,15 @@ export default function PaymentModal() {
     completePayment,
     selectedTicketToView,
     setSelectedTicketToView,
-    closePaymentModal
+    closePaymentModal,
+    redeemTicket
   } = usePayment();
 
   const { currentUser } = useAuth();
 
   // Step state: 'checkout' | 'processing' | 'success'
   const [step, setStep] = useState('checkout');
+  const [isCheckInConfirmOpen, setIsCheckInConfirmOpen] = useState(false);
   
   // Payment methods: 'card' (Credit/debit) | 'qris' (QRIS / E-Wallet) | 'va' (Virtual Account) | 'paypal'
   const [paymentMethod, setPaymentMethod] = useState('card');
@@ -159,37 +162,173 @@ export default function PaymentModal() {
   const handleDownloadTicket = () => {
     if (!orderReceipt) return;
     const bookingCode = orderReceipt.bookingCode || 'HM-JOG-100001';
-    const content = `=====================================================
-          HAMEMAYU YOGYAKARTA - E-TIKET RESMI
-=====================================================
-Kode Booking   : ${bookingCode}
-Nama Pemesan   : ${orderReceipt.userName || currentUser?.name || 'Gabriel Fazriel'}
-Email Pemesan  : ${orderReceipt.userEmail || currentUser?.email || 'user@hamemayu.id'}
-Tanggal Wisata : ${orderReceipt.visitDate || new Date().toISOString().split('T')[0]}
-Waktu Transaksi: ${new Date(orderReceipt.createdAt).toLocaleString('id-ID')}
-Status         : LUNAS / VERIFIED (PAID)
-Metode Bayar   : ${orderReceipt.methodLabel || 'Digital Payment'}
+    const qrValue = orderReceipt.qrCodeValue || bookingCode;
+    const visitDate = orderReceipt.visitDate || new Date().toISOString().split('T')[0];
+    const customerName = (orderReceipt.userName || currentUser?.name || 'Gabriel Fazriel').replace(' (Guest)', '').replace('Tamu Penjelajah', 'Gabriel Fazriel');
+    const customerEmail = (orderReceipt.userEmail || currentUser?.email || 'fazrilkece258@gmail.com').replace('guest@hamemayu.id', 'fazrilkece258@gmail.com');
+    const validity = orderReceipt.validityLabel || 'Berlaku s/d 14 Hari Sejak Pembelian';
+    const paidAt = orderReceipt.createdAt ? new Date(orderReceipt.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleDateString('id-ID');
 
-DAFTAR ITEM / DESTINASI:
-${orderReceipt.items.map((it, idx) => `  ${idx + 1}. ${it.name} (${it.category || 'Destinasi'}) x${it.quantity || 1} - Rp ${((it.price || 0) * (it.quantity || 1)).toLocaleString('id-ID')}`).join('\n')}
+    // Desain Faktur Pembayaran & E-Tiket Standar Korporat/Traveloka/Tiket.com (Sederhana, Bersih, Profesional, Tanpa Slop)
+    const htmlContent = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bukti Pembayaran - ${bookingCode} - Hamemayu</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #F8F9FA; color: #212529; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; padding: 40px 16px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    .receipt-container { background: #FFFFFF; width: 100%; max-width: 620px; border: 1px solid #E9ECEF; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 36px 32px; }
+    
+    /* Top Header */
+    .receipt-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 24px; border-bottom: 1px solid #DEE2E6; }
+    .brand-title { font-size: 20px; font-weight: 700; color: #111827; letter-spacing: -0.5px; }
+    .brand-subtitle { font-size: 12px; color: #6C757D; margin-top: 2px; }
+    .receipt-status { text-align: right; }
+    .badge-paid { display: inline-block; background: #E8F5E9; color: #2E7D32; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; border: 1px solid #C8E6C9; letter-spacing: 0.5px; }
+    .invoice-num { font-size: 12px; font-family: monospace; color: #495057; margin-top: 6px; font-weight: 600; }
 
-RINCIAN FINANSIAL:
-  Subtotal      : Rp ${(orderReceipt.subtotal || 0).toLocaleString('id-ID')}
-  Diskon Promo  : - Rp ${(orderReceipt.discount || 0).toLocaleString('id-ID')}
-  Total Bayar   : Rp ${(orderReceipt.totalAmount || 0).toLocaleString('id-ID')}
+    /* Metadata Grid */
+    .info-section { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid #DEE2E6; font-size: 13px; }
+    .info-group label { display: block; font-size: 11px; color: #6C757D; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .info-group span { font-weight: 600; color: #212529; }
 
-KODE VERIFIKASI QR GATE:
-${orderReceipt.qrCodeValue || bookingCode}
-=====================================================
-* Tunjukkan tiket ini di gerbang masuk cagar budaya / kasir sentra kuliner Yogyakarta.
-* Layanan bantuan Hamemayu: support@hamemayu.id
-=====================================================`;
+    /* Item Table */
+    .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    .items-table th { text-align: left; font-size: 11px; font-weight: 700; color: #6C757D; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid #DEE2E6; letter-spacing: 0.5px; }
+    .items-table td { padding: 12px 0; font-size: 13px; border-bottom: 1px solid #F1F3F5; }
+    .items-table .text-right { text-align: right; }
+    .item-name { font-weight: 600; color: #212529; }
+    .item-qty { color: #6C757D; font-size: 12px; }
 
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    /* Summary Totals */
+    .summary-section { margin-top: 16px; width: 100%; display: flex; flex-direction: column; align-items: flex-end; }
+    .summary-table { width: 260px; font-size: 13px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 4px 0; color: #495057; }
+    .summary-row.total { font-size: 15px; font-weight: 700; color: #111827; border-top: 1px solid #DEE2E6; padding-top: 10px; margin-top: 6px; }
+
+    /* QR Code Section */
+    .qr-section { margin-top: 28px; padding: 20px; background: #F8F9FA; border: 1px solid #E9ECEF; border-radius: 6px; display: flex; align-items: center; gap: 20px; }
+    .qr-image { width: 110px; height: 110px; border: 1px solid #DEE2E6; border-radius: 4px; padding: 4px; background: #FFFFFF; flex-shrink: 0; }
+    .qr-text h4 { font-size: 13px; font-weight: 700; color: #212529; margin-bottom: 4px; }
+    .qr-text p { font-size: 12px; color: #6C757D; line-height: 1.4; margin-bottom: 6px; }
+    .qr-text .code { font-family: monospace; font-size: 12px; font-weight: 700; color: #212529; background: #E9ECEF; padding: 2px 6px; border-radius: 4px; }
+
+    /* Footer Note */
+    .receipt-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #DEE2E6; text-align: center; font-size: 11px; color: #6C757D; line-height: 1.5; }
+
+    /* Print Button */
+    .action-bar { margin-top: 20px; }
+    .btn-print { background: #212529; color: #FFFFFF; border: none; padding: 10px 22px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+    .btn-print:hover { background: #000000; }
+
+    @media print {
+      body { background: #FFFFFF; padding: 0; }
+      .receipt-container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
+      .action-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-container">
+    <div class="receipt-header">
+      <div>
+        <h1 class="brand-title">Hamemayu Yogyakarta</h1>
+        <p class="brand-subtitle">Bukti Pembayaran & E-Tiket Resmi</p>
+      </div>
+      <div class="receipt-status">
+        <span class="badge-paid">LUNAS</span>
+        <div class="invoice-num">${bookingCode}</div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-group">
+        <label>Nama Pemesan</label>
+        <span>${customerName}</span>
+      </div>
+      <div class="info-group">
+        <label>Tanggal Transaksi</label>
+        <span>${paidAt} WIB</span>
+      </div>
+      <div class="info-group">
+        <label>Tanggal Kunjungan</label>
+        <span>${visitDate}</span>
+      </div>
+      <div class="info-group">
+        <label>Metode Pembayaran</label>
+        <span>${orderReceipt.methodLabel || 'Digital Payment'}</span>
+      </div>
+    </div>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Item / Destinasi</th>
+          <th class="text-right">Qty</th>
+          <th class="text-right">Harga</th>
+          <th class="text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${orderReceipt.items.map((it) => `
+          <tr>
+            <td>
+              <div class="item-name">${it.name}</div>
+            </td>
+            <td class="text-right item-qty">${it.quantity || 1}</td>
+            <td class="text-right">Rp ${(it.price || 0).toLocaleString('id-ID')}</td>
+            <td class="text-right font-weight-bold">Rp ${(((it.price || 0) * (it.quantity || 1))).toLocaleString('id-ID')}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="summary-section">
+      <div class="summary-table">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>Rp ${(orderReceipt.subtotal || orderReceipt.totalAmount || 0).toLocaleString('id-ID')}</span>
+        </div>
+        ${orderReceipt.discount > 0 ? `
+        <div class="summary-row" style="color: #2E7D32;">
+          <span>Diskon Promo</span>
+          <span>- Rp ${orderReceipt.discount.toLocaleString('id-ID')}</span>
+        </div>` : ''}
+        <div class="summary-row total">
+          <span>Total Pembayaran</span>
+          <span>Rp ${(orderReceipt.totalAmount || 0).toLocaleString('id-ID')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="qr-section">
+      <img class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrValue)}" alt="QR Code">
+      <div class="qr-text">
+        <h4>Verifikasi Tiket di Lokasi</h4>
+        <p>Tunjukkan QR Code ini kepada petugas loket gerbang destinasi atau kasir sentra kuliner untuk akses masuk.</p>
+        <span class="code">${bookingCode}</span>
+      </div>
+    </div>
+
+    <div class="receipt-footer">
+      Bukti pembayaran ini sah dan diterbitkan secara digital oleh Sistem Hamemayu Yogyakarta.<br>
+      Bantuan: info@jogjahamemayu.id | Telp: (0274) 589223
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-print" onclick="window.print()">Cetak Dokumen / Simpan PDF</button>
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `E-Tiket-${bookingCode}.txt`;
+    a.download = `Bukti-Pembayaran-${bookingCode}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -276,7 +415,7 @@ ${orderReceipt.qrCodeValue || bookingCode}
             <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-700">
               <User size={17} />
               <span className="truncate max-w-[140px]">
-                {currentUser?.name || 'Gabriel'}
+                {(currentUser?.name || 'Gabriel Fazriel').replace(' (Guest)', '').replace('Tamu Penjelajah', 'Gabriel Fazriel')}
               </span>
             </div>
             <div className="relative p-1">
@@ -340,13 +479,13 @@ ${orderReceipt.qrCodeValue || bookingCode}
                   </div>
                 </div>
                 {/* 3-Column Review Summary Card (Exact Match to Veroné Reference) */}
-                <div className="border border-[#E5E7EB] rounded-xl p-3.5 sm:p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] text-xs">
+                <div className="border border-[#E5E7EB] rounded-xl p-3.5 sm:p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-[#E5E7EB] text-xs">
                   {/* Contact */}
-                  <div className="md:pr-3 pt-2 md:pt-0">
-                    <div className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-0.5">
-                      Contact
+                  <div className="md:pr-4 pt-2 md:pt-0">
+                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-0.5">
+                      Email Pemesan
                     </div>
-                    <div className="font-semibold text-[#1A1412] truncate">
+                    <div className="font-bold text-[#1A1412] truncate text-xs sm:text-sm">
                       {contactEmail}
                     </div>
                     <button
@@ -354,44 +493,28 @@ ${orderReceipt.qrCodeValue || bookingCode}
                       onClick={() => setIsEditingContact(!isEditingContact)}
                       className="text-[11px] font-semibold text-[#1A1412] underline mt-1 cursor-pointer block hover:text-neutral-600"
                     >
-                      {isEditingContact ? 'Tutup' : 'Change'}
+                      {isEditingContact ? 'Selesai' : 'Ubah Email'}
                     </button>
                   </div>
 
-                  {/* Ship to / Destination */}
-                  <div className="md:px-3 pt-2 md:pt-0">
-                    <div className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-0.5">
-                      Kunjungan
+                  {/* Destination & Visit Date */}
+                  <div className="md:pl-4 pt-2 md:pt-0">
+                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-0.5">
+                      Destinasi & Jadwal Kunjungan
                     </div>
-                    <div className="font-semibold text-[#1A1412] line-clamp-1">
+                    <div className="font-bold text-[#1A1412] line-clamp-1 text-xs sm:text-sm">
                       {primaryDestinationName}
                     </div>
-                    <div className="text-[11px] text-neutral-500">
-                      Tgl: {visitDate}
+                    <div className="text-[11px] text-neutral-500 font-medium">
+                      Tanggal Kunjungan: {visitDate}
                     </div>
                     <button
                       type="button"
                       onClick={() => setIsEditingVisitDate(!isEditingVisitDate)}
                       className="text-[11px] font-semibold text-[#1A1412] underline mt-1 cursor-pointer block hover:text-neutral-600"
                     >
-                      {isEditingVisitDate ? 'Tutup' : 'Change'}
+                      {isEditingVisitDate ? 'Selesai' : 'Ubah Tanggal'}
                     </button>
-                  </div>
-
-                  {/* Method */}
-                  <div className="md:pl-3 pt-2 md:pt-0">
-                    <div className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-0.5">
-                      Method
-                    </div>
-                    <div className="font-semibold text-[#1A1412]">
-                      E-Ticket Instant Access
-                    </div>
-                    <div className="text-[11px] text-neutral-500">
-                      QR Code Langsung Aktif • Rp 0
-                    </div>
-                    <span className="text-[11px] font-medium text-emerald-700 block mt-1">
-                      ✓ Siap Scan
-                    </span>
                   </div>
                 </div>
 
@@ -675,81 +798,15 @@ ${orderReceipt.qrCodeValue || bookingCode}
                 </div>
 
                 {/* =================================================================
-                    BILLING ADDRESS SECTION (Exact Match to Veroné Reference)
+                    BOTTOM ACTION BAR (Kembali & Tombol Bayar)
                     ================================================================= */}
-                <div className="space-y-3 pt-2">
-                  <div>
-                    <h3 className="text-base font-bold text-[#1A1412] m-0">
-                      Billing address
-                    </h3>
-                    <p className="text-xs text-neutral-500 m-0 mt-0.5">
-                      Select the address that matches your card or payment method.
-                    </p>
-                  </div>
-
-                  <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white">
-                    {/* Option 1: Same as shipping address */}
-                    <div
-                      onClick={() => setBillingAddressMode('same')}
-                      className={`p-3.5 sm:p-4 flex items-center gap-2.5 cursor-pointer transition-colors ${
-                        billingAddressMode === 'same' ? 'bg-[#F9FAFB]' : 'bg-white hover:bg-neutral-50'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="billingAddress"
-                        checked={billingAddressMode === 'same'}
-                        onChange={() => setBillingAddressMode('same')}
-                        className="w-4 h-4 text-black accent-[#1A1412] cursor-pointer"
-                      />
-                      <span className="text-xs sm:text-sm font-semibold text-[#1A1412]">
-                        Same as shipping address
-                      </span>
-                    </div>
-
-                    {/* Option 2: Use a different billing address */}
-                    <div
-                      onClick={() => setBillingAddressMode('different')}
-                      className={`p-3.5 sm:p-4 border-t border-[#E5E7EB] flex items-center gap-2.5 cursor-pointer transition-colors ${
-                        billingAddressMode === 'different' ? 'bg-[#F9FAFB]' : 'bg-white hover:bg-neutral-50'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="billingAddress"
-                        checked={billingAddressMode === 'different'}
-                        onChange={() => setBillingAddressMode('different')}
-                        className="w-4 h-4 text-black accent-[#1A1412] cursor-pointer"
-                      />
-                      <span className="text-xs sm:text-sm font-semibold text-[#1A1412]">
-                        Use a different billing address
-                      </span>
-                    </div>
-
-                    {billingAddressMode === 'different' && (
-                      <div className="p-4 border-t border-[#E5E7EB] bg-[#F9FAFB] space-y-2.5">
-                        <input
-                          type="text"
-                          value={customBillingName}
-                          onChange={(e) => setCustomBillingName(e.target.value)}
-                          placeholder="Nama lengkap pengunjung lain / perusahaan"
-                          className="w-full px-3.5 py-2.5 rounded-lg border border-[#D1D5DB] bg-white text-xs sm:text-sm text-[#1A1412] placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-black"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* =================================================================
-                    BOTTOM ACTION BAR (Return Link & Black Pill "Complete order ↗")
-                    ================================================================= */}
-                <div className="pt-4 flex items-center justify-between gap-4 flex-wrap">
+                <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
                   <button
                     type="button"
                     onClick={handleClose}
                     className="text-xs font-semibold text-neutral-600 hover:text-black transition-colors cursor-pointer"
                   >
-                    Return to Shipping
+                    ← Kembali ke Jelajah
                   </button>
 
                   <button
@@ -757,7 +814,7 @@ ${orderReceipt.qrCodeValue || bookingCode}
                     onClick={handlePaySimulation}
                     className="px-7 py-3 rounded-full bg-[#1A1412] hover:bg-black text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer hover:scale-[1.01]"
                   >
-                    <span>Complete order</span>
+                    <span>Bayar Sekarang (Konfirmasi)</span>
                     <ArrowUpRight size={16} />
                   </button>
                 </div>
@@ -769,6 +826,7 @@ ${orderReceipt.qrCodeValue || bookingCode}
                   <span className="cursor-pointer hover:underline">Terms of use</span>
                 </div>
               </div>
+
             )}
 
             {/* ------------------- STEP 2: PROCESSING ------------------- */}
@@ -796,7 +854,7 @@ ${orderReceipt.qrCodeValue || bookingCode}
                     </span>
                   </div>
                   <h2 className="text-xl font-bold text-emerald-950 m-0">
-                    Order confirmed! Thank you, {orderReceipt.userName}.
+                    Order confirmed! Thank you, {orderReceipt.userName.replace(' (Guest)', '').replace('Tamu Penjelajah', 'Gabriel Fazriel')}.
                   </h2>
                   <p className="text-xs text-emerald-800 m-0">
                     A confirmation has been sent to {orderReceipt.userEmail}. Your official E-Ticket and QR Code are active and ready.
@@ -814,9 +872,17 @@ ${orderReceipt.qrCodeValue || bookingCode}
                         {orderReceipt.bookingCode}
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                      ✓ PAID & ACTIVE
-                    </span>
+                    {orderReceipt.status === 'REDEEMED' || orderReceipt.ticketState === 'used' ? (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-200 flex items-center gap-1">
+                        <Check size={11} className="text-emerald-400" />
+                        <span>SUDAH DIGUNAKAN</span>
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1 animate-pulse">
+                        <CheckCircle2 size={11} className="text-emerald-600" />
+                        <span>AKTIF & SIAP PAKAI</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
@@ -838,15 +904,29 @@ ${orderReceipt.qrCodeValue || bookingCode}
                       </div>
                       <div>
                         <span className="font-semibold text-neutral-400 text-[11px] block">
+                          MASA BERLAKU TIKET:
+                        </span>
+                        <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-xs inline-block">
+                          {orderReceipt.validityLabel || 'Berlaku s/d 7 Hari Setelah Pembelian'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-neutral-400 text-[11px] block">
                           METODE PEMBAYARAN:
                         </span>
                         <span className="font-semibold text-[#1A1412]">
                           {orderReceipt.methodLabel}
                         </span>
                       </div>
-                      <p className="text-[11px] text-neutral-500 m-0 pt-1">
-                        Tunjukkan QR Code ini di gerbang tiket destinasi atau kasir sentra kuliner untuk verifikasi langsung tanpa antre.
-                      </p>
+                      {orderReceipt.redeemedAt ? (
+                        <div className="p-2 rounded-xl bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-700 font-medium">
+                          ✓ Telah divalidasi di lokasi pada {new Date(orderReceipt.redeemedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB.
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-neutral-500 m-0 pt-0.5">
+                          Tunjukkan QR Code ini di gerbang tiket destinasi atau kasir sentra kuliner untuk verifikasi langsung tanpa antre.
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -855,23 +935,25 @@ ${orderReceipt.qrCodeValue || bookingCode}
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         type="button"
-                        onClick={() => window.print()}
-                        className="px-3.5 py-2 rounded-xl border border-neutral-300 hover:bg-neutral-50 text-xs font-bold text-neutral-800 flex items-center gap-1.5 cursor-pointer transition-colors"
-                        title="Cetak atau simpan e-tiket sebagai PDF"
-                      >
-                        <Printer size={14} />
-                        <span>Cetak Tiket (PDF)</span>
-                      </button>
-
-                      <button
-                        type="button"
                         onClick={handleDownloadTicket}
-                        className="px-3.5 py-2 rounded-xl border border-neutral-300 hover:bg-neutral-50 text-xs font-bold text-neutral-800 flex items-center gap-1.5 cursor-pointer transition-colors"
-                        title="Unduh e-tiket resmi dalam format berkas digital"
+                        className="px-4 py-2 rounded-xl bg-[#1A1412] hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-transform active:scale-95 shadow-sm"
+                        title="Unduh berkas e-tiket resmi (Offline Digital Pass)"
                       >
                         <Download size={14} />
-                        <span>Unduh Tiket</span>
+                        <span>Unduh Berkas Tiket</span>
                       </button>
+
+                      {orderReceipt.status !== 'REDEEMED' && orderReceipt.ticketState !== 'used' && (
+                        <button
+                          type="button"
+                          onClick={() => setIsCheckInConfirmOpen(true)}
+                          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs transition-transform active:scale-95"
+                          title="Simulasi check-in di pintu gerbang wisata atau kasir kuliner"
+                        >
+                          <CheckCircle2 size={14} />
+                          <span>Check-in / Gunakan Tiket</span>
+                        </button>
+                      )}
                     </div>
 
                     <button
@@ -937,9 +1019,46 @@ ${orderReceipt.qrCodeValue || bookingCode}
                       <p className="text-[11px] text-neutral-500 m-0 mt-0.5">
                         Kategori: {item.category || (item.type === 'kuliner' ? 'Kuliner Khas' : 'Tiket Budaya')}
                       </p>
-                      <p className="text-[11px] text-neutral-500 m-0">
-                        Quantity: {qty} product
-                      </p>
+                      {step === 'checkout' && !orderReceipt ? (
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-[11px] text-neutral-500 font-medium">Jumlah Tiket:</span>
+                          <div className="flex items-center border border-neutral-300 rounded-lg overflow-hidden bg-white shadow-2xs">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const current = itemQuantities[item.id] || 1;
+                                if (current > 1) {
+                                  setItemQuantities((prev) => ({ ...prev, [item.id]: current - 1 }));
+                                }
+                              }}
+                              className="w-6 h-6 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                              title="Kurangi tiket"
+                            >
+                              <Minus size={11} />
+                            </button>
+                            <span className="w-7 text-center text-xs font-bold text-neutral-900 select-none">
+                              {qty}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const current = itemQuantities[item.id] || 1;
+                                if (current < 20) {
+                                  setItemQuantities((prev) => ({ ...prev, [item.id]: current + 1 }));
+                                }
+                              }}
+                              className="w-6 h-6 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                              title="Tambah tiket"
+                            >
+                              <Plus size={11} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-neutral-500 m-0">
+                          Jumlah Tiket: {qty} orang
+                        </p>
+                      )}
                     </div>
 
                     {/* Price */}
@@ -996,34 +1115,20 @@ ${orderReceipt.qrCodeValue || bookingCode}
             {/* Financial Totals Breakdown (Exact Match to Veroné Reference) */}
             <div className="pt-4 border-t border-[#E5E7EB] space-y-2.5 text-xs sm:text-sm">
               <div className="flex items-center justify-between text-neutral-600">
-                <span>Subtotal ({totalProductCount} items)</span>
+                <span>Subtotal ({totalProductCount} item tiket)</span>
                 <span className="font-semibold text-[#1A1412]">
                   Rp {subtotal.toLocaleString('id-ID')}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-neutral-600">
-                <span>Shipping</span>
-                <span className="font-semibold text-[#1A1412]">
-                  {shippingFee === 0 ? 'Free' : `Rp ${shippingFee.toLocaleString('id-ID')}`}
-                </span>
-              </div>
-
               {isPromoApplied && discount > 0 && (
-                <div className="flex items-center justify-between text-emerald-700">
-                  <span>Discount</span>
+                <div className="flex items-center justify-between text-emerald-700 font-medium">
+                  <span>Diskon Kupon Promo</span>
                   <span className="font-semibold">
                     - Rp {discount.toLocaleString('id-ID')}
                   </span>
                 </div>
               )}
-
-              <div className="flex items-center justify-between text-neutral-600">
-                <span>Tax</span>
-                <span className="font-semibold text-[#1A1412]">
-                  Rp 0.00
-                </span>
-              </div>
 
               <div className="pt-3 border-t border-[#E5E7EB] flex items-center justify-between text-base sm:text-lg font-black text-[#1A1412]">
                 <span>Total</span>
@@ -1034,7 +1139,81 @@ ${orderReceipt.qrCodeValue || bookingCode}
             </div>
           </div>
         </main>
+
+        {/* =========================================================================
+            HIDDEN ON SCREEN, VISIBLE ON PRINT: STRUK FISIK RESMI THERMAL/A4/PDF
+            ========================================================================= */}
+        {orderReceipt && (
+          <PrintableReceiptTicket
+            receipt={orderReceipt}
+            items={items}
+            subtotal={subtotal}
+            shippingFee={shippingFee}
+            discount={discount}
+            totalAmount={totalAmount}
+          />
+        )}
       </div>
+
+        {/* =========================================================================
+            POPUP KONFIRMASI CHECK-IN / REDEEM TIKET DI PINTU MASUK
+            ========================================================================= */}
+        <AnimatePresence>
+          {isCheckInConfirmOpen && (
+            <div className="fixed inset-0 z-[100005] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-neutral-200 space-y-4 text-center"
+              >
+                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <CheckCircle2 size={32} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-[#1A1412] m-0">
+                    Konfirmasi Masuk / Check-in
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+                    Apakah Anda sudah berada di loket gerbang masuk <strong>{primaryDestinationName}</strong> dan siap memvalidasi tiket ini?
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs font-mono font-bold text-neutral-700">
+                  Kode: {orderReceipt?.bookingCode}
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCheckInConfirmOpen(false)}
+                    className="flex-1 py-2.5 rounded-full border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (redeemTicket && orderReceipt?.bookingCode) {
+                        redeemTicket(orderReceipt.bookingCode);
+                        setOrderReceipt((prev) => ({
+                          ...prev,
+                          status: 'REDEEMED',
+                          ticketState: 'used',
+                          redeemedAt: new Date().toISOString()
+                        }));
+                      }
+                      setIsCheckInConfirmOpen(false);
+                    }}
+                    className="flex-1 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-transform active:scale-95 cursor-pointer"
+                  >
+                    Ya, Validasi Sekarang
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
     </AnimatePresence>
   );
 }

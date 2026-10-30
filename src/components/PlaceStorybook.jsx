@@ -1753,7 +1753,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
                         <span>
                           Mengulas sebagai:{' '}
                           <strong style={{ color: '#15131b' }}>
-                            {currentUser ? currentUser.name : 'Tamu Penjelajah (Guest)'}
+                            {currentUser ? currentUser.name : 'Gabriel Fazriel'}
                           </strong>
                         </span>
                         <button
@@ -1877,7 +1877,7 @@ export default function PlaceStorybook({ place, places = CULTURAL_PLACES, onBack
           return Number(r.rating) === Number(reviewFilterRating);
         });
 
-        const activeAuthorName = currentUser ? currentUser.name : 'Tamu Penjelajah (Guest)';
+        const activeAuthorName = currentUser ? currentUser.name : 'Gabriel Fazriel';
         const activeAuthorAvatar =
           currentUser?.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed=Guest';
 

@@ -442,7 +442,7 @@ export default function Navbar({
                   ) : (
                     <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/60 text-left">
                       <p className="text-xs font-bold text-amber-950 m-0">
-                        Tamu Penjelajah
+                        Penjelajah Budaya
                       </p>
                       <p className="text-[11px] text-amber-900/80 m-0 mt-0.5">
                         Masuk untuk menyimpan agenda budaya & momen favorit Anda.
@@ -1092,7 +1092,7 @@ export default function Navbar({
                 <div className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-neutral-900 m-0">
-                      Tamu Penjelajah
+                      Penjelajah Budaya
                     </p>
                     <p className="text-[10px] text-neutral-500 m-0">
                       Masuk untuk simpan paspor &amp; momen

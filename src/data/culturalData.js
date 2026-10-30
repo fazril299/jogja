@@ -50,6 +50,9 @@ export const JOGJA_GPS_ZONES = [
       },
       {
         id: 'lumpia-samijaya',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/lumpia-samijaya-malioboro',
+        gofoodMerchant: 'Lumpia Samijaya Malioboro',
         trackPointCode: 'TP-02',
         name: 'Lumpia Samijaya Malioboro (Sejak 1976)',
         spotName: 'Jl. Malioboro No.18, Suryatmajan, Kec. Danurejan, Kota Yogyakarta, DIY 55213',
@@ -82,6 +85,9 @@ export const JOGJA_GPS_ZONES = [
       },
       {
         id: 'oseng-mercon-bu-narti',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/oseng-mercon-bu-narti-kh-ahmad-dahlan',
+        gofoodMerchant: 'Oseng-Oseng Mercon Bu Narti',
         trackPointCode: 'TP-04',
         name: 'Oseng-Oseng Mercon Bu Narti (Pusat 1998)',
         spotName: 'Jl. KH. Ahmad Dahlan No.107, Notoprajan, Kec. Ngampilan, Kota Yogyakarta, DIY 55262',
@@ -115,6 +121,9 @@ export const JOGJA_GPS_ZONES = [
     kulinerList: [
       {
         id: 'gudeg-yu-djum-wijilan',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/gudeg-yu-djum-pusat-wijilan-167',
+        gofoodMerchant: 'Gudeg Yu Djum Pusat Wijilan 167',
         trackPointCode: 'TP-01',
         name: 'Gudeg Yu Djum Wijilan 167 (Pusat Asli 1951)',
         spotName: 'Jl. Wijilan No.167, Panembahan, Kec. Kraton, Kota Yogyakarta, DIY 55131',
@@ -196,6 +205,9 @@ export const JOGJA_GPS_ZONES = [
     kulinerList: [
       {
         id: 'bakmi-jawa-mbah-gito',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/bakmi-jawa-mbah-gito-rejwangan',
+        gofoodMerchant: 'Bakmi Jawa Mbah Gito',
         trackPointCode: 'TP-01',
         name: 'Bakmi Jawa Mbah Gito (Pusat Otentik)',
         spotName: 'Jl. Nyi Ageng Nis No.9, Rejowinangun, Kec. Kotagede, Kota Yogyakarta, DIY 55171',
@@ -228,6 +240,9 @@ export const JOGJA_GPS_ZONES = [
       },
       {
         id: 'tempo-gelato-prawirotaman',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/tempo-gelato-prawirotaman',
+        gofoodMerchant: 'Tempo Gelato Prawirotaman',
         trackPointCode: 'TP-03',
         name: 'Tempo Gelato Prawirotaman (Ikonik Asli)',
         spotName: 'Jl. Prawirotaman No.38B, Brontokusuman, Kec. Mergangsan, Kota Yogyakarta, DIY 55153',
@@ -293,6 +308,9 @@ export const JOGJA_GPS_ZONES = [
       },
       {
         id: 'kopi-klotok-pakem',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/warung-kopi-klotok-kaliurang',
+        gofoodMerchant: 'Warung Kopi Klotok Pakem',
         trackPointCode: 'TP-02',
         name: 'Warung Kopi Klotok Kaliurang Pakem',
         spotName: 'Jl. Kaliurang KM.16, Area Sawah, Pakembinangun, Kec. Pakem, Kabupaten Sleman, DIY 55582',
@@ -309,6 +327,9 @@ export const JOGJA_GPS_ZONES = [
       },
       {
         id: 'jejamuran-sleman',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/jejamuran-pandowoharjo',
+        gofoodMerchant: 'Jejamuran Resto Sleman',
         trackPointCode: 'TP-03',
         name: 'Jejamuran Resto Sleman Yogyakarta',
         spotName: 'Jl. Pandowoharjo No.51, Niron, Pandowoharjo, Kec. Sleman, Kabupaten Sleman, DIY 55512',
@@ -358,6 +379,9 @@ export const JOGJA_GPS_ZONES = [
     kulinerList: [
       {
         id: 'sate-klathak-pak-pong',
+        hasGofood: true,
+        gofoodUrl: 'https://gofood.co.id/jogja/restaurant/sate-klathak-pak-pong-pusat',
+        gofoodMerchant: 'Sate Klathak Pak Pong Pusat',
         trackPointCode: 'TP-01',
         name: 'Sate Klathak Pak Pong Pusat (Jejeran)',
         spotName: 'Jl. Sultan Agung No.18, Jejeran II, Wonokromo, Kec. Pleret, Kabupaten Bantul, DIY 55791',

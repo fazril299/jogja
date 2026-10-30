@@ -308,14 +308,25 @@ export function PaymentProvider({ children }) {
   const completePayment = useCallback(
     (paymentResult) => {
       const randomCode = Math.floor(100000 + Math.random() * 900000);
+      // Hitung masa berlaku tiket (Default: 7 hari untuk kuliner/voucher, 3 hari untuk wisata)
+      const isCulinaryOnly = (activePaymentOrder?.items || []).every((i) => i.type === 'kuliner');
+      const validityDays = isCulinaryOnly ? 14 : 3;
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + validityDays);
+      expiry.setHours(23, 59, 59, 999);
+
       const newRecord = {
         id: `PAY-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
         bookingCode: `HM-JOG-${randomCode}`,
         qrCodeValue: `HM-TICKET-YOGYA-${randomCode}-${Date.now()}`,
         createdAt: new Date().toISOString(),
-        userName: currentUser?.name || 'Gabriel Fazriel',
-        userEmail: currentUser?.email || 'user@hamemayu.id',
-        status: 'PAID',
+        userName: (currentUser && !currentUser.isGuest) ? currentUser.name : (currentUser?.name && !currentUser.name.includes('Tamu') ? currentUser.name : 'Gabriel Fazriel'),
+        userEmail: (currentUser && !currentUser.isGuest) ? currentUser.email : (currentUser?.email && !currentUser.email.includes('guest@') ? currentUser.email : 'fazrilkece258@gmail.com'),
+        status: 'PAID', // 'PAID' (Active) | 'REDEEMED' (Used) | 'EXPIRED'
+        ticketState: 'active', // 'active' | 'used' | 'expired'
+        validUntil: expiry.toISOString(),
+        validityLabel: `Berlaku s/d ${expiry.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}, 23:59 WIB`,
+        redeemedAt: null,
         method: paymentResult.method || 'card',
         methodLabel: paymentResult.methodLabel || 'Credit Card',
         items: activePaymentOrder?.items || [],
@@ -366,6 +377,43 @@ export function PaymentProvider({ children }) {
     [paymentHistory]
   );
 
+  /**
+   * Simulasi Check-in / Gunakan Tiket di Loket Wisata / Kasir Resto
+   */
+  const redeemTicket = useCallback((bookingCode) => {
+    if (!bookingCode) return false;
+    let redeemedOrder = null;
+
+    setPaymentHistory((prev) =>
+      prev.map((order) => {
+        if (order.bookingCode === bookingCode) {
+          redeemedOrder = {
+            ...order,
+            status: 'REDEEMED',
+            ticketState: 'used',
+            redeemedAt: new Date().toISOString()
+          };
+          return redeemedOrder;
+        }
+        return order;
+      })
+    );
+
+    if (redeemedOrder) {
+      setSelectedTicketToView(redeemedOrder);
+      try {
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ['#059669', '#10B981', '#34D399', '#FBBF24']
+        });
+      } catch (e) {}
+    }
+
+    return true;
+  }, []);
+
   return (
     <PaymentContext.Provider
       value={{
@@ -382,7 +430,8 @@ export function PaymentProvider({ children }) {
         selectedTicketToView,
         setSelectedTicketToView: openTicketViewer,
         closePaymentModal,
-        parseItemPrice
+        parseItemPrice,
+        redeemTicket
       }}
     >
       {children}

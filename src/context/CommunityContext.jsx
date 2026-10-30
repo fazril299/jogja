@@ -248,7 +248,7 @@ export function CommunityProvider({ children }) {
 
     const activeUser = user || {
       id: 'guest-user',
-      name: 'Tamu Penjelajah (Guest)',
+      name: 'Gabriel Fazriel',
       avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest'
     };
 

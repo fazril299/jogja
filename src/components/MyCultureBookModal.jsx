@@ -35,6 +35,7 @@ import { useCultureBook } from '../context/CultureBookContext';
 import { useAuth } from '../context/AuthContext';
 import { usePayment } from '../context/PaymentContext';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
+import GoFoodBadge from './GoFoodBadge';
 import { CULTURAL_BADGES, CULTURAL_QUESTS, BADGE_TIERS } from '../data/badgeQuestData';
 import { CULTURAL_EVENTS, CULTURAL_JOURNALS } from '../data/culturalEventsData';
 import { getHaversineDistance } from '../utils/gpsSecurity';
@@ -77,6 +78,7 @@ export default function MyCultureBookModal({
   const [showGuideDetail, setShowGuideDetail] = useState(false);
   const [badgeFilterType, setBadgeFilterType] = useState('all');
   const [ticketCategoryFilter, setTicketCategoryFilter] = useState('all'); // 'all' | 'wisata' | 'kuliner'
+  const [ticketStatusFilter, setTicketStatusFilter] = useState('all'); // 'all' | 'active' | 'used'
   const [isDestinasiExpanded, setIsDestinasiExpanded] = useState(true);
 
   // Sync tab saat initialTab berubah atau modal dibuka
@@ -176,27 +178,45 @@ export default function MyCultureBookModal({
     return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner')).length;
   }, [paymentHistory]);
 
+  const activeTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => o.status !== 'REDEEMED' && o.ticketState !== 'used').length;
+  }, [paymentHistory]);
+
+  const usedTicketsCount = React.useMemo(() => {
+    return (paymentHistory || []).filter((o) => o.status === 'REDEEMED' || o.ticketState === 'used').length;
+  }, [paymentHistory]);
+
   const filteredPaymentHistory = React.useMemo(() => {
+    let result = paymentHistory || [];
+
+    // Filter Kategori
     if (ticketCategoryFilter === 'wisata') {
-      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type));
+      result = result.filter((o) => (o.items || []).some((i) => i.type === 'wisata' || !i.type));
+    } else if (ticketCategoryFilter === 'kuliner') {
+      result = result.filter((o) => (o.items || []).some((i) => i.type === 'kuliner'));
     }
-    if (ticketCategoryFilter === 'kuliner') {
-      return (paymentHistory || []).filter((o) => (o.items || []).some((i) => i.type === 'kuliner'));
+
+    // Filter Status Tiket
+    if (ticketStatusFilter === 'active') {
+      result = result.filter((o) => o.status !== 'REDEEMED' && o.ticketState !== 'used');
+    } else if (ticketStatusFilter === 'used') {
+      result = result.filter((o) => o.status === 'REDEEMED' || o.ticketState === 'used');
     }
-    return paymentHistory || [];
-  }, [paymentHistory, ticketCategoryFilter]);
+
+    return result;
+  }, [paymentHistory, ticketCategoryFilter, ticketStatusFilter]);
 
   const isGuest = !currentUser || currentUser.isGuest;
 
   // Paspor Budaya display info
   const displayName = isGuest
-    ? 'Tamu Penjelajah'
+    ? 'Penjelajah Budaya'
     : (currentUser?.email === 'fazriel@admin.com'
         ? 'Admin'
         : (currentUser?.name || 'Penjelajah Budaya'));
 
   const displayRole = isGuest
-    ? 'Tamu Penjelajah Budaya @ Hamemayu'
+    ? 'Penjelajah Budaya @ Hamemayu'
     : (currentUser && (currentUser.role === 'admin' || currentUser.email === 'fazriel@admin.com' || currentUser.email === 'admin@hamemayu.id' || currentUser.email === 'fazrielmuliyael@gmail.com')
         ? `${currentUser.email || 'Admin'} • Administrator Sistem @ Hamemayu`
         : `${currentUser?.email || 'Member'} • Penjelajah Budaya @ Hamemayu`);
@@ -400,16 +420,7 @@ export default function MyCultureBookModal({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
                 {/* Top Action Buttons */}
-                <div className="absolute top-2.5 right-2.5 flex items-center gap-2 z-10">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center cursor-pointer shadow-sm border border-white/20"
-                    aria-label="Tutup Profil"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
+                
               </div>
 
               {/* Profile Details */}
@@ -806,7 +817,21 @@ export default function MyCultureBookModal({
                               </button>
                             )}
 
-                            {paid ? (
+                            {item.isCulinary ? (
+                              item.hasGofood ? (
+                                <a
+                                  href={item.gofoodUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                                  title={`Pesan ${item.name} via GoFood`}
+                                >
+                                  <GoFoodBadge size="sm" showExternalIcon={true} />
+                                </a>
+                              ) : (
+                                <span className="text-[10px] text-neutral-500 font-medium">Kunjungan Kuliner Langsung</span>
+                              )
+                            ) : paid ? (
                               <button
                                 type="button"
                                 onClick={() => {
@@ -825,8 +850,8 @@ export default function MyCultureBookModal({
                                 onClick={() => initiatePayment(item, { fromWishlist: true })}
                                 className="px-3 py-1 rounded-xl bg-[#2C221E] hover:bg-[#C99B52] text-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
                               >
-                                <CreditCard size={11} className="text-[#C99B52]" />
-                                <span>Bayar Sekarang</span>
+                                <Ticket size={11} className="text-[#C99B52]" />
+                                <span>Beli Tiket Masuk</span>
                               </button>
                             )}
                           </div>
@@ -879,30 +904,64 @@ export default function MyCultureBookModal({
                   )}
                 </div>
 
-                {/* Mobile Filter Pills */}
+                {/* Mobile Filter Pills: Kategori & Status */}
                 {paymentHistory.length > 0 && (
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
-                    {[
-                      { id: 'all', label: `Semua (${paymentHistory.length})` },
-                      { id: 'wisata', label: `Wisata (${wisataTicketsCount})` },
-                      { id: 'kuliner', label: `Kuliner (${kulinerTicketsCount})` }
-                    ].map((f) => {
-                      const isSel = ticketCategoryFilter === f.id;
-                      return (
-                        <button
-                          key={f.id}
-                          type="button"
-                          onClick={() => setTicketCategoryFilter(f.id)}
-                          className={`px-2.5 py-1 rounded-full font-bold whitespace-nowrap cursor-pointer transition-colors ${
-                            isSel
-                              ? 'bg-[#2C221E] text-white'
-                              : 'bg-[#FAF6EE] text-[#786B5E] border border-[#E5D7BE]'
-                          }`}
-                        >
-                          {f.label}
-                        </button>
-                      );
-                    })}
+                  <div className="space-y-1.5">
+                    {/* Status Tabs */}
+                    <div className="flex items-center gap-1 p-0.5 rounded-xl bg-neutral-200/60 border border-neutral-300 text-[10px]">
+                      <button
+                        type="button"
+                        onClick={() => setTicketStatusFilter('all')}
+                        className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
+                          ticketStatusFilter === 'all' ? 'bg-[#2C221E] text-white shadow-2xs' : 'text-neutral-600'
+                        }`}
+                      >
+                        Semua Status ({paymentHistory.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTicketStatusFilter('active')}
+                        className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
+                          ticketStatusFilter === 'active' ? 'bg-[#15803D] text-white shadow-2xs' : 'text-neutral-600'
+                        }`}
+                      >
+                        Siap Pakai ({activeTicketsCount})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTicketStatusFilter('used')}
+                        className={`flex-1 py-1 rounded-lg font-bold text-center cursor-pointer transition-all ${
+                          ticketStatusFilter === 'used' ? 'bg-neutral-800 text-white shadow-2xs' : 'text-neutral-600'
+                        }`}
+                      >
+                        Riwayat ({usedTicketsCount})
+                      </button>
+                    </div>
+
+                    {/* Category Filter */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[11px]">
+                      {[
+                        { id: 'all', label: 'Semua Kategori' },
+                        { id: 'wisata', label: `Wisata (${wisataTicketsCount})` },
+                        { id: 'kuliner', label: `Kuliner (${kulinerTicketsCount})` }
+                      ].map((f) => {
+                        const isSel = ticketCategoryFilter === f.id;
+                        return (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setTicketCategoryFilter(f.id)}
+                            className={`px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap cursor-pointer transition-colors text-[10px] ${
+                              isSel
+                                ? 'bg-[#2C221E] text-white'
+                                : 'bg-[#FAF6EE] text-[#786B5E] border border-[#E5D7BE]'
+                            }`}
+                          >
+                            {f.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
@@ -932,10 +991,17 @@ export default function MyCultureBookModal({
                           <span className="font-mono text-[11px] font-bold text-[#2C221E] bg-[#F2ECE1] px-2 py-0.5 rounded-md">
                             {order.bookingCode}
                           </span>
-                          <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                            <CheckCircle2 size={10} />
-                            <span>LUNAS</span>
-                          </span>
+                          {order.status === 'REDEEMED' || order.ticketState === 'used' ? (
+                            <span className="text-[9px] font-extrabold text-neutral-300 bg-neutral-800 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                              <Check size={10} className="text-emerald-400" />
+                              <span>SUDAH DIPAKAI</span>
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-0.5 animate-pulse">
+                              <CheckCircle2 size={10} />
+                              <span>SIAP PAKAI</span>
+                            </span>
+                          )}
                         </div>
 
                         <div className="space-y-1">
@@ -1291,42 +1357,6 @@ export default function MyCultureBookModal({
                 }}
               />
 
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '0.75rem',
-                  right: '0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  zIndex: 10
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={onClose}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    padding: '0.35rem 0.8rem',
-                    borderRadius: '999px',
-                    backgroundColor: 'rgba(250, 248, 245, 0.95)',
-                    border: '1px solid #E5DEC9',
-                    color: '#2C221E',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(44, 34, 30, 0.12)',
-                    backdropFilter: 'blur(8px)',
-                    transition: 'all 0.15s ease'
-                  }}
-                  aria-label="Tutup Profil"
-                >
-                  <X size={13} />
-                  <span>Tutup</span>
-                </button>
-              </div>
             </div>
 
             {/* Profile Info - Streamlined Compact Layout */}
@@ -2423,7 +2453,23 @@ export default function MyCultureBookModal({
                                     </div>
                                   </div>
 
-                                  {paid ? (
+                                  {item.isCulinary ? (
+                                    item.hasGofood ? (
+                                      <a
+                                        href={item.gofoodUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: 'none' }}
+                                        title={`Pesan ${item.name} langsung di GoFood`}
+                                      >
+                                        <GoFoodBadge size="sm" showExternalIcon={true} />
+                                      </a>
+                                    ) : (
+                                      <span style={{ fontSize: '0.75rem', color: '#786B5E', fontWeight: 600 }}>
+                                        Dine-in / Lokasi
+                                      </span>
+                                    )
+                                  ) : paid ? (
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -2467,8 +2513,8 @@ export default function MyCultureBookModal({
                                         transition: 'background-color 0.2s'
                                       }}
                                     >
-                                      <CreditCard size={12} color="#C99B52" />
-                                      <span>Bayar Sekarang</span>
+                                      <Ticket size={12} color="#C99B52" />
+                                      <span>Beli Tiket Masuk</span>
                                     </button>
                                   )}
                                 </div>
@@ -2594,36 +2640,70 @@ export default function MyCultureBookModal({
                     </div>
                   )}
 
-                  {/* 2. FILTER KATEGORI TIKET PILLS */}
+                  {/* 2. FILTER STATUS & KATEGORI TIKET PILLS */}
                   {paymentHistory.length > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {[
-                        { id: 'all', label: `Semua Tiket (${paymentHistory.length})` },
-                        { id: 'wisata', label: `Tiket Wisata (${wisataTicketsCount})` },
-                        { id: 'kuliner', label: `Voucher Kuliner (${kulinerTicketsCount})` }
-                      ].map((f) => {
-                        const isSelected = ticketCategoryFilter === f.id;
-                        return (
-                          <button
-                            key={f.id}
-                            type="button"
-                            onClick={() => setTicketCategoryFilter(f.id)}
-                            style={{
-                              padding: '0.4rem 0.95rem',
-                              borderRadius: '999px',
-                              border: isSelected ? '1.5px solid #2C221E' : '1px solid #E5D7BE',
-                              backgroundColor: isSelected ? '#2C221E' : '#FAF6EE',
-                              color: isSelected ? '#FAF8F5' : '#786B5E',
-                              fontSize: '0.75rem',
-                              fontWeight: isSelected ? 800 : 600,
-                              cursor: 'pointer',
-                              transition: 'all 0.15s ease'
-                            }}
-                          >
-                            {f.label}
-                          </button>
-                        );
-                      })}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      {/* Status Tabs */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', backgroundColor: '#F0ECE4', padding: '0.25rem', borderRadius: '999px', border: '1px solid #E5DDCF' }}>
+                        {[
+                          { id: 'all', label: `Semua (${paymentHistory.length})` },
+                          { id: 'active', label: `Siap Pakai (${activeTicketsCount})` },
+                          { id: 'used', label: `Riwayat Dipakai (${usedTicketsCount})` }
+                        ].map((s) => {
+                          const isSel = ticketStatusFilter === s.id;
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => setTicketStatusFilter(s.id)}
+                              style={{
+                                padding: '0.35rem 0.85rem',
+                                borderRadius: '999px',
+                                border: 'none',
+                                backgroundColor: isSel ? '#2C221E' : 'transparent',
+                                color: isSel ? '#FFFFFF' : '#6B5E54',
+                                fontSize: '0.74rem',
+                                fontWeight: isSel ? 800 : 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease'
+                              }}
+                            >
+                              {s.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Category Pills */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {[
+                          { id: 'all', label: 'Semua Kategori' },
+                          { id: 'wisata', label: `Wisata (${wisataTicketsCount})` },
+                          { id: 'kuliner', label: `Kuliner (${kulinerTicketsCount})` }
+                        ].map((f) => {
+                          const isSelected = ticketCategoryFilter === f.id;
+                          return (
+                            <button
+                              key={f.id}
+                              type="button"
+                              onClick={() => setTicketCategoryFilter(f.id)}
+                              style={{
+                                padding: '0.35rem 0.85rem',
+                                borderRadius: '999px',
+                                border: isSelected ? '1.5px solid #2C221E' : '1px solid #E5D7BE',
+                                backgroundColor: isSelected ? '#FAF6EE' : '#FFFFFF',
+                                color: isSelected ? '#2C221E' : '#786B5E',
+                                fontSize: '0.73rem',
+                                fontWeight: isSelected ? 800 : 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease'
+                              }}
+                            >
+                              {f.label}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
@@ -2699,22 +2779,41 @@ export default function MyCultureBookModal({
                                 {order.bookingCode}
                               </span>
                             </div>
-                            <span
-                              style={{
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                padding: '0.2rem 0.6rem',
-                                borderRadius: '999px',
-                                backgroundColor: '#15803D',
-                                color: '#FFFFFF',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.25rem'
-                              }}
-                            >
-                              <CheckCircle2 size={11} />
-                              <span>LUNAS</span>
-                            </span>
+                            {order.status === 'REDEEMED' || order.ticketState === 'used' ? (
+                              <span
+                                style={{
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  padding: '0.2rem 0.65rem',
+                                  borderRadius: '999px',
+                                  backgroundColor: '#1F2937',
+                                  color: '#E5E7EB',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem'
+                                }}
+                              >
+                                <Check size={11} color="#34D399" />
+                                <span>SUDAH DIPAKAI</span>
+                              </span>
+                            ) : (
+                              <span
+                                style={{
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  padding: '0.2rem 0.65rem',
+                                  borderRadius: '999px',
+                                  backgroundColor: '#15803D',
+                                  color: '#FFFFFF',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem'
+                                }}
+                              >
+                                <CheckCircle2 size={11} />
+                                <span>SIAP PAKAI</span>
+                              </span>
+                            )}
                           </div>
 
                           {/* Body items */}

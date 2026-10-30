@@ -33,6 +33,7 @@ import { usePayment } from '../context/PaymentContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { JOGJA_GPS_ZONES } from '../data/culturalData';
+import GoFoodBadge from './GoFoodBadge';
 import {
   KOTA_YOGYAKARTA_OUTLINE,
   KEMANTREN_LIST,
@@ -1431,9 +1432,9 @@ export default function NearMeModal({
                             className="p-3 rounded-2xl cursor-pointer transition-all border group bg-white border-[#EAE3D6] hover:border-[#C99B52] hover:bg-[#FCFAF8] shadow-xs"
                           >
                             <div className="flex items-start gap-2.5">
-                              {/* Foto Thumbnail */}
+                              {/* Foto Thumbnail + Official GoFood Badge */}
                               {item.image && (
-                                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-[#E5DDD1] bg-[#F5EFE6] shadow-2xs">
+                                <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-[#E5DDD1] bg-[#F5EFE6] shadow-2xs">
                                   <img
                                     src={item.image}
                                     alt={item.name}
@@ -1442,6 +1443,11 @@ export default function NearMeModal({
                                       e.target.style.display = 'none';
                                     }}
                                   />
+                                  {item.hasGofood && (
+                                    <div className="absolute top-1 left-1 z-10 scale-90 origin-top-left">
+                                      <GoFoodBadge size="xs" showExternalIcon={false} />
+                                    </div>
+                                  )}
                                 </div>
                               )}
 
@@ -1570,31 +1576,21 @@ export default function NearMeModal({
                               </div>
 
                               <div className="flex items-center gap-1.5">
-                                {isItemPaid(item.id) ? (
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      const t = getPaidTicketByItemId(item.id);
-                                      if (t) setSelectedTicketToView(t);
-                                    }}
-                                    className="py-1 px-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                                {item.hasGofood ? (
+                                  <a
+                                    href={item.gofoodUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="cursor-pointer transition-transform hover:scale-105 active:scale-95 inline-flex"
+                                    title={`Pesan ${item.name} langsung di GoFood`}
                                   >
-                                    <CheckCircle2 size={10} />
-                                    <span>Voucher Aktif</span>
-                                  </button>
+                                    <GoFoodBadge size="sm" showExternalIcon={true} />
+                                  </a>
                                 ) : (
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      initiatePayment(item);
-                                    }}
-                                    className="py-1 px-2.5 rounded-full bg-[#FAF4E8] hover:bg-[#8A5D26] text-[#8A5D26] hover:text-white border border-[#EFE0C7] text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
-                                  >
-                                    <Ticket size={10} />
-                                    <span>Pesan Voucher</span>
-                                  </button>
+                                  <span className="text-[10px] text-[#786B5E] bg-[#FAF6EE] border border-[#EFE6D6] px-2 py-0.5 rounded-full font-medium">
+                                    Dine-in / Lokasi
+                                  </span>
                                 )}
 
                                 <button
@@ -1607,7 +1603,7 @@ export default function NearMeModal({
                                   className="py-1 px-2.5 rounded-full bg-[#2C221E] hover:bg-[#C99B52] hover:text-[#2C221E] text-white text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
                                 >
                                   <Navigation size={10} />
-                                  <span>Rute</span>
+                                  <span>Petunjuk Rute</span>
                                 </button>
                               </div>
                             </div>
@@ -1651,7 +1647,7 @@ export default function NearMeModal({
               {/* Header: Foto + Judul + Tombol Tutup */}
               <div className="flex items-start gap-3.5 mb-3">
                 {activeItem.image && (
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-[#E8DFC9] bg-[#FAF6EE] shadow-xs">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-[#E8DFC9] bg-[#FAF6EE] shadow-xs">
                     <img
                       src={activeItem.image}
                       alt={activeItem.name}
@@ -1660,6 +1656,11 @@ export default function NearMeModal({
                         e.target.style.display = 'none';
                       }}
                     />
+                    {activeItem.hasGofood && (
+                      <div className="absolute top-1.5 left-1.5 z-10 scale-90 origin-top-left">
+                        <GoFoodBadge size="xs" showExternalIcon={false} />
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1722,6 +1723,17 @@ export default function NearMeModal({
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2 pt-1 border-t border-[#F2ECE3]">
+                {activeItem?.hasGofood && (
+                  <a
+                    href={activeItem.gofoodUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer transition-transform hover:scale-[1.03] active:scale-95 shrink-0 inline-flex"
+                    title={`Pesan ${activeItem.name} di GoFood Resmi`}
+                  >
+                    <GoFoodBadge size="md" showExternalIcon={true} />
+                  </a>
+                )}
                 <button
                   type="button"
                   onClick={() => {

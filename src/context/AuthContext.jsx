@@ -57,8 +57,8 @@ const DEFAULT_GOOGLE_ACCOUNTS = [
 // Sesi Default Tamu (Unauthenticated Guest)
 export const GUEST_SESSION = {
   id: 'guest-user',
-  name: 'Tamu Penjelajah (Guest)',
-  email: 'guest@hamemayu.id',
+  name: 'Gabriel Fazriel',
+  email: 'fazrilkece258@gmail.com',
   avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Guest',
   role: 'guest',
   isGuest: true,
