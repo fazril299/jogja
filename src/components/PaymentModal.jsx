@@ -23,7 +23,6 @@ import {
   AlertCircle,
   Receipt,
   User,
-  ShoppingBag,
   Lock,
   Printer
 } from 'lucide-react';
@@ -415,12 +414,6 @@ export default function PaymentModal() {
               <User size={17} />
               <span className="truncate max-w-[140px]">
                 {(currentUser?.name || 'Gabriel Fazriel').replace(' (Guest)', '').replace('Tamu Penjelajah', 'Gabriel Fazriel')}
-              </span>
-            </div>
-            <div className="relative p-1">
-              <ShoppingBag size={18} />
-              <span className="absolute -top-1 -right-1 bg-[#1A1412] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {items.length}
               </span>
             </div>
             <button
