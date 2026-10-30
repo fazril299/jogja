@@ -861,9 +861,9 @@ export default function MyCultureBookModal({
 
                     {/* Ringkasan Checkout Bawah Mobile */}
                     {unpaidWishlistItems.length > 0 && (
-                      <div className="p-3 rounded-2xl bg-[#2C221E] text-white flex items-center justify-between gap-2 shadow-md">
+                      <div className="p-3 rounded-2xl bg-[#2C221E] text-white flex items-center justify-between gap-2 shadow-none border border-[#3D302A]">
                         <div>
-                          <p className="text-[9px] text-[#C99B52] font-semibold m-0 uppercase tracking-wider">
+                          <p className="text-[9px] text-[#D4C9BD] font-semibold m-0 uppercase tracking-wider">
                             Total Belum Lunas
                           </p>
                           <p className="text-xs font-black text-white m-0">
@@ -873,7 +873,7 @@ export default function MyCultureBookModal({
                         <button
                           type="button"
                           onClick={() => checkoutWishlist(unpaidWishlistItems)}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#C99B52] hover:bg-[#D4A75E] text-[#2C221E] text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all"
+                          className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-[#FAF6EE] text-[#2C221E] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-none"
                         >
                           <ShoppingBag size={13} />
                           <span>Bayar Semua</span>
@@ -2297,11 +2297,11 @@ export default function MyCultureBookModal({
                           fontSize: '0.84rem',
                           fontWeight: 800,
                           cursor: 'pointer',
-                          boxShadow: '0 4px 14px rgba(44, 34, 30, 0.18)',
+                          boxShadow: 'none',
                           transition: 'all 0.2s'
                         }}
                       >
-                        <CreditCard size={15} color="#C99B52" />
+                        <CreditCard size={15} color="#FFFFFF" />
                         <span>Bayar Semua Wishlist ({unpaidWishlistItems.length} Item)</span>
                       </button>
                     )}
@@ -2537,12 +2537,12 @@ export default function MyCultureBookModal({
                             justifyContent: 'space-between',
                             flexWrap: 'wrap',
                             gap: '1rem',
-                            boxShadow: '0 8px 24px rgba(44, 34, 30, 0.22)',
+                            boxShadow: 'none', border: '1px solid #3D302A',
                             marginTop: '0.5rem'
                           }}
                         >
                           <div>
-                            <span style={{ fontSize: '0.75rem', color: '#C99B52', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                            <span style={{ fontSize: '0.75rem', color: '#D4C9BD', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                               Ringkasan Pembayaran Wishlist
                             </span>
                             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF', marginTop: '0.15rem' }}>
@@ -2560,16 +2560,16 @@ export default function MyCultureBookModal({
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.65rem',
-                              backgroundColor: '#C99B52',
+                              backgroundColor: '#FFFFFF',
                               color: '#2C221E',
                               border: 'none',
-                              borderRadius: '12px',
+                              borderRadius: '10px',
                               padding: '0.75rem 1.6rem',
-                              fontSize: '0.9rem',
-                              fontWeight: 900,
+                              fontSize: '0.88rem',
+                              fontWeight: 800,
                               cursor: 'pointer',
-                              boxShadow: '0 4px 16px rgba(201, 155, 82, 0.35)',
-                              transition: 'all 0.2s'
+                              boxShadow: 'none',
+                              transition: 'background-color 0.15s ease'
                             }}
                           >
                             <ShoppingBag size={17} />
